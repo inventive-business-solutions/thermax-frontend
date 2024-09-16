@@ -1,0 +1,11 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+body {
+  font-family: var(--font-roboto), sans-serif; /* Fallback to sans-serif */
+}
+
+.debug-border {
+  border: 1px solid red;
+}
