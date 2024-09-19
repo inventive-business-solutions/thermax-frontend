@@ -1,7 +1,7 @@
-import { Metadata } from "next"
 import { auth } from "auth"
-import HeaderSidebar from "components/HeaderSidebar"
 import { Card, Flex } from "antd";
+import { Metadata } from "next"
+import HeaderSidebar from "components/HeaderSidebar"
 import ProjectDetails from "components/ProjectDetails";
 
 

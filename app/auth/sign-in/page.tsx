@@ -1,14 +1,13 @@
 "use client"
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Divider } from "antd"
+import Image from "next/image"
+import { signIn } from "next-auth/react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import * as zod from "zod"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomPasswordInput from "components/FormInputs/CustomPasswordInput"
-import { GoogleOutlined } from "@ant-design/icons"
-import Image from "next/image"
-import { signIn } from "next-auth/react"
-import { useState } from "react"
 
 const signInSchema = zod.object({
   email: zod.string().email({ message: "Invalid email address" }),

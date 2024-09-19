@@ -63,7 +63,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit }) => {
   )
 }
 
-export default ProjectForm
+export default ProjectForm;
 
 {
   /* <Flex gap="middle" justify="center" align="center" >
