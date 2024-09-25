@@ -2,9 +2,9 @@
 
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { Button } from "antd"
+import { useState } from "react"
 import DesignBasis from "components/Project Components/Design Basis/DesignBasis"
 import ProjectInfo from "components/Project Components/ProjectInfo"
-import { useState } from "react"
 
 const tabData = [
   { label: "Project Information", key: "1" },
