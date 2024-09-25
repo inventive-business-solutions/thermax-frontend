@@ -1,11 +1,13 @@
 "use client"
-import { useState } from "react"
 import { Button, Card, Flex, Modal } from "antd"
-import Image from "next/image"
 import { Divider } from "antd"
+import Image from "next/image"
+import Link from "next/link"
+import { useState } from "react"
 import ProjectForm from "./ProjectForm"
 import LogoImage from "../public/assets/images/eni_max_logo.png"
-import Link from "next/link"
+import { PlusCircleOutlined } from "@ant-design/icons"
+import { PROJECT_LIST_PAGE } from "configs/constants"
 
 const TitleStyles = {
   fontWeight: "bold",
@@ -58,77 +60,74 @@ const ProjectDetails = () => {
 
   return (
     <div>
-      <Flex gap="middle" vertical style={{ margin: "2rem" }}>
-        <div className="shadow-md">
-          <Card
-            style={{ boxShadow: "0px 1px 2px -2px rgba(0,0,0,0,16) !important" }}
-            title={
-              <Flex gap="middle" justify="space-between">
-                <div style={{ ...TitleStyles }}>Project Details</div>
-                <Button size="large" type="primary" icon={"+"} iconPosition={"end"} onClick={() => setOpen(true)}>
-                  Add Project
-                </Button>
-              </Flex>
-            }
-          >
-            <Flex gap="middle" justify="center">
-              {ProjectArray1.map((item, index) => (
-                <div key={index} className="shadow-md">
-                  <Link href="/project_list">
-                    <Card
-                      style={{
-                        boxShadow: "0px 1px 2px -2px rgba(0,0,0,0,16)",
-                        borderBottom: `0.4rem solid ${item.colour}`,
-                        minWidth: "300px",
-                      }}
-                      bordered={true}
-                      className="flex flex-col rounded-md bg-gray-100"
-                    >
-                      <Flex gap="middle" align="center" wrap>
-                        <div>
-                          <Image src={item.image} alt="Description of the image" width={85} height={85} priority />
-                        </div>
-                        <Flex vertical align="center" justify="center">
-                          <div style={{ fontSize: "1rem", fontWeight: "initial" }}>{item.heading}</div>
-                          <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{item.quantity}</div>
-                        </Flex>
+      <div className="shadow-md">
+        <Card
+          title={
+            <div className="flex justify-between">
+              <h2 className="text-lg font-bold tracking-wide">Project Details</h2>
+              <Button type="primary" icon={<PlusCircleOutlined />} iconPosition={"start"} onClick={() => setOpen(true)}>
+                Add Project
+              </Button>
+            </div>
+          }
+        >
+          <Flex gap="middle" justify="center">
+            {ProjectArray1.map((item, index) => (
+              <div key={index} className="shadow-md">
+                <Link href={PROJECT_LIST_PAGE}>
+                  <Card
+                    style={{
+                      boxShadow: "0px 1px 2px -2px rgba(0,0,0,0,16)",
+                      borderBottom: `0.4rem solid ${item.colour}`,
+                      minWidth: "300px",
+                    }}
+                    bordered={true}
+                    className="flex flex-col rounded-md bg-gray-100"
+                  >
+                    <Flex gap="middle" align="center" wrap>
+                      <div>
+                        <Image src={item.image} alt="Description of the image" width={85} height={85} priority />
+                      </div>
+                      <Flex vertical align="center" justify="center">
+                        <div style={{ fontSize: "1rem", fontWeight: "initial" }}>{item.heading}</div>
+                        <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{item.quantity}</div>
                       </Flex>
-                    </Card>
-                  </Link>
-                </div>
-              ))}
-            </Flex>
-            <Divider />
-            <Flex gap="middle">
-              {ProjectArray2.map((item, index) => (
-                <div key={index} className="shadow-md">
-                  <Link href="/project_list">
-                    <Card
-                      style={{
-                        boxShadow: "0px 1px 2px -2px rgba(0,0,0,0,16)",
-                        borderBottom: `0.4rem solid ${item.colour}`,
-                        minWidth: "300px",
-                      }}
-                      bordered={true}
-                      className="flex flex-col rounded-md bg-gray-100"
-                    >
-                      <Flex gap="middle" align="center" wrap>
-                        <div>
-                          <Image src={item.image} alt="Description of the image" width={85} height={85} priority />
-                        </div>
-                        <Flex vertical align="center" justify="center">
-                          <div style={{ fontSize: "1rem", fontWeight: "initial" }}>{item.heading}</div>
-                          <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{item.quantity}</div>
-                        </Flex>
+                    </Flex>
+                  </Card>
+                </Link>
+              </div>
+            ))}
+          </Flex>
+          <Divider />
+          <Flex gap="middle">
+            {ProjectArray2.map((item, index) => (
+              <div key={index} className="shadow-md">
+                <Link href="/project_list">
+                  <Card
+                    style={{
+                      boxShadow: "0px 1px 2px -2px rgba(0,0,0,0,16)",
+                      borderBottom: `0.4rem solid ${item.colour}`,
+                      minWidth: "300px",
+                    }}
+                    bordered={true}
+                    className="flex flex-col rounded-md bg-gray-100"
+                  >
+                    <Flex gap="middle" align="center" wrap>
+                      <div>
+                        <Image src={item.image} alt="Description of the image" width={85} height={85} priority />
+                      </div>
+                      <Flex vertical align="center" justify="center">
+                        <div style={{ fontSize: "1rem", fontWeight: "initial" }}>{item.heading}</div>
+                        <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{item.quantity}</div>
                       </Flex>
-                    </Card>
-                  </Link>
-                </div>
-              ))}
-            </Flex>
-          </Card>
-        </div>
-      </Flex>
+                    </Flex>
+                  </Card>
+                </Link>
+              </div>
+            ))}
+          </Flex>
+        </Card>
+      </div>
 
       <Modal
         title={<span style={{ fontSize: "2rem", fontWeight: "bold" }}>Add Project</span>}
