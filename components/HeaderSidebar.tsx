@@ -1,9 +1,11 @@
 "use client"
-import { AppstoreOutlined, MailOutlined, MenuOutlined, SettingOutlined } from "@ant-design/icons"
-import { Button, Drawer, Menu, MenuProps } from "antd"
-import Link from "next/link"
 import { useState } from "react"
+import { AppstoreOutlined, MailOutlined, MenuOutlined, SettingOutlined } from "@ant-design/icons"
+import { Button, Drawer, Flex, Menu, MenuProps } from "antd"
+import Image from "next/image"
+import Link from "next/link"
 import { UserButton } from "./UserButton"
+import LogoImage from "../public/assets/images/eni_max_logo.png"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
@@ -13,7 +15,11 @@ const items: MenuItem[] = [
     label: "Group",
     type: "group",
     children: [
-      { key: "13", label: <Link href="/">Home</Link> },
+      { key: "13", label: <Link href="/">Project Console</Link> },
+      { key: "13", label: <Link href="/project_list"> Project List</Link> },
+      { key: "13", label: <Link href="/">User Management</Link> },
+      { key: "13", label: <Link href="/">Add Packages</Link> },
+      { key: "13", label: <Link href="/">Complete Project</Link> },
       { key: "14", label: <Link href="/form">Form Components</Link> },
       { key: "15", label: <Link href="/table">Table</Link> },
     ],
@@ -86,9 +92,12 @@ export default function HeaderSidebar() {
   return (
     <div>
       <header className="sticky left-0 top-0 flex items-center justify-between border-b border-gray-300 p-4 shadow-md">
-        <Button type="primary" onClick={toggleSidebar}>
-          <MenuOutlined />
-        </Button>
+        <Flex gap="middle" align="center">
+          <Button type="primary" onClick={toggleSidebar}>
+            <MenuOutlined />
+          </Button>
+          <Image src={LogoImage} alt="Description of the image" width={60} height={60} priority />
+        </Flex>
         <UserButton />
       </header>
 

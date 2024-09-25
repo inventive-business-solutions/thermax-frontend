@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.336 18.336">
+    <defs>
+        <style>
+            .cls-1{fill:#fff}.cls-2{fill:none;stroke:#2993f5;stroke-width:3px}
+        </style>
+    </defs>
+    <g id="Add_icon" data-name="Add icon">
+        <g id="Add_icon-2" data-name="Add icon">
+            <path id="Background" d="M9.168 0A9.168 9.168 0 1 1 0 9.168 9.168 9.168 0 0 1 9.168 0z" class="cls-1"/>
+            <g id="_" data-name="+" transform="translate(4.763 4.629)">
+                <path id="Horizontal" d="M0 0v8.601" class="cls-2" transform="rotate(90 2.15 6.45)"/>
+                <path id="Vertical" d="M0 0v8.601" class="cls-2" transform="translate(4.3)"/>
+            </g>
+        </g>
+    </g>
+</svg>
