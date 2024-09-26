@@ -7,13 +7,13 @@ import {
   PlusOutlined,
 } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Input } from "antd"
-import { Preahvihear } from "next/font/google"
-import { useState } from "react"
-import { Controller, useForm } from "react-hook-form"
-import * as zod from "zod"
+import { Button, Input, Tooltip } from "antd"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
+import { Preahvihear } from "next/font/google"
+import React, { useState } from "react"
+import { useForm, Controller } from "react-hook-form"
+import * as zod from "zod"
 
 const sampleSystemSupply = [
   {
@@ -82,7 +82,13 @@ const customValidationSchema = zod.object({
 
 type ProjectInfoFormData = zod.infer<typeof customValidationSchema>
 
-const ProjectInfo = () => {
+interface ProjectInfoProps {
+  isSaved: (tabKey: string) => void
+  handleSave: () => void
+  changeTab: (Tab: string) => void
+}
+
+const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTab }) => {
   const [panelArray, setPanelArray] = useState([
     {
       id: 1,
@@ -115,6 +121,8 @@ const ProjectInfo = () => {
   })
 
   const SubmitProjectInfo = (data: ProjectInfoFormData) => {
+    isSaved("1")
+    handleSave()
     console.log("Submitted Project Info:", data)
   }
 
@@ -313,18 +321,35 @@ const ProjectInfo = () => {
         <Button type="primary" size="large">
           Go to SLD
         </Button>
-        <Button type="primary" onClick={handleSubmit(SubmitProjectInfo)} size="large">
-          Save
-        </Button>
+        <Tooltip title="Save" placement="top">
+          <Button type="primary" onClick={handleSubmit(SubmitProjectInfo)} size="large">
+            Save
+          </Button>
+        </Tooltip>
         <Button type="primary" size="large">
           Document List
         </Button>
         <Button type="primary" size="large">
           Instrumental
         </Button>
-        <Button type="primary" size="large">
-          Electrical
-        </Button>
+        <Tooltip title="Save and go to Design Basis" placement="top">
+          <Button
+            type="primary"
+            onClick={async () => {
+              try {
+                 isSaved("1");
+                 handleSave();
+                 changeTab("2");
+              } catch (error) {
+                console.error("Error during submission:", error)
+                // Optionally, handle the error (e.g., show a notification or alert)
+              }
+            }}
+            size="large"
+          >
+            Electrical
+          </Button>
+        </Tooltip>
       </div>
     </form>
   )
