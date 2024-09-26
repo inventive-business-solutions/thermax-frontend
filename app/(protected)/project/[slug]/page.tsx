@@ -1,8 +1,9 @@
 "use client"
 
 import { QuestionCircleOutlined } from "@ant-design/icons"
-import { Button } from "antd"
+import { Button, FloatButton } from "antd"
 import DesignBasis from "components/Project Components/Design Basis/DesignBasis"
+import ElectricalLoadList from "components/Project Components/Electrical Load List/ElectricalLoadList"
 import ProjectInfo from "components/Project Components/ProjectInfo"
 import { useState } from "react"
 
@@ -19,7 +20,7 @@ const tabData = [
 
 export default function Page({ params }: { params: { slug: string } }) {
   const [openTab, setOpenTab] = useState<string>("1") // current open tab
-  const [savedTabs, setSavedTabs] = useState<string[]>(["1"]) // array to track saved tabs
+  const [savedTabs, setSavedTabs] = useState<string[]>([]) // array to track saved tabs
 
   // Check if a tab is saved
   const isSaved = (tabKey: string) => savedTabs.includes(tabKey)
@@ -33,6 +34,10 @@ export default function Page({ params }: { params: { slug: string } }) {
     if (targetIndex <= currentIndex || (targetIndex === currentIndex + 1 && isSaved(openTab))) {
       setOpenTab(tabKey)
     }
+  }
+
+  const changeTab = (tab: string) => {
+    setOpenTab(tab) // set the tab to desired tab
   }
 
   // Handle save action
@@ -50,13 +55,17 @@ export default function Page({ params }: { params: { slug: string } }) {
     if (savedTabs.includes(tabKey)) {
       return "bg-blue-500 text-white" // Visited and saved
     }
+    let nextIndex = tabData.findIndex((tab) => tab.key === openTab) + 1
+    if (tabData[nextIndex] && tabData[nextIndex].key === tabKey && savedTabs.includes(openTab)) {
+      return "bg-white text-gray-600" // visitable
+    }
     return "bg-gray-300 text-gray-600 cursor-not-allowed" // Unvisited, disabled
   }
 
   return (
     <>
       <div className="m-4 flex flex-wrap">
-        <div className="flex w-full justify-end">
+        {/* <div className="flex w-full justify-end">
           <Button
             style={{ backgroundColor: "#ffc107 !important", color: "black" }}
             size="large"
@@ -66,14 +75,14 @@ export default function Page({ params }: { params: { slug: string } }) {
           >
             Need Help
           </Button>
-        </div>
+        </div> */}
         <div className="w-full">
-          <ul className="mb-0 flex w-[90%] list-none flex-row flex-wrap pb-4 pt-3" role="tablist">
+          <ul className="mb-0 flex  list-none flex-row flex-wrap pb-4 pt-3" role="tablist">
             {tabData.map((tab) => (
               <li key={tab.key} className="-mb-px mr-2 flex-auto text-center last:mr-0">
                 <a
                   className={
-                    "block rounded px-5 py-3 text-xs font-bold uppercase leading-normal shadow-lg " +
+                    "block rounded border px-5 py-3 text-xs font-bold uppercase leading-normal shadow-lg " +
                     renderTabClass(tab.key)
                   }
                   onClick={(e) => {
@@ -95,15 +104,15 @@ export default function Page({ params }: { params: { slug: string } }) {
               <div className="tab-content tab-space">
                 {/* Tab Content */}
                 <div className={openTab === "1" ? "block" : "hidden"} id="link1">
-                  <ProjectInfo />
+                  <ProjectInfo isSaved={isSaved} handleSave={handleSave} changeTab={changeTab} />
                 </div>
 
                 <div className={openTab === "2" ? "block" : "hidden"} id="link2">
-                  <DesignBasis />
+                  <DesignBasis handleSave={handleSave} />
                 </div>
 
                 <div className={openTab === "3" ? "block" : "hidden"} id="link3">
-                  <p>Content of Electrical Load List</p>
+                  <ElectricalLoadList handleSave={() => {}} />
                 </div>
 
                 <div className={openTab === "4" ? "block" : "hidden"} id="link4">
@@ -129,11 +138,16 @@ export default function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
         </div>
-        <div className="flex w-full justify-end gap-4">
+        {/* <div className="flex w-full justify-end gap-4">
           <Button type="primary" onClick={handleSave} disabled={isSaved(openTab)}>
             {isSaved(openTab) ? "Saved" : "Save Tab"}
           </Button>
-        </div>
+        </div> */}
+
+        <FloatButton
+          icon={<QuestionCircleOutlined />}
+          style={{ insetInlineEnd: 94, height: "3rem", width: "3rem", backgroundColor: "yellow !important", color: "yellow !important" }}
+        />
       </div>
     </>
   )
