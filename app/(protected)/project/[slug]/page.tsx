@@ -146,7 +146,13 @@ export default function Page({ params }: { params: { slug: string } }) {
 
         <FloatButton
           icon={<QuestionCircleOutlined />}
-          style={{ insetInlineEnd: 94, height: "3rem", width: "3rem", backgroundColor: "yellow !important", color: "yellow !important" }}
+          style={{
+            insetInlineEnd: 94,
+            height: "3rem",
+            width: "3rem",
+            backgroundColor: "yellow !important",
+            color: "yellow !important",
+          }}
         />
       </div>
     </>

@@ -229,11 +229,7 @@ const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
                   //     </>
                   //   )}
                   // />
-                  <CustomTextAreaInput
-                      name="motor1SafeArea"
-                      control={control}
-                      label=""
-                  />
+                  <CustomTextAreaInput name="motor1SafeArea" control={control} label="" />
                 ),
                 hazardousAreaDetails: (
                   // <Controller
@@ -248,11 +244,7 @@ const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
                   //     </>
                   //   )}
                   // />
-                  <CustomTextAreaInput
-                    name="motor1HazardousArea"
-                    control={control}
-                    label=""
-                  />
+                  <CustomTextAreaInput name="motor1HazardousArea" control={control} label="" />
                 ),
               },
               {
@@ -273,12 +265,7 @@ const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
                   //     </>
                   //   )}
                   // />
-                  <CustomSingleSelect
-                    name="motor2SafeArea"
-                    control={control}
-                    label=""
-                    options={motor2Options}
-                  />
+                  <CustomSingleSelect name="motor2SafeArea" control={control} label="" options={motor2Options} />
                 ),
                 hazardousAreaDetails: (
                   // <Controller
@@ -293,11 +280,7 @@ const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
                   //     </>
                   //   )}
                   // />
-                  <CustomTextInput
-                    name="motor2HazardousArea"
-                    control={control}
-                    label=""
-                  />
+                  <CustomTextInput name="motor2HazardousArea" control={control} label="" />
                 ),
               },
               {
@@ -314,11 +297,7 @@ const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
                   //     </>
                   //   )}
                   // />
-                  <CustomTextInput
-                    name="motor3SafeArea"
-                    control={control}
-                    label=""
-                  />
+                  <CustomTextInput name="motor3SafeArea" control={control} label="" />
                 ),
                 hazardousAreaDetails: (
                   // <Controller
@@ -333,11 +312,7 @@ const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
                   //     </>
                   //   )}
                   // />
-                  <CustomTextInput
-                    name="motor3HazardousArea"
-                    control={control}
-                    label=""
-                  />
+                  <CustomTextInput name="motor3HazardousArea" control={control} label="" />
                 ),
               },
             ]}
