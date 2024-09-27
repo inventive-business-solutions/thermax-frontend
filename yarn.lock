@@ -52,24 +52,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/cssinjs@npm:1.18.2":
-  version: 1.18.2
-  resolution: "@ant-design/cssinjs@npm:1.18.2"
-  dependencies:
-    "@babel/runtime": "npm:^7.11.1"
-    "@emotion/hash": "npm:^0.8.0"
-    "@emotion/unitless": "npm:^0.7.5"
-    classnames: "npm:^2.3.1"
-    csstype: "npm:^3.1.3"
-    rc-util: "npm:^5.35.0"
-    stylis: "npm:^4.0.13"
-  peerDependencies:
-    react: ">=16.0.0"
-    react-dom: ">=16.0.0"
-  checksum: 10c0/cc0afc55726c01b97f8dfcf3bdd4b6613f9c164c7bb39dcaefb7a9c94ffbcf1f7e72a4b91a26e1fa8eeb9aa860173ff9947ab970ab1e8a41159538a4512d3575
-  languageName: node
-  linkType: hard
-
 "@ant-design/cssinjs@npm:^1.21.0":
   version: 1.21.0
   resolution: "@ant-design/cssinjs@npm:1.21.0"
@@ -85,6 +67,24 @@ __metadata:
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
   checksum: 10c0/ffc384e369e2d0610ef322adcf3eba9fe785c4cc065b2bffbf6973abebf72f15ea194d7ffbb94440f363ee7c105388c6ca6b98aff3979f31ee7a49bd2600e986
+  languageName: node
+  linkType: hard
+
+"@ant-design/cssinjs@npm:^1.21.1":
+  version: 1.21.1
+  resolution: "@ant-design/cssinjs@npm:1.21.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.11.1"
+    "@emotion/hash": "npm:^0.8.0"
+    "@emotion/unitless": "npm:^0.7.5"
+    classnames: "npm:^2.3.1"
+    csstype: "npm:^3.1.3"
+    rc-util: "npm:^5.35.0"
+    stylis: "npm:^4.3.3"
+  peerDependencies:
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: 10c0/9dca7fa851ae59d084cfe6787937536a601e16e3b4f82f6a63a5eb4098d83b36a5b88a1ff9128a8d8cd2bd3336734e14248e427f0875c37cbf94a70fb0d29e50
   languageName: node
   linkType: hard
 
@@ -15597,7 +15597,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "next-enterprise@workspace:."
   dependencies:
-    "@ant-design/cssinjs": "npm:1.18.2"
+    "@ant-design/cssinjs": "npm:^1.21.1"
     "@ant-design/icons": "npm:^5.4.0"
     "@ant-design/nextjs-registry": "npm:^1.0.1"
     "@babel/core": "npm:^7.23.3"
@@ -20225,6 +20225,13 @@ __metadata:
   version: 4.3.2
   resolution: "stylis@npm:4.3.2"
   checksum: 10c0/0410e1404cbeee3388a9e17587875211ce2f014c8379af0d1e24ca55878867c9f1ccc7b0ce9a156ca53f5d6e301391a82b0645522a604674a378b3189a4a1994
+  languageName: node
+  linkType: hard
+
+"stylis@npm:^4.3.3":
+  version: 4.3.4
+  resolution: "stylis@npm:4.3.4"
+  checksum: 10c0/4899c2674cd2538e314257abd1ba7ea3c2176439659ddac6593c78192cfd4a06f814a0a4fc69bc7f8fcc6b997e13d383dd9b578b71074746a0fb86045a83e42d
   languageName: node
   linkType: hard
 

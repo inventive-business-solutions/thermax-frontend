@@ -19,7 +19,7 @@ export default function HeaderSidebar() {
     { key: "1", label: <Link href={HOME_PAGE}>Project Console</Link> },
     { key: "2", label: <Link href={PROJECT_LIST_PAGE}> Project List</Link> },
     { key: "3", label: <Link href={USER_MANAGEMENT_PAGE}>User Management</Link> },
-    { key: "4", label: <Link href={PACKAGE_PAGE}>Add Packages</Link> },
+    { key: "4", label: <Link href={PACKAGE_PAGE}>Package Management</Link> },
   ]
 
   const toggleSidebar = () => {
