@@ -42,6 +42,7 @@
     "@t3-oss/env-nextjs": "^0.10.1",
     "@vercel/otel": "^1.8.3",
     "antd": "^5.20.1",
+    "bcryptjs": "^2.4.3",
     "lodash": "^4.17.21",
     "next": "^14.2.3",
     "next-auth": "^5.0.0-beta.20",
@@ -50,6 +51,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.2",
     "react-loader-spinner": "^6.1.6",
+    "swr": "^2.2.5",
     "tailwind-merge": "^2.3.0",
     "zod": "^3.23.8"
   },
@@ -76,6 +78,7 @@
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.1.2",
     "@total-typescript/ts-reset": "^0.5.1",
+    "@types/bcryptjs": "^2",
     "@types/jest": "^29.5.10",
     "@types/node": "^20.12.13",
     "@types/react": "^18.3.3",
