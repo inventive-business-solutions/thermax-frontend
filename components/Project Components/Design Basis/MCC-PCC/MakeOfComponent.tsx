@@ -51,13 +51,12 @@
 //     <div>
 //       <div className="grid grid-cols-3 gap-4">
 //         {dropdownData.map((dropdown, index) => (
-//           <div key={index} style={{ marginBottom: "10px" }}>
+//           <div key={index} >
 //             <h4 className="text-lg">{dropdown.heading}</h4>
 //             <Select
-//               size="large"
+//
 //               placeholder="Select an option"
 //               onChange={handleChange(index)}
-//               style={{ width: "100%", height: "3.2rem" }}
 //               allowClear
 //             >
 //               {dropdown.options.map((option) => (
@@ -71,7 +70,7 @@
 //       </div>
 
 //       <div className="flex flex-row justify-end">
-//         <Button type="primary" size="large" onClick={handleSwitchTab}>Save and Next</Button>
+//         <Button type="primary"  onClick={handleSwitchTab}>Save and Next</Button>
 //       </div>
 //     </div>
 //   )
@@ -151,7 +150,7 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ handleSwitchTab }) =>
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-3 gap-4">
         {dropdownData.map((dropdown, index) => (
-          <div key={index} style={{ marginBottom: "10px" }}>
+          <div key={index}>
             <h4 className="text-lg">{dropdown.heading}</h4>
             {/* <Controller
               name={`selections.${index}`}
@@ -159,9 +158,8 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ handleSwitchTab }) =>
               render={({ field }) => (
                 <Select
                   {...field}
-                  size="large"
+                  
                   placeholder="Select an option"
-                  style={{ width: "100%", height: "3.2rem" }}
                   allowClear
                   onChange={(value) => field.onChange(value)} // Update form state on change
                 >
@@ -183,7 +181,7 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ handleSwitchTab }) =>
       </div>
 
       <div className="flex flex-row justify-end">
-        <Button type="primary" size="large" htmlType="submit">
+        <Button type="primary" htmlType="submit">
           Save and Next
         </Button>
       </div>

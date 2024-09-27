@@ -43,7 +43,7 @@ const Download: React.FC = () => {
                 setOpenTab("2")
               }}
               iconPosition="start"
-              icon={<FolderOpenOutlined style={{ fontSize: "1.2rem" }} />}
+              icon={<FolderOpenOutlined />}
             >
               Document 1
             </Button>
@@ -53,11 +53,11 @@ const Download: React.FC = () => {
       status: "Approved",
       documentRevision: "Rev 1",
       createdDate: "2024-09-19",
-      action: <CopyOutlined style={{ fontSize: "1.2rem" }} />,
+      action: <CopyOutlined />,
       download: (
         <div className="flex flex-row justify-start gap-2">
-          <DownloadOutlined style={{ fontSize: "1.2rem" }} />
-          <BellFilled style={{ fontSize: "1.2rem" }} />
+          <DownloadOutlined />
+          <BellFilled />
         </div>
       ),
       release: (

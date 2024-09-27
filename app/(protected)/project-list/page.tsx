@@ -55,27 +55,16 @@ const dataSource = Array.from<DataType>({ length: 46 }).map<DataType>((_, i) => 
   action: (
     <Flex gap="middle">
       <Tooltip placement="top" title="Delete">
-        <Button
-          type="primary"
-          shape="circle"
-          size="middle"
-          icon={<DeleteFilled style={{ fontSize: "1.3rem" }} />}
-          danger
-        />
+        <Button type="primary" shape="circle" size="middle" icon={<DeleteFilled />} danger />
       </Tooltip>
       <Tooltip placement="top" title="Edit">
-        <Button type="primary" shape="circle" size="middle" icon={<EditFilled style={{ fontSize: "1.3rem" }} />} />
+        <Button type="primary" shape="circle" size="middle" icon={<EditFilled />} />
       </Tooltip>
       <Tooltip placement="top" title="Upload Files">
-        <Button type="primary" shape="circle" size="middle" icon={<UploadOutlined style={{ fontSize: "1.3rem" }} />} />
+        <Button type="primary" shape="circle" size="middle" icon={<UploadOutlined />} />
       </Tooltip>
       <Tooltip placement="top" title="Complete Project">
-        <Button
-          type="primary"
-          shape="circle"
-          size="middle"
-          icon={<FileDoneOutlined style={{ fontSize: "1.3rem" }} />}
-        />
+        <Button type="primary" shape="circle" size="middle" icon={<FileDoneOutlined />} />
       </Tooltip>
     </Flex>
   ),
@@ -83,14 +72,7 @@ const dataSource = Array.from<DataType>({ length: 46 }).map<DataType>((_, i) => 
 
 const { Search } = Input
 
-const suffix = (
-  <AudioOutlined
-    style={{
-      fontSize: 16,
-      color: "#1677ff",
-    }}
-  />
-)
+const suffix = <AudioOutlined />
 
 type SearchProps = GetProps<typeof Input.Search>
 
@@ -127,17 +109,19 @@ const ProjectList = () => {
   const onSearch: SearchProps["onSearch"] = (value, _e, info) => console.log(info?.source, value)
 
   return (
-    <div style={{ marginLeft: "1rem", marginRight: "1rem", paddingTop: "1.4rem" }} className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1">
       <div className="flex flex-row items-center justify-between">
-        <div style={{ fontSize: "2rem" }}>Project Console</div>
-        <div style={{ fontSize: "2rem" }}>
-          <Search placeholder="Search Project" enterButton size="large" onSearch={onSearch} />
+        <div>Project Console</div>
+        <div>
+          <Search placeholder="Search Project" enterButton onSearch={onSearch} />
         </div>
-        <div style={{ fontSize: "2rem" }} className="flex gap-3">
+        <div className="flex gap-3">
+          <Tooltip title="refresh" placement="top">
+            <SyncOutlined spin={loading} color="#492971" />
+          </Tooltip>
           <Button
-            size="large"
             type="primary"
-            icon={<FolderAddOutlined style={{ fontSize: "1.5rem" }} />}
+            icon={<FolderAddOutlined />}
             iconPosition={"end"}
             onClick={() => {
               setOpen(true)
@@ -147,10 +131,8 @@ const ProjectList = () => {
             Add Project
           </Button>
           <Button
-            style={{ backgroundColor: "#ffc107 !important", color: "black" }}
-            size="large"
             type="primary"
-            icon={<QuestionCircleOutlined style={{ fontSize: "1.3rem" }} />}
+            icon={<QuestionCircleOutlined />}
             iconPosition={"end"}
             onClick={() => {
               setOpen(true)
@@ -161,21 +143,13 @@ const ProjectList = () => {
           </Button>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-2">
-        <div className="flex cursor-pointer items-center gap-2">
-          <Tooltip title="refresh" placement="top">
-            <SyncOutlined style={{ fontSize: "1.5rem" }} spin={loading} color="#492971" />
-          </Tooltip>
-        </div>
-      </div>
+
       <div className="shadow-md">
         <Table columns={columns} dataSource={dataSource} />
       </div>
 
       <Modal
-        title={
-          <span style={{ fontSize: "2rem", fontWeight: "bold" }}> {!help ? "Add Project" : "Watch a Video"} </span>
-        }
+        title={<span> {!help ? "Add Project" : "Watch a Video"} </span>}
         width={800}
         okText={!help ? "Submit" : "Close"}
         open={open}

@@ -63,7 +63,7 @@ const DesignBasis: React.FC<DesignBasisProps> = ({ handleSave }) => {
                 setOpenTab("2")
               }}
               iconPosition="start"
-              icon={<FolderOpenOutlined style={{ fontSize: "1.2rem" }} />}
+              icon={<FolderOpenOutlined />}
             >
               Document 1
             </Button>
@@ -73,11 +73,11 @@ const DesignBasis: React.FC<DesignBasisProps> = ({ handleSave }) => {
       status: "Approved",
       documentRevision: "Rev 1",
       createdDate: "2024-09-19", // Sample created date
-      action: <CopyOutlined style={{ fontSize: "1.2rem" }} />,
+      action: <CopyOutlined />,
       download: (
         <div className="flex flex-row justify-start gap-2">
-          <DownloadOutlined style={{ fontSize: "1.2rem" }} />
-          <BellFilled style={{ fontSize: "1.2rem" }} />
+          <DownloadOutlined />
+          <BellFilled />
         </div>
       ),
       release: (
@@ -153,7 +153,7 @@ const DesignBasis: React.FC<DesignBasisProps> = ({ handleSave }) => {
         </div>
       </div>
       <div className="flex w-full flex-row justify-end">
-        <Button type="primary" size="large" onClick={handleSave}>
+        <Button type="primary"  onClick={handleSave}>
           Save
         </Button>
       </div>

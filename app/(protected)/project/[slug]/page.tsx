@@ -65,17 +65,6 @@ export default function Page({ params }: { params: { slug: string } }) {
   return (
     <>
       <div className="m-4 flex flex-wrap">
-        {/* <div className="flex w-full justify-end">
-          <Button
-            style={{ backgroundColor: "#ffc107 !important", color: "black" }}
-            size="large"
-            type="primary"
-            icon={<QuestionCircleOutlined style={{ fontSize: "1.3rem" }} />}
-            iconPosition={"end"}
-          >
-            Need Help
-          </Button>
-        </div> */}
         <div className="w-full">
           <ul className="mb-0 flex  list-none flex-row flex-wrap pb-4 pt-3" role="tablist">
             {tabData.map((tab) => (
@@ -144,16 +133,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           </Button>
         </div> */}
 
-        <FloatButton
-          icon={<QuestionCircleOutlined />}
-          style={{
-            insetInlineEnd: 94,
-            height: "3rem",
-            width: "3rem",
-            backgroundColor: "yellow !important",
-            color: "yellow !important",
-          }}
-        />
+        <FloatButton icon={<QuestionCircleOutlined />} />
       </div>
     </>
   )

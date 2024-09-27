@@ -318,34 +318,27 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
       </div>
 
       <div className="mt-4 flex flex-row items-end justify-end gap-2">
-        <Button type="primary" size="large">
-          Go to SLD
-        </Button>
+        <Button type="primary">Go to SLD</Button>
         <Tooltip title="Save" placement="top">
-          <Button type="primary" onClick={handleSubmit(SubmitProjectInfo)} size="large">
+          <Button type="primary" onClick={handleSubmit(SubmitProjectInfo)}>
             Save
           </Button>
         </Tooltip>
-        <Button type="primary" size="large">
-          Document List
-        </Button>
-        <Button type="primary" size="large">
-          Instrumental
-        </Button>
+        <Button type="primary">Document List</Button>
+        <Button type="primary">Instrumental</Button>
         <Tooltip title="Save and go to Design Basis" placement="top">
           <Button
             type="primary"
             onClick={async () => {
               try {
-                 isSaved("1");
-                 handleSave();
-                 changeTab("2");
+                isSaved("1")
+                handleSave()
+                changeTab("2")
               } catch (error) {
                 console.error("Error during submission:", error)
                 // Optionally, handle the error (e.g., show a notification or alert)
               }
             }}
-            size="large"
           >
             Electrical
           </Button>

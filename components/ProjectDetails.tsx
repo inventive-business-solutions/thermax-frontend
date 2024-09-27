@@ -9,10 +9,6 @@ import LogoImage from "../public/assets/images/eni_max_logo.png"
 import { PlusCircleOutlined } from "@ant-design/icons"
 import { PROJECT_LIST_PAGE } from "configs/constants"
 
-const TitleStyles = {
-  fontWeight: "bold",
-  fontSize: "24px",
-}
 const ProjectArray1 = [
   {
     image: LogoImage,
@@ -75,22 +71,14 @@ const ProjectDetails = () => {
             {ProjectArray1.map((item, index) => (
               <div key={index} className="shadow-md">
                 <Link href={PROJECT_LIST_PAGE}>
-                  <Card
-                    style={{
-                      boxShadow: "0px 1px 2px -2px rgba(0,0,0,0,16)",
-                      borderBottom: `0.4rem solid ${item.colour}`,
-                      minWidth: "300px",
-                    }}
-                    bordered={true}
-                    className="flex flex-col rounded-md bg-gray-100"
-                  >
+                  <Card bordered={true} className="flex flex-col rounded-md bg-gray-100">
                     <Flex gap="middle" align="center" wrap>
                       <div>
                         <Image src={item.image} alt="Description of the image" width={85} height={85} priority />
                       </div>
                       <Flex vertical align="center" justify="center">
-                        <div style={{ fontSize: "1rem", fontWeight: "initial" }}>{item.heading}</div>
-                        <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{item.quantity}</div>
+                        <div>{item.heading}</div>
+                        <div>{item.quantity}</div>
                       </Flex>
                     </Flex>
                   </Card>
@@ -103,22 +91,14 @@ const ProjectDetails = () => {
             {ProjectArray2.map((item, index) => (
               <div key={index} className="shadow-md">
                 <Link href="/project_list">
-                  <Card
-                    style={{
-                      boxShadow: "0px 1px 2px -2px rgba(0,0,0,0,16)",
-                      borderBottom: `0.4rem solid ${item.colour}`,
-                      minWidth: "300px",
-                    }}
-                    bordered={true}
-                    className="flex flex-col rounded-md bg-gray-100"
-                  >
+                  <Card bordered={true} className="flex flex-col rounded-md bg-gray-100">
                     <Flex gap="middle" align="center" wrap>
                       <div>
                         <Image src={item.image} alt="Description of the image" width={85} height={85} priority />
                       </div>
                       <Flex vertical align="center" justify="center">
-                        <div style={{ fontSize: "1rem", fontWeight: "initial" }}>{item.heading}</div>
-                        <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{item.quantity}</div>
+                        <div>{item.heading}</div>
+                        <div>{item.quantity}</div>
                       </Flex>
                     </Flex>
                   </Card>
@@ -130,7 +110,7 @@ const ProjectDetails = () => {
       </div>
 
       <Modal
-        title={<span style={{ fontSize: "2rem", fontWeight: "bold" }}>Add Project</span>}
+        title={<span>Add Project</span>}
         width={800}
         okText="Submit"
         open={open}

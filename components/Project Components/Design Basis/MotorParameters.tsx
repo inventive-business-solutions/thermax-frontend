@@ -149,7 +149,7 @@
 //       </div>
 
 //       <div className="mt-3 flex w-full flex-row justify-end">
-//         <Button type="primary" size="large" onClick={handleSave}>
+//         <Button type="primary"  onClick={handleSave}>
 //           Save and Next
 //         </Button>
 //       </div>
@@ -338,7 +338,7 @@ const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
         </div>
 
         <div className="mt-3 flex w-full flex-row justify-end">
-          <Button type="primary" size="large" htmlType="submit">
+          <Button type="primary" htmlType="submit">
             Save and Next
           </Button>
         </div>

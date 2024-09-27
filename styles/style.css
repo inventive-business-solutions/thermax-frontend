@@ -21,3 +21,8 @@ input[type="text"] {
   border: 1px solid #ccc; /* Border styling */
   border-radius: 4px; /* Rounded corners */
 }
+
+.package-table .ant-table-header .ant-table-cell {
+  font-weight: bold;
+  text-align: center;
+}

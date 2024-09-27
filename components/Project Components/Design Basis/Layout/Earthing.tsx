@@ -67,7 +67,7 @@ const Earthing: React.FC = () => {
       </form>
 
       <div className="mt-2 flex w-full justify-end">
-        <Button type="primary" size="large" onClick={handleSubmit(SubmitCommonConfig)}>
+        <Button type="primary" onClick={handleSubmit(SubmitCommonConfig)}>
           Save and Continue
         </Button>
       </div>

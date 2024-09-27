@@ -26,12 +26,12 @@ const configItemValidationSchema = zod.object({
 })
 
 interface CommonConfigurationProps {
-    handleSwitchTab : (key: string) => void
+  handleSwitchTab: (key: string) => void
 }
 
 type commonConfigurationFormData = zod.infer<typeof configItemValidationSchema>
 
-const CommonConfiguration: React.FC<CommonConfigurationProps> = ({handleSwitchTab}) => {
+const CommonConfiguration: React.FC<CommonConfigurationProps> = ({ handleSwitchTab }) => {
   const { control, handleSubmit } = useForm<commonConfigurationFormData>({
     resolver: zodResolver(configItemValidationSchema),
     defaultValues: {
@@ -45,7 +45,7 @@ const CommonConfiguration: React.FC<CommonConfigurationProps> = ({handleSwitchTa
 
   const SubmitCommonConfig = (data: commonConfigurationFormData) => {
     console.log("Common Config Data:", data)
-    handleSwitchTab("3");
+    handleSwitchTab("3")
   }
 
   return (
@@ -72,7 +72,7 @@ const CommonConfiguration: React.FC<CommonConfigurationProps> = ({handleSwitchTa
       </form>
 
       <div className="mt-2 flex w-full justify-end">
-        <Button type="primary" size="large" onClick={handleSubmit(SubmitCommonConfig)}>
+        <Button type="primary" onClick={handleSubmit(SubmitCommonConfig)}>
           Save and Continue
         </Button>
       </div>

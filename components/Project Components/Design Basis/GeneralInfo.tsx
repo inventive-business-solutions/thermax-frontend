@@ -137,12 +137,7 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({ handleSave }) => {
             label: (
               <span>
                 {tab.label}
-                <Button
-                  type="link"
-                  onClick={() => removeTab(tab.key)}
-                  style={{ marginLeft: "8px", padding: "0" }}
-                  icon={<CloseOutlined />}
-                />
+                <Button type="link" onClick={() => removeTab(tab.key)} icon={<CloseOutlined />} />
               </span>
             ),
             children: (
@@ -203,7 +198,6 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({ handleSave }) => {
                           { value: "iec", label: "IEC" },
                           { value: "nema", label: "NEMA" },
                         ]}
-                        style={{ width: "100%" }}
                       />
                       <CustomSingleSelect
                         name="zone"
@@ -214,7 +208,6 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({ handleSave }) => {
                           { value: "zone1", label: "Zone 1" },
                           { value: "zone2", label: "Zone 2" },
                         ]}
-                        style={{ width: "100%" }}
                       />
 
                       <CustomSingleSelect
@@ -227,7 +220,6 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({ handleSave }) => {
                           { value: "groupIIB", label: "Group IIB" },
                           { value: "groupIIC", label: "Group IIC" },
                         ]}
-                        style={{ width: "100%" }}
                       />
 
                       <CustomSingleSelect
@@ -240,7 +232,6 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({ handleSave }) => {
                           { value: "-20C to +60C", label: "-20°C to +60°C" },
                           { value: "+40C to +70C", label: "+40°C to +70°C" },
                         ]}
-                        style={{ width: "100%" }}
                       />
                     </div>
                     {errors.standard && <span className="text-red-500">{errors.standard.message}</span>}
@@ -262,7 +253,6 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({ handleSave }) => {
               render={({ field }) => (
                 <Select
                   {...field}
-                  style={{ width: 120 }}
                   options={[
                     { value: "jack", label: "Jack" },
                     { value: "lucy", label: "Lucy" },
@@ -276,7 +266,7 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({ handleSave }) => {
         </div>
 
         <div className="flex w-full justify-end gap-4">
-          <Button type="primary" htmlType="submit" size="large">
+          <Button type="primary" htmlType="submit" >
             Save
           </Button>
         </div>
