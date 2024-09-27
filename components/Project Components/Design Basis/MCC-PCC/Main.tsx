@@ -40,7 +40,6 @@ const MainMCC: React.FC = () => {
         activeKey={activeKey} // Set the active tab
         onChange={onChange}
         type="card"
-        size="large"
         items={TabMCC.map((tab) => ({
           label: tab.label,
           key: tab.key,
