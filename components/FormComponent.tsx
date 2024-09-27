@@ -199,7 +199,7 @@ export default function MyCustomForm() {
         ]}
       />
 
-      <Button type="primary" size="large" htmlType="submit">
+      <Button type="primary"  htmlType="submit">
         Submit
       </Button>
     </form>

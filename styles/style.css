@@ -1,0 +1,28 @@
+.common-configuration {
+  margin: 20px;
+}
+
+label {
+  display: block; /* Ensure the label is on its own line */
+  margin-bottom: 5px; /* Space between label and input */
+  font-weight: bold; /* Optional: Make the label bold */
+}
+
+.subtext {
+  display: block; /* Make it a block element */
+  font-size: 12px; /* Smaller font size for subtext */
+  color: #666; /* Color for the subtext */
+  margin-top: 2px; /* Space between label and subtext */
+}
+
+input[type="text"] {
+  width: 100%; /* Full width of the container */
+  padding: 8px; /* Padding for better appearance */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.package-table .ant-table-header .ant-table-cell {
+  font-weight: bold;
+  text-align: center;
+}
