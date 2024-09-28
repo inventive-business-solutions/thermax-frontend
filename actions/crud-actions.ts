@@ -53,9 +53,29 @@ export const createData = async (url: string, data: any): Promise<any> => {
 
 // Update an existing document
 export const updateData = async (url: string, data: any) => {
-  const apiClient = await getApiClient()
-  const response = await apiClient.put(url, data)
-  return response.data.data
+  try {
+    const apiClient = await getApiClient()
+    const response = await apiClient.put(url, data)
+    return response.data.data
+  } catch (error: any) {
+    if (error.isAxiosError) {
+      throw new Error(
+        JSON.stringify({
+          message: error.response?.data?.errors[0]?.message || "Not able to catch error",
+          type: error.response?.data?.errors[0]?.type || "Unknown error type",
+          status: error.response?.status,
+        })
+      )
+    } else {
+      throw new Error(
+        JSON.stringify({
+          message: "Error is not related to axios",
+          type: "Non-Axios error",
+          status: "500",
+        })
+      )
+    }
+  }
 }
 
 // Delete a document

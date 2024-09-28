@@ -5,12 +5,16 @@ import {
   MinusSquareTwoTone,
   PlusCircleOutlined,
   PlusSquareTwoTone,
+  SyncOutlined,
 } from "@ant-design/icons"
 import { Button, Popconfirm, Table, TableColumnsType, Tooltip } from "antd"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import AddPackageModal from "./AddPackageModal"
 import { GET_PKG_URL, MAIN_PKG_URL } from "configs/api-endpoints"
-import { useCreateData, useDeleteData, useGetData } from "hooks/useCRUD"
+import { useCreateData, useGetData } from "hooks/useCRUD"
+import { mutate } from "swr"
+import AddOrEditPackageModal from "./AddPackageModal"
+import { deleteData } from "actions/crud-actions"
 
 interface DataType {
   key: string
@@ -40,17 +44,40 @@ function renameNameToKey(pkgList: any[]) {
 
 export default function PackageList() {
   const [loading, setLoading] = useState(false)
+  const [editMode, setEditMode] = useState(false)
   const [open, setOpen] = useState(false)
-  const { data: packageData } = useGetData(GET_PKG_URL)
-  const { remove } = useDeleteData()
+  const [editEventTrigger, setEditEventTrigger] = useState(false)
+  const [rowData, setRowData] = useState<any>(null)
+  const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_URL)
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
     setLoading(true)
-    await remove(`${MAIN_PKG_URL}/${selectedRowID}`)
+    await deleteData(`${MAIN_PKG_URL}/${selectedRowID}`)
+    // Revalidate the cache
+    mutate(GET_PKG_URL)
     setLoading(false)
   }
 
+  const handleEdit = (values: any) => {
+    setOpen(true)
+    setEditMode(true)
+    setEditEventTrigger(!editEventTrigger)
+    setRowData(values)
+  }
+
+  const handleAddPkg = () => {
+    setOpen(true)
+    setEditMode(false)
+    setRowData(null)
+  }
+
   const parentColumns: TableColumnsType<DataType> = [
+    {
+      title: "ID",
+      dataIndex: "name",
+      key: "name",
+      hidden: true,
+    },
     {
       title: "Main Package",
       align: "center",
@@ -67,7 +94,7 @@ export default function PackageList() {
             <Button type="link" shape="circle" icon={<PlusCircleOutlined />} />
           </Tooltip>
           <Tooltip placement="top" title="Edit Main Package">
-            <Button type="link" shape="circle" icon={<EditOutlined />} />
+            <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
           <Tooltip placement="top" title="Delete Main Package">
             <Popconfirm
@@ -130,8 +157,16 @@ export default function PackageList() {
 
   return (
     <div className="flex flex-col gap-2 px-20 py-4">
-      <div className="text-end">
-        <Button type="primary" onClick={showModal}>
+      <div className="flex justify-end gap-2">
+        <Tooltip title="Refresh">
+          <Button
+            type="link"
+            shape="circle"
+            icon={<SyncOutlined spin={packageLoading} />}
+            onClick={() => mutate(GET_PKG_URL)}
+          />
+        </Tooltip>
+        <Button type="primary" onClick={handleAddPkg}>
           Add Main Package
         </Button>
       </div>
@@ -146,7 +181,13 @@ export default function PackageList() {
         size="small"
         className="shadow-lg"
       />
-      <AddPackageModal open={open} setOpen={setOpen} />
+      <AddOrEditPackageModal
+        open={open}
+        setOpen={setOpen}
+        editMode={editMode}
+        values={rowData}
+        editEventTrigger={editEventTrigger}
+      />
     </div>
   )
 }

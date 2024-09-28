@@ -1,7 +1,6 @@
+import { useState } from "react"
 import useSWR, { mutate } from "swr"
 import { createData, deleteData, getData, getOrCreateData, updateData } from "actions/crud-actions"
-import { useState } from "react"
-import { ApiError } from "configs/constants"
 
 // Hook for reading documents
 export const useGetData = (url: string) => {
@@ -35,38 +34,4 @@ export const useCreateData = (url: string) => {
   }
 
   return { create, error }
-}
-
-// Hook for updating a document
-export const useUpdateData = (url: string) => {
-  const update = async (updateObject: any) => {
-    try {
-      // Optimistically update the cache
-      mutate(url, updateObject, false)
-      // Make the PUT request
-      await updateData(url, updateObject)
-      // Revalidate the cache
-      mutate(url)
-    } catch (error) {
-      throw error
-    }
-  }
-
-  return { update }
-}
-
-// Hook for deleting a document
-export const useDeleteData = () => {
-  const remove = async (url: string) => {
-    try {
-      // Make the DELETE request
-      await deleteData(url)
-      // Revalidate the cache
-      mutate(url)
-    } catch (error) {
-      console.error("Error deleting document:", error)
-    }
-  }
-
-  return { remove }
 }
