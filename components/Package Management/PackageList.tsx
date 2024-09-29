@@ -9,12 +9,13 @@ import {
 } from "@ant-design/icons"
 import { Button, Popconfirm, Table, TableColumnsType, Tooltip } from "antd"
 import { useEffect, useState } from "react"
-import AddPackageModal from "./AddPackageModal"
-import { GET_PKG_URL, MAIN_PKG_URL } from "configs/api-endpoints"
-import { useCreateData, useGetData } from "hooks/useCRUD"
 import { mutate } from "swr"
-import AddOrEditPackageModal from "./AddPackageModal"
 import { deleteData } from "actions/crud-actions"
+import { GET_PKG_URL, MAIN_PKG_URL, SUB_PKG_URL } from "configs/api-endpoints"
+import { useCreateData, useGetData } from "hooks/useCRUD"
+import AddPackageModal from "./MainPackageModal"
+import MainPackageModal from "./MainPackageModal"
+import SubPackageModal from "./SubPackageModal"
 
 interface DataType {
   key: string
@@ -44,10 +45,15 @@ function renameNameToKey(pkgList: any[]) {
 
 export default function PackageList() {
   const [loading, setLoading] = useState(false)
-  const [editMode, setEditMode] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [editModeMainPkg, setEditModeMainPkg] = useState(false)
+  const [editModeSubPkg, setEditModeSubPkg] = useState(false)
+  const [mainPkgopen, setMainPkgOpen] = useState(false)
+  const [subPkgOpen, setSubPkgOpen] = useState(false)
+
   const [editEventTrigger, setEditEventTrigger] = useState(false)
-  const [rowData, setRowData] = useState<any>(null)
+  const [mainPkgRowData, setMainPkgRowData] = useState<any>(null)
+  const [subPkgRowData, setSubPkgRowData] = useState<any>(null)
+
   const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_URL)
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
@@ -58,17 +64,40 @@ export default function PackageList() {
     setLoading(false)
   }
 
-  const handleEdit = (values: any) => {
-    setOpen(true)
-    setEditMode(true)
-    setEditEventTrigger(!editEventTrigger)
-    setRowData(values)
+  const handleSubPkgDelete = async (selectedRowID: string) => {
+    setLoading(true)
+    await deleteData(`${SUB_PKG_URL}/${selectedRowID}`)
+    // Revalidate the cache
+    mutate(GET_PKG_URL)
+    setLoading(false)
   }
 
-  const handleAddPkg = () => {
-    setOpen(true)
-    setEditMode(false)
-    setRowData(null)
+  const handleAddMainPkg = () => {
+    setMainPkgOpen(true)
+    setEditModeMainPkg(false)
+    setMainPkgRowData(null)
+  }
+
+  const handleAddSubPkg = (mainPkgRecord: any) => {
+    setSubPkgOpen(true)
+    setEditModeSubPkg(false)
+    mainPkgRecord["main_package_label"] = mainPkgRecord.package_name
+    setSubPkgRowData(mainPkgRecord)
+  }
+
+  const handleEditMainPkg = (values: any) => {
+    setMainPkgOpen(true)
+    setEditModeMainPkg(true)
+    setEditEventTrigger(!editEventTrigger)
+    setMainPkgRowData(values)
+  }
+
+  const handleEditSubPkg = (values: any) => {
+    setSubPkgOpen(true)
+    setEditModeSubPkg(true)
+    setEditEventTrigger(!editEventTrigger)
+    console.log(values)
+    setSubPkgRowData(values)
   }
 
   const parentColumns: TableColumnsType<DataType> = [
@@ -91,10 +120,10 @@ export default function PackageList() {
       render: (text, record) => (
         <div className="flex justify-center gap-2">
           <Tooltip placement="top" title="Add Sub Package">
-            <Button type="link" shape="circle" icon={<PlusCircleOutlined />} />
+            <Button type="link" shape="circle" icon={<PlusCircleOutlined />} onClick={() => handleAddSubPkg(record)} />
           </Tooltip>
           <Tooltip placement="top" title="Edit Main Package">
-            <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+            <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEditMainPkg(record)} />
           </Tooltip>
           <Tooltip placement="top" title="Delete Main Package">
             <Popconfirm
@@ -118,22 +147,21 @@ export default function PackageList() {
     {
       title: "Action",
       key: "sub_action",
-      render: () => (
+      render: (text, record) => (
         <div>
-          <Button type="link">
-            <EditOutlined />
-          </Button>
-          <Button type="link" danger>
-            <DeleteOutlined />
-          </Button>
+          <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEditSubPkg(record)} />
+          <Popconfirm
+            title="Are you sure to delete this sub package?"
+            onConfirm={async () => await handleSubPkgDelete(record.key)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="link" shape="circle" danger icon={<DeleteOutlined />} />
+          </Popconfirm>
         </div>
       ),
     },
   ]
-
-  const showModal = () => {
-    setOpen(true)
-  }
 
   // Expanded row rendering for child table
   const expandedRowRender = (record: DataType) => {
@@ -166,7 +194,7 @@ export default function PackageList() {
             onClick={() => mutate(GET_PKG_URL)}
           />
         </Tooltip>
-        <Button type="primary" onClick={handleAddPkg}>
+        <Button type="primary" onClick={handleAddMainPkg}>
           Add Main Package
         </Button>
       </div>
@@ -181,11 +209,18 @@ export default function PackageList() {
         size="small"
         className="shadow-lg"
       />
-      <AddOrEditPackageModal
-        open={open}
-        setOpen={setOpen}
-        editMode={editMode}
-        values={rowData}
+      <MainPackageModal
+        open={mainPkgopen}
+        setOpen={setMainPkgOpen}
+        editMode={editModeMainPkg}
+        values={mainPkgRowData}
+        editEventTrigger={editEventTrigger}
+      />
+      <SubPackageModal
+        open={subPkgOpen}
+        setOpen={setSubPkgOpen}
+        editMode={editModeSubPkg}
+        values={subPkgRowData}
         editEventTrigger={editEventTrigger}
       />
     </div>

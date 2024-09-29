@@ -9,7 +9,7 @@ import CustomTextInput from "components/FormInputs/CustomInput"
 import { GET_PKG_URL, MAIN_PKG_URL } from "configs/api-endpoints"
 import { createData, updateData } from "actions/crud-actions"
 
-const AddPackageSchema = zod.object({
+const MainPackageSchema = zod.object({
   package_name: zod.string({ required_error: "Package name is required" }),
 })
 
@@ -19,7 +19,7 @@ const getDefaultValues = (editMode: boolean, values: any) => {
   }
 }
 
-export default function AddOrEditPackageModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
+export default function MainPackageModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
@@ -29,8 +29,8 @@ export default function AddOrEditPackageModal({ open, setOpen, editMode, values,
     setMessage("")
     setStatus("")
   }
-  const { control, handleSubmit, formState, reset } = useForm<zod.infer<typeof AddPackageSchema>>({
-    resolver: zodResolver(AddPackageSchema),
+  const { control, handleSubmit, formState, reset } = useForm<zod.infer<typeof MainPackageSchema>>({
+    resolver: zodResolver(MainPackageSchema),
     defaultValues: getDefaultValues(editMode, values),
   })
 
@@ -38,7 +38,7 @@ export default function AddOrEditPackageModal({ open, setOpen, editMode, values,
     reset(getDefaultValues(editMode, values))
   }, [editMode, reset, values, editEventTrigger])
 
-  const onSubmit: SubmitHandler<zod.infer<typeof AddPackageSchema>> = (data: any) => {
+  const onSubmit: SubmitHandler<zod.infer<typeof MainPackageSchema>> = (data: any) => {
     startTransition(async () => {
       if (editMode) {
         try {
