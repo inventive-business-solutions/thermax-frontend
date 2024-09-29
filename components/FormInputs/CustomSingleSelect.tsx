@@ -31,7 +31,7 @@ export default function CustomSingleSelect({
       control={control}
       render={({ field, fieldState }) => (
         <div>
-          <label htmlFor={name} className="text-sm">
+          <label htmlFor={name} className="text-sm font-semibold">
             {label}
           </label>
           <Select

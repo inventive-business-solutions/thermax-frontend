@@ -2,7 +2,9 @@
 import {
   AudioOutlined,
   DeleteFilled,
+  DeleteOutlined,
   EditFilled,
+  EditOutlined,
   FileDoneOutlined,
   FolderAddOutlined,
   QuestionCircleOutlined,
@@ -52,21 +54,22 @@ const dataSource = Array.from<DataType>({ length: 46 }).map<DataType>((_, i) => 
   project: `Project no. ${i}`,
   start_date: `01/07/2020`,
   modified_date: `01/02/2014`,
+  align: "center",
   action: (
-    <Flex gap="middle">
+    <div className="flex justify-center gap-2">
       <Tooltip placement="top" title="Delete">
-        <Button type="primary" shape="circle" size="middle" icon={<DeleteFilled />} danger />
+        <Button type="primary" shape="circle" icon={<DeleteOutlined />} danger />
       </Tooltip>
       <Tooltip placement="top" title="Edit">
-        <Button type="primary" shape="circle" size="middle" icon={<EditFilled />} />
+        <Button type="primary" shape="circle" icon={<EditOutlined />} />
       </Tooltip>
       <Tooltip placement="top" title="Upload Files">
-        <Button type="primary" shape="circle" size="middle" icon={<UploadOutlined />} />
+        <Button type="primary" shape="circle" icon={<UploadOutlined />} />
       </Tooltip>
       <Tooltip placement="top" title="Complete Project">
-        <Button type="primary" shape="circle" size="middle" icon={<FileDoneOutlined />} />
+        <Button type="primary" shape="circle" icon={<FileDoneOutlined />} />
       </Tooltip>
-    </Flex>
+    </div>
   ),
 }))
 

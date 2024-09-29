@@ -16,8 +16,8 @@ export default function CustomTextInput({ control, name, label, placeholder, ...
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <div>
-          <label htmlFor={name} className="text-sm">
+        <div className="flex flex-col gap-1">
+          <label htmlFor={name} className="text-sm font-semibold">
             {label}
           </label>
           <Input {...field} {...props} placeholder={placeholder} status={fieldState.error && "error"} />
