@@ -9,7 +9,7 @@ interface CheckboxFieldProps {
   checked?: boolean
 }
 
-export default function CustomCheckboxInput({ control, name, label, checked }: CheckboxFieldProps) {
+export default function CustomCheckboxInput({ control, name, label }: CheckboxFieldProps) {
   return (
     <Controller
       name={name}

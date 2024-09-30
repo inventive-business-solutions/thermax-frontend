@@ -1,10 +1,10 @@
 "use client"
-import React, { useState } from "react"
-import { Button, Checkbox, Divider, Dropdown, Menu, Radio, Select, Tabs, message } from "antd"
 import { CloseOutlined, DownOutlined } from "@ant-design/icons"
-import { useForm, Controller } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Button, Checkbox, Divider, Dropdown, message, Radio, Select, Tabs } from "antd"
+import React, { useState } from "react"
+import { Controller, useForm } from "react-hook-form"
+import { z } from "zod"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 
 // Define validation schema using zod
@@ -266,7 +266,7 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({ handleSave }) => {
         </div>
 
         <div className="flex w-full justify-end gap-4">
-          <Button type="primary" htmlType="submit" >
+          <Button type="primary" htmlType="submit">
             Save
           </Button>
         </div>

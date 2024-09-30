@@ -1,7 +1,7 @@
-import React, { useState } from "react"
 import { Tabs } from "antd"
-import MakeOfComponent from "./MakeOfComponent"
+import React, { useState } from "react"
 import CommonConfiguration from "./commonConfiguration"
+import MakeOfComponent from "./MakeOfComponent"
 import MccComponent from "./MccComponent"
 
 const MainMCC: React.FC = () => {

@@ -1,10 +1,9 @@
 "use client"
 
+import { Button } from "antd"
 import React, { useState } from "react"
-import { Button, Table, TableColumnType, Tooltip } from "antd"
-import { BellFilled, CopyOutlined, DownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
-import Download from "./Download"
 import CableSchedule from "./CableSchedule"
+import Download from "./Download"
 import MotorCanopyList from "./MotorCanopyList"
 // import GeneralInfo from "./GeneralInfo"
 // import MotorParameters from "./MotorParameters"
@@ -17,17 +16,6 @@ const tabData = [
   { label: "Cable Schedule", key: "3" },
   { label: "Motor Canopy List", key: "4" },
 ]
-
-interface TableDataType {
-  key: React.Key
-  documentName: React.ReactNode
-  status: string
-  documentRevision: string
-  createdDate: string
-  action: React.ReactNode
-  download: React.ReactNode
-  release: React.ReactNode
-}
 
 interface ElectricalLoadListProps {
   handleSave: () => void

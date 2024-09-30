@@ -158,13 +158,13 @@
 // }
 
 // export default MotorParameters
-import { Table, Input, Select, Button } from "antd"
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Button, Table } from "antd"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
-import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextInput from "components/FormInputs/CustomInput"
+import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
+import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 
 interface MotorParametersProps {
   handleSave: () => void
@@ -181,11 +181,7 @@ const schema = z.object({
 })
 
 const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       motor1SafeArea: "",

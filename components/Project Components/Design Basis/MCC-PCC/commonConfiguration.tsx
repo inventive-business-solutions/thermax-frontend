@@ -1,21 +1,12 @@
-import {
-  ArrowDownOutlined,
-  DeleteColumnOutlined,
-  DeleteOutlined,
-  DownOutlined,
-  DownSquareFilled,
-  PlusOutlined,
-} from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Input, Select, Tooltip } from "antd" // Import Select for dropdown
+import { Button } from "antd" // Import Select for dropdown
+import React from "react"
+import { useForm } from "react-hook-form"
+import * as zod from "zod"
 import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { Preahvihear } from "next/font/google"
-import React from "react"
-import { useForm, Controller } from "react-hook-form"
-import * as zod from "zod"
 
 const configItemValidationSchema = zod.object({
   id: zod.number(),

@@ -7,7 +7,7 @@ export const UNAUTHORIZED = "/unauthorized"
 export const UNVERIFIED = "/unverified"
 
 export const HOME_PAGE = "/"
-export const PROJECT_LIST_PAGE = "/project-list"
+export const PROJECTS_PAGE = "/project"
 export const PACKAGE_PAGE = "/package-management"
 export const COMPLETE_PROJECT_PAGE = "/complete_project"
 export const USER_MANAGEMENT_PAGE = "/user-management"

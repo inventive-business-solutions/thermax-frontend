@@ -78,14 +78,12 @@
 
 // export default MakeOfComponent
 
-import React from "react"
-import { Button, Select } from "antd"
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Button } from "antd"
+import React from "react"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-
-const { Option } = Select
 
 // Define the option type
 interface OptionType {
@@ -128,11 +126,7 @@ const schema = z.object({
 })
 
 const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ handleSwitchTab }) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<{
+  const { control, handleSubmit } = useForm<{
     selections: string[]
   }>({
     resolver: zodResolver(schema),
@@ -172,10 +166,6 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ handleSwitchTab }) =>
               )}
             /> */}
             <CustomSingleSelect name={`selections.${index}`} control={control} label="" options={options} />
-            {/* Display error message if validation fails */}
-            {errors.selections && errors.selections[index] && (
-              <p className="text-red-500">{errors.selections[index].message}</p>
-            )}
           </div>
         ))}
       </div>

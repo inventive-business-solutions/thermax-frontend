@@ -8,12 +8,11 @@ import {
   SyncOutlined,
 } from "@ant-design/icons"
 import { Button, Popconfirm, Table, TableColumnsType, Tooltip } from "antd"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
 import { GET_PKG_URL, MAIN_PKG_URL, SUB_PKG_URL } from "configs/api-endpoints"
-import { useCreateData, useGetData } from "hooks/useCRUD"
-import AddPackageModal from "./MainPackageModal"
+import { useGetData } from "hooks/useCRUD"
 import MainPackageModal from "./MainPackageModal"
 import SubPackageModal from "./SubPackageModal"
 
@@ -44,7 +43,6 @@ function renameNameToKey(pkgList: any[]) {
 }
 
 export default function PackageList() {
-  const [loading, setLoading] = useState(false)
   const [editModeMainPkg, setEditModeMainPkg] = useState(false)
   const [editModeSubPkg, setEditModeSubPkg] = useState(false)
   const [mainPkgopen, setMainPkgOpen] = useState(false)
@@ -57,19 +55,15 @@ export default function PackageList() {
   const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_URL)
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
-    setLoading(true)
     await deleteData(`${MAIN_PKG_URL}/${selectedRowID}`)
     // Revalidate the cache
     mutate(GET_PKG_URL)
-    setLoading(false)
   }
 
   const handleSubPkgDelete = async (selectedRowID: string) => {
-    setLoading(true)
     await deleteData(`${SUB_PKG_URL}/${selectedRowID}`)
     // Revalidate the cache
     mutate(GET_PKG_URL)
-    setLoading(false)
   }
 
   const handleAddMainPkg = () => {
