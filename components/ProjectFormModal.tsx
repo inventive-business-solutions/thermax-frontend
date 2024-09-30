@@ -1,27 +1,18 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Col, Flex, Modal, Row } from "antd"
+import { Button, Modal } from "antd"
 import { useEffect, useState, useTransition } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
-import {
-  CLIENT_NAME_URL,
-  CONSULTANT_NAME_URL,
-  GET_PKG_URL,
-  MAIN_PKG_URL,
-  PROJECT_URL,
-  USER_URL,
-} from "configs/api-endpoints"
-import { useGetData } from "hooks/useCRUD"
+import { CLIENT_NAME_URL, CONSULTANT_NAME_URL, GET_PKG_URL, PROJECT_URL, USER_URL } from "configs/api-endpoints"
+import { useDropdownOptions } from "hooks/useDropdownOptions"
+import AlertNotification from "./AlertNotification"
 import CustomAutoComplete from "./FormInputs/AutocompleteWithCreate"
 import CustomTextInput from "./FormInputs/CustomInput"
 import CustomSingleSelect from "./FormInputs/CustomSingleSelect"
-import { createDropdownOptions } from "./Package Management/package-management.logic"
-import AlertNotification from "./AlertNotification"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
 
 const ProjectFormValidationSchema = zod.object({
   project_name: zod.string().optional(),

@@ -1,11 +1,11 @@
 "use client"
 
 import { QuestionCircleOutlined } from "@ant-design/icons"
-import { Button, FloatButton } from "antd"
+import { FloatButton } from "antd"
+import { useState } from "react"
 import DesignBasis from "components/Project Components/Design Basis/DesignBasis"
 import ElectricalLoadList from "components/Project Components/Electrical Load List/ElectricalLoadList"
 import ProjectInfo from "components/Project Components/ProjectInfo"
-import { useState } from "react"
 
 const tabData = [
   { label: "Project Information", key: "1" },
@@ -18,7 +18,7 @@ const tabData = [
   { label: "Sizing", key: "8" },
 ]
 
-export default function Page({ params }: { params: { slug: string } }) {
+export default function Page() {
   const [openTab, setOpenTab] = useState<string>("1") // current open tab
   const [savedTabs, setSavedTabs] = useState<string[]>([]) // array to track saved tabs
 
@@ -48,19 +48,6 @@ export default function Page({ params }: { params: { slug: string } }) {
   }
 
   // Render the tab classes based on their state
-  const renderTabClass = (tabKey: string) => {
-    if (openTab === tabKey) {
-      return isSaved(tabKey) ? "bg-green-500 text-white" : "bg-orange-500" // Current tab (saved or unsaved)
-    }
-    if (savedTabs.includes(tabKey)) {
-      return "bg-blue-500" // Visited and saved
-    }
-    let nextIndex = tabData.findIndex((tab) => tab.key === openTab) + 1
-    if (tabData[nextIndex] && tabData[nextIndex].key === tabKey && savedTabs.includes(openTab)) {
-      return "text-gray-600" // visitable
-    }
-    return "bg-gray-300 text-gray-600 cursor-not-allowed" // Unvisited, disabled
-  }
 
   return (
     <>

@@ -1,19 +1,17 @@
 "use client"
-import { AppstoreOutlined, MailOutlined, MenuOutlined, SettingOutlined } from "@ant-design/icons"
-import { Button, Drawer, Flex, Menu, MenuProps } from "antd"
+import { MenuOutlined } from "@ant-design/icons"
+import { Drawer, Menu, MenuProps } from "antd"
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
+import Loader from "./Loader"
 import { UserButton } from "./UserButton"
 import LogoImage from "../public/assets/images/eni_max_logo.png"
-import Loader from "./Loader"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
-  const pathname = usePathname()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 

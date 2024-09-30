@@ -4,11 +4,11 @@ import { useEffect, useState, useTransition } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
+import { createData, updateData } from "actions/crud-actions"
 import AlertNotification from "components/AlertNotification"
 import CustomTextInput from "components/FormInputs/CustomInput"
-import { AREA_CLASSIFICATION_URL, GET_PKG_URL, MAIN_PKG_URL, SUB_PKG_URL } from "configs/api-endpoints"
-import { createData, updateData } from "actions/crud-actions"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
+import { AREA_CLASSIFICATION_URL, GET_PKG_URL, SUB_PKG_URL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { createDropdownOptions } from "./package-management.logic"
 
@@ -98,7 +98,7 @@ export default function SubPackageModal({ open, setOpen, editMode, values, editE
             name="classification_area"
             control={control}
             label="Classification Area"
-            options={createDropdownOptions(areaClassificationData)}
+            options={createDropdownOptions(areaClassificationData, "name")}
           />
         </div>
         <AlertNotification message={message} status={status} />

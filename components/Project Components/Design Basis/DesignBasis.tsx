@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useState } from "react"
-import { Button, Table, TableColumnType, Tooltip } from "antd"
 import { BellFilled, CopyOutlined, DownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
+import { Button, Table, TableColumnType, Tooltip } from "antd"
+import React, { useState } from "react"
 import GeneralInfo from "./GeneralInfo"
-import MotorParameters from "./MotorParameters"
-import MainMCC from "./MCC-PCC/Main"
 import MainLayout from "./Layout/Main"
+import MainMCC from "./MCC-PCC/Main"
+import MotorParameters from "./MotorParameters"
 
 const tabData = [
   { label: "Document Revision", key: "1" },

@@ -1,5 +1,5 @@
-import React, { useState } from "react"
 import { Tabs } from "antd"
+import React, { useState } from "react"
 import CableTray from "./CableTray"
 import Earthing from "./Earthing"
 
@@ -22,10 +22,6 @@ const MainLayout: React.FC = () => {
   const onChange = (key: string) => {
     console.log(key)
     setActiveKey(key) // Update active tab
-  }
-
-  const handleSwitchTab = (key: string) => {
-    setActiveKey(key) // Switch to the specified tab
   }
 
   return (

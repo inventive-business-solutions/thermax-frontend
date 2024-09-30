@@ -1,27 +1,23 @@
 "use client"
 import {
-  AudioOutlined,
-  DeleteFilled,
   DeleteOutlined,
-  EditFilled,
   EditOutlined,
   FileDoneOutlined,
   FolderAddOutlined,
-  QuestionCircleOutlined,
   SyncOutlined,
   UploadOutlined,
 } from "@ant-design/icons"
-import { Button, Divider, Flex, GetProps, Input, Modal, Table, Tooltip } from "antd"
+import { Button, GetProps, Input, Table, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import Link from "next/link"
 import { useState } from "react"
-import ProjectForm from "components/ProjectFormModal"
 import ProjectFormModal from "components/ProjectFormModal"
-import { useGetData } from "hooks/useCRUD"
 import { PROJECT_URL } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 
 interface DataType {
   key: React.Key
+  name?: string
   project_oc_number: string
   client_name: string
   project_name: string
@@ -34,12 +30,10 @@ const { Search } = Input
 type SearchProps = GetProps<typeof Input.Search>
 
 export default function ProjectList() {
-  const [loading, setLoading] = useState(false)
-  const [help, setHelp] = useState(false)
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
-  const { data: projectList } = useGetData(PROJECT_URL)
+  const { data: projectList, isLoading } = useGetData(PROJECT_URL)
 
   const columns: ColumnsType<DataType> = [
     { title: "Project OC No", dataIndex: "project_oc_number", key: "project_oc_number" },
@@ -60,7 +54,7 @@ export default function ProjectList() {
       title: "Action",
       dataIndex: "action",
       align: "center",
-      render: (text, record) => (
+      render: () => (
         <div className="flex justify-center gap-2">
           <Tooltip placement="top" title="Edit">
             <Button type="link" shape="circle" icon={<EditOutlined />} />
@@ -96,7 +90,7 @@ export default function ProjectList() {
         </div>
         <div className="flex gap-3">
           <Tooltip title="refresh" placement="top">
-            <SyncOutlined spin={loading} color="#492971" />
+            <SyncOutlined spin={isLoading} color="#492971" />
           </Tooltip>
           <Button type="primary" icon={<FolderAddOutlined />} iconPosition={"end"} onClick={handleAddProject}>
             Add Project

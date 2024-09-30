@@ -1,13 +1,9 @@
 "use client"
-import { Button, Card, Flex, Modal } from "antd"
-import { Divider } from "antd"
+import { Card } from "antd"
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
-import ProjectForm from "./ProjectFormModal"
-import LogoImage from "../public/assets/images/eni_max_logo.png"
-import { PlusCircleOutlined } from "@ant-design/icons"
 import { PROJECTS_PAGE } from "configs/constants"
+import LogoImage from "../public/assets/images/eni_max_logo.png"
 
 const ProjectArray1 = [
   {

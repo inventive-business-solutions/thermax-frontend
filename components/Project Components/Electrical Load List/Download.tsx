@@ -1,7 +1,6 @@
 "use client"
 import { BellFilled, CopyOutlined, DownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
 import { Button, Table, TableColumnType, Tabs, Tooltip } from "antd"
-import { useState } from "react"
 
 interface TableDataType {
   key: React.Key
@@ -29,22 +28,13 @@ const DownloadTable = ({ dataSource }: { dataSource: TableDataType[] }) => {
 }
 
 const Download: React.FC = () => {
-  const [openTab, setOpenTab] = useState<string>("1")
-
   const dataSource: TableDataType[] = [
     {
       key: 1,
       documentName: (
         <div>
           <Tooltip title="Edit Revision" placement="top">
-            <Button
-              type="link"
-              onClick={() => {
-                setOpenTab("2")
-              }}
-              iconPosition="start"
-              icon={<FolderOpenOutlined />}
-            >
+            <Button type="link" iconPosition="start" icon={<FolderOpenOutlined />}>
               Document 1
             </Button>
           </Tooltip>
@@ -103,7 +93,6 @@ const Download: React.FC = () => {
 
   const onChange = (key: string) => {
     console.log(key)
-    setOpenTab(key)
   }
 
   return (
