@@ -24,7 +24,6 @@ interface DataType {
   project: string
   start_date: string
   modified_date: string
-  action: React.ReactNode
 }
 
 const columns: ColumnsType<DataType> = [
@@ -44,7 +43,27 @@ const columns: ColumnsType<DataType> = [
   },
   { title: "Start Date", dataIndex: "start_date" },
   { title: "Modified Date", dataIndex: "modified_date" },
-  { title: "Action", dataIndex: "action" },
+  {
+    title: "Action",
+    dataIndex: "action",
+    align: "center",
+    render: (text, record) => (
+      <div className="flex justify-center gap-2">
+        <Tooltip placement="top" title="Edit">
+          <Button type="link" shape="circle" icon={<EditOutlined />} />
+        </Tooltip>
+        <Tooltip placement="top" title="Upload Files">
+          <Button type="link" shape="circle" icon={<UploadOutlined />} />
+        </Tooltip>
+        <Tooltip placement="top" title="Complete Project">
+          <Button type="link" shape="circle" icon={<FileDoneOutlined />} />
+        </Tooltip>
+        <Tooltip placement="top" title="Delete">
+          <Button type="link" shape="circle" icon={<DeleteOutlined />} danger />
+        </Tooltip>
+      </div>
+    ),
+  },
 ]
 
 const dataSource = Array.from<DataType>({ length: 46 }).map<DataType>((_, i) => ({
@@ -55,22 +74,6 @@ const dataSource = Array.from<DataType>({ length: 46 }).map<DataType>((_, i) => 
   start_date: `01/07/2020`,
   modified_date: `01/02/2014`,
   align: "center",
-  action: (
-    <div className="flex justify-center gap-2">
-      <Tooltip placement="top" title="Delete">
-        <Button type="primary" shape="circle" icon={<DeleteOutlined />} danger />
-      </Tooltip>
-      <Tooltip placement="top" title="Edit">
-        <Button type="primary" shape="circle" icon={<EditOutlined />} />
-      </Tooltip>
-      <Tooltip placement="top" title="Upload Files">
-        <Button type="primary" shape="circle" icon={<UploadOutlined />} />
-      </Tooltip>
-      <Tooltip placement="top" title="Complete Project">
-        <Button type="primary" shape="circle" icon={<FileDoneOutlined />} />
-      </Tooltip>
-    </div>
-  ),
 }))
 
 const { Search } = Input
@@ -112,10 +115,10 @@ const ProjectList = () => {
   const onSearch: SearchProps["onSearch"] = (value, _e, info) => console.log(info?.source, value)
 
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex flex-row items-center justify-between">
-        <div>Project Console</div>
-        <div>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-lg font-bold tracking-wide">Project Console</div>
+        <div className="basis-1/2">
           <Search placeholder="Search Project" enterButton onSearch={onSearch} />
         </div>
         <div className="flex gap-3">
@@ -148,7 +151,7 @@ const ProjectList = () => {
       </div>
 
       <div className="shadow-md">
-        <Table columns={columns} dataSource={dataSource} />
+        <Table columns={columns} dataSource={dataSource} pagination={{ size: "small", pageSize: 5 }} size="small" />
       </div>
 
       <Modal

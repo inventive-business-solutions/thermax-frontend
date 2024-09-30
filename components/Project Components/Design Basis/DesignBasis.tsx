@@ -89,75 +89,63 @@ const DesignBasis: React.FC<DesignBasisProps> = ({ handleSave }) => {
   ]
 
   return (
-    <>
-      <div>DESIGN BASIS TAB</div>
-      <div className="m-4 flex flex-wrap">
-        <div className="w-full">
-          <ul className="mb-0 flex list-none flex-row flex-wrap pb-4 pt-3" role="tablist">
-            {tabData.map((tab, index) => (
-              <li key={tab.key} className="-mb-px mr-2 flex-auto text-center last:mr-0">
-                <a
-                  className={
-                    `block rounded border px-5 py-3 text-xs font-bold uppercase leading-normal shadow-lg ` +
-                    (openTab === tab.key && tabsEnabled[index]
-                      ? "bg-primary-600 text-white"
-                      : !tabsEnabled[index]
-                      ? "cursor-not-allowed bg-gray-300 text-gray-500"
-                      : "bg-white text-primary-600")
-                  }
-                  onClick={(e) => {
-                    e.preventDefault()
-                    if (tabsEnabled[index]) {
-                      setOpenTab(tab.key)
-                    }
-                  }}
-                  data-toggle="tab"
-                  href={`#link${tab.key}`}
-                  role="tablist"
-                >
-                  {tab.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+    <div className="flex flex-col gap-2">
+      <div className="font-bold underline">DESIGN BASIS TAB</div>
+      <div className="">
+        <div className="flex gap-2">
+          {tabData.map((tab, index) => (
+            <div
+              key={tab.key}
+              className={
+                "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-300 p-2 text-sm font-bold uppercase tracking-wide text-gray-600"
+              }
+              onClick={(e) => {
+                e.preventDefault()
+                if (tabsEnabled[index]) {
+                  setOpenTab(tab.key)
+                }
+              }}
+            >
+              {tab.label}
+            </div>
+          ))}
+        </div>
+        <div className="relative mb-6 flex w-full min-w-0 flex-col break-words rounded bg-white">
+          <div className="flex-auto px-4 py-5">
+            <div className="tab-content tab-space">
+              {/* Tab Content */}
+              <div className={openTab === "1" ? "block" : "hidden"} id="link1">
+                <Table columns={columns} dataSource={dataSource} />
+              </div>
 
-          <div className="relative mb-6 flex w-full min-w-0 flex-col break-words rounded bg-white">
-            <div className="flex-auto px-4 py-5">
-              <div className="tab-content tab-space">
-                {/* Tab Content */}
-                <div className={openTab === "1" ? "block" : "hidden"} id="link1">
-                  <Table columns={columns} dataSource={dataSource} />
-                </div>
+              <div className={openTab === "2" ? "block" : "hidden"} id="link2">
+                <GeneralInfo handleSave={() => setOpenTab("3")} />
+              </div>
 
-                <div className={openTab === "2" ? "block" : "hidden"} id="link2">
-                  <GeneralInfo handleSave={() => setOpenTab("3")} />
-                </div>
+              <div className={openTab === "3" ? "block" : "hidden"} id="link3">
+                <p>Content of Motor Parameters</p>
 
-                <div className={openTab === "3" ? "block" : "hidden"} id="link3">
-                  <p>Content of Motor Parameters</p>
+                <MotorParameters handleSave={() => setOpenTab("4")} />
+              </div>
 
-                  <MotorParameters handleSave={() => setOpenTab("4")} />
-                </div>
+              <div className={openTab === "4" ? "block" : "hidden"} id="link4">
+                <p>Content of MCC/PCC</p>
+                <MainMCC />
+              </div>
 
-                <div className={openTab === "4" ? "block" : "hidden"} id="link4">
-                  <p>Content of MCC/PCC</p>
-                  <MainMCC />
-                </div>
-
-                <div className={openTab === "5" ? "block" : "hidden"} id="link5">
-                  <MainLayout />
-                </div>
+              <div className={openTab === "5" ? "block" : "hidden"} id="link5">
+                <MainLayout />
               </div>
             </div>
           </div>
+          <div className="flex w-full flex-row justify-end">
+            <Button type="primary" onClick={handleSave}>
+              Save
+            </Button>
+          </div>
         </div>
       </div>
-      <div className="flex w-full flex-row justify-end">
-        <Button type="primary"  onClick={handleSave}>
-          Save
-        </Button>
-      </div>
-    </>
+    </div>
   )
 }
 

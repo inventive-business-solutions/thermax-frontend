@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { HOME_PAGE, PACKAGE_PAGE, PROJECT_LIST_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
+import { HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
 import { UserButton } from "./UserButton"
 import LogoImage from "../public/assets/images/eni_max_logo.png"
 import Loader from "./Loader"
@@ -28,14 +28,14 @@ export default function HeaderSidebar() {
       key: "1",
       label: (
         <Link href={HOME_PAGE} onClick={handleLinkClick}>
-          Project Console
+          Dashboard
         </Link>
       ),
     },
     {
       key: "2",
       label: (
-        <Link href={PROJECT_LIST_PAGE} onClick={handleLinkClick}>
+        <Link href={PROJECTS_PAGE} onClick={handleLinkClick}>
           {" "}
           Project List
         </Link>
