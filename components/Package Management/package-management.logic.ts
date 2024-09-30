@@ -1,10 +1,11 @@
-export const createDropdownOptions = (data: any) => {
+export const createDropdownOptions = (data: any, dropdownKey: string) => {
+  console.log("dropdownKey", dropdownKey, data)
   if (!data) return []
   return data.map((item: any) => {
     return {
       ...item,
-      value: item.name,
-      label: item.name,
+      value: item[dropdownKey],
+      label: item[dropdownKey],
     }
   })
 }

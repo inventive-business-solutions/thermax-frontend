@@ -6,8 +6,9 @@ import { SessionProvider } from "next-auth/react"
 import { auth } from "auth"
 
 export const metadata: Metadata = {
+  title: "EniMax",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/eni_max_logo_svg_final.svg",
   },
 }
 
