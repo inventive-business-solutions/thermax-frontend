@@ -1,25 +1,60 @@
 "use client"
-import { AppstoreOutlined, MailOutlined, MenuOutlined, SettingOutlined } from "@ant-design/icons"
-import { Button, Drawer, Flex, Menu, MenuProps } from "antd"
+import { MenuOutlined } from "@ant-design/icons"
+import { Drawer, Menu, MenuProps } from "antd"
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { HOME_PAGE, PACKAGE_PAGE, PROJECT_LIST_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
+import { HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
+import Loader from "./Loader"
 import { UserButton } from "./UserButton"
 import LogoImage from "../public/assets/images/eni_max_logo.png"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
-  const pathname = usePathname()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const handleLinkClick = () => {
+    setLoading(true)
+    setIsSidebarOpen(false)
+    setLoading(false)
+  }
 
   const items: MenuItem[] = [
-    { key: "1", label: <Link href={HOME_PAGE}>Project Console</Link> },
-    { key: "2", label: <Link href={PROJECT_LIST_PAGE}> Project List</Link> },
-    { key: "3", label: <Link href={USER_MANAGEMENT_PAGE}>User Management</Link> },
-    { key: "4", label: <Link href={PACKAGE_PAGE}>Package Management</Link> },
+    {
+      key: "1",
+      label: (
+        <Link href={HOME_PAGE} onClick={handleLinkClick}>
+          Dashboard
+        </Link>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <Link href={PROJECTS_PAGE} onClick={handleLinkClick}>
+          {" "}
+          Project List
+        </Link>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <Link href={USER_MANAGEMENT_PAGE} onClick={handleLinkClick}>
+          User Management
+        </Link>
+      ),
+    },
+    {
+      key: "4",
+      label: (
+        <Link href={PACKAGE_PAGE} onClick={handleLinkClick}>
+          Package Management
+        </Link>
+      ),
+    },
   ]
 
   const toggleSidebar = () => {
@@ -43,6 +78,8 @@ export default function HeaderSidebar() {
         </div>
         <UserButton />
       </header>
+
+      {loading && <Loader />}
 
       <Drawer placement="left" title="Thermax" onClose={toggleSidebar} open={isSidebarOpen} closable={false}>
         <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" items={items} />

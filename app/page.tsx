@@ -1,23 +1,18 @@
 import { Metadata } from "next"
-import { auth } from "auth"
 import HeaderSidebar from "components/HeaderSidebar"
-import ProjectDetails from "components/ProjectDetails"
+import ProjectDashboard from "components/ProjectDashboard"
 
 export const metadata: Metadata = {
   title: "Homepage",
 }
 
 export default async function Web() {
-  const session = await auth()
-
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex-1">
-        <HeaderSidebar />
+    <>
+      <HeaderSidebar />
+      <div className="p-4">
+        <ProjectDashboard />
       </div>
-      <div className="flex-1">
-        <ProjectDetails />
-      </div>
-    </div>
+    </>
   )
 }

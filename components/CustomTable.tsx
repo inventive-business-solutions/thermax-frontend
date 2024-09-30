@@ -1,6 +1,6 @@
 "use client"
 import { SyncOutlined } from "@ant-design/icons"
-import { Button, Flex, Table, Tag, Tooltip } from "antd"
+import { Button, Table, Tag, Tooltip } from "antd"
 import type { TableColumnsType, TableProps } from "antd"
 import React, { useState } from "react"
 

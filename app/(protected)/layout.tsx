@@ -4,7 +4,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   return (
     <>
       <HeaderSidebar />
-      <div className="p-2">{children}</div>
+      <div className="p-4">{children}</div>
     </>
   )
 }

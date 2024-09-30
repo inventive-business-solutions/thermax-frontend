@@ -1,5 +1,5 @@
 "use client"
-import { Radio, RadioGroupProps, Switch, SwitchProps } from "antd"
+import { Switch, SwitchProps } from "antd"
 import { Control, Controller } from "react-hook-form"
 
 interface CustomSwitchProps extends SwitchProps {

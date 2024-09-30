@@ -6,10 +6,9 @@ import { SessionProvider } from "next-auth/react"
 import { auth } from "auth"
 
 export const metadata: Metadata = {
-  title: "Next.js Boilerplate",
-  description: "Next.js Boilerplate with Tailwind CSS and Ant Design",
+  title: "EniMax",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/eni_max_logo_svg_final.svg",
   },
 }
 
