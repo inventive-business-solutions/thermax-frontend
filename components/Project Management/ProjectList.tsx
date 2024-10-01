@@ -75,7 +75,7 @@ export default function ProjectList() {
           <Tooltip placement="top" title="Complete Project">
             <Button type="link" shape="circle" icon={<FileDoneOutlined />} />
           </Tooltip>
-          <Tooltip placement="top" title="Delete Project">
+          <Tooltip placement="top" title="Delete">
             <Popconfirm
               title="Are you sure to delete this project?"
               onConfirm={async () => await handleDeleteProject(record.key)}

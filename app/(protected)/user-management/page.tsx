@@ -1,7 +1,9 @@
+import UserList from "components/User Management/UserList"
+
 export default function UserManagement() {
   return (
     <div>
-      <h1>User Management</h1>
+      <UserList />
     </div>
   )
 }

@@ -6,6 +6,7 @@ export const CLIENT_NAME_URL = `/document/Client?fields=["*"]`
 export const CONSULTANT_NAME_URL = `/document/Consultant?fields=["*"]`
 
 export const PROJECT_URL = `/document/Project`
-export const USER_URL = `/document/User?fields=["name", "email"]`
+export const USER_URL = `/document/Thermax User`
 
 export const getProjectListUrl = `${PROJECT_URL}?fields=["*"]&order_by=creation desc`
+export const getUsersUrl = `${USER_URL}?fields=["*"]&order_by=creation desc`

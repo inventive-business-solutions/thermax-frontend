@@ -37,7 +37,9 @@ export default function CustomUpload({ control, name, uploadButtonLabel, ...prop
               field.onChange(fileUrls) // Store as a comma-separated string
             }}
           >
-            <Button icon={<UploadOutlined />}>{uploadButtonLabel}</Button>
+            <Button type="dashed" icon={<UploadOutlined />}>
+              {uploadButtonLabel}
+            </Button>
           </Upload>
           {fieldState.error && <p className="text-xs text-red-600">{fieldState.error.message}</p>}
         </>

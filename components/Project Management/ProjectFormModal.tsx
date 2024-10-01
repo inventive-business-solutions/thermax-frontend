@@ -9,10 +9,10 @@ import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
 import { CLIENT_NAME_URL, CONSULTANT_NAME_URL, getProjectListUrl, PROJECT_URL, USER_URL } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
-import AlertNotification from "./AlertNotification"
-import CustomAutoComplete from "./FormInputs/AutocompleteWithCreate"
-import CustomTextInput from "./FormInputs/CustomInput"
-import CustomSingleSelect from "./FormInputs/CustomSingleSelect"
+import AlertNotification from "../AlertNotification"
+import CustomAutoComplete from "../FormInputs/AutocompleteWithCreate"
+import CustomTextInput from "../FormInputs/CustomInput"
+import CustomSingleSelect from "../FormInputs/CustomSingleSelect"
 
 const ProjectFormValidationSchema = zod.object({
   project_name: zod.string().optional(),
