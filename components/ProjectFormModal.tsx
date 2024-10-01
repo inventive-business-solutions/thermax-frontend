@@ -7,7 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
-import { CLIENT_NAME_URL, CONSULTANT_NAME_URL, GET_PKG_URL, PROJECT_URL, USER_URL } from "configs/api-endpoints"
+import { CLIENT_NAME_URL, CONSULTANT_NAME_URL, getProjectListUrl, PROJECT_URL, USER_URL } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 import AlertNotification from "./AlertNotification"
 import CustomAutoComplete from "./FormInputs/AutocompleteWithCreate"
@@ -23,12 +23,13 @@ const ProjectFormValidationSchema = zod.object({
 })
 
 const getDefaultValues = (editMode: boolean, values: any) => {
+  console.log(values)
   return {
     project_name: editMode ? values?.project_name : null,
     project_oc_number: editMode ? values?.project_oc_number : null,
     client_name: editMode ? values?.client_name : null,
-    consultant_name: editMode ? values.consultant_name : null,
-    approver: editMode ? values.approver : null,
+    consultant_name: editMode ? values?.consultant_name : null,
+    approver: editMode ? values?.approver : null,
   }
 }
 
@@ -41,7 +42,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values }: an
   const { dropdownOptions: consultantNameOptions } = useDropdownOptions(CONSULTANT_NAME_URL, "consultant_name")
   const { dropdownOptions: approverOptions } = useDropdownOptions(USER_URL, "email")
 
-  const { control, handleSubmit, reset, formState } = useForm({
+  const { control, handleSubmit, reset, formState, getValues } = useForm({
     resolver: zodResolver(ProjectFormValidationSchema),
     defaultValues: getDefaultValues(editMode, values),
     mode: "onBlur",
@@ -82,7 +83,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values }: an
         }
       }
     })
-    mutate(GET_PKG_URL)
+    mutate(getProjectListUrl)
   }
 
   return (
@@ -104,6 +105,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values }: an
         <div className="flex gap-2">
           <div className="flex-1">
             <CustomAutoComplete
+              defaultOption={editMode ? getValues("client_name") : null}
               name="client_name"
               control={control}
               label="Client Name"
@@ -115,6 +117,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values }: an
           </div>
           <div className="flex-1">
             <CustomAutoComplete
+              defaultOption={editMode ? getValues("consultant_name") : null}
               name="consultant_name"
               control={control}
               label="Consultant Name"

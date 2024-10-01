@@ -7,16 +7,18 @@ import {
   SyncOutlined,
   UploadOutlined,
 } from "@ant-design/icons"
-import { Button, GetProps, Input, Table, Tooltip } from "antd"
+import { Button, GetProps, Input, Popconfirm, Table, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import Link from "next/link"
 import { useState } from "react"
+import { mutate } from "swr"
+import { deleteData } from "actions/crud-actions"
 import ProjectFormModal from "components/ProjectFormModal"
-import { PROJECT_URL } from "configs/api-endpoints"
+import { getProjectListUrl, PROJECT_URL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 
 interface DataType {
-  key: React.Key
+  key: string
   name?: string
   project_oc_number: string
   client_name: string
@@ -29,11 +31,19 @@ const { Search } = Input
 
 type SearchProps = GetProps<typeof Input.Search>
 
+const changeNameToKey = (projectList: any[]) => {
+  if (!projectList) return []
+  projectList.forEach((project) => {
+    project.key = project.name
+  })
+  return projectList
+}
+
 export default function ProjectList() {
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
-  const { data: projectList, isLoading } = useGetData(PROJECT_URL)
+  const { data: projectList, isLoading } = useGetData(getProjectListUrl)
 
   const columns: ColumnsType<DataType> = [
     { title: "Project OC No", dataIndex: "project_oc_number", key: "project_oc_number" },
@@ -54,10 +64,10 @@ export default function ProjectList() {
       title: "Action",
       dataIndex: "action",
       align: "center",
-      render: () => (
+      render: (text, record) => (
         <div className="flex justify-center gap-2">
           <Tooltip placement="top" title="Edit">
-            <Button type="link" shape="circle" icon={<EditOutlined />} />
+            <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEditProject(record)} />
           </Tooltip>
           <Tooltip placement="top" title="Upload Files">
             <Button type="link" shape="circle" icon={<UploadOutlined />} />
@@ -65,8 +75,16 @@ export default function ProjectList() {
           <Tooltip placement="top" title="Complete Project">
             <Button type="link" shape="circle" icon={<FileDoneOutlined />} />
           </Tooltip>
-          <Tooltip placement="top" title="Delete">
-            <Button type="link" shape="circle" icon={<DeleteOutlined />} danger />
+          <Tooltip placement="top" title="Delete Project">
+            <Popconfirm
+              title="Are you sure to delete this project?"
+              onConfirm={async () => await handleDeleteProject(record.key)}
+              okText="Yes"
+              cancelText="No"
+              placement="topRight"
+            >
+              <Button type="link" shape="circle" icon={<DeleteOutlined />} danger />
+            </Popconfirm>
           </Tooltip>
         </div>
       ),
@@ -81,6 +99,18 @@ export default function ProjectList() {
     setProjectRow(null)
   }
 
+  const handleEditProject = (selectedRow: any) => {
+    setOpen(true)
+    setEditMode(true)
+    setProjectRow(selectedRow)
+  }
+
+  const handleDeleteProject = async (selectedRowID: string) => {
+    await deleteData(`${PROJECT_URL}/${selectedRowID}`)
+    // Revalidate the cache
+    mutate(getProjectListUrl)
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
@@ -89,8 +119,13 @@ export default function ProjectList() {
           <Search placeholder="Search Project" enterButton onSearch={onSearch} />
         </div>
         <div className="flex gap-3">
-          <Tooltip title="refresh" placement="top">
-            <SyncOutlined spin={isLoading} color="#492971" />
+          <Tooltip title="Refresh">
+            <Button
+              type="link"
+              shape="circle"
+              icon={<SyncOutlined spin={isLoading} />}
+              onClick={() => mutate(getProjectListUrl)}
+            />
           </Tooltip>
           <Button type="primary" icon={<FolderAddOutlined />} iconPosition={"end"} onClick={handleAddProject}>
             Add Project
@@ -99,7 +134,12 @@ export default function ProjectList() {
       </div>
 
       <div className="shadow-md">
-        <Table columns={columns} dataSource={projectList} pagination={{ size: "small", pageSize: 5 }} size="small" />
+        <Table
+          columns={columns}
+          dataSource={changeNameToKey(projectList)}
+          pagination={{ size: "small", pageSize: 5 }}
+          size="small"
+        />
       </div>
 
       <ProjectFormModal open={open} setOpen={setOpen} editMode={editMode} values={projectRow} />

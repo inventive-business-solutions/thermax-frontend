@@ -14,6 +14,7 @@ interface CustomAutoCompleteProps {
   optionKeyName: string
   disabled?: boolean
   createOptionUrl: string
+  defaultOption?: string
 }
 
 export default function CustomAutoComplete({
@@ -25,6 +26,7 @@ export default function CustomAutoComplete({
   optionKeyName,
   disabled,
   createOptionUrl,
+  defaultOption,
 }: CustomAutoCompleteProps) {
   const [typedValue, setTypedValue] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
@@ -32,6 +34,9 @@ export default function CustomAutoComplete({
 
   // Use useEffect to update filteredOptions whenever the options prop changes
   useEffect(() => {
+    if (defaultOption) {
+      setTypedValue(defaultOption)
+    }
     setFilteredOptions(options) // Sync filteredOptions with the new options from parent
   }, [options])
 
