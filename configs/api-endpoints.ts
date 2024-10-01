@@ -4,5 +4,8 @@ export const SUB_PKG_URL = "/document/Sub Package"
 export const AREA_CLASSIFICATION_URL = "/document/Area of Classification"
 export const CLIENT_NAME_URL = `/document/Client?fields=["*"]`
 export const CONSULTANT_NAME_URL = `/document/Consultant?fields=["*"]`
-export const PROJECT_URL = `/document/Project?fields=["*"]`
+
+export const PROJECT_URL = `/document/Project`
 export const USER_URL = `/document/User?fields=["name", "email"]`
+
+export const getProjectListUrl = `${PROJECT_URL}?fields=["*"]&order_by=creation desc`
