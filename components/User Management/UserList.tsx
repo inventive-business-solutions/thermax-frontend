@@ -31,6 +31,7 @@ export default function UserList() {
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [userRow, setUserRow] = useState<any>(null)
+  const [editEventTrigger, setEditEventTrigger] = useState(false)
   const { data: userList, isLoading } = useGetData(getUsersUrl)
 
   const columns: ColumnsType<DataType> = [
@@ -71,15 +72,18 @@ export default function UserList() {
   ]
 
   const handleAdd = () => {
+    setEditEventTrigger(!editEventTrigger)
     setOpen(true)
     setEditMode(false)
     setUserRow(null)
   }
 
   const handleEdit = (selectedRow: any) => {
-    setOpen(true)
+    setEditEventTrigger(!editEventTrigger)
     setEditMode(true)
     setUserRow(selectedRow)
+    console.log(selectedRow)
+    setOpen(true)
   }
 
   const handleDelete = async (selectedRowID: string) => {
@@ -117,7 +121,13 @@ export default function UserList() {
         />
       </div>
 
-      <UserModal open={open} setOpen={setOpen} editMode={editMode} values={userRow} />
+      <UserModal
+        open={open}
+        setOpen={setOpen}
+        editMode={editMode}
+        values={userRow}
+        editEventTrigger={editEventTrigger}
+      />
     </div>
   )
 }

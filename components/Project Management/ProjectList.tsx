@@ -13,9 +13,9 @@ import Link from "next/link"
 import { useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
-import ProjectFormModal from "components/ProjectFormModal"
 import { getProjectListUrl, PROJECT_URL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
+import ProjectFormModal from "./ProjectFormModal"
 
 interface DataType {
   key: string

@@ -8,3 +8,11 @@ export const getFrappeToken = async () => {
   }
   return ""
 }
+
+export const getFrappeAdminToken = async () => {
+  return `token ${process.env.FRAPPE_ADMIN_AUTH_KEY}:${process.env.FRAPPE_ADMIN_AUTH_SECRET}`
+}
+
+export const getFrappeBaseUrl = () => {
+  return process.env.FRAPPE_BASE_URL
+}
