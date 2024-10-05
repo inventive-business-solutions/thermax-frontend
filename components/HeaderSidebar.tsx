@@ -7,7 +7,6 @@ import { useState } from "react"
 import { HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
 import Loader from "./Loader"
 import { UserButton } from "./UserButton"
-import LogoImage from "../public/assets/images/eni_max_logo.png"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
@@ -72,7 +71,7 @@ export default function HeaderSidebar() {
             <MenuOutlined />
           </div>
           <Link href={"/"} className="hidden items-center gap-2 md:flex">
-            <Image src={LogoImage} alt="Thermax logo" width={35} height={35} className="rounded-full" />
+            <Image src={"/eni_max_logo.png"} alt="Thermax logo" width={35} height={35} className="rounded-full" />
             <span className="ml-1 text-xl font-bold">Thermax</span>
           </Link>
         </div>

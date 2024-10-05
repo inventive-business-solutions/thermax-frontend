@@ -2,25 +2,29 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Modal } from "antd"
+import Image from "next/image"
 import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
+import { mutate } from "swr"
 import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
+import { uploadFile } from "components/FileUpload"
+import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomUpload from "components/FormInputs/CustomUpload"
-import { getUsersUrl, USER_URL } from "configs/api-endpoints"
+import { DIVISION_API, getUsersUrl, USER_API } from "configs/api-endpoints"
+import { BTG_SUPERUSER } from "configs/constants"
+import { useDropdownOptions } from "hooks/useDropdownOptions"
 import AlertNotification from "../AlertNotification"
 import CustomTextInput from "../FormInputs/CustomInput"
-import { uploadFile } from "components/FileUpload"
-import Image from "next/image"
-import { mutate } from "swr"
-import { List } from "lodash"
+import { getAuthSecretToken } from "actions/frappe-key-secret"
 
 const UserFormValidationSchema = zod.object({
-  first_name: zod.string().optional(),
-  last_name: zod.string().optional(),
+  first_name: zod.string({ message: "First name is required" }).nonempty({ message: "First name is required" }),
+  last_name: zod.string({ message: "Last name is required" }).nonempty({ message: "Last name is required" }),
   email: zod.string().optional(),
   name_initial: zod.string().optional(),
   digital_signature: zod.any().optional(),
+  role: zod.string().optional(),
 })
 
 const getDefaultValues = (editMode: boolean, values: any) => {
@@ -30,15 +34,20 @@ const getDefaultValues = (editMode: boolean, values: any) => {
     email: editMode ? values?.email : null,
     name_initial: editMode ? values?.name_initial : null,
     digital_signature: editMode ? (values?.digital_signature === "" ? [] : [values?.digital_signature]) : [],
+    role: editMode ? values?.role : null,
   }
 }
 
 export default function UserFormModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
+  const [authSecret, setAuthSecret] = useState("")
   const [loading, setLoading] = useState(false)
+  const [role, setRole] = useState(BTG_SUPERUSER)
 
-  const { control, handleSubmit, reset, formState } = useForm({
+  const { dropdownOptions: divisionNames } = useDropdownOptions(DIVISION_API, "name")
+
+  const { control, handleSubmit, reset, formState, watch } = useForm({
     resolver: zodResolver(UserFormValidationSchema),
     defaultValues: getDefaultValues(editMode, values),
     mode: "onBlur",
@@ -55,43 +64,6 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
     setStatus("")
   }
 
-  const onSubmit: SubmitHandler<zod.infer<typeof UserFormValidationSchema>> = async (data: any) => {
-    setLoading(true)
-    console.log(data)
-    try {
-      if (editMode) {
-        await handleEditUser(data)
-      } else {
-        await handleCreateUser(data)
-      }
-    } catch (error: any) {
-      handleError(error)
-    } finally {
-      mutate(getUsersUrl)
-      setLoading(false)
-    }
-  }
-
-  // Helper function for updating user
-  const handleEditUser = async (userData: any) => {
-    const dg_sign_file = userData?.digital_signature
-    console.log(userData)
-    try {
-      if (typeof dg_sign_file === "string" && dg_sign_file.startsWith("/files/")) {
-        userData["digital_signature"] = dg_sign_file
-      } else {
-        const { data } = await uploadFile(dg_sign_file[0] as File)
-        userData["digital_signature"] = data.file_url
-      }
-
-      await updateData(`${USER_URL}/${values.name}`, userData)
-      setStatus("success")
-      setMessage("User information updated successfully")
-    } catch (error: any) {
-      throw error
-    }
-  }
-
   // Helper function for creating user
   const handleCreateUser = async (userData: any) => {
     const dg_sign_file = userData?.digital_signature
@@ -102,9 +74,28 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
         const { data } = await uploadFile(dg_sign_file as File)
         userData["digital_signature"] = data.file_url
       }
-      await createData(USER_URL, { ...userData, send_welcome_email: 0 })
+      await createData(USER_API, { ...userData, send_welcome_email: 0 })
       setStatus("success")
-      setMessage("New project created successfully")
+      setMessage("New user created successfully")
+    } catch (error: any) {
+      throw error
+    }
+  }
+
+  // Helper function for updating user
+  const handleUpdateUser = async (userData: any) => {
+    const dg_sign_file = userData?.digital_signature
+    try {
+      if (typeof dg_sign_file === "string" && dg_sign_file.startsWith("/files/")) {
+        userData["digital_signature"] = dg_sign_file
+      } else {
+        const { data } = await uploadFile(dg_sign_file[0] as File)
+        userData["digital_signature"] = data.file_url
+      }
+
+      await updateData(`${USER_API}/${values.name}`, userData)
+      setStatus("success")
+      setMessage("User information updated successfully")
     } catch (error: any) {
       throw error
     }
@@ -120,6 +111,23 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
     } catch (parseError) {
       // If parsing fails, use the raw error message
       setMessage(error?.message || "An unknown error occurred")
+    }
+  }
+
+  const onSubmit: SubmitHandler<zod.infer<typeof UserFormValidationSchema>> = async (data: any) => {
+    setLoading(true)
+    console.log(data)
+    try {
+      if (editMode) {
+        await handleUpdateUser(data)
+      } else {
+        await handleCreateUser(data)
+      }
+    } catch (error: any) {
+      handleError(error)
+    } finally {
+      mutate(getUsersUrl)
+      setLoading(false)
     }
   }
 
@@ -145,14 +153,18 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
         <div className="flex-1">
           <CustomTextInput name="name_initial" control={control} label="Initials" type="text" />
         </div>
-        <div className="flex gap-4">
-          <div className="">
-            <CustomUpload
-              name="digital_signature"
-              control={control}
-              uploadButtonLabel="Digital Signature"
-              accept="image/*"
-            />
+        <div className="flex flex-col gap-4">
+          <div className="flex-1">
+            {role === BTG_SUPERUSER ? (
+              <CustomSingleSelect name="role" control={control} label="Role" options={divisionNames} />
+            ) : (
+              <CustomUpload
+                name="digital_signature"
+                control={control}
+                uploadButtonLabel="Digital Signature"
+                accept="image/*"
+              />
+            )}
           </div>
           <div>
             {values?.digital_signature && (

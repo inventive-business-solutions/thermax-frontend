@@ -16,3 +16,7 @@ export const getFrappeAdminToken = async () => {
 export const getFrappeBaseUrl = () => {
   return process.env.FRAPPE_BASE_URL
 }
+
+export const getAuthSecretToken = () => {
+  return process.env.AUTH_SECRET
+}

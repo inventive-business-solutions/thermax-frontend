@@ -5,7 +5,7 @@ import type { ColumnsType } from "antd/es/table"
 import { useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
-import { getUsersUrl, USER_URL } from "configs/api-endpoints"
+import { getUsersUrl, USER_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import UserModal from "./UserModal"
 
@@ -87,7 +87,7 @@ export default function UserList() {
   }
 
   const handleDelete = async (selectedRowID: string) => {
-    await deleteData(`${USER_URL}/${selectedRowID}`)
+    await deleteData(`${USER_API}/${selectedRowID}`)
     // Revalidate the cache
     mutate(getUsersUrl)
   }

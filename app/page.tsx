@@ -1,8 +1,10 @@
 import { Metadata } from "next"
 import Image from "next/image"
+import Link from "next/link"
+import { SIGN_IN } from "configs/constants"
 
 export const metadata: Metadata = {
-  title: "Homepage",
+  title: "Electrical Suite",
 }
 
 export default async function Web() {
@@ -14,7 +16,9 @@ export default async function Web() {
         </div>
         <div className="flex items-center gap-8">
           <div>
-            <button className="rounded bg-blue-500 px-4 py-1 font-bold text-white hover:bg-blue-700">SIGN IN</button>
+            <Link href={SIGN_IN}>
+              <button className="rounded bg-blue-500 px-4 py-1 font-bold text-white hover:bg-blue-700">SIGN IN</button>
+            </Link>
           </div>
 
           <Image src="./eni_max_logo_svg_final.svg" alt="EniMax Logo" width={100} height={100} />
