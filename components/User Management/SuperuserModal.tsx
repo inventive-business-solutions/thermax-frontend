@@ -18,14 +18,15 @@ import AlertNotification from "../AlertNotification"
 import CustomTextInput from "../FormInputs/CustomInput"
 import { getAuthSecretToken } from "actions/frappe-key-secret"
 import { useGetCurrentUserRole } from "hooks/use-current-user"
+import { registerSuperuser } from "actions/register"
 
 const UserFormValidationSchema = zod.object({
-  first_name: zod.string({ message: "First name is required" }).nonempty({ message: "First name is required" }),
-  last_name: zod.string({ message: "Last name is required" }).nonempty({ message: "Last name is required" }),
-  email: zod.string().optional(),
+  first_name: zod.string({ required_error: "First name is required" }),
+  last_name: zod.string({ required_error: "Last name is required" }),
+  email: zod.string({ required_error: "Email address is required" }).email({ message: "Invalid email address" }),
   name_initial: zod.string().optional(),
   digital_signature: zod.any().optional(),
-  role: zod.string().optional(),
+  division: zod.string({ required_error: "Division is required" }),
 })
 
 const getDefaultValues = (editMode: boolean, values: any) => {
@@ -35,7 +36,7 @@ const getDefaultValues = (editMode: boolean, values: any) => {
     email: editMode ? values?.email : null,
     name_initial: editMode ? values?.name_initial : null,
     digital_signature: editMode ? (values?.digital_signature === "" ? [] : [values?.digital_signature]) : [],
-    role: editMode ? values?.role : null,
+    division: editMode ? values?.division : null,
   }
 }
 
@@ -44,7 +45,6 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
   const roles = useGetCurrentUserRole()
-  console.log(roles)
 
   const { dropdownOptions: divisionNames } = useDropdownOptions(DIVISION_API, "name")
 
@@ -115,19 +115,19 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
     }
   }
 
-  const onSubmit: SubmitHandler<zod.infer<typeof UserFormValidationSchema>> = async (data: any) => {
+  const onSubmit: SubmitHandler<zod.infer<typeof UserFormValidationSchema>> = async (data) => {
     setLoading(true)
     console.log(data)
     try {
       if (editMode) {
         await handleUpdateUser(data)
       } else {
-        await handleCreateUser(data)
+        await registerSuperuser(data, `Superuser ${data.division}`, data.division)
       }
     } catch (error: any) {
+      debugger
       handleError(error)
     } finally {
-      mutate(getUsersUrl)
       setLoading(false)
     }
   }
@@ -135,7 +135,7 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
   return (
     <Modal
       open={open}
-      title={<h1 className="text-center font-bold">{`${editMode ? "Edit" : "Add New"} User`}</h1>}
+      title={<h1 className="text-center font-bold">{`${editMode ? "Edit" : "Add New"} Superuser`}</h1>}
       onCancel={handleCancel}
       footer={null}
     >
@@ -157,7 +157,7 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
         <div className="flex flex-col gap-4">
           <div className="flex-1">
             {roles.includes(BTG_SUPERUSER) ? (
-              <CustomSingleSelect name="role" control={control} label="Role" options={divisionNames} />
+              <CustomSingleSelect name="division" control={control} label="Division" options={divisionNames} />
             ) : (
               <CustomUpload
                 name="digital_signature"

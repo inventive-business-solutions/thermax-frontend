@@ -21,7 +21,6 @@ export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const roles = useGetCurrentUserRole()
-  console.log(roles)
 
   const handleLinkClick = () => {
     setLoading(true)
@@ -71,6 +70,9 @@ export default function HeaderSidebar() {
 
   const visibleItems = items.filter((item: any) => {
     if (roles.includes(BTG_SUPERUSER) && item.key === "3") {
+      return true
+    }
+    if (!roles.includes(BTG_SUPERUSER)) {
       return true
     }
     return false

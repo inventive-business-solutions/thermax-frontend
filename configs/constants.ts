@@ -13,15 +13,6 @@ export const PACKAGE_PAGE = "/package-management"
 export const COMPLETE_PROJECT_PAGE = "/complete_project"
 export const USER_MANAGEMENT_PAGE = "/user-management"
 
-// Role Names
-export const BTG_SUPERUSER = "Superuser BTG"
-export const ENVIRO_SUPERUSER = "Superuser Enviro"
-export const HEATING_SUPERUSER = "Superuser Heating"
-export const SERVICES_SUPERUSER = "Superuser Services"
-export const WWS_IPG_SUPERUSER = "Superuser WWS IPG"
-export const WWS_SPG_SUPERUSER = "Superuser WWS SPG"
-export const DEVELOPER = "Developer"
-
 // Division Names
 export const BTG = "BTG"
 export const ENVIRO = "Enviro"
@@ -29,3 +20,12 @@ export const HEATING = "Heating"
 export const SERVICES = "Services"
 export const WWS_IPG = "WWS IPG"
 export const WWS_SPG = "WWS SPG"
+
+// Role Names
+export const BTG_SUPERUSER = `Superuser ${BTG}`
+export const ENVIRO_SUPERUSER = `Superuser ${ENVIRO}`
+export const HEATING_SUPERUSER = `Superuser ${HEATING}`
+export const SERVICES_SUPERUSER = `Superuser ${SERVICES}`
+export const WWS_IPG_SUPERUSER = `Superuser ${WWS_IPG}`
+export const WWS_SPG_SUPERUSER = `Superuser ${WWS_SPG}`
+export const DEVELOPER = "Developer"

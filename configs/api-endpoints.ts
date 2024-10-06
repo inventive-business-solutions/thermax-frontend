@@ -10,7 +10,6 @@ export const USER_API = `/document/User`
 export const NEXT_AUTH_USER_API = `/document/NextAuthUser`
 export const THERMAX_USER_API = `/document/Thermax Extended User`
 export const DIVISION_API = `/document/Division`
-export const DIVISION_SUPERUSER_API = `/document/Division Superuser`
 
 export const getProjectListUrl = `${PROJECT_URL}?fields=["*"]&order_by=creation desc`
 export const getUsersUrl = `${USER_API}?fields=["*"]&order_by=creation desc`

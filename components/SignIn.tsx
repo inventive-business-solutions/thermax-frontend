@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react"
 import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import * as zod from "zod"
-import { registerBTGUser } from "actions/register"
+import { registerSuperuser } from "actions/register"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomPasswordInput from "components/FormInputs/CustomPasswordInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
@@ -88,7 +88,7 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
   const onSubmit2: SubmitHandler<zod.infer<typeof createBTGUserSchema>> = async (data) => {
     setLoading(true)
     try {
-      const response = await registerBTGUser(data)
+      const response = await registerSuperuser(data)
       if (response?.status === 409) {
         setStatus("error")
         setMessage(response?.message)

@@ -4,15 +4,15 @@ import bcrypt from "bcryptjs"
 import { v4 as uuid } from "uuid"
 import {
   CREDENTIALS_EMAIL_API,
-  DIVISION_SUPERUSER_API,
+  DIVISION_API,
   EMAIL_VERIFICATION_API,
   NEXT_AUTH_USER_API,
   THERMAX_USER_API,
   USER_API,
 } from "configs/api-endpoints"
-import { BTG, BTG_SUPERUSER, NEXT_PUBLIC_BASE_URL } from "configs/constants"
-import { createData, getData, updateData } from "./crud-actions"
+import { NEXT_PUBLIC_BASE_URL } from "configs/constants"
 import { adminApiClient } from "./axios-clients"
+import { createData, getData, updateData } from "./crud-actions"
 
 export const generateSimplePassword = (length = 8) => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -137,7 +137,11 @@ export const createFrappeApiKeys = async (email: string) => {
   }
 }
 
-export const registerBTGUser = async (values: any) => {
+export const registerSuperuser = async (
+  values: { email: string; first_name: string; last_name: string },
+  superuser_role: string,
+  division_name: string
+) => {
   const { email, first_name, last_name } = values
 
   try {
@@ -153,16 +157,16 @@ export const registerBTGUser = async (values: any) => {
     const errObj: any = JSON.parse(error.message)
     if (errObj.type === "DoesNotExistError" && errObj.status === 404) {
       try {
-        await createFrappeUser(email, first_name, last_name, BTG_SUPERUSER)
+        await createFrappeUser(email, first_name, last_name, superuser_role)
         await createFrappeApiKeys(email)
         const token = uuid()
         const hashedPassword = await bcrypt.hash("Admin", 10)
         await createNextAuthUser(email, hashedPassword, token)
-        await createThermaxExtendedUser(email, BTG)
-        await updateData(`${DIVISION_SUPERUSER_API}/${BTG}`, true, {
-          email,
+        await createThermaxExtendedUser(email, division_name)
+        await updateData(`${DIVISION_API}/${division_name}`, true, {
+          division_superuser: email,
         })
-        await sendUserVerificationEmail(email, BTG, "Team BTG", token)
+        await sendUserVerificationEmail(email, division_name, `Team ${division_name}`, token)
       } catch (error) {
         throw error
       }
