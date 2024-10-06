@@ -5,7 +5,7 @@ import type { ColumnsType } from "antd/es/table"
 import { useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
-import { getUsersUrl, USER_API } from "configs/api-endpoints"
+import { DIVISION_SUPERUSER_API, getUsersUrl, USER_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import UserModal from "./UserModal"
 
@@ -32,16 +32,11 @@ export default function UserList() {
   const [editMode, setEditMode] = useState(false)
   const [userRow, setUserRow] = useState<any>(null)
   const [editEventTrigger, setEditEventTrigger] = useState(false)
-  const { data: userList, isLoading } = useGetData(getUsersUrl)
+  const { data: userList, isLoading } = useGetData(`${DIVISION_SUPERUSER_API}?fields=["*"]`)
+  console.log(userList)
 
   const columns: ColumnsType<DataType> = [
-    {
-      title: "Full Name",
-      dataIndex: "full_name",
-      key: "full_name",
-      render: (text, record: any) => `${record?.first_name} ${record?.last_name}`,
-    },
-    { title: "Name Initial", dataIndex: "name_initial", key: "name_initial" },
+    { title: "Division", dataIndex: "name", key: "name" },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Created Date", dataIndex: "creation", key: "creation", render: (text) => new Date(text).toDateString() },
     { title: "Modified Date", dataIndex: "modified", key: "modified", render: (text) => new Date(text).toDateString() },
@@ -52,7 +47,9 @@ export default function UserList() {
       render: (text, record) => (
         <div className="flex justify-center gap-2">
           <Tooltip placement="top" title="Edit">
-            <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+            <div className="rounded-full hover:bg-blue-100">
+              <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+            </div>
           </Tooltip>
 
           <Tooltip placement="top" title="Delete">
@@ -63,7 +60,9 @@ export default function UserList() {
               cancelText="No"
               placement="topRight"
             >
-              <Button type="link" shape="circle" icon={<DeleteOutlined />} danger />
+              <div className="rounded-full hover:bg-red-100">
+                <Button type="link" shape="circle" icon={<DeleteOutlined />} danger />
+              </div>
             </Popconfirm>
           </Tooltip>
         </div>
@@ -87,7 +86,7 @@ export default function UserList() {
   }
 
   const handleDelete = async (selectedRowID: string) => {
-    await deleteData(`${USER_API}/${selectedRowID}`)
+    await deleteData(`${USER_API}/${selectedRowID}`, true)
     // Revalidate the cache
     mutate(getUsersUrl)
   }

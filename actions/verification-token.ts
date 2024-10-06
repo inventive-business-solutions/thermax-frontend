@@ -5,6 +5,7 @@ import { NEXT_PUBLIC_BASE_URL } from "configs/constants"
 import { convertToFrappeDatetime } from "utils/helpers"
 import { adminApiClient } from "./axios-clients"
 import { NEXT_AUTH_USER_API } from "configs/api-endpoints"
+import { sendCredentialsEmail } from "./register"
 
 export const verifyEmailandGenerateToken = async (email: string) => {
   try {
@@ -73,8 +74,10 @@ export const verifyAccount = async (token: string) => {
       return { valid: false, email: "" }
     }
     const user = users[0]
-    
-    return { valid: true, email: user.name }
+    const email = user.name
+    await sendCredentialsEmail(email, "Team BTG")
+
+    return { valid: true, email }
   } catch (error: any) {
     return { valid: false, email: "" }
   }

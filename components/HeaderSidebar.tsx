@@ -1,18 +1,27 @@
 "use client"
-import { MenuOutlined } from "@ant-design/icons"
+import {
+  AppstoreAddOutlined,
+  DashboardOutlined,
+  MenuOutlined,
+  UnorderedListOutlined,
+  UserSwitchOutlined,
+} from "@ant-design/icons"
 import { Drawer, Menu, MenuProps } from "antd"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
+import { BTG_SUPERUSER, HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
 import Loader from "./Loader"
 import { UserButton } from "./UserButton"
+import { useGetCurrentUserRole } from "hooks/use-current-user"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const roles = useGetCurrentUserRole()
+  console.log(roles)
 
   const handleLinkClick = () => {
     setLoading(true)
@@ -28,6 +37,7 @@ export default function HeaderSidebar() {
           Dashboard
         </Link>
       ),
+      icon: <DashboardOutlined />,
     },
     {
       key: "2",
@@ -37,6 +47,7 @@ export default function HeaderSidebar() {
           Project List
         </Link>
       ),
+      icon: <UnorderedListOutlined />,
     },
     {
       key: "3",
@@ -45,6 +56,7 @@ export default function HeaderSidebar() {
           User Management
         </Link>
       ),
+      icon: <UserSwitchOutlined />,
     },
     {
       key: "4",
@@ -53,11 +65,23 @@ export default function HeaderSidebar() {
           Package Management
         </Link>
       ),
+      icon: <AppstoreAddOutlined />,
     },
   ]
 
+  const visibleItems = items.filter((item: any) => {
+    if (roles.includes(BTG_SUPERUSER) && item.key === "3") {
+      return true
+    }
+    return false
+  })
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
+  }
+
+  if (loading) {
+    return <Loader />
   }
 
   return (
@@ -78,10 +102,8 @@ export default function HeaderSidebar() {
         <UserButton />
       </header>
 
-      {loading && <Loader />}
-
       <Drawer placement="left" title="Thermax" onClose={toggleSidebar} open={isSidebarOpen} closable={false}>
-        <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" items={items} />
+        <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" items={visibleItems} />
       </Drawer>
     </div>
   )

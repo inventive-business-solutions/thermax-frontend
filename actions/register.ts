@@ -2,17 +2,17 @@
 
 import bcrypt from "bcryptjs"
 import { v4 as uuid } from "uuid"
-import * as z from "zod"
-import { BTG_SUPERUSER, NEXT_PUBLIC_BASE_URL } from "configs/constants"
-import { SignUpSchema } from "configs/schemas"
+import {
+  CREDENTIALS_EMAIL_API,
+  DIVISION_SUPERUSER_API,
+  EMAIL_VERIFICATION_API,
+  NEXT_AUTH_USER_API,
+  THERMAX_USER_API,
+  USER_API,
+} from "configs/api-endpoints"
+import { BTG, BTG_SUPERUSER, NEXT_PUBLIC_BASE_URL } from "configs/constants"
+import { createData, getData, updateData } from "./crud-actions"
 import { adminApiClient } from "./axios-clients"
-import { CREDENTIALS_EMAIL_API, EMAIL_VERIFICATION_API, NEXT_AUTH_USER_API, USER_API } from "configs/api-endpoints"
-
-interface ErrorResponse {
-  message: string
-  type: string
-  status: number
-}
 
 export const generateSimplePassword = (length = 8) => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -47,47 +47,62 @@ const handleAPIError = (error: any) => {
 
 export const checkUserExists = async (email: string) => {
   try {
-    const user = await adminApiClient.get(`${USER_API}/${email}`)
+    const user = await getData(`${USER_API}/${email}`, true)
     return !!user.data
   } catch (error: any) {
-    return handleAPIError(error)
+    throw error
   }
 }
 
 export const checkNextAuthUserExists = async (email: string): Promise<boolean> => {
   try {
-    const user = await adminApiClient.get(`${NEXT_AUTH_USER_API}/${email}`)
+    const user = await getData(`${NEXT_AUTH_USER_API}/${email}`, true)
     return !!user.data
   } catch (error: any) {
-    return handleAPIError(error)
+    throw error
   }
 }
 
 export const createFrappeUser = async (email: string, first_name: string, last_name: string, role: string) => {
-  await adminApiClient.post(USER_API, {
-    email,
-    first_name,
-    last_name,
-    enabled: 1,
-    roles: [
-      {
-        role: role,
-      },
-      {
-        role: "System Manager",
-      },
-    ],
-    send_welcome_email: 0,
-  })
+  try {
+    await createData(USER_API, true, {
+      email,
+      first_name,
+      last_name,
+      enabled: 1,
+      roles: [
+        {
+          role: role,
+        },
+        {
+          role: "System Manager",
+        },
+      ],
+      send_welcome_email: 0,
+    })
+  } catch (error) {
+    throw error
+  }
 }
 
 export const createNextAuthUser = async (email: string, hashedPassword: string, token: string) => {
   try {
-    await adminApiClient.post(NEXT_AUTH_USER_API, {
+    await createData(NEXT_AUTH_USER_API, true, {
       linked_user: email,
       hashed_password: hashedPassword,
       email_verification_token: token,
       email_verified: false,
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export const createThermaxExtendedUser = async (email: string, division: string) => {
+  try {
+    await createData(THERMAX_USER_API, true, {
+      email,
+      division,
     })
   } catch (error) {
     throw error
@@ -101,7 +116,7 @@ export const sendUserVerificationEmail = async (
   token: string
 ) => {
   try {
-    await adminApiClient.post(EMAIL_VERIFICATION_API, {
+    await createData(EMAIL_VERIFICATION_API, true, {
       email,
       division_name,
       verification_link: `${NEXT_PUBLIC_BASE_URL}/auth/verify-account?token=${token}`,
@@ -113,50 +128,12 @@ export const sendUserVerificationEmail = async (
 }
 
 export const createFrappeApiKeys = async (email: string) => {
-  const { data } = await adminApiClient.post(`/method/frappe.core.doctype.user.user.generate_keys?user=${email}`)
-  const { api_secret } = data?.data
-  return api_secret
-}
-
-export const register = async (values: z.infer<typeof SignUpSchema>) => {
-  const { email, password, firstName, lastName, role } = values
-
   try {
-    // Check if the user exists
-    const userExists = await checkUserExists(email)
-    const nextAuthUserExists = await checkNextAuthUserExists(email)
-
-    if (userExists && nextAuthUserExists) {
-      return {
-        status: "error",
-        message: "ExistingUser",
-      }
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    if (userExists && !nextAuthUserExists && password) {
-      await createNextAuthUser(email, hashedPassword)
-    }
-
-    if (!userExists) {
-      await createFrappeUser(email, firstName, lastName, role)
-      await createFrappeApiKeys(email)
-      await createNextAuthUser(email, hashedPassword)
-    }
-
-    return {
-      status: "success",
-      message: "User created successfully",
-    }
-
-    // TODO: Send verification token email
-  } catch (error: any) {
-    console.error("Error during registration:", error.message)
-    return {
-      status: "error",
-      message: "An error occurred during the registration process. Please try again later.",
-    }
+    const { data } = await adminApiClient.post(`/method/frappe.core.doctype.user.user.generate_keys?user=${email}`)
+    const { api_secret } = data?.data
+    return api_secret
+  } catch (error) {
+    handleAPIError(error)
   }
 }
 
@@ -175,20 +152,21 @@ export const registerBTGUser = async (values: any) => {
   } catch (error: any) {
     const errObj: any = JSON.parse(error.message)
     if (errObj.type === "DoesNotExistError" && errObj.status === 404) {
-      await createFrappeUser(email, first_name, last_name, BTG_SUPERUSER)
-      await createFrappeApiKeys(email)
-      const token = uuid()
       try {
+        await createFrappeUser(email, first_name, last_name, BTG_SUPERUSER)
+        await createFrappeApiKeys(email)
+        const token = uuid()
         const hashedPassword = await bcrypt.hash("Admin", 10)
         await createNextAuthUser(email, hashedPassword, token)
+        await createThermaxExtendedUser(email, BTG)
+        await updateData(`${DIVISION_SUPERUSER_API}/${BTG}`, true, {
+          email,
+        })
+        await sendUserVerificationEmail(email, BTG, "Team BTG", token)
       } catch (error) {
         throw error
       }
-      try {
-        await sendUserVerificationEmail(email, "BTG", "Team BTG", token)
-      } catch (error) {
-        throw error
-      }
+
       return {
         message: "User created successfully",
         type: "UserCreated",
@@ -202,11 +180,11 @@ export const sendCredentialsEmail = async (email: string, sent_by: string) => {
   try {
     const system_generated_password = await generateSimplePassword()
     const hashed_password = await bcrypt.hash(system_generated_password, 10)
-    await adminApiClient.patch(`${NEXT_AUTH_USER_API}/${email}`, {
+    await updateData(`${NEXT_AUTH_USER_API}/${email}`, true, {
       email_verified: true,
       hashed_password,
     })
-    await adminApiClient.post(CREDENTIALS_EMAIL_API, {
+    await createData(CREDENTIALS_EMAIL_API, true, {
       email,
       password: system_generated_password,
       sent_by,

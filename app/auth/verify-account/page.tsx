@@ -5,7 +5,6 @@ import { useEffect, useState } from "react"
 import { verifyAccount } from "actions/verification-token"
 import Loader from "components/Loader"
 import { UNAUTHORIZED } from "configs/constants"
-import { sendCredentialsEmail } from "actions/register"
 
 export default function VerifyAccount() {
   const [validToken, setValidToken] = useState(false)
@@ -23,12 +22,7 @@ export default function VerifyAccount() {
 
     ;(async () => {
       try {
-        const { valid, email } = await verifyAccount(token)
-        debugger
-
-        if (valid) {
-          await sendCredentialsEmail(email, "Team BTG")
-        }
+        const { valid } = await verifyAccount(token)
 
         if (!valid) {
           router.push(UNAUTHORIZED)

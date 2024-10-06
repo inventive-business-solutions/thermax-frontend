@@ -7,13 +7,8 @@ import type { NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 
 import { adminApiClient } from "actions/axios-clients"
-import {
-  checkNextAuthUserExists,
-  checkUserExists,
-  createFrappeApiKeys,
-  createFrappeUser,
-  createNextAuthUser,
-} from "actions/register"
+import { createFrappeApiKeys } from "actions/register"
+import { USER_API } from "configs/api-endpoints"
 import { SIGN_IN } from "configs/constants"
 
 const config = {
@@ -27,13 +22,11 @@ const config = {
         const { email, password } = credentials
         const nextAuthUserRes = await adminApiClient.get(`/document/NextAuthUser/${email}`)
         const { data } = nextAuthUserRes.data
-        if (data.hashed_password === "Social Login") {
-          throw new Error("Social Login")
-        }
+
         const passwordsMatch = await bcrypt.compare(password as string, data.hashed_password as string)
 
         if (passwordsMatch) {
-          const userInfoRes = await adminApiClient.get(`/document/User/${email}`)
+          const userInfoRes = await adminApiClient.get(`${USER_API}/${email}`)
           const { data: userInfo } = userInfoRes.data
           const api_secret = await createFrappeApiKeys(email as string)
           return {
@@ -56,19 +49,6 @@ const config = {
     async signIn({ user, account, profile, email, credentials }) {
       /* Use the signIn() callback to control if a user is allowed to sign in. */
 
-      if (account?.provider === "google") {
-        const gmail = user?.email ?? ""
-        const userExists = await checkUserExists(gmail)
-        if (!userExists) {
-          await createFrappeUser(gmail, user?.name ?? "", "", "")
-          await createFrappeApiKeys(gmail)
-        }
-        const nextAuthUserExists = await checkNextAuthUserExists(gmail)
-        if (!nextAuthUserExists) {
-          await createNextAuthUser(gmail, "Social Login")
-        }
-        return true
-      }
       return true
     },
 
@@ -78,22 +58,6 @@ const config = {
       This method is not invoked when you persist sessions in a database.
       The returned value will be encrypted, and it is stored in a cookie. */
       // Persist the OAuth access_token and or the user id to the token right after signin
-      if (account?.provider === "google") {
-        token.accessToken = account.access_token
-        token.userId = account.userId
-        const gmail = user?.email ?? ""
-        const userInfoRes = await adminApiClient.get(`/document/User/${gmail}`)
-        const { data: userInfo } = userInfoRes.data
-        const api_secret = await createFrappeApiKeys(gmail)
-        token.userInfo = {
-          first_name: userInfo.first_name,
-          last_name: userInfo.last_name,
-          email: userInfo.email,
-          roles: userInfo.roles,
-          api_key: userInfo.api_key,
-          api_secret: api_secret,
-        }
-      }
 
       if (account?.provider === "credentials") {
         // Attach userInfo to the token if it's the initial sign-in
