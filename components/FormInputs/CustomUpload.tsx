@@ -1,7 +1,10 @@
 "use client"
 import { UploadOutlined } from "@ant-design/icons"
-import { Button, Upload, UploadProps } from "antd"
+import { Button, GetProp, Upload, UploadProps } from "antd"
+import { RcFile, UploadFile } from "antd/es/upload"
+import { useState } from "react"
 import { Control, Controller } from "react-hook-form"
+import Image from "antd"
 
 interface CustomUploadProps extends UploadProps {
   control: Control<any>
@@ -17,28 +20,27 @@ export default function CustomUpload({ control, name, uploadButtonLabel, ...prop
     <Controller
       name={name}
       control={control}
-      defaultValue="" // Use a string as the default value
       render={({ field, fieldState }) => (
         <>
           <Upload
             {...props}
-            fileList={
-              field.value
-                ? field.value.split(", ").map((url: string) => ({
-                    uid: url,
-                    name: url,
-                    status: "done",
-                    url: url,
-                  }))
-                : []
-            } // Convert string to fileList array
-            onChange={(info) => {
-              const fileUrls = info.fileList.map((file) => file.url || file.name).join(", ")
-              field.onChange(fileUrls) // Store as a comma-separated string
+            onRemove={(file) => {
+              const index = field.value.indexOf(file)
+              const newFileList = field.value.slice()
+              newFileList.splice(index, 1)
+              field.onChange(newFileList) // Call onChange to update the form value
             }}
+            beforeUpload={(file) => {
+              field.onChange([...field.value, file]) // Add new file to the list
+              return false // Prevent auto-upload
+            }}
+            fileList={field.value}
           >
-            <Button icon={<UploadOutlined />}>{uploadButtonLabel}</Button>
+            <Button type="dashed" icon={<UploadOutlined />}>
+              {uploadButtonLabel}
+            </Button>
           </Upload>
+
           {fieldState.error && <p className="text-xs text-red-600">{fieldState.error.message}</p>}
         </>
       )}

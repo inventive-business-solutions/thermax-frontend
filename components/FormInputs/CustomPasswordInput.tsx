@@ -16,7 +16,7 @@ export default function CustomPasswordInput({ control, name, label, placeholder,
       control={control}
       render={({ field, fieldState }) => (
         <div>
-          <label htmlFor={name} className="text-sm">
+          <label htmlFor={name} className="text-sm font-semibold">
             {label}
           </label>
           <Input.Password {...field} {...props} placeholder={placeholder} status={fieldState.error && "error"} />

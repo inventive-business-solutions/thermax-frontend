@@ -2,117 +2,194 @@
 
 import bcrypt from "bcryptjs"
 import { v4 as uuid } from "uuid"
-import * as z from "zod"
+import {
+  CREDENTIALS_EMAIL_API,
+  DIVISION_API,
+  EMAIL_VERIFICATION_API,
+  NEXT_AUTH_USER_API,
+  THERMAX_USER_API,
+  USER_API,
+} from "configs/api-endpoints"
 import { NEXT_PUBLIC_BASE_URL } from "configs/constants"
-import { SignUpSchema } from "configs/schemas"
 import { adminApiClient } from "./axios-clients"
+import { createData, getData, updateData } from "./crud-actions"
 
-export const checkUserExists = async (email: string): Promise<boolean> => {
+export const generateSimplePassword = (length = 8) => {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  let password = ""
+
+  for (let i = 0; i < length; i++) {
+    password += chars[Math.floor(Math.random() * chars.length)]
+  }
+
+  return password
+}
+
+const handleAPIError = (error: any) => {
+  if (error.isAxiosError) {
+    throw new Error(
+      JSON.stringify({
+        message: error.response?.data?.errors[0]?.message || "Not able to catch error",
+        type: error.response?.data?.errors[0]?.type || "Unknown error type",
+        status: error.response?.status,
+      })
+    )
+  } else {
+    throw new Error(
+      JSON.stringify({
+        message: "Error is not related to axios",
+        type: "Non-Axios error",
+        status: "500",
+      })
+    )
+  }
+}
+
+export const checkUserExists = async (email: string) => {
   try {
-    const user = await adminApiClient.get(`/document/User/${email}`)
-    return !!user.data
+    const user = await getData(`${USER_API}/${email}`, true)
+    return true
   } catch (error: any) {
-    if (error.response && error.response.status === 404) {
-      return false // User does not exist
-    } else {
-      throw error // Other errors are rethrown
-    }
+    throw error
   }
 }
 
 export const checkNextAuthUserExists = async (email: string): Promise<boolean> => {
   try {
-    const user = await adminApiClient.get(`/document/NextAuthUser/${email}`)
+    const user = await getData(`${NEXT_AUTH_USER_API}/${email}`, true)
     return !!user.data
   } catch (error: any) {
-    if (error.response && error.response.status === 404) {
-      return false // User does not exist
-    } else {
-      throw error // Other errors are rethrown
+    throw error
+  }
+}
+
+export const createFrappeUser = async (email: string, first_name: string, last_name: string, role: string) => {
+  try {
+    await createData(USER_API, true, {
+      email,
+      first_name,
+      last_name,
+      enabled: 1,
+      roles: [
+        {
+          role: role,
+        },
+        {
+          role: "System Manager",
+        },
+      ],
+      send_welcome_email: 0,
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export const createNextAuthUser = async (email: string, hashedPassword: string, token: string) => {
+  try {
+    await createData(NEXT_AUTH_USER_API, true, {
+      linked_user: email,
+      hashed_password: hashedPassword,
+      email_verification_token: token,
+      email_verified: false,
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export const createThermaxExtendedUser = async (email: string, division: string) => {
+  try {
+    await createData(THERMAX_USER_API, true, {
+      email,
+      division,
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export const sendUserVerificationEmail = async (
+  email: string,
+  division_name: string,
+  sent_by: string,
+  token: string
+) => {
+  try {
+    await createData(EMAIL_VERIFICATION_API, true, {
+      email,
+      division_name,
+      verification_link: `${NEXT_PUBLIC_BASE_URL}/auth/verify-account?token=${token}`,
+      sent_by,
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export const createFrappeApiKeys = async (email: string) => {
+  try {
+    const { data } = await adminApiClient.post(`/method/frappe.core.doctype.user.user.generate_keys?user=${email}`)
+    const { api_secret } = data?.data
+    return api_secret
+  } catch (error) {
+    handleAPIError(error)
+  }
+}
+
+export const registerSuperuser = async (values: any, superuser_role: string, division_name: string) => {
+  const { division_superuser: email, first_name, last_name } = values
+
+  try {
+    const userExists = await checkUserExists(email)
+    if (userExists) {
+      return {
+        message: "User already exists",
+        type: "UserExistsError",
+        status: 409,
+      }
+    }
+  } catch (error: any) {
+    const errObj: any = JSON.parse(error.message)
+    if (errObj.type === "DoesNotExistError" && errObj.status === 404) {
+      try {
+        await createFrappeUser(email, first_name, last_name, superuser_role)
+        await createFrappeApiKeys(email)
+        const token = uuid()
+        const hashedPassword = await bcrypt.hash("Admin", 10)
+        await createNextAuthUser(email, hashedPassword, token)
+        await createThermaxExtendedUser(email, division_name)
+        await updateData(`${DIVISION_API}/${division_name}`, true, {
+          division_superuser: email,
+        })
+        // await sendUserVerificationEmail(email, division_name, `Team ${division_name}`, token)
+      } catch (error) {
+        throw error
+      }
+
+      return {
+        message: "User created successfully",
+        type: "UserCreated",
+        status: 201,
+      }
     }
   }
 }
 
-export const createFrappeUser = async (email: string, firstName: string, lastName: string, role: string) => {
-  await adminApiClient.post("/document/User", {
-    email,
-    first_name: firstName,
-    last_name: lastName,
-    enabled: 1,
-    roles: [
-      {
-        role: role,
-      },
-      {
-        role: "System Manager",
-      },
-    ],
-    send_welcome_email: 0,
-  })
-}
-
-export const createNextAuthUser = async (email: string, hashedPassword: string) => {
-  const token = uuid()
-  await adminApiClient.post("/document/NextAuthUser", {
-    linked_user: email,
-    hashed_password: hashedPassword,
-    email_verification_token: token,
-    email_verified: false,
-  })
-  await adminApiClient.post(
-    "/method/nextintegration.next_integration.doctype.nextauthuser.api.trigger_next_user_verification",
-    {
-      email: email,
-      verification_link: `${NEXT_PUBLIC_BASE_URL}/auth/verify-account?token=${token}`,
-      sent_by: "GCEK Placement Team",
-    }
-  )
-}
-
-export const createFrappeApiKeys = async (email: string) => {
-  const { data } = await adminApiClient.post(`/method/frappe.core.doctype.user.user.generate_keys?user=${email}`)
-  const { api_secret } = data?.data
-  return api_secret
-}
-
-export const register = async (values: z.infer<typeof SignUpSchema>) => {
-  const { email, password, firstName, lastName, role } = values
-
+export const sendCredentialsEmail = async (email: string, sent_by: string) => {
   try {
-    // Check if the user exists
-    const userExists = await checkUserExists(email)
-    const nextAuthUserExists = await checkNextAuthUserExists(email)
-
-    if (userExists && nextAuthUserExists) {
-      return {
-        status: "error",
-        message: "ExistingUser",
-      }
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    if (userExists && !nextAuthUserExists && password) {
-      await createNextAuthUser(email, hashedPassword)
-    }
-
-    if (!userExists) {
-      await createFrappeUser(email, firstName, lastName, role)
-      await createFrappeApiKeys(email)
-      await createNextAuthUser(email, hashedPassword)
-    }
-
-    return {
-      status: "success",
-      message: "User created successfully",
-    }
-
-    // TODO: Send verification token email
-  } catch (error: any) {
-    console.error("Error during registration:", error.message)
-    return {
-      status: "error",
-      message: "An error occurred during the registration process. Please try again later.",
-    }
+    const system_generated_password = await generateSimplePassword()
+    const hashed_password = await bcrypt.hash(system_generated_password, 10)
+    await updateData(`${NEXT_AUTH_USER_API}/${email}`, true, {
+      email_verified: true,
+      hashed_password,
+    })
+    await createData(CREDENTIALS_EMAIL_API, true, {
+      email,
+      password: system_generated_password,
+      sent_by,
+    })
+  } catch (error) {
+    throw error
   }
 }

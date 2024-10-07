@@ -13,9 +13,9 @@ import Link from "next/link"
 import { useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
-import ProjectFormModal from "components/ProjectFormModal"
 import { getProjectListUrl, PROJECT_URL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
+import ProjectFormModal from "./ProjectFormModal"
 
 interface DataType {
   key: string
@@ -75,7 +75,7 @@ export default function ProjectList() {
           <Tooltip placement="top" title="Complete Project">
             <Button type="link" shape="circle" icon={<FileDoneOutlined />} />
           </Tooltip>
-          <Tooltip placement="top" title="Delete Project">
+          <Tooltip placement="top" title="Delete">
             <Popconfirm
               title="Are you sure to delete this project?"
               onConfirm={async () => await handleDeleteProject(record.key)}

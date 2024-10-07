@@ -1,19 +1,28 @@
 "use client"
-import { MenuOutlined } from "@ant-design/icons"
-import { Drawer, Menu, MenuProps } from "antd"
+import {
+  AppstoreAddOutlined,
+  DashboardOutlined,
+  MenuOutlined,
+  UnorderedListOutlined,
+  UserSwitchOutlined,
+} from "@ant-design/icons"
+import { Drawer, Menu, MenuProps, Tag } from "antd"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
+import { BTG_SUPERUSER, HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
 import Loader from "./Loader"
 import { UserButton } from "./UserButton"
-import LogoImage from "../public/assets/images/eni_max_logo.png"
+import { useGetCurrentUserRole } from "hooks/use-current-user"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  let roles = useGetCurrentUserRole()
+
+  console.log("roles", roles)
 
   const handleLinkClick = () => {
     setLoading(true)
@@ -29,6 +38,7 @@ export default function HeaderSidebar() {
           Dashboard
         </Link>
       ),
+      icon: <DashboardOutlined />,
     },
     {
       key: "2",
@@ -38,6 +48,7 @@ export default function HeaderSidebar() {
           Project List
         </Link>
       ),
+      icon: <UnorderedListOutlined />,
     },
     {
       key: "3",
@@ -46,6 +57,7 @@ export default function HeaderSidebar() {
           User Management
         </Link>
       ),
+      icon: <UserSwitchOutlined />,
     },
     {
       key: "4",
@@ -54,11 +66,26 @@ export default function HeaderSidebar() {
           Package Management
         </Link>
       ),
+      icon: <AppstoreAddOutlined />,
     },
   ]
 
+  const visibleItems = items.filter((item: any) => {
+    if (roles.includes(BTG_SUPERUSER) && item.key === "3") {
+      return true
+    }
+    if (!roles.includes(BTG_SUPERUSER)) {
+      return true
+    }
+    return false
+  })
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
+  }
+
+  if (loading) {
+    return <Loader />
   }
 
   return (
@@ -72,17 +99,18 @@ export default function HeaderSidebar() {
             <MenuOutlined />
           </div>
           <Link href={"/"} className="hidden items-center gap-2 md:flex">
-            <Image src={LogoImage} alt="Thermax logo" width={35} height={35} className="rounded-full" />
+            <Image src={"/eni_max_logo.png"} alt="Thermax logo" width={35} height={35} className="rounded-full" />
             <span className="ml-1 text-xl font-bold">Thermax</span>
+            <div>
+              <Tag color="blue">{roles[0].replace("Superuser ", "")} Division</Tag>
+            </div>
           </Link>
         </div>
         <UserButton />
       </header>
 
-      {loading && <Loader />}
-
       <Drawer placement="left" title="Thermax" onClose={toggleSidebar} open={isSidebarOpen} closable={false}>
-        <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" items={items} />
+        <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" items={visibleItems} />
       </Drawer>
     </div>
   )

@@ -7,12 +7,12 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
-import { CLIENT_NAME_URL, CONSULTANT_NAME_URL, getProjectListUrl, PROJECT_URL, USER_URL } from "configs/api-endpoints"
+import { CLIENT_NAME_URL, CONSULTANT_NAME_URL, getProjectListUrl, PROJECT_URL, USER_API } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
-import AlertNotification from "./AlertNotification"
-import CustomAutoComplete from "./FormInputs/AutocompleteWithCreate"
-import CustomTextInput from "./FormInputs/CustomInput"
-import CustomSingleSelect from "./FormInputs/CustomSingleSelect"
+import AlertNotification from "../AlertNotification"
+import CustomAutoComplete from "../FormInputs/AutocompleteWithCreate"
+import CustomTextInput from "../FormInputs/CustomInput"
+import CustomSingleSelect from "../FormInputs/CustomSingleSelect"
 
 const ProjectFormValidationSchema = zod.object({
   project_name: zod.string().optional(),
@@ -36,11 +36,11 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 export default function ProjectFormModal({ open, setOpen, editMode, values }: any) {
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
-  const [isPending, startTransition] = useTransition()
+  const [loading, setLoading] = useState(false)
 
   const { dropdownOptions: clientNameOptions } = useDropdownOptions(CLIENT_NAME_URL, "client_name")
   const { dropdownOptions: consultantNameOptions } = useDropdownOptions(CONSULTANT_NAME_URL, "consultant_name")
-  const { dropdownOptions: approverOptions } = useDropdownOptions(USER_URL, "email")
+  const { dropdownOptions: approverOptions } = useDropdownOptions(USER_API, "email")
 
   const { control, handleSubmit, reset, formState, getValues } = useForm({
     resolver: zodResolver(ProjectFormValidationSchema),
@@ -59,31 +59,53 @@ export default function ProjectFormModal({ open, setOpen, editMode, values }: an
     setStatus("")
   }
 
-  const onSubmit: SubmitHandler<zod.infer<typeof ProjectFormValidationSchema>> = (data: any) => {
-    startTransition(async () => {
+  const handleCreateProject = async (projectData: any) => {
+    try {
+      await createData(PROJECT_URL, projectData)
+      setStatus("success")
+      setMessage("New project created successfully")
+    } catch (error: any) {
+      throw error
+    }
+  }
+
+  const handleUpdateProject = async (projectData: any) => {
+    try {
+      await updateData(`${PROJECT_URL}/${values.name}`, projectData)
+      setStatus("success")
+      setMessage("Project information updated successfully")
+    } catch (error: any) {
+      throw error
+    }
+  }
+
+  // Helper function for handling errors
+  const handleError = (error: any) => {
+    setStatus("error")
+    try {
+      const errorObj = JSON.parse(error?.message) as any
+      console.log(errorObj)
+      setMessage(errorObj?.message)
+    } catch (parseError) {
+      // If parsing fails, use the raw error message
+      setMessage(error?.message || "An unknown error occurred")
+    }
+  }
+
+  const onSubmit: SubmitHandler<zod.infer<typeof ProjectFormValidationSchema>> = async (data: any) => {
+    setLoading(true)
+    try {
       if (editMode) {
-        try {
-          await updateData(`${PROJECT_URL}/${values.name}`, data)
-          setStatus("success")
-          setMessage("Project information updated successfully")
-        } catch (error: any) {
-          setStatus("error")
-          const errorObj = JSON.parse(error?.message) as any
-          setMessage(errorObj?.message)
-        }
+        await handleUpdateProject(data)
       } else {
-        try {
-          await createData(PROJECT_URL, data)
-          setStatus("success")
-          setMessage("New project created successfully")
-        } catch (error: any) {
-          setStatus("error")
-          const errorObj = JSON.parse(error?.message) as any
-          setMessage(errorObj?.message)
-        }
+        await handleCreateProject(data)
       }
-    })
-    mutate(getProjectListUrl)
+    } catch (error: any) {
+      handleError(error)
+    } finally {
+      mutate(getProjectListUrl)
+      setLoading(false)
+    }
   }
 
   return (
@@ -134,7 +156,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values }: an
         </div>
         <AlertNotification message={message} status={status} />
         <div className="text-end">
-          <Button type="primary" htmlType="submit" loading={isPending} disabled={!formState.isValid}>
+          <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
             Save
           </Button>
         </div>
