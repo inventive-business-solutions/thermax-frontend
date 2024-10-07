@@ -1,85 +1,77 @@
 "use server"
-import { ApiError } from "configs/constants"
-import { getApiClient } from "./axios-clients"
+import { adminApiClient, getApiClient } from "./axios-clients"
 
-// Fetch documents
-export const getData = async (url: string) => {
-  const apiClient = await getApiClient()
-  const response = await apiClient.get(url)
-  return response.data.data
+const handleAPIError = (error: any) => {
+  if (error.isAxiosError) {
+    throw new Error(
+      JSON.stringify({
+        message: error.response?.data?.errors[0]?.message || "Not able to catch error",
+        type: error.response?.data?.errors[0]?.type || "Unknown error type",
+        status: error.response?.status,
+      })
+    )
+  } else {
+    throw new Error(
+      JSON.stringify({
+        message: "Error is not related to axios",
+        type: "Non-Axios error",
+        status: "500",
+      })
+    )
+  }
 }
 
-export const getOrCreateData = async (baseURL: string, id: string, data: any) => {
-  const apiClient = await getApiClient()
+// Fetch documents
+export const getData = async (url: string, useAdminClient: boolean) => {
+  let apiClient = await getApiClient()
+  if (useAdminClient) {
+    apiClient = adminApiClient
+  }
   try {
-    const getResponse = await apiClient.get(`${baseURL}/${id}`)
-    return getResponse.data.data
+    const response = await apiClient.get(url)
+    return response.data.data
   } catch (error: any) {
-    if (error?.response?.status === 404) {
-      const postResponse = await apiClient.post(baseURL, data)
-      return postResponse.data.data
-    }
-    return []
+    handleAPIError(error)
   }
 }
 
 // Create a new document
-// Optimized createData function
-export const createData = async (url: string, data: any): Promise<any> => {
+export const createData = async (url: string, useAdminClient: boolean, data: any) => {
+  let apiClient = await getApiClient()
+  if (useAdminClient) {
+    apiClient = adminApiClient
+  }
   try {
-    const apiClient = await getApiClient()
     const response = await apiClient.post(url, data)
     return response.data.data
   } catch (error: any) {
-    if (error.isAxiosError) {
-      throw new Error(
-        JSON.stringify({
-          message: error.response?.data?.errors[0]?.message || "Not able to catch error",
-          type: error.response?.data?.errors[0]?.type || "Unknown error type",
-          status: error.response?.status,
-        })
-      )
-    } else {
-      throw new Error(
-        JSON.stringify({
-          message: "Error is not related to axios",
-          type: "Non-Axios error",
-          status: "500",
-        })
-      )
-    }
+    handleAPIError(error)
   }
 }
 
 // Update an existing document
-export const updateData = async (url: string, data: any) => {
+export const updateData = async (url: string, useAdminClient: boolean, data: any) => {
+  let apiClient = await getApiClient()
+  if (useAdminClient) {
+    apiClient = adminApiClient
+  }
   try {
-    const apiClient = await getApiClient()
     const response = await apiClient.put(url, data)
     return response.data.data
   } catch (error: any) {
-    if (error.isAxiosError) {
-      throw new Error(
-        JSON.stringify({
-          message: error.response?.data?.errors[0]?.message || "Not able to catch error",
-          type: error.response?.data?.errors[0]?.type || "Unknown error type",
-          status: error.response?.status,
-        })
-      )
-    } else {
-      throw new Error(
-        JSON.stringify({
-          message: "Error is not related to axios",
-          type: "Non-Axios error",
-          status: "500",
-        })
-      )
-    }
+    handleAPIError(error)
   }
 }
 
 // Delete a document
-export const deleteData = async (url: string) => {
-  const apiClient = await getApiClient()
-  await apiClient.delete(url)
+export const deleteData = async (url: string, useAdminClient: boolean) => {
+  let apiClient = await getApiClient()
+  if (useAdminClient) {
+    apiClient = adminApiClient
+  }
+  try {
+    await apiClient.delete(url)
+  } catch (error: any) {
+    handleAPIError(error)
+  }
 }

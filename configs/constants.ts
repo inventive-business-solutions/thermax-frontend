@@ -7,19 +7,31 @@ export const UNAUTHORIZED = "/unauthorized"
 export const UNVERIFIED = "/unverified"
 
 export const HOME_PAGE = "/"
+export const DASHBOARD_PAGE = "/dashboard"
 export const PROJECTS_PAGE = "/project"
 export const PACKAGE_PAGE = "/package-management"
 export const COMPLETE_PROJECT_PAGE = "/complete_project"
 export const USER_MANAGEMENT_PAGE = "/user-management"
 
-export class ApiError extends Error {
-  statusCode: number
-  errorType: string
+// Division Names
+export const BTG = "BTG"
+export const ENVIRO = "Enviro"
+export const HEATING = "Heating"
+export const SERVICES = "Services"
+export const WWS_IPG = "WWS IPG"
+export const WWS_SPG = "WWS SPG"
 
-  constructor(message: string, errorType: string, statusCode: number) {
-    super(message)
-    this.statusCode = statusCode
-    this.errorType = errorType
-    this.name = "ApiError"
-  }
+// Role Names
+export const THERMAX_USER = "Thermax User"
+export const THERMAX_SUPERUSER = `Thermax Superuser`
+export const THERMAX_DEVELOPER = "Thermax Developer"
+export const SYSTEM_MANAGER = "System Manager"
+
+export const TagColors = {
+  BTG: "magenta",
+  Enviro: "green",
+  Heating: "volcano",
+  Services: "blue",
+  "WWS IPG": "cyan",
+  "WWS SPG": "red",
 }

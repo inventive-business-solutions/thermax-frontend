@@ -3,9 +3,9 @@
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { FloatButton } from "antd"
 import { useState } from "react"
-import DesignBasis from "components/Project Components/Design Basis/DesignBasis"
-import ElectricalLoadList from "components/Project Components/Electrical Load List/ElectricalLoadList"
-import ProjectInfo from "components/Project Components/ProjectInfo"
+import DesignBasis from "components/Project Management/Design Basis/DesignBasis"
+import ElectricalLoadList from "components/Project Management/Electrical Load List/ElectricalLoadList"
+import ProjectInfo from "components/Project Management/ProjectInfo"
 
 const tabData = [
   { label: "Project Information", key: "1" },

@@ -3,7 +3,7 @@ import { Card } from "antd"
 import Image from "next/image"
 import Link from "next/link"
 import { PROJECTS_PAGE } from "configs/constants"
-import LogoImage from "../public/assets/images/eni_max_logo.png"
+import LogoImage from "../public/eni_max_logo.png"
 
 const ProjectArray1 = [
   {

@@ -6,6 +6,14 @@ export const CLIENT_NAME_URL = `/document/Client?fields=["*"]`
 export const CONSULTANT_NAME_URL = `/document/Consultant?fields=["*"]`
 
 export const PROJECT_URL = `/document/Project`
-export const USER_URL = `/document/User?fields=["name", "email"]`
+export const USER_API = `/document/User`
+export const NEXT_AUTH_USER_API = `/document/NextAuthUser`
+export const THERMAX_USER_API = `/document/Thermax Extended User`
+export const DIVISION_API = `/document/Division`
 
 export const getProjectListUrl = `${PROJECT_URL}?fields=["*"]&order_by=creation desc`
+export const getUsersUrl = `${USER_API}?fields=["*"]&order_by=creation desc`
+
+export const EMAIL_VERIFICATION_API = "/method/thermax_extended_user.trigger_email_verification_mail"
+
+export const CREDENTIALS_EMAIL_API = "/method/thermax_extended_user.trigger_send_credentials"

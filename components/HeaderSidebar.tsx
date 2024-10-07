@@ -1,19 +1,26 @@
 "use client"
-import { MenuOutlined } from "@ant-design/icons"
-import { Drawer, Menu, MenuProps } from "antd"
+import {
+  AppstoreAddOutlined,
+  DashboardOutlined,
+  MenuOutlined,
+  UnorderedListOutlined,
+  UserSwitchOutlined,
+} from "@ant-design/icons"
+import { Drawer, Menu, MenuProps, Tag } from "antd"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
+import { BTG, HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, TagColors, USER_MANAGEMENT_PAGE } from "configs/constants"
+import { useCurrentUser } from "hooks/use-current-user"
 import Loader from "./Loader"
 import { UserButton } from "./UserButton"
-import LogoImage from "../public/assets/images/eni_max_logo.png"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const userInfo = useCurrentUser()
 
   const handleLinkClick = () => {
     setLoading(true)
@@ -29,6 +36,7 @@ export default function HeaderSidebar() {
           Dashboard
         </Link>
       ),
+      icon: <DashboardOutlined />,
     },
     {
       key: "2",
@@ -38,6 +46,7 @@ export default function HeaderSidebar() {
           Project List
         </Link>
       ),
+      icon: <UnorderedListOutlined />,
     },
     {
       key: "3",
@@ -46,6 +55,7 @@ export default function HeaderSidebar() {
           User Management
         </Link>
       ),
+      icon: <UserSwitchOutlined />,
     },
     {
       key: "4",
@@ -54,11 +64,26 @@ export default function HeaderSidebar() {
           Package Management
         </Link>
       ),
+      icon: <AppstoreAddOutlined />,
     },
   ]
 
+  const visibleItems = items.filter((item: any) => {
+    if (userInfo?.division === BTG && item.key === "3") {
+      return true
+    }
+    if (userInfo?.division !== BTG) {
+      return true
+    }
+    return false
+  })
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
+  }
+
+  if (loading) {
+    return <Loader />
   }
 
   return (
@@ -71,18 +96,19 @@ export default function HeaderSidebar() {
           >
             <MenuOutlined />
           </div>
-          <Link href={"/"} className="hidden items-center gap-2 md:flex">
-            <Image src={LogoImage} alt="Thermax logo" width={35} height={35} className="rounded-full" />
-            <span className="ml-1 text-xl font-bold">Thermax</span>
+          <Link href={"/"} className="hidden items-center gap-3 md:flex">
+            <Image src={"/eni_max_logo.png"} alt="Thermax logo" width={35} height={35} className="rounded-full" />
+            <span className="ml-1 text-xl font-bold text-slate-800">EniMax</span>
+            <div>
+              <Tag color={TagColors[userInfo?.division]}>{userInfo?.division} Division</Tag>
+            </div>
           </Link>
         </div>
         <UserButton />
       </header>
 
-      {loading && <Loader />}
-
       <Drawer placement="left" title="Thermax" onClose={toggleSidebar} open={isSidebarOpen} closable={false}>
-        <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" items={items} />
+        <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" items={visibleItems} />
       </Drawer>
     </div>
   )

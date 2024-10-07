@@ -13,6 +13,18 @@ const config = withPlugins([[withBundleAnalyzer({ enabled: env.ANALYZE })]], {
     },
   },
   experimental: { instrumentationHook: false },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "enaibot.frappe.cloud",
+      },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
+      },
+    ],
+  },
   rewrites() {
     return [
       { source: "/healthz", destination: "/api/health" },

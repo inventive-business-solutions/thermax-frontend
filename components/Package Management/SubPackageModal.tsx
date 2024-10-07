@@ -47,13 +47,10 @@ export default function SubPackageModal({ open, setOpen, editMode, values, editE
   }, [editMode, reset, values, editEventTrigger])
 
   const onSubmit: SubmitHandler<zod.infer<typeof SubPackageSchema>> = (data: any) => {
-    console.log(data)
-    console.log(values)
-
     startTransition(async () => {
       if (editMode) {
         try {
-          await updateData(`${SUB_PKG_URL}/${values.name}`, data)
+          await updateData(`${SUB_PKG_URL}/${values.name}`, false, data)
           setStatus("success")
           setMessage("Sub package updated successfully")
         } catch (error: any) {

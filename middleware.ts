@@ -1,10 +1,25 @@
 import { NextResponse } from "next/server"
 import { auth } from "auth"
+import {
+  BTG,
+  COMPLETE_PROJECT_PAGE,
+  DASHBOARD_PAGE,
+  PACKAGE_PAGE,
+  PROJECTS_PAGE,
+  USER_MANAGEMENT_PAGE,
+} from "configs/constants"
 
 export default auth((req) => {
+  if (!req.auth) {
+    return NextResponse.next()
+  }
+  const { userInfo } = req.auth as any
   const pathname = req.nextUrl.pathname
+  if (userInfo.division === BTG && !pathname.includes(USER_MANAGEMENT_PAGE)) {
+    return NextResponse.redirect(new URL(USER_MANAGEMENT_PAGE, req.url))
+  }
   // Define protected routes
-  const protectedRoutes = ["/protected", "/form"]
+  const protectedRoutes = [DASHBOARD_PAGE, PROJECTS_PAGE, PACKAGE_PAGE, COMPLETE_PROJECT_PAGE, USER_MANAGEMENT_PAGE]
 
   // Check if the user is authenticated. If auth is null then the user is not authenticated
   const isAuthenticated = !!req.auth
