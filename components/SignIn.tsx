@@ -21,7 +21,9 @@ const signInSchema = zod.object({
 const createBTGUserSchema = zod.object({
   first_name: zod.string({ required_error: "First name is required" }),
   last_name: zod.string({ required_error: "Last name is required" }),
-  email: zod.string({ required_error: "Email address is required" }).email({ message: "Invalid email address" }),
+  division_superuser: zod
+    .string({ required_error: "Email address is required" })
+    .email({ message: "Invalid email address" }),
 })
 
 export default function SignIn({ authSecret }: { authSecret: string }) {
@@ -113,7 +115,7 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
           <form onSubmit={handleSubmit2(onSubmit2)} className="flex flex-col gap-2">
             <CustomTextInput name="first_name" control={control2} label="First Name" />
             <CustomTextInput name="last_name" control={control2} label="Last Name" />
-            <CustomTextInput name="email" control={control2} label="Email" type="email" />
+            <CustomTextInput name="division_superuser" control={control2} label="Email" type="email" />
             <AlertNotification status={status} message={message} />
             <Button type="primary" htmlType="submit" loading={loading}>
               Create BTG User
