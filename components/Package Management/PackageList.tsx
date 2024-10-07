@@ -90,7 +90,6 @@ export default function PackageList() {
     setSubPkgOpen(true)
     setEditModeSubPkg(true)
     setEditEventTrigger(!editEventTrigger)
-    console.log(values)
     setSubPkgRowData(values)
   }
 

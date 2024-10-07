@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 
 export default async function UserManagement() {
   const userInfo = await getUserInfo()
-  return <div>{userInfo?.division === BTG ? <SuperuserList /> : <UserList />}</div>
+  return <div>{userInfo?.division === BTG ? <SuperuserList /> : <UserList userInfo={userInfo} />}</div>
 }

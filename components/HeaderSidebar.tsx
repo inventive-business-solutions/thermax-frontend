@@ -100,7 +100,7 @@ export default function HeaderSidebar() {
             <Image src={"/eni_max_logo.png"} alt="Thermax logo" width={35} height={35} className="rounded-full" />
             <span className="ml-1 text-xl font-bold text-slate-800">EniMax</span>
             <div>
-              <Tag color={TagColors[BTG]}>{BTG} Division</Tag>
+              <Tag color={TagColors[userInfo?.division]}>{userInfo?.division} Division</Tag>
             </div>
           </Link>
         </div>

@@ -45,7 +45,6 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
     setStatus("error")
     try {
       const errorObj = JSON.parse(error?.message) as any
-      console.log(errorObj)
       setMessage(errorObj?.message)
     } catch (parseError) {
       // If parsing fails, use the raw error message

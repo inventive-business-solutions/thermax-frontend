@@ -24,7 +24,6 @@ const UserFormValidationSchema = zod.object({
     .string({ required_error: "Email address is required", message: "Email address is required" })
     .email({ message: "Invalid email address" }),
   name_initial: zod.string({ required_error: "Initials is required", message: "Initials is required" }),
-  digital_signature: zod.any().optional(),
   division: zod.string({ required_error: "Division is required", message: "Division is required" }),
 })
 
@@ -34,12 +33,11 @@ const getDefaultValues = (editMode: boolean, values: any) => {
     last_name: editMode ? values?.last_name : null,
     email: editMode ? values?.email : null,
     name_initial: editMode ? values?.name_initial : null,
-    digital_signature: editMode ? (values?.digital_signature === "" ? [] : [values?.digital_signature]) : [],
     division: editMode ? values?.division : null,
   }
 }
 
-export default function UserFormModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
+export default function SuperuserFormModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
@@ -64,35 +62,10 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
     setStatus("")
   }
 
-  // Helper function for creating user
-  const handleCreateUser = async (userData: any) => {
-    const dg_sign_file = userData?.digital_signature
-    try {
-      if (Array.isArray(dg_sign_file)) {
-        userData["digital_signature"] = ""
-      } else {
-        const { data } = await uploadFile(dg_sign_file as File)
-        userData["digital_signature"] = data.file_url
-      }
-      await createData(USER_API, false, { ...userData, send_welcome_email: 0 })
-      setStatus("success")
-      setMessage("New user created successfully")
-    } catch (error: any) {
-      throw error
-    }
-  }
-
   // Helper function for updating user
   const handleUpdateUser = async (userData: any) => {
-    // const dg_sign_file = userData?.digital_signature
     try {
-      // if (typeof dg_sign_file === "string" && dg_sign_file.startsWith("/files/")) {
-      //   userData["digital_signature"] = dg_sign_file
-      // } else {
-      //   const { data } = await uploadFile(dg_sign_file[0] as File)
-      //   userData["digital_signature"] = data.file_url
-      // }
-      userData["digital_signature"] = ""
+      userData["digital_signature"] = null
 
       await updateData(`${USER_API}/${values.name}`, false, userData)
       await updateData(`${THERMAX_USER_API}/${values.name}`, false, userData)
@@ -173,16 +146,6 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
               disabled={watch("division") === BTG}
             />
           </div>
-          {values?.digital_signature && (
-            <div>
-              <Image
-                src={`${process.env.NEXT_PUBLIC_FRAPPE_DOMAIN_NAME}${values?.digital_signature}`}
-                width={100}
-                height={100}
-                alt="Digital Signature"
-              />
-            </div>
-          )}
         </div>
         <AlertNotification message={message} status={status} />
         <div className="text-end">

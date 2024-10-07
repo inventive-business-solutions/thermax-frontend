@@ -8,8 +8,8 @@ import { deleteData } from "actions/crud-actions"
 import { DIVISION_API, getUsersUrl, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
 import { BTG, TagColors } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
-import SuperuserModal from "./SuperuserModal"
-import { record } from "zod"
+import { changeNameToKey, mergeLists } from "utils/helpers"
+import SuperuserFormModal from "./SuperuserModal"
 
 interface DataType {
   key: string
@@ -20,45 +20,17 @@ interface DataType {
   modified: string
 }
 
-const changeNameToKey = (projectList: any[]) => {
-  if (!projectList) return []
-  projectList.forEach((project) => {
-    project.key = project.name
-  })
-  return projectList
-}
-
-const mergeLists = (lists: any[][], relations: any[]) => {
-  // Start with the first list as the base
-  return lists.reduce((mergedList, currentList, index) => {
-    if (index === 0) {
-      return currentList // Start with the first list
-    }
-
-    const relation = relations[index - 1]
-    const { fromKey, toKey } = relation
-
-    // Create a Map from the current list for faster lookups
-    const currentListMap = new Map(currentList?.map((item) => [item[toKey], item]))
-
-    // Merge the current list with the accumulated merged list
-    return mergedList
-      ?.map((prevItem) => {
-        const matchedItem = currentListMap.get(prevItem[fromKey])
-        return matchedItem ? { ...prevItem, ...matchedItem } : null
-      })
-      .filter(Boolean) // Remove unmatched elements
-  }, [])
-}
-
 export default function SuperuserList() {
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [userRow, setUserRow] = useState<any>(null)
   const [editEventTrigger, setEditEventTrigger] = useState(false)
-  const { data: userList } = useGetData(`${THERMAX_USER_API}?fields=["*"]&filters=[["is_superuser", "=",  "1"]]`, false)
-  const { data: thermaxUserList } = useGetData(`${USER_API}?fields=["*"]`, false)
-  const mergedList = mergeLists([userList, thermaxUserList], [{ fromKey: "name", toKey: "name" }])
+  const { data: thermaxUserList } = useGetData(
+    `${THERMAX_USER_API}?fields=["*"]&filters=[["is_superuser", "=",  "1"]]`,
+    false
+  )
+  const { data: userList } = useGetData(`${USER_API}?fields=["*"]`, false)
+  const mergedList = mergeLists([thermaxUserList, userList], [{ fromKey: "name", toKey: "name" }])
 
   const columns: ColumnsType<DataType> = [
     {
@@ -90,7 +62,6 @@ export default function SuperuserList() {
       dataIndex: "action",
       align: "center",
       render: (text, record) => {
-        console.log(record)
         return (
           <div className="flex justify-center gap-2">
             <Tooltip placement="top" title="Edit">
@@ -114,13 +85,7 @@ export default function SuperuserList() {
                 placement="topRight"
               >
                 <div className="rounded-full hover:bg-red-100">
-                  <Button
-                    type="link"
-                    shape="circle"
-                    icon={<DeleteOutlined />}
-                    danger
-                    disabled={record.division === BTG}
-                  />
+                  <Button type="link" shape="circle" icon={<DeleteOutlined />} danger disabled />
                 </div>
               </Popconfirm>
             </Tooltip>
@@ -141,7 +106,6 @@ export default function SuperuserList() {
     setEditEventTrigger(!editEventTrigger)
     setEditMode(true)
     setUserRow(selectedRow)
-    console.log(selectedRow)
     setOpen(true)
   }
 
@@ -177,7 +141,7 @@ export default function SuperuserList() {
         <Table columns={columns} dataSource={changeNameToKey(mergedList)} pagination={{ size: "small" }} size="small" />
       </div>
 
-      <SuperuserModal
+      <SuperuserFormModal
         open={open}
         setOpen={setOpen}
         editMode={editMode}
