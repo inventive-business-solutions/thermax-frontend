@@ -47,7 +47,7 @@ const handleAPIError = (error: any) => {
 
 export const checkUserExists = async (email: string) => {
   try {
-    const user = await getData(`${USER_API}/${email}`, true)
+    await getData(`${USER_API}/${email}`, true)
     return true
   } catch (error: any) {
     throw error
@@ -56,8 +56,8 @@ export const checkUserExists = async (email: string) => {
 
 export const checkNextAuthUserExists = async (email: string): Promise<boolean> => {
   try {
-    const user = await getData(`${NEXT_AUTH_USER_API}/${email}`, true)
-    return !!user.data
+    await getData(`${NEXT_AUTH_USER_API}/${email}`, true)
+    return true
   } catch (error: any) {
     throw error
   }
@@ -98,11 +98,18 @@ export const createNextAuthUser = async (email: string, hashedPassword: string, 
   }
 }
 
-export const createThermaxExtendedUser = async (email: string, division: string) => {
+export const createThermaxExtendedUser = async (
+  email: string,
+  division: string,
+  name_initial: string,
+  is_superuser: boolean
+) => {
   try {
     await createData(THERMAX_USER_API, true, {
       email,
       division,
+      name_initial,
+      is_superuser,
     })
   } catch (error) {
     throw error
@@ -137,8 +144,14 @@ export const createFrappeApiKeys = async (email: string) => {
   }
 }
 
-export const registerSuperuser = async (values: any, superuser_role: string, division_name: string) => {
-  const { division_superuser: email, first_name, last_name } = values
+export const CreateUser = async (
+  values: any,
+  user_role: string,
+  division: string,
+  is_superuser: boolean,
+  name_initial: string = ""
+) => {
+  const { email, first_name, last_name } = values
 
   try {
     const userExists = await checkUserExists(email)
@@ -153,15 +166,12 @@ export const registerSuperuser = async (values: any, superuser_role: string, div
     const errObj: any = JSON.parse(error.message)
     if (errObj.type === "DoesNotExistError" && errObj.status === 404) {
       try {
-        await createFrappeUser(email, first_name, last_name, superuser_role)
+        await createFrappeUser(email, first_name, last_name, user_role)
         await createFrappeApiKeys(email)
         const token = uuid()
         const hashedPassword = await bcrypt.hash("Admin", 10)
         await createNextAuthUser(email, hashedPassword, token)
-        await createThermaxExtendedUser(email, division_name)
-        await updateData(`${DIVISION_API}/${division_name}`, true, {
-          division_superuser: email,
-        })
+        await createThermaxExtendedUser(email, division, name_initial, is_superuser)
         // await sendUserVerificationEmail(email, division_name, `Team ${division_name}`, token)
       } catch (error) {
         throw error

@@ -52,16 +52,16 @@ export default function PackageList() {
   const [mainPkgRowData, setMainPkgRowData] = useState<any>(null)
   const [subPkgRowData, setSubPkgRowData] = useState<any>(null)
 
-  const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_URL)
+  const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_URL, false)
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
-    await deleteData(`${MAIN_PKG_URL}/${selectedRowID}`)
+    await deleteData(`${MAIN_PKG_URL}/${selectedRowID}`, false)
     // Revalidate the cache
     mutate(GET_PKG_URL)
   }
 
   const handleSubPkgDelete = async (selectedRowID: string) => {
-    await deleteData(`${SUB_PKG_URL}/${selectedRowID}`)
+    await deleteData(`${SUB_PKG_URL}/${selectedRowID}`, false)
     // Revalidate the cache
     mutate(GET_PKG_URL)
   }

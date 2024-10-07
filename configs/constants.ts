@@ -22,11 +22,16 @@ export const WWS_IPG = "WWS IPG"
 export const WWS_SPG = "WWS SPG"
 
 // Role Names
-export const BTG_SUPERUSER = `Superuser ${BTG}`
-export const ENVIRO_SUPERUSER = `Superuser ${ENVIRO}`
-export const HEATING_SUPERUSER = `Superuser ${HEATING}`
-export const SERVICES_SUPERUSER = `Superuser ${SERVICES}`
-export const WWS_IPG_SUPERUSER = `Superuser ${WWS_IPG}`
-export const WWS_SPG_SUPERUSER = `Superuser ${WWS_SPG}`
-export const DEVELOPER = "Developer"
+export const THERMAX_USER = "Thermax User"
+export const THERMAX_SUPERUSER = `Thermax Superuser`
+export const THERMAX_DEVELOPER = "Thermax Developer"
 export const SYSTEM_MANAGER = "System Manager"
+
+export const TagColors = {
+  BTG: "magenta",
+  Enviro: "green",
+  Heating: "volcano",
+  Services: "blue",
+  "WWS IPG": "cyan",
+  "WWS SPG": "red",
+}

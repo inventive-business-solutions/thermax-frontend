@@ -1,10 +1,10 @@
 "use client"
 import { UploadOutlined } from "@ant-design/icons"
 import { Button, GetProp, Upload, UploadProps } from "antd"
+import Image from "antd"
 import { RcFile, UploadFile } from "antd/es/upload"
 import { useState } from "react"
 import { Control, Controller } from "react-hook-form"
-import Image from "antd"
 
 interface CustomUploadProps extends UploadProps {
   control: Control<any>

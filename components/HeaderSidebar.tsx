@@ -10,19 +10,17 @@ import { Drawer, Menu, MenuProps, Tag } from "antd"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { BTG_SUPERUSER, HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, USER_MANAGEMENT_PAGE } from "configs/constants"
+import { BTG, HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, TagColors, USER_MANAGEMENT_PAGE } from "configs/constants"
+import { useCurrentUser } from "hooks/use-current-user"
 import Loader from "./Loader"
 import { UserButton } from "./UserButton"
-import { useGetCurrentUserRole } from "hooks/use-current-user"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  let roles = useGetCurrentUserRole()
-
-  console.log("roles", roles)
+  const userInfo = useCurrentUser()
 
   const handleLinkClick = () => {
     setLoading(true)
@@ -71,10 +69,10 @@ export default function HeaderSidebar() {
   ]
 
   const visibleItems = items.filter((item: any) => {
-    if (roles.includes(BTG_SUPERUSER) && item.key === "3") {
+    if (userInfo?.division === BTG && item.key === "3") {
       return true
     }
-    if (!roles.includes(BTG_SUPERUSER)) {
+    if (userInfo?.division !== BTG) {
       return true
     }
     return false
@@ -98,11 +96,11 @@ export default function HeaderSidebar() {
           >
             <MenuOutlined />
           </div>
-          <Link href={"/"} className="hidden items-center gap-2 md:flex">
+          <Link href={"/"} className="hidden items-center gap-3 md:flex">
             <Image src={"/eni_max_logo.png"} alt="Thermax logo" width={35} height={35} className="rounded-full" />
-            <span className="ml-1 text-xl font-bold">Thermax</span>
+            <span className="ml-1 text-xl font-bold text-slate-800">EniMax</span>
             <div>
-              <Tag color="blue">{roles[0].replace("Superuser ", "")} Division</Tag>
+              <Tag color={TagColors[BTG]}>{BTG} Division</Tag>
             </div>
           </Link>
         </div>
