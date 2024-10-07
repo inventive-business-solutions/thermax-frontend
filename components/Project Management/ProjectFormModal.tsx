@@ -7,7 +7,14 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
-import { CLIENT_NAME_URL, CONSULTANT_NAME_URL, getProjectListUrl, PROJECT_URL, USER_API } from "configs/api-endpoints"
+import {
+  CLIENT_NAME_URL,
+  CONSULTANT_NAME_URL,
+  getProjectListUrl,
+  PROJECT_URL,
+  THERMAX_USER_API,
+  USER_API,
+} from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 import AlertNotification from "../AlertNotification"
 import CustomAutoComplete from "../FormInputs/AutocompleteWithCreate"
@@ -15,15 +22,20 @@ import CustomTextInput from "../FormInputs/CustomInput"
 import CustomSingleSelect from "../FormInputs/CustomSingleSelect"
 
 const ProjectFormValidationSchema = zod.object({
-  project_name: zod.string().optional(),
-  project_oc_number: zod.string().optional(),
-  client_name: zod.string().optional(),
-  consultant_name: zod.string().optional(),
-  approver: zod.string().optional(),
+  project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
+  project_oc_number: zod.string({
+    required_error: "Project OC number is required",
+    message: "Project OC number is required",
+  }),
+  client_name: zod.string({ required_error: "Client name is required", message: "Client name is required" }),
+  consultant_name: zod.string({
+    required_error: "Consultant name is required",
+    message: "Consultant name is required",
+  }),
+  approver: zod.string({ required_error: "Approver is required", message: "Approver is required" }),
 })
 
 const getDefaultValues = (editMode: boolean, values: any) => {
-  console.log(values)
   return {
     project_name: editMode ? values?.project_name : null,
     project_oc_number: editMode ? values?.project_oc_number : null,
@@ -33,14 +45,17 @@ const getDefaultValues = (editMode: boolean, values: any) => {
   }
 }
 
-export default function ProjectFormModal({ open, setOpen, editMode, values }: any) {
+export default function ProjectFormModal({ open, setOpen, editMode, values, userInfo, getProjectUrl }: any) {
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
 
   const { dropdownOptions: clientNameOptions } = useDropdownOptions(CLIENT_NAME_URL, "client_name")
   const { dropdownOptions: consultantNameOptions } = useDropdownOptions(CONSULTANT_NAME_URL, "consultant_name")
-  const { dropdownOptions: approverOptions } = useDropdownOptions(USER_API, "email")
+  const { dropdownOptions: approverOptions } = useDropdownOptions(
+    `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`,
+    "name"
+  )
 
   const { control, handleSubmit, reset, formState, getValues } = useForm({
     resolver: zodResolver(ProjectFormValidationSchema),
@@ -61,21 +76,25 @@ export default function ProjectFormModal({ open, setOpen, editMode, values }: an
 
   const handleCreateProject = async (projectData: any) => {
     try {
-      await createData(PROJECT_URL, projectData)
+      await createData(PROJECT_URL, false, projectData)
       setStatus("success")
       setMessage("New project created successfully")
     } catch (error: any) {
       throw error
+    } finally {
+      mutate(getProjectUrl)
     }
   }
 
   const handleUpdateProject = async (projectData: any) => {
     try {
-      await updateData(`${PROJECT_URL}/${values.name}`, projectData)
+      await updateData(`${PROJECT_URL}/${values.name}`, false, projectData)
       setStatus("success")
       setMessage("Project information updated successfully")
     } catch (error: any) {
       throw error
+    } finally {
+      mutate(getProjectUrl)
     }
   }
 
@@ -84,7 +103,6 @@ export default function ProjectFormModal({ open, setOpen, editMode, values }: an
     setStatus("error")
     try {
       const errorObj = JSON.parse(error?.message) as any
-      console.log(errorObj)
       setMessage(errorObj?.message)
     } catch (parseError) {
       // If parsing fails, use the raw error message
@@ -94,6 +112,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values }: an
 
   const onSubmit: SubmitHandler<zod.infer<typeof ProjectFormValidationSchema>> = async (data: any) => {
     setLoading(true)
+    data = { ...data, division: userInfo?.division }
     try {
       if (editMode) {
         await handleUpdateProject(data)

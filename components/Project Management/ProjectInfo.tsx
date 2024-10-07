@@ -115,7 +115,6 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
   const SubmitProjectInfo = (data: ProjectInfoFormData) => {
     isSaved("1")
     handleSave()
-    console.log("Submitted Project Info:", data)
   }
 
   const handleAddPanel = () => {

@@ -1,8 +1,8 @@
 import { Metadata } from "next"
-import { getUserRoles } from "actions/user-actions"
+import { getUserInfo } from "actions/user-actions"
 import SuperuserList from "components/User Management/SuperuserList"
-import { BTG_SUPERUSER } from "configs/constants"
 import { UserList } from "components/User Management/UserList"
+import { BTG } from "configs/constants"
 
 export const metadata: Metadata = {
   title: "EniMax - User Management",
@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 }
 
 export default async function UserManagement() {
-  const roles = await getUserRoles()
-  console.log(roles)
-  return <div>{roles.includes(BTG_SUPERUSER) ? <SuperuserList /> : <UserList />}</div>
+  const userInfo = await getUserInfo()
+  return <div>{userInfo?.division === BTG ? <SuperuserList /> : <UserList userInfo={userInfo} />}</div>
 }

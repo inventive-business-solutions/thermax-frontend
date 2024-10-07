@@ -13,7 +13,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
-import { getProjectListUrl, PROJECT_URL } from "configs/api-endpoints"
+import { PROJECT_URL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import ProjectFormModal from "./ProjectFormModal"
 
@@ -39,11 +39,12 @@ const changeNameToKey = (projectList: any[]) => {
   return projectList
 }
 
-export default function ProjectList() {
+export default function ProjectList({ userInfo }: any) {
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
-  const { data: projectList, isLoading } = useGetData(getProjectListUrl)
+  const getProjectUrl = `${PROJECT_URL}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]&order_by=creation desc`
+  const { data: projectList, isLoading } = useGetData(getProjectUrl, false)
 
   const columns: ColumnsType<DataType> = [
     { title: "Project OC No", dataIndex: "project_oc_number", key: "project_oc_number" },
@@ -60,6 +61,7 @@ export default function ProjectList() {
     },
     { title: "Created Date", dataIndex: "creation", key: "creation", render: (text) => new Date(text).toDateString() },
     { title: "Modified Date", dataIndex: "modified", key: "modified", render: (text) => new Date(text).toDateString() },
+    { title: "Approver", dataIndex: "approver", key: "approver" },
     {
       title: "Action",
       dataIndex: "action",
@@ -106,9 +108,9 @@ export default function ProjectList() {
   }
 
   const handleDeleteProject = async (selectedRowID: string) => {
-    await deleteData(`${PROJECT_URL}/${selectedRowID}`)
+    await deleteData(`${PROJECT_URL}/${selectedRowID}`, false)
     // Revalidate the cache
-    mutate(getProjectListUrl)
+    mutate(getProjectUrl)
   }
 
   return (
@@ -124,7 +126,7 @@ export default function ProjectList() {
               type="link"
               shape="circle"
               icon={<SyncOutlined spin={isLoading} />}
-              onClick={() => mutate(getProjectListUrl)}
+              onClick={() => mutate(getProjectUrl)}
             />
           </Tooltip>
           <Button type="primary" icon={<FolderAddOutlined />} iconPosition={"end"} onClick={handleAddProject}>
@@ -142,7 +144,14 @@ export default function ProjectList() {
         />
       </div>
 
-      <ProjectFormModal open={open} setOpen={setOpen} editMode={editMode} values={projectRow} />
+      <ProjectFormModal
+        open={open}
+        setOpen={setOpen}
+        editMode={editMode}
+        values={projectRow}
+        userInfo={userInfo}
+        getProjectUrl={getProjectUrl}
+      />
     </div>
   )
 }

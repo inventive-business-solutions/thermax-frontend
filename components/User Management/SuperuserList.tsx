@@ -6,48 +6,18 @@ import { useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
 import { DIVISION_API, getUsersUrl, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
+import { BTG, TagColors } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
-import SuperuserModal from "./SuperuserModal"
-import { BTG } from "configs/constants"
+import { changeNameToKey, mergeLists } from "utils/helpers"
+import SuperuserFormModal from "./SuperuserModal"
 
 interface DataType {
   key: string
   first_name?: string
   last_name?: string
-  division_superuser: string
+  division: string
   creation: string
   modified: string
-}
-
-const changeNameToKey = (projectList: any[]) => {
-  if (!projectList) return []
-  projectList.forEach((project) => {
-    project.key = project.name
-  })
-  return projectList
-}
-
-const mergeLists = (lists: any[][], relations: any[]) => {
-  // Start with the first list as the base
-  return lists.reduce((mergedList, currentList, index) => {
-    if (index === 0) {
-      return currentList // Start with the first list
-    }
-
-    const relation = relations[index - 1]
-    const { fromKey, toKey } = relation
-
-    // Create a Map from the current list for faster lookups
-    const currentListMap = new Map(currentList?.map((item) => [item[toKey], item]))
-
-    // Merge the current list with the accumulated merged list
-    return mergedList
-      ?.map((prevItem) => {
-        const matchedItem = currentListMap.get(prevItem[fromKey])
-        return matchedItem ? { ...prevItem, ...matchedItem } : null
-      })
-      .filter(Boolean) // Remove unmatched elements
-  }, [])
 }
 
 export default function SuperuserList() {
@@ -55,16 +25,12 @@ export default function SuperuserList() {
   const [editMode, setEditMode] = useState(false)
   const [userRow, setUserRow] = useState<any>(null)
   const [editEventTrigger, setEditEventTrigger] = useState(false)
-  const { data: divisionList, isLoading } = useGetData(`${DIVISION_API}?fields=["*"]`, false)
-  const { data: userList } = useGetData(`${USER_API}?fields=["name", "first_name", "last_name"]`, false)
-  const { data: thermaxUserList } = useGetData(`${THERMAX_USER_API}?fields=["*"]`, false)
-  const mergedList = mergeLists(
-    [userList, divisionList, thermaxUserList],
-    [
-      { fromKey: "name", toKey: "division_superuser" },
-      { fromKey: "division_superuser", toKey: "name" },
-    ]
+  const { data: thermaxUserList } = useGetData(
+    `${THERMAX_USER_API}?fields=["*"]&filters=[["is_superuser", "=",  "1"]]`,
+    false
   )
+  const { data: userList } = useGetData(`${USER_API}?fields=["*"]`, false)
+  const mergedList = mergeLists([thermaxUserList, userList], [{ fromKey: "name", toKey: "name" }])
 
   const columns: ColumnsType<DataType> = [
     {
@@ -82,8 +48,14 @@ export default function SuperuserList() {
       dataIndex: "name_initial",
       key: "name_initial",
     },
-    { title: "Email", dataIndex: "division_superuser", key: "division_superuser" },
-    { title: "Division", dataIndex: "division_name", key: "division_name" },
+    { title: "Email", dataIndex: "email", key: "email" },
+    {
+      title: "Division",
+      dataIndex: "division",
+      key: "division",
+      render: (text, record) => <Tag color={TagColors[record.division]}>{text}</Tag>,
+    },
+
     { title: "Modified Date", dataIndex: "modified", key: "modified", render: (text) => new Date(text).toDateString() },
     {
       title: "Action",
@@ -99,7 +71,7 @@ export default function SuperuserList() {
                   shape="circle"
                   icon={<EditOutlined />}
                   onClick={() => handleEdit(record)}
-                  disabled={!record.division_superuser}
+                  disabled={record.division === BTG}
                 />
               </div>
             </Tooltip>
@@ -113,13 +85,7 @@ export default function SuperuserList() {
                 placement="topRight"
               >
                 <div className="rounded-full hover:bg-red-100">
-                  <Button
-                    type="link"
-                    shape="circle"
-                    icon={<DeleteOutlined />}
-                    danger
-                    disabled={!record.division_superuser}
-                  />
+                  <Button type="link" shape="circle" icon={<DeleteOutlined />} danger disabled />
                 </div>
               </Popconfirm>
             </Tooltip>
@@ -140,7 +106,6 @@ export default function SuperuserList() {
     setEditEventTrigger(!editEventTrigger)
     setEditMode(true)
     setUserRow(selectedRow)
-    console.log(selectedRow)
     setOpen(true)
   }
 
@@ -161,7 +126,7 @@ export default function SuperuserList() {
               <Button
                 type="link"
                 shape="circle"
-                icon={<SyncOutlined spin={isLoading} />}
+                icon={<SyncOutlined />}
                 onClick={() => mutate(`${DIVISION_API}?fields=["*"]`)}
               />
             </div>
@@ -176,7 +141,7 @@ export default function SuperuserList() {
         <Table columns={columns} dataSource={changeNameToKey(mergedList)} pagination={{ size: "small" }} size="small" />
       </div>
 
-      <SuperuserModal
+      <SuperuserFormModal
         open={open}
         setOpen={setOpen}
         editMode={editMode}

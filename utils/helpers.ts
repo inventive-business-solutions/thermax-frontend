@@ -18,3 +18,34 @@ export const convertToFrappeDatetime = (datetime: Date): string => {
   const expires = `${expiresDate} ${expiresTime}`
   return expires
 }
+
+export const mergeLists = (lists: any[][], relations: any[]) => {
+  // Start with the first list as the base
+  return lists.reduce((mergedList, currentList, index) => {
+    if (index === 0) {
+      return currentList // Start with the first list
+    }
+
+    const relation = relations[index - 1]
+    const { fromKey, toKey } = relation
+
+    // Create a Map from the current list for faster lookups
+    const currentListMap = new Map(currentList?.map((item) => [item[toKey], item]))
+
+    // Merge the current list with the accumulated merged list
+    return mergedList
+      ?.map((prevItem) => {
+        const matchedItem = currentListMap.get(prevItem[fromKey])
+        return matchedItem ? { ...prevItem, ...matchedItem } : null
+      })
+      .filter(Boolean) // Remove unmatched elements
+  }, [])
+}
+
+export const changeNameToKey = (projectList: any[]) => {
+  if (!projectList) return []
+  projectList.forEach((project) => {
+    project.key = project.name
+  })
+  return projectList
+}

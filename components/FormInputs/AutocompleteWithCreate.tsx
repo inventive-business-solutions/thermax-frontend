@@ -45,7 +45,7 @@ export default function CustomAutoComplete({
 
     setIsLoading(true)
     try {
-      await createData(createOptionUrl, { [optionKeyName]: value })
+      await createData(createOptionUrl, false, { [optionKeyName]: value })
       onChange(value)
       mutate(createOptionUrl) // Trigger SWR to re-fetch data
       message.success(`Option "${value}" created successfully!`)

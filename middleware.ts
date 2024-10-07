@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "auth"
 import {
-  BTG_SUPERUSER,
+  BTG,
   COMPLETE_PROJECT_PAGE,
   DASHBOARD_PAGE,
   PACKAGE_PAGE,
@@ -14,9 +14,8 @@ export default auth((req) => {
     return NextResponse.next()
   }
   const { userInfo } = req.auth as any
-  const roleList = userInfo.roles.map((role: any) => role.role)
   const pathname = req.nextUrl.pathname
-  if (roleList.includes(BTG_SUPERUSER) && !pathname.includes(USER_MANAGEMENT_PAGE)) {
+  if (userInfo.division === BTG && !pathname.includes(USER_MANAGEMENT_PAGE)) {
     return NextResponse.redirect(new URL(USER_MANAGEMENT_PAGE, req.url))
   }
   // Define protected routes

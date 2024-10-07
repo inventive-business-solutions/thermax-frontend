@@ -6,9 +6,9 @@ import type { NextAuthConfig } from "next-auth"
 
 import Credentials from "next-auth/providers/credentials"
 
-import { adminApiClient } from "actions/axios-clients"
+import { getData } from "actions/crud-actions"
 import { createFrappeApiKeys } from "actions/register"
-import { USER_API } from "configs/api-endpoints"
+import { NEXT_AUTH_USER_API, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
 import { SIGN_IN } from "configs/constants"
 
 const config = {
@@ -20,22 +20,29 @@ const config = {
     Credentials({
       async authorize(credentials) {
         const { email, password } = credentials
-        const nextAuthUserRes = await adminApiClient.get(`/document/NextAuthUser/${email}`)
-        const { data } = nextAuthUserRes.data
+        const nextUser = await getData(
+          `${NEXT_AUTH_USER_API}?fields=["hashed_password", "email_verified"]&filters=[["name", "=", "${email}"]]`,
+          true
+        )
 
-        const passwordsMatch = await bcrypt.compare(password as string, data.hashed_password as string)
+        const passwordsMatch = await bcrypt.compare(password as string, nextUser[0]?.hashed_password as string)
 
         if (passwordsMatch) {
-          const userInfoRes = await adminApiClient.get(`${USER_API}/${email}`)
-          const { data: userInfo } = userInfoRes.data
+          const frappeUser = await getData(`${USER_API}/${email}`, true)
+          const thermaxUser = await getData(
+            `${THERMAX_USER_API}?fields=["division", "is_superuser"]&filters=[["email", "=", "${email}"]]`,
+            true
+          )
+          const userInfo = { ...nextUser[0], ...frappeUser, ...thermaxUser[0] }
           const api_secret = await createFrappeApiKeys(email as string)
           return {
-            first_name: userInfo.first_name,
-            last_name: userInfo.last_name,
-            email: userInfo.email,
-            email_verified: data.email_verified,
-            roles: userInfo.roles,
-            api_key: userInfo.api_key,
+            first_name: userInfo?.first_name,
+            last_name: userInfo?.last_name,
+            email: email,
+            email_verified: userInfo?.email_verified,
+            division: userInfo?.division,
+            roles: userInfo?.roles,
+            api_key: userInfo?.api_key,
             api_secret: api_secret,
           }
         }
