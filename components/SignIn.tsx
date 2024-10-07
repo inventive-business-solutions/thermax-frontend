@@ -1,6 +1,6 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Divider } from "antd"
+import { Button } from "antd"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
@@ -10,10 +10,7 @@ import * as zod from "zod"
 import { registerSuperuser } from "actions/register"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomPasswordInput from "components/FormInputs/CustomPasswordInput"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { DIVISION_API } from "configs/api-endpoints"
-import { DASHBOARD_PAGE } from "configs/constants"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { BTG, BTG_SUPERUSER, DASHBOARD_PAGE } from "configs/constants"
 import AlertNotification from "./AlertNotification"
 
 const signInSchema = zod.object({
@@ -31,7 +28,6 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
-  const { dropdownOptions: divisionNames } = useDropdownOptions(DIVISION_API, "name")
   const router = useRouter()
 
   const { control, handleSubmit, watch } = useForm<zod.infer<typeof signInSchema>>({
@@ -88,7 +84,7 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
   const onSubmit2: SubmitHandler<zod.infer<typeof createBTGUserSchema>> = async (data) => {
     setLoading(true)
     try {
-      const response = await registerSuperuser(data)
+      const response = await registerSuperuser(data, BTG_SUPERUSER, BTG)
       if (response?.status === 409) {
         setStatus("error")
         setMessage(response?.message)
@@ -126,9 +122,6 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-          <div>
-            <CustomSingleSelect name="role" control={control} label="Role" options={divisionNames} />
-          </div>
           <div>
             <CustomTextInput name="email" control={control} label="Email" type="email" />
           </div>

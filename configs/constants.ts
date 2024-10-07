@@ -29,3 +29,4 @@ export const SERVICES_SUPERUSER = `Superuser ${SERVICES}`
 export const WWS_IPG_SUPERUSER = `Superuser ${WWS_IPG}`
 export const WWS_SPG_SUPERUSER = `Superuser ${WWS_SPG}`
 export const DEVELOPER = "Developer"
+export const SYSTEM_MANAGER = "System Manager"

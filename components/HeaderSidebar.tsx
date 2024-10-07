@@ -6,7 +6,7 @@ import {
   UnorderedListOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons"
-import { Drawer, Menu, MenuProps } from "antd"
+import { Drawer, Menu, MenuProps, Tag } from "antd"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -20,7 +20,9 @@ type MenuItem = Required<MenuProps>["items"][number]
 export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const roles = useGetCurrentUserRole()
+  let roles = useGetCurrentUserRole()
+
+  console.log("roles", roles)
 
   const handleLinkClick = () => {
     setLoading(true)
@@ -99,6 +101,9 @@ export default function HeaderSidebar() {
           <Link href={"/"} className="hidden items-center gap-2 md:flex">
             <Image src={"/eni_max_logo.png"} alt="Thermax logo" width={35} height={35} className="rounded-full" />
             <span className="ml-1 text-xl font-bold">Thermax</span>
+            <div>
+              <Tag color="blue">{roles[0].replace("Superuser ", "")} Division</Tag>
+            </div>
           </Link>
         </div>
         <UserButton />

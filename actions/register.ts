@@ -48,7 +48,7 @@ const handleAPIError = (error: any) => {
 export const checkUserExists = async (email: string) => {
   try {
     const user = await getData(`${USER_API}/${email}`, true)
-    return !!user.data
+    return true
   } catch (error: any) {
     throw error
   }
@@ -137,12 +137,8 @@ export const createFrappeApiKeys = async (email: string) => {
   }
 }
 
-export const registerSuperuser = async (
-  values: { email: string; first_name: string; last_name: string },
-  superuser_role: string,
-  division_name: string
-) => {
-  const { email, first_name, last_name } = values
+export const registerSuperuser = async (values: any, superuser_role: string, division_name: string) => {
+  const { division_superuser: email, first_name, last_name } = values
 
   try {
     const userExists = await checkUserExists(email)
@@ -166,7 +162,7 @@ export const registerSuperuser = async (
         await updateData(`${DIVISION_API}/${division_name}`, true, {
           division_superuser: email,
         })
-        await sendUserVerificationEmail(email, division_name, `Team ${division_name}`, token)
+        // await sendUserVerificationEmail(email, division_name, `Team ${division_name}`, token)
       } catch (error) {
         throw error
       }
