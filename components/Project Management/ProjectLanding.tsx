@@ -25,8 +25,6 @@ export default function ProjectLanding({ params }: { params: { project_id: strin
   const [savedTabs, setSavedTabs] = useState<string[]>([]) // array to track saved tabs
   console.log("params", params)
 
-  const projectInfo = useGetData("project-info", false)
-
   // Check if a tab is saved
   const isSaved = (tabKey: string) => savedTabs.includes(tabKey)
 

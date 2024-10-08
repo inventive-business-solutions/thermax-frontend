@@ -1,117 +1,118 @@
-import { DeleteOutlined, DownOutlined, PlusOutlined } from "@ant-design/icons"
+import { DownOutlined, PercentageOutlined, PlusOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Tooltip } from "antd"
+import { Button, message, Tooltip } from "antd"
 import React, { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { SubmitHandler, useForm } from "react-hook-form"
+import { mutate } from "swr"
 import * as zod from "zod"
+import { updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import {
-  AMBIENT_TEMP_MAX_API,
-  CONTROL_SUPPLY_API,
-  CONTROL_UTILITY_PHASE_API,
-  ELECTRICAL_DESIGN_TEMP_API,
-  FAULT_LEVEL_API,
-  FREQUENCY_API,
-  FREQUENCY_VARIATION_API,
-  MAIN_SUPPLY_LV_API,
-  MAIN_SUPPLY_MV_API,
-  MAIN_SUPPLY_PHASE_API,
-  PANEL_TYPE_API,
-  PROJECT_API,
-  SEC_API,
-  SEISMIC_ZONE_API,
-  UTILITY_SUPPLY_API,
-  VOLTAGE_VARIATION_API,
-} from "configs/api-endpoints"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { PROJECT_API, PROJECT_INFO_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
 
-const sampleSystemSupply = [
-  {
-    type: "standard",
-    mainSupply: "",
-    variation: "",
-    phase: "",
-  },
-  {
-    type: "standard",
-    mainSupply: "",
-    variation: "",
-    phase: "",
-  },
-  {
-    type: "standard",
-    mainSupply: "",
-    variation: "",
-    phase: "",
-  },
-  {
-    type: "special",
-    equipmentType: "", // Different dropdown for this element
-    capacity: "", // Another different dropdown
-  },
-  {
-    type: "special",
-    equipmentType: "", // Different dropdown for this element
-    capacity: "", // Another different dropdown
-  },
-  {
-    type: "special",
-    equipmentType: "", // Different dropdown for this element
-    capacity: "", // Another different dropdown
-  },
-  {
-    type: "custom",
-    customField1: "", // Custom field for this element
-    customField2: "", // Another custom field
-  },
-]
-
-const customValidationSchema = zod.object({
+const ProjectInfoSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
   project_oc_number: zod.string({
     required_error: "Project OC number is required",
     message: "Project OC number is required",
   }),
   client_name: zod.string({ required_error: "Client name is required", message: "Client name is required" }),
-  project_location: zod.string().optional(),
-  systemSupply: zod.array(
-    zod.object({
-      mainSupply: zod.string().optional(),
-      variation: zod.string().optional(),
-      phase: zod.string().optional(),
-      equipmentType: zod.string().optional(),
-      capacity: zod.string().optional(),
-      customField1: zod.string().optional(),
-      customField2: zod.string().optional(),
-    })
-  ),
-  panel_type: zod.string().optional(),
+  project_location: zod.string(),
+  main_supply_mv: zod.string({ required_error: "Main supply MV is required", message: "Main supply MV is required" }),
+  main_supply_mv_variation: zod.string({
+    required_error: "Main supply MV variation is required",
+    message: "Main supply MV variation is required",
+  }),
+  main_supply_mv_phase: zod.string({
+    required_error: "Main supply MV phase is required",
+    message: "Main supply MV phase is required",
+  }),
+  main_supply_lv: zod.string({ required_error: "Main supply LV is required", message: "Main supply LV is required" }),
+  main_supply_lv_variation: zod.string({
+    required_error: "Main supply LV variation is required",
+    message: "Main supply LV variation is required",
+  }),
+  main_supply_lv_phase: zod.string({
+    required_error: "Main supply LV phase is required",
+    message: "Main supply LV phase is required",
+  }),
+  control_supply: zod.string({ required_error: "Control supply is required", message: "Control supply is required" }),
+  control_supply_variation: zod.string({
+    required_error: "Control supply variation is required",
+    message: "Control supply variation is required",
+  }),
+  control_supply_phase: zod.string({
+    required_error: "Control supply phase is required",
+    message: "Control supply phase is required",
+  }),
+  utility_supply: zod.string({ required_error: "Utility supply is required", message: "Utility supply is required" }),
+  utility_supply_variation: zod.string({
+    required_error: "Utility supply variation is required",
+    message: "Utility supply variation is required",
+  }),
+  utility_supply_phase: zod.string({
+    required_error: "Utility supply phase is required",
+    message: "Utility supply phase is required",
+  }),
+  frequency: zod.string({ required_error: "Frequency is required", message: "Frequency is required" }),
+  frequency_variation: zod.string({
+    required_error: "Frequency variation is required",
+    message: "Frequency variation is required",
+  }),
+  fault_level: zod.string({ required_error: "Fault level is required", message: "Fault level is required" }),
+  sec: zod.string({ required_error: "Sec is required", message: "Sec is required" }),
+  ambient_temperature_max: zod.string({
+    required_error: "Ambient temperature max is required",
+    message: "Ambient temperature max is required",
+  }),
+  ambient_temperature_min: zod
+    .string({ required_error: "Ambient temperature min is required", message: "Ambient temperature min is required" })
+    .min(1, "Ambient temperature min is required"),
+  electrical_design_temperature: zod.string({
+    required_error: "Electrical design temperature is required",
+    message: "Electrical design temperature is required",
+  }),
+  seismic_zone: zod.string({ required_error: "Seismic zone is required", message: "Seismic zone is required" }),
 })
 
-const getDefaultValues = (editMode: boolean, values: any) => {
+const getDefaultValues = (isEdit: boolean, projectData: any) => {
   return {
-    project_name: editMode ? values?.project_name : null,
-    project_oc_number: editMode ? values?.project_oc_number : null,
-    client_name: editMode ? values?.client_name : null,
-    name_initial: editMode ? values?.name_initial : null,
-    digital_signature: editMode ? (!values?.digital_signature ? [] : [values?.digital_signature]) : [],
+    project_name: projectData?.project_name,
+    project_oc_number: projectData?.project_oc_number,
+    client_name: projectData?.client_name,
+    project_location: projectData?.project_location,
+    main_supply_mv: projectData?.main_supply_mv || "11 KV",
+    main_supply_mv_variation: projectData?.main_supply_mv_variation || "+/- 10",
+    main_supply_mv_phase: projectData?.main_supply_mv_phase || "3 Phase / 4 Wire",
+    main_supply_lv: projectData?.main_supply_lv || "415 VAC",
+    main_supply_lv_variation: projectData?.main_supply_lv_variation || "+/- 10",
+    main_supply_lv_phase: projectData?.main_supply_lv_phase || "3 Phase / 4 Wire",
+    control_supply: projectData?.control_supply || "230 VAC",
+    control_supply_variation: projectData?.control_supply_variation || "+/- 10",
+    control_supply_phase: projectData?.control_supply_phase || "1 Phase",
+    utility_supply: projectData?.utility_supply || "230 VAC",
+    utility_supply_variation: projectData?.utility_supply_variation || "+/- 10",
+    utility_supply_phase: projectData?.utility_supply_phase || "1 Phase",
+    frequency: projectData?.frequency || "50",
+    frequency_variation: projectData?.frequency_variation || "+/- 5",
+    fault_level: projectData?.fault_level || "50",
+    sec: projectData?.sec || "1",
+    ambient_temperature_max: projectData?.ambient_temperature_max || "40",
+    ambient_temperature_min: projectData?.ambient_temperature_min || "40",
+    electrical_design_temperature: projectData?.electrical_design_temperature || "50",
+    seismic_zone: projectData?.seismic_zone || "2",
   }
 }
 
-type ProjectInfoFormData = zod.infer<typeof customValidationSchema>
-
-interface ProjectInfoProps {
-  isSaved: (tabKey: string) => void
-  handleSave: () => void
-  changeTab: (Tab: string) => void
-  params: { project_id: string }
-}
-
-const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTab, params }) => {
-  const { data: projectData } = useGetData(`${PROJECT_API}/${params.project_id}`, false)
+const ProjectInfo = ({ params }: any) => {
+  const getProjectMetadataUrl = `${PROJECT_API}/${params.project_id}`
+  const getProjectInfoUrl = `${PROJECT_INFO_API}/${params.project_id}`
+  const { data: projectMetadata } = useGetData(getProjectMetadataUrl, false)
+  const { data: projectInfo } = useGetData(getProjectInfoUrl, false)
+  const [loading, setLoading] = useState(false)
+  const projectData = React.useMemo(() => ({ ...projectMetadata, ...projectInfo }), [projectMetadata, projectInfo])
   const {
     panelTypeOptions,
     mainSupplyMVOptions,
@@ -130,26 +131,8 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
     seismicZoneOptions,
   } = useProjectInfoDropdowns()
 
-  const [panelArray, setPanelArray] = useState([
-    {
-      id: 1,
-      panel_name: "MCC",
-      panel_type: "LT-MCC",
-    },
-    {
-      id: 2,
-      panel_name: "PCC",
-      panel_type: "LT-PCC",
-    },
-    {
-      id: 3,
-      panel_name: "MCC cum PCC",
-      panel_type: "LT-PLC",
-    },
-  ])
-
-  const { control, handleSubmit, setValue, reset } = useForm({
-    resolver: zodResolver(customValidationSchema),
+  const { control, handleSubmit, reset } = useForm({
+    resolver: zodResolver(ProjectInfoSchema),
     defaultValues: getDefaultValues(true, projectData),
     mode: "onBlur",
   })
@@ -158,39 +141,35 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
     reset(getDefaultValues(true, projectData))
   }, [reset, projectData])
 
-  const SubmitProjectInfo = (data: ProjectInfoFormData) => {
-    isSaved("1")
-    handleSave()
+  // Helper function for handling errors
+  const handleError = (error: any) => {
+    try {
+      const errorObj = JSON.parse(error?.message) as any
+      message.error(errorObj?.message)
+    } catch (parseError) {
+      // If parsing fails, use the raw error message
+      message.error(error?.message || "An unknown error occurred")
+    }
   }
 
-  const handleAddPanel = () => {
-    setPanelArray((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        panel_name: "",
-        panel_type: "",
-      },
-    ])
-    setValue("panelSummary", panelArray)
-  }
-
-  const handlePanelRemove = (id: number) => {
-    const newArray = panelArray.filter((panel) => panel.id !== id)
-    setPanelArray(newArray)
-    setValue("panelSummary", newArray)
-  }
-
-  const handlePanelChange = (id: number, field: string, value: string) => {
-    const updatedArray = panelArray.map((panel) => (panel.id === id ? { ...panel, [field]: value } : panel))
-    setPanelArray(updatedArray)
-    setValue("panelSummary", updatedArray)
+  const onSubmit: SubmitHandler<zod.infer<typeof ProjectInfoSchema>> = async (data: any) => {
+    setLoading(true)
+    try {
+      await updateData(getProjectInfoUrl, false, data)
+      message.success("Project information updated successfully")
+    } catch (error: any) {
+      handleError(error)
+    } finally {
+      setLoading(false)
+      mutate(getProjectInfoUrl)
+    }
+    console.log(data)
   }
 
   return (
     <div className="flex flex-col gap-2">
       <div className="font-bold underline">PROJECT INFORMATION TAB</div>
-      <form onSubmit={handleSubmit(SubmitProjectInfo)} className="flex flex-col gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
         <div className="flex gap-2">
           <div className="flex-1">
             <CustomTextInput name="project_name" control={control} label="Project Name" type="text" disabled />
@@ -215,7 +194,7 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               suffixIcon={
                 <>
-                  <p>Volts</p>
+                  <p className="font-semibold text-blue-500">Volts</p>
                   <DownOutlined />
                 </>
               }
@@ -230,6 +209,12 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               label="Variation"
               options={voltageVariationOptions}
+              suffixIcon={
+                <>
+                  <PercentageOutlined style={{ color: "#3b82f6" }} />
+                  <DownOutlined />
+                </>
+              }
             />
           </div>
           <div className="flex-1">
@@ -248,7 +233,7 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               suffixIcon={
                 <>
-                  <p>Volts</p>
+                  <p className="font-semibold text-blue-500">Volts</p>
                   <DownOutlined />
                 </>
               }
@@ -262,6 +247,12 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               label="Variation"
               options={voltageVariationOptions}
+              suffixIcon={
+                <>
+                  <PercentageOutlined style={{ color: "#3b82f6" }} />
+                  <DownOutlined />
+                </>
+              }
             />
           </div>
           <div className="flex-1">
@@ -280,7 +271,7 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               suffixIcon={
                 <>
-                  <p>Volts</p>
+                  <p className="font-semibold text-blue-500">Volts</p>
                   <DownOutlined />
                 </>
               }
@@ -294,6 +285,12 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               label="Variation"
               options={voltageVariationOptions}
+              suffixIcon={
+                <>
+                  <PercentageOutlined style={{ color: "#3b82f6" }} />
+                  <DownOutlined />
+                </>
+              }
             />
           </div>
           <div className="flex-1">
@@ -312,7 +309,7 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               suffixIcon={
                 <>
-                  <p>Volts</p>
+                  <p className="font-semibold text-blue-500">Volts</p>
                   <DownOutlined />
                 </>
               }
@@ -326,6 +323,12 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               label="Variation"
               options={voltageVariationOptions}
+              suffixIcon={
+                <>
+                  <PercentageOutlined style={{ color: "#3b82f6" }} />
+                  <DownOutlined />
+                </>
+              }
             />
           </div>
           <div className="flex-1">
@@ -339,7 +342,18 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
         </div>
         <div className="flex w-2/3 gap-2">
           <div className="flex-1">
-            <CustomSingleSelect name="frequency" control={control} label="Frequency" options={frequencyOptions} />
+            <CustomSingleSelect
+              name="frequency"
+              control={control}
+              label="Frequency"
+              options={frequencyOptions}
+              suffixIcon={
+                <>
+                  <p className="font-semibold text-blue-500">Hz</p>
+                  <DownOutlined />
+                </>
+              }
+            />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
@@ -347,12 +361,29 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               label="Variation"
               options={frequencyVariationOptions}
+              suffixIcon={
+                <>
+                  <PercentageOutlined style={{ color: "#3b82f6" }} />
+                  <DownOutlined />
+                </>
+              }
             />
           </div>
         </div>
         <div className="flex w-2/3 gap-2">
           <div className="flex-1">
-            <CustomSingleSelect name="fault_level" control={control} label="Fault Level" options={faultLevelOptions} />
+            <CustomSingleSelect
+              name="fault_level"
+              control={control}
+              label="Fault Level"
+              options={faultLevelOptions}
+              suffixIcon={
+                <>
+                  <p className="font-semibold text-blue-500">KA</p>
+                  <DownOutlined />
+                </>
+              }
+            />
           </div>
           <div className="flex-1">
             <CustomSingleSelect name="sec" control={control} label="Sec" options={secOptions} />
@@ -365,10 +396,26 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               label="Ambient Temperature [Max]"
               options={ambientTempMaxOptions}
+              suffixIcon={
+                <>
+                  <p className="font-semibold text-blue-500">Deg C</p>
+                  <DownOutlined />
+                </>
+              }
             />
           </div>
           <div className="flex-1">
-            <CustomTextInput name="ambient_temperature_min" control={control} label="Ambient Temperature [Min]" />
+            <CustomTextInput
+              name="ambient_temperature_min"
+              control={control}
+              label="Ambient Temperature [Min]"
+              type="text"
+              suffix={
+                <>
+                  <p className="text-xs font-semibold text-blue-400">Deg C</p>
+                </>
+              }
+            />
           </div>
         </div>
         <div className="flex w-2/3 gap-2">
@@ -378,6 +425,12 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
               control={control}
               label="Electrical Design Temperature"
               options={electricalDesignTempOptions}
+              suffixIcon={
+                <>
+                  <p className="font-semibold text-blue-500">Deg C</p>
+                  <DownOutlined />
+                </>
+              }
             />
           </div>
           <div className="flex-1">
@@ -393,62 +446,22 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ isSaved, handleSave, changeTa
         <div className="flex flex-col">
           <div className="font-bold">Panel Summary</div>
           <div className="flex items-center justify-start gap-4">
-            <div>Number of Panels: {panelArray.length}</div>
-            <Button type="primary" iconPosition="start" onClick={handleAddPanel} icon={<PlusOutlined />}>
+            <div>Number of Panels:</div>
+            <Button type="primary" iconPosition="start" icon={<PlusOutlined />}>
               Add Panel
             </Button>
           </div>
         </div>
 
-        <div className="col-span-2  me-4 min-h-[200px] overflow-y-scroll">
-          <div className="flex w-full flex-col justify-start gap-3">
-            {panelArray.map((item, index) => (
-              <div key={index} className="mt-3 grid grid-cols-9 gap-4">
-                <div>{index + 1}</div>
-                <div className="col-span-2">
-                  <CustomTextInput
-                    name={`panelSummary.${index}.panel_name`}
-                    label=""
-                    type="text"
-                    control={control}
-                    defaultValue={item.panel_name}
-                    onChange={(e) => handlePanelChange(item.id, "panel_name", e.target.value)}
-                  />
-                </div>
-                <div className="col-span-2">
-                  <CustomSingleSelect name="panel_type" control={control} label="" options={panelTypeOptions} />
-                </div>
-                <Button type="primary" icon={<DeleteOutlined />} onClick={() => handlePanelRemove(item.id)} danger />
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className="mt-4 flex flex-row items-end justify-end gap-2">
           <Button type="primary">Go to SLD</Button>
-          <Tooltip title="Save" placement="top">
-            <Button type="primary" onClick={handleSubmit(SubmitProjectInfo)}>
-              Save
-            </Button>
-          </Tooltip>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            Save
+          </Button>
           <Button type="primary">Document List</Button>
           <Button type="primary">Instrumental</Button>
           <Tooltip title="Save and go to Design Basis" placement="top">
-            <Button
-              type="primary"
-              onClick={async () => {
-                try {
-                  isSaved("1")
-                  handleSave()
-                  changeTab("2")
-                } catch (error) {
-                  console.error("Error during submission:", error)
-                  // Optionally, handle the error (e.g., show a notification or alert)
-                }
-              }}
-            >
-              Electrical
-            </Button>
+            <Button type="primary">Electrical</Button>
           </Tooltip>
         </div>
       </form>

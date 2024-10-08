@@ -6,6 +6,7 @@ export const CLIENT_NAME_API = `/document/Client?fields=["*"]`
 export const CONSULTANT_NAME_API = `/document/Consultant?fields=["*"]`
 
 export const PROJECT_API = `/document/Project`
+export const PROJECT_INFO_API = `/document/Project Information`
 export const USER_API = `/document/User`
 export const NEXT_AUTH_USER_API = `/document/NextAuthUser`
 export const THERMAX_USER_API = `/document/Thermax Extended User`
