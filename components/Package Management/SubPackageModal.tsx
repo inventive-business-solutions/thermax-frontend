@@ -8,7 +8,7 @@ import { createData, updateData } from "actions/crud-actions"
 import AlertNotification from "components/AlertNotification"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { AREA_CLASSIFICATION_URL, GET_PKG_URL, SUB_PKG_URL } from "configs/api-endpoints"
+import { AREA_CLASSIFICATION_API, GET_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { createDropdownOptions } from "./package-management.logic"
 
@@ -27,7 +27,7 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 }
 
 export default function SubPackageModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
-  const { data: areaClassificationData } = useGetData(AREA_CLASSIFICATION_URL)
+  const { data: areaClassificationData } = useGetData(AREA_CLASSIFICATION_API)
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
@@ -50,7 +50,7 @@ export default function SubPackageModal({ open, setOpen, editMode, values, editE
     startTransition(async () => {
       if (editMode) {
         try {
-          await updateData(`${SUB_PKG_URL}/${values.name}`, false, data)
+          await updateData(`${SUB_PKG_API}/${values.name}`, false, data)
           setStatus("success")
           setMessage("Sub package updated successfully")
         } catch (error: any) {
@@ -61,7 +61,7 @@ export default function SubPackageModal({ open, setOpen, editMode, values, editE
       } else {
         data["main_package_name"] = values.name
         try {
-          await createData(SUB_PKG_URL, data)
+          await createData(SUB_PKG_API, data)
           setStatus("success")
           setMessage("Sub package created successfully")
         } catch (error: any) {
@@ -71,7 +71,7 @@ export default function SubPackageModal({ open, setOpen, editMode, values, editE
         }
       }
     })
-    mutate(GET_PKG_URL)
+    mutate(GET_PKG_API)
   }
   return (
     <Modal

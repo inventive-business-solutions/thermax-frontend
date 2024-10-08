@@ -6,6 +6,8 @@ import { useState } from "react"
 import DesignBasis from "components/Project Management/Design Basis/DesignBasis"
 import ElectricalLoadList from "components/Project Management/Electrical Load List/ElectricalLoadList"
 import ProjectInfo from "components/Project Management/ProjectInfo"
+import { useGetData } from "hooks/useCRUD"
+import { useRouter } from "next/navigation"
 
 const tabData = [
   { label: "Project Information", key: "1" },
@@ -18,9 +20,12 @@ const tabData = [
   { label: "Sizing", key: "8" },
 ]
 
-export default function Page() {
+export default function ProjectLanding({ params }: { params: { project_id: string } }) {
   const [openTab, setOpenTab] = useState<string>("1") // current open tab
   const [savedTabs, setSavedTabs] = useState<string[]>([]) // array to track saved tabs
+  console.log("params", params)
+
+  const projectInfo = useGetData("project-info", false)
 
   // Check if a tab is saved
   const isSaved = (tabKey: string) => savedTabs.includes(tabKey)
@@ -58,7 +63,7 @@ export default function Page() {
               <div
                 key={tab.key}
                 className={
-                  "white grid flex-auto cursor-pointer place-content-center rounded border bg-orange-500 p-2 text-sm font-bold uppercase tracking-wide text-white"
+                  "white grid flex-auto cursor-pointer place-content-center rounded border bg-orange-500 p-1 text-sm font-bold uppercase tracking-wide text-white"
                 }
                 onClick={(e) => {
                   e.preventDefault()
@@ -73,7 +78,7 @@ export default function Page() {
           <div className="">
             {/* Tab Content */}
             <div className={openTab === "1" ? "block" : "hidden"} id="link1">
-              <ProjectInfo isSaved={isSaved} handleSave={handleSave} changeTab={changeTab} />
+              <ProjectInfo isSaved={isSaved} handleSave={handleSave} changeTab={changeTab} params={params} />
             </div>
 
             <div className={openTab === "2" ? "block" : "hidden"} id="link2">
