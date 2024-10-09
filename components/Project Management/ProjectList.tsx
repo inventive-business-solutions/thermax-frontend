@@ -13,7 +13,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
-import { PROJECT_URL } from "configs/api-endpoints"
+import { PROJECT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import ProjectFormModal from "./ProjectFormModal"
 
@@ -43,7 +43,7 @@ export default function ProjectList({ userInfo }: any) {
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
-  const getProjectUrl = `${PROJECT_URL}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]&order_by=creation desc`
+  const getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]&order_by=creation desc`
   const { data: projectList, isLoading } = useGetData(getProjectUrl, false)
 
   const columns: ColumnsType<DataType> = [
@@ -108,7 +108,7 @@ export default function ProjectList({ userInfo }: any) {
   }
 
   const handleDeleteProject = async (selectedRowID: string) => {
-    await deleteData(`${PROJECT_URL}/${selectedRowID}`, false)
+    await deleteData(`${PROJECT_API}/${selectedRowID}`, false)
     // Revalidate the cache
     mutate(getProjectUrl)
   }
