@@ -10,12 +10,13 @@ import {
 import { Button, GetProps, Input, Popconfirm, Table, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
 import { PROJECT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import ProjectFormModal from "./ProjectFormModal"
+import { useLoading } from "hooks/useLoading"
 
 interface DataType {
   key: string
@@ -45,6 +46,10 @@ export default function ProjectList({ userInfo }: any) {
   const [projectRow, setProjectRow] = useState<any>(null)
   const getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]&order_by=creation desc`
   const { data: projectList, isLoading } = useGetData(getProjectUrl, false)
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+  }, [])
 
   const columns: ColumnsType<DataType> = [
     { title: "Project OC No", dataIndex: "project_oc_number", key: "project_oc_number" },
@@ -54,7 +59,7 @@ export default function ProjectList({ userInfo }: any) {
       dataIndex: "project_name",
       key: "project_name",
       render: (text, record) => (
-        <Link href={`/project/${record.name}`} className="hover:underline">
+        <Link href={`/project/${record.name}`} className="hover:underline" onClick={() => setModalLoading(true)}>
           {record.project_name}
         </Link>
       ),

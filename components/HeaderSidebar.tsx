@@ -7,63 +7,47 @@ import {
   UserSwitchOutlined,
 } from "@ant-design/icons"
 import { Drawer, Menu, MenuProps, Tag } from "antd"
+import { set } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { BTG, HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, TagColors, USER_MANAGEMENT_PAGE } from "configs/constants"
 import { useCurrentUser } from "hooks/use-current-user"
-import Loader from "./Loader"
 import { UserButton } from "./UserButton"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const userInfo = useCurrentUser()
+  const router = useRouter()
 
-  const handleLinkClick = () => {
-    setLoading(true)
+  const handleLinkClick = (path: string) => {
     setIsSidebarOpen(false)
-    setLoading(false)
+    router.push(path)
   }
 
   const items: MenuItem[] = [
     {
       key: "1",
-      label: (
-        <Link href={HOME_PAGE} onClick={handleLinkClick}>
-          Dashboard
-        </Link>
-      ),
+      label: <div onClick={() => handleLinkClick(HOME_PAGE)}>Dashboard</div>,
       icon: <DashboardOutlined />,
     },
     {
       key: "2",
-      label: (
-        <Link href={PROJECTS_PAGE} onClick={handleLinkClick}>
-          {" "}
-          Project List
-        </Link>
-      ),
+      label: <div onClick={() => handleLinkClick(PROJECTS_PAGE)}> Project List</div>,
       icon: <UnorderedListOutlined />,
     },
     {
       key: "3",
-      label: (
-        <Link href={USER_MANAGEMENT_PAGE} onClick={handleLinkClick}>
-          User Management
-        </Link>
-      ),
+      label: <div onClick={() => handleLinkClick(USER_MANAGEMENT_PAGE)}> User Management</div>,
+
       icon: <UserSwitchOutlined />,
     },
     {
       key: "4",
-      label: (
-        <Link href={PACKAGE_PAGE} onClick={handleLinkClick}>
-          Package Management
-        </Link>
-      ),
+      label: <div onClick={() => handleLinkClick(PACKAGE_PAGE)}> Package Management</div>,
       icon: <AppstoreAddOutlined />,
     },
   ]
@@ -80,10 +64,6 @@ export default function HeaderSidebar() {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
-  }
-
-  if (loading) {
-    return <Loader />
   }
 
   return (

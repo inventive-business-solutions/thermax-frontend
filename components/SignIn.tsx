@@ -1,10 +1,10 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "antd"
+import { Button, Modal } from "antd"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import * as zod from "zod"
 import { CreateUser } from "actions/register"
@@ -12,6 +12,7 @@ import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomPasswordInput from "components/FormInputs/CustomPasswordInput"
 import { BTG, DASHBOARD_PAGE, THERMAX_SUPERUSER } from "configs/constants"
 import AlertNotification from "./AlertNotification"
+import { useLoading } from "hooks/useLoading"
 
 const signInSchema = zod.object({
   email: zod.string({ required_error: "Email address is required" }).email({ message: "Invalid email address" }),
@@ -26,9 +27,14 @@ const createBTGUserSchema = zod.object({
 
 export default function SignIn({ authSecret }: { authSecret: string }) {
   const [loading, setLoading] = useState(false)
+  const { setLoading: setModalLoading } = useLoading()
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
   const router = useRouter()
+
+  useEffect(() => {
+    setModalLoading(false)
+  }, [])
 
   const { control, handleSubmit, watch } = useForm<zod.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -63,6 +69,7 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
       // If no error then redirect to the desired page
       setStatus("success")
       setMessage("Successfully signed in. Redirecting...")
+      setModalLoading(true)
       router.push(DASHBOARD_PAGE)
     }
     switch (signInRes?.error) {

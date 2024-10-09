@@ -80,7 +80,7 @@ export default function ProjectLanding({ params }: { params: { project_id: strin
             </div>
 
             <div className={openTab === "2" ? "block" : "hidden"} id="link2">
-              <DesignBasis handleSave={handleSave} />
+              <DesignBasis />
             </div>
 
             <div className={openTab === "3" ? "block" : "hidden"} id="link3">
