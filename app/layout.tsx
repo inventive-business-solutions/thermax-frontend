@@ -4,8 +4,8 @@ import { Poppins, Roboto } from "next/font/google"
 import "styles/tailwind.css"
 import { SessionProvider } from "next-auth/react"
 import { auth } from "auth"
-import { LoadingProvider } from "./context/BaseContext"
 import ModalLoader from "components/ModalLoader"
+import { LoadingProvider } from "./context/BaseContext"
 
 export const metadata: Metadata = {
   title: "EniMax",

@@ -2,15 +2,15 @@
 
 import { DeleteOutlined, EditOutlined, SyncOutlined, UserAddOutlined } from "@ant-design/icons"
 import { Button, Popconfirm, Table, Tag, Tooltip } from "antd"
+import { ColumnsType } from "antd/es/table"
 import { useState } from "react"
 import { mutate } from "swr"
+import { deleteData } from "actions/crud-actions"
 import { getUsersUrl, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
+import { BTG, TagColors } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
 import { changeNameToKey, mergeLists } from "utils/helpers"
 import UserFormModal from "./UserModal"
-import { ColumnsType } from "antd/es/table"
-import { BTG, TagColors } from "configs/constants"
-import { deleteData } from "actions/crud-actions"
 
 interface DataType {
   key: string

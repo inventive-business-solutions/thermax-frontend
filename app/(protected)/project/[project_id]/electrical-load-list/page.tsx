@@ -1,7 +1,12 @@
 import React from "react"
+import ElectricalLoadList from "components/Project Management/Electrical Load List/ElectricalLoadList"
 
-const ElectricalLoadList = () => {
-  return <div>ElectricalLoadList</div>
+const ElectricalLoadListPage = () => {
+  return (
+    <>
+      <ElectricalLoadList />
+    </>
+  )
 }
 
-export default ElectricalLoadList
+export default ElectricalLoadListPage

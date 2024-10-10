@@ -13,8 +13,9 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { BTG, HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, TagColors, USER_MANAGEMENT_PAGE } from "configs/constants"
-import { useCurrentUser } from "hooks/use-current-user"
+import { useCurrentUser } from "hooks/useCurrentUser"
 import { UserButton } from "./UserButton"
+import { useLoading } from "hooks/useLoading"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
@@ -22,8 +23,10 @@ export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const userInfo = useCurrentUser()
   const router = useRouter()
+  const { setLoading } = useLoading()
 
   const handleLinkClick = (path: string) => {
+    setLoading(true)
     setIsSidebarOpen(false)
     router.push(path)
   }

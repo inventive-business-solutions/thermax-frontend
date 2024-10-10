@@ -11,8 +11,8 @@ import { CreateUser } from "actions/register"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomPasswordInput from "components/FormInputs/CustomPasswordInput"
 import { BTG, DASHBOARD_PAGE, THERMAX_SUPERUSER } from "configs/constants"
-import AlertNotification from "./AlertNotification"
 import { useLoading } from "hooks/useLoading"
+import AlertNotification from "./AlertNotification"
 
 const signInSchema = zod.object({
   email: zod.string({ required_error: "Email address is required" }).email({ message: "Invalid email address" }),

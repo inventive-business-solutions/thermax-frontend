@@ -1,7 +1,7 @@
 "use client"
 
-import { useLoading } from "hooks/useLoading"
 import { Circles } from "react-loader-spinner"
+import { useLoading } from "hooks/useLoading"
 
 export default function ModalLoader() {
   const { isLoading } = useLoading()

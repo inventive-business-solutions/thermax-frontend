@@ -15,8 +15,9 @@ import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
 import { PROJECT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
-import ProjectFormModal from "./ProjectFormModal"
 import { useLoading } from "hooks/useLoading"
+import ProjectFormModal from "./ProjectFormModal"
+import { UploadProjectFilesModal } from "./UploadProjectFilesModal"
 
 interface DataType {
   key: string
@@ -42,6 +43,7 @@ const changeNameToKey = (projectList: any[]) => {
 
 export default function ProjectList({ userInfo }: any) {
   const [open, setOpen] = useState(false)
+  const [uploadFileOpen, setUploadFileOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
   const getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]&order_by=creation desc`
@@ -77,7 +79,7 @@ export default function ProjectList({ userInfo }: any) {
             <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEditProject(record)} />
           </Tooltip>
           <Tooltip placement="top" title="Upload Files">
-            <Button type="link" shape="circle" icon={<UploadOutlined />} />
+            <Button type="link" shape="circle" icon={<UploadOutlined />} onClick={() => handleUploadFiles(record)} />
           </Tooltip>
           <Tooltip placement="top" title="Complete Project">
             <Button type="link" shape="circle" icon={<FileDoneOutlined />} />
@@ -112,6 +114,11 @@ export default function ProjectList({ userInfo }: any) {
     setProjectRow(selectedRow)
   }
 
+  const handleUploadFiles = (selectedRow: any) => {
+    setUploadFileOpen(true)
+    setProjectRow(selectedRow)
+  }
+
   const handleDeleteProject = async (selectedRowID: string) => {
     await deleteData(`${PROJECT_API}/${selectedRowID}`, false)
     // Revalidate the cache
@@ -139,7 +146,6 @@ export default function ProjectList({ userInfo }: any) {
           </Button>
         </div>
       </div>
-
       <div className="shadow-md">
         <Table
           columns={columns}
@@ -148,7 +154,6 @@ export default function ProjectList({ userInfo }: any) {
           size="small"
         />
       </div>
-
       <ProjectFormModal
         open={open}
         setOpen={setOpen}
@@ -156,6 +161,12 @@ export default function ProjectList({ userInfo }: any) {
         values={projectRow}
         userInfo={userInfo}
         getProjectUrl={getProjectUrl}
+      />
+      <UploadProjectFilesModal
+        open={uploadFileOpen}
+        setOpen={setUploadFileOpen}
+        values={projectRow}
+        userInfo={userInfo}
       />
     </div>
   )

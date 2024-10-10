@@ -1,7 +1,7 @@
 import axios from "axios"
 
 import FormData from "form-data"
-import { getFrappeAdminToken, getFrappeBaseUrl } from "../actions/frappe-key-secret"
+import { getFrappeAdminToken, getFrappeBaseUrl } from "../../actions/frappe-key-secret"
 
 export const uploadFile = async (file: File) => {
   const frappeToken = await getFrappeAdminToken()

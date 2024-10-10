@@ -17,11 +17,7 @@ const tabData = [
   { label: "Motor Canopy List", key: "4" },
 ]
 
-interface ElectricalLoadListProps {
-  handleSave: () => void
-}
-
-const ElectricalLoadList: React.FC<ElectricalLoadListProps> = ({ handleSave }) => {
+const ElectricalLoadList = () => {
   const [openTab, setOpenTab] = useState<string>("1")
 
   return (
@@ -75,9 +71,7 @@ const ElectricalLoadList: React.FC<ElectricalLoadListProps> = ({ handleSave }) =
         </div>
       </div>
       <div className="flex w-full flex-row justify-end">
-        <Button type="primary" onClick={handleSave}>
-          Save
-        </Button>
+        <Button type="primary">Save</Button>
       </div>
     </>
   )

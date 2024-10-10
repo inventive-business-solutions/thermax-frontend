@@ -11,8 +11,8 @@ import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { PROJECT_API, PROJECT_INFO_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
-import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
 import { useLoading } from "hooks/useLoading"
+import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
 
 const ProjectInfoSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),

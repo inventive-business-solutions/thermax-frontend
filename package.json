@@ -26,6 +26,7 @@
     "@ant-design/cssinjs": "^1.21.1",
     "@ant-design/icons": "^5.4.0",
     "@ant-design/nextjs-registry": "^1.0.1",
+    "@aws-sdk/client-s3": "^3.667.0",
     "@hookform/resolvers": "^3.9.0",
     "@next/bundle-analyzer": "^14.2.3",
     "@opentelemetry/api-logs": "0.46.0",

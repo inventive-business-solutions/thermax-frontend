@@ -3,11 +3,11 @@
 import { BellFilled, CopyOutlined, DownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
 import { Button, Table, TableColumnType, Tooltip } from "antd"
 import React, { useEffect, useState } from "react"
+import { useLoading } from "hooks/useLoading"
 import GeneralInfo from "./GeneralInfo"
 import MainLayout from "./Layout/Main"
 import MainMCC from "./MCC-PCC/Main"
 import MotorParameters from "./MotorParameters"
-import { useLoading } from "hooks/useLoading"
 
 const tabData = [
   { label: "Document Revision", key: "1" },

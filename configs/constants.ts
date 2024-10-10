@@ -21,6 +21,14 @@ export const SERVICES = "Services"
 export const WWS_IPG = "WWS IPG"
 export const WWS_SPG = "WWS SPG"
 
+export const S3FolderMapping = {
+  [ENVIRO]: "ENVIRO",
+  [HEATING]: "HEATING",
+  [SERVICES]: "WWS-SERVICES",
+  [WWS_IPG]: "WWS-IPG",
+  [WWS_SPG]: "WWS-SPG",
+}
+
 // Role Names
 export const THERMAX_USER = "Thermax User"
 export const THERMAX_SUPERUSER = `Thermax Superuser`

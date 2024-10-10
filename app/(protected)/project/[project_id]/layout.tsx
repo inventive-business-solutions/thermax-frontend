@@ -1,8 +1,10 @@
 "use client"
-import { useLoading } from "hooks/useLoading"
+import { QuestionCircleOutlined } from "@ant-design/icons"
+import { FloatButton } from "antd"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import React from "react"
+import { useLoading } from "hooks/useLoading"
 
 export default function Layout({ children, params }: { children: React.ReactNode; params: { project_id: string } }) {
   const router = useRouter()
@@ -90,6 +92,7 @@ export default function Layout({ children, params }: { children: React.ReactNode
           </Link>
         </nav>
         <main>{children}</main>
+        <FloatButton icon={<QuestionCircleOutlined />} />
       </div>
     </>
   )

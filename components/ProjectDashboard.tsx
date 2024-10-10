@@ -2,10 +2,10 @@
 import { Card } from "antd"
 import Image from "next/image"
 import Link from "next/link"
-import { PROJECTS_PAGE } from "configs/constants"
-import LogoImage from "../public/eni_max_logo.png"
 import { useEffect, useState } from "react"
+import { PROJECTS_PAGE } from "configs/constants"
 import { useLoading } from "hooks/useLoading"
+import LogoImage from "../public/eni_max_logo.png"
 
 const ProjectArray1 = [
   {
