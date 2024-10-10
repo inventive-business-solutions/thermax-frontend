@@ -1,10 +1,8 @@
-import ProjectLanding from "components/Project Management/ProjectLanding"
+import { redirect } from "next/navigation"
+import React from "react"
 
-export default async function Page({ params }: { params: { project_id: string } }) {
-  console.log("params", params)
-  return (
-    <>
-      <ProjectLanding params={params} />
-    </>
-  )
+const DefaultPage = async ({ params }: { params: { project_id: string } }) => {
+  redirect(`/project/${params.project_id}/project-information`)
 }
+
+export default DefaultPage

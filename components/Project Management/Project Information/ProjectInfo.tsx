@@ -1,3 +1,4 @@
+"use client"
 import { DownOutlined, PercentageOutlined, PlusOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Tooltip } from "antd"
@@ -8,9 +9,11 @@ import * as zod from "zod"
 import { updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { PROJECT_API, PROJECT_INFO_API } from "configs/api-endpoints"
+import { PROJECT_API, PROJECT_INFO_API, PROJECT_PANEL_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
 import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
+import PanelDataList from "./PanelDataList"
 
 const ProjectInfoSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
@@ -109,12 +112,13 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
 const ProjectInfo = ({ params }: any) => {
   const getProjectMetadataUrl = `${PROJECT_API}/${params.project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${params.project_id}`
+
   const { data: projectMetadata } = useGetData(getProjectMetadataUrl, false)
   const { data: projectInfo } = useGetData(getProjectInfoUrl, false)
+
   const [loading, setLoading] = useState(false)
   const projectData = React.useMemo(() => ({ ...projectMetadata, ...projectInfo }), [projectMetadata, projectInfo])
   const {
-    panelTypeOptions,
     mainSupplyMVOptions,
     voltageVariationOptions,
     frequencyVariationOptions,
@@ -130,8 +134,12 @@ const ProjectInfo = ({ params }: any) => {
     electricalDesignTempOptions,
     seismicZoneOptions,
   } = useProjectInfoDropdowns()
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+  }, [])
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(ProjectInfoSchema),
     defaultValues: getDefaultValues(true, projectData),
     mode: "onBlur",
@@ -163,31 +171,57 @@ const ProjectInfo = ({ params }: any) => {
       setLoading(false)
       mutate(getProjectInfoUrl)
     }
-    console.log(data)
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <div className="font-bold underline">PROJECT INFORMATION TAB</div>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-        <div className="flex gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <div className="flex gap-4">
           <div className="flex-1">
-            <CustomTextInput name="project_name" control={control} label="Project Name" type="text" disabled />
+            <CustomTextInput
+              name="project_name"
+              control={control}
+              label="Project Name"
+              type="text"
+              disabled
+              size="small"
+            />
           </div>
           <div className="flex-1">
-            <CustomTextInput name="project_oc_number" control={control} label="Project OC NO." type="text" disabled />
+            <CustomTextInput
+              name="project_oc_number"
+              control={control}
+              label="Project OC NO."
+              type="text"
+              disabled
+              size="small"
+            />
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-4">
           <div className="flex-1">
-            <CustomTextInput name="client_name" control={control} label="Client Name" type="text" disabled />
+            <CustomTextInput
+              name="client_name"
+              control={control}
+              label="Client Name"
+              type="text"
+              disabled
+              size="small"
+            />
           </div>
           <div className="flex-1">
-            <CustomTextInput name="project_location" control={control} label="Project Location" type="text" />
+            <CustomTextInput
+              name="project_location"
+              control={control}
+              label="Project Location"
+              type="text"
+              size="small"
+            />
           </div>
         </div>
         <h1 className="font-bold">System Supply</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-8">
           <div className="flex-1">
             <CustomSingleSelect
               name="main_supply_mv"
@@ -200,6 +234,7 @@ const ProjectInfo = ({ params }: any) => {
               }
               label="Main Supply [MV]"
               options={mainSupplyMVOptions}
+              size="small"
             />
           </div>
 
@@ -215,6 +250,7 @@ const ProjectInfo = ({ params }: any) => {
                   <DownOutlined />
                 </>
               }
+              size="small"
             />
           </div>
           <div className="flex-1">
@@ -223,10 +259,11 @@ const ProjectInfo = ({ params }: any) => {
               control={control}
               label="Phase"
               options={mainSupplyPhaseOptions}
+              size="small"
             />
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-8">
           <div className="flex-1">
             <CustomSingleSelect
               name="main_supply_lv"
@@ -239,6 +276,7 @@ const ProjectInfo = ({ params }: any) => {
               }
               label="Main Supply [LV]"
               options={mainSupplyLVOptions}
+              size="small"
             />
           </div>
           <div className="flex-1">
@@ -247,6 +285,7 @@ const ProjectInfo = ({ params }: any) => {
               control={control}
               label="Variation"
               options={voltageVariationOptions}
+              size="small"
               suffixIcon={
                 <>
                   <PercentageOutlined style={{ color: "#3b82f6" }} />
@@ -261,10 +300,11 @@ const ProjectInfo = ({ params }: any) => {
               control={control}
               label="Phase"
               options={mainSupplyPhaseOptions}
+              size="small"
             />
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-8">
           <div className="flex-1">
             <CustomSingleSelect
               name="control_supply"
@@ -277,6 +317,7 @@ const ProjectInfo = ({ params }: any) => {
               }
               label="Control Supply"
               options={controlSupplyOptions}
+              size="small"
             />
           </div>
           <div className="flex-1">
@@ -285,6 +326,7 @@ const ProjectInfo = ({ params }: any) => {
               control={control}
               label="Variation"
               options={voltageVariationOptions}
+              size="small"
               suffixIcon={
                 <>
                   <PercentageOutlined style={{ color: "#3b82f6" }} />
@@ -299,10 +341,11 @@ const ProjectInfo = ({ params }: any) => {
               control={control}
               label="Phase"
               options={controlUtilityPhaseOptions}
+              size="small"
             />
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-8">
           <div className="flex-1">
             <CustomSingleSelect
               name="utility_supply"
@@ -315,6 +358,7 @@ const ProjectInfo = ({ params }: any) => {
               }
               label="Utility Supply"
               options={utilitySupplyOptions}
+              size="small"
             />
           </div>
           <div className="flex-1">
@@ -329,6 +373,7 @@ const ProjectInfo = ({ params }: any) => {
                   <DownOutlined />
                 </>
               }
+              size="small"
             />
           </div>
           <div className="flex-1">
@@ -337,10 +382,11 @@ const ProjectInfo = ({ params }: any) => {
               control={control}
               label="Phase"
               options={controlUtilityPhaseOptions}
+              size="small"
             />
           </div>
         </div>
-        <div className="flex w-2/3 gap-2">
+        <div className="flex w-2/3 gap-8">
           <div className="flex-1">
             <CustomSingleSelect
               name="frequency"
@@ -353,6 +399,7 @@ const ProjectInfo = ({ params }: any) => {
                   <DownOutlined />
                 </>
               }
+              size="small"
             />
           </div>
           <div className="flex-1">
@@ -367,10 +414,11 @@ const ProjectInfo = ({ params }: any) => {
                   <DownOutlined />
                 </>
               }
+              size="small"
             />
           </div>
         </div>
-        <div className="flex w-2/3 gap-2">
+        <div className="flex w-2/3 gap-8">
           <div className="flex-1">
             <CustomSingleSelect
               name="fault_level"
@@ -383,13 +431,14 @@ const ProjectInfo = ({ params }: any) => {
                   <DownOutlined />
                 </>
               }
+              size="small"
             />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect name="sec" control={control} label="Sec" options={secOptions} />
+            <CustomSingleSelect name="sec" control={control} label="Sec" options={secOptions} size="small" />
           </div>
         </div>
-        <div className="flex w-2/3 gap-2">
+        <div className="flex w-2/3 gap-8">
           <div className="flex-1">
             <CustomSingleSelect
               name="ambient_temperature_max"
@@ -402,6 +451,7 @@ const ProjectInfo = ({ params }: any) => {
                   <DownOutlined />
                 </>
               }
+              size="small"
             />
           </div>
           <div className="flex-1">
@@ -415,10 +465,11 @@ const ProjectInfo = ({ params }: any) => {
                   <p className="text-xs font-semibold text-blue-400">Deg C</p>
                 </>
               }
+              size="small"
             />
           </div>
         </div>
-        <div className="flex w-2/3 gap-2">
+        <div className="flex w-2/3 gap-8">
           <div className="flex-1">
             <CustomSingleSelect
               name="electrical_design_temperature"
@@ -431,6 +482,7 @@ const ProjectInfo = ({ params }: any) => {
                   <DownOutlined />
                 </>
               }
+              size="small"
             />
           </div>
           <div className="flex-1">
@@ -439,30 +491,34 @@ const ProjectInfo = ({ params }: any) => {
               control={control}
               label="Seismic Zone"
               options={seismicZoneOptions}
+              size="small"
             />
           </div>
         </div>
-
-        <div className="flex flex-col">
-          <div className="font-bold">Panel Summary</div>
-          <div className="flex items-center justify-start gap-4">
-            <div>Number of Panels:</div>
-            <Button type="primary" iconPosition="start" icon={<PlusOutlined />}>
-              Add Panel
-            </Button>
-          </div>
+        <div className="w-2/3">
+          <PanelDataList projectId={params?.project_id} />
         </div>
 
-        <div className="mt-4 flex flex-row items-end justify-end gap-2">
-          <Button type="primary">Go to SLD</Button>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            Save
-          </Button>
-          <Button type="primary">Document List</Button>
-          <Button type="primary">Instrumental</Button>
-          <Tooltip title="Save and go to Design Basis" placement="top">
-            <Button type="primary">Electrical</Button>
-          </Tooltip>
+        <div className="mt-4 flex items-end justify-end gap-2">
+          <div className="">
+            <Button type="primary">Go to SLD</Button>
+          </div>
+          <div className="">
+            <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
+              Save
+            </Button>
+          </div>
+          <div className="">
+            <Button type="primary">Document List</Button>
+          </div>
+          <div className="">
+            <Button type="primary">Instrumental</Button>
+          </div>
+          <div className="">
+            <Tooltip title="Save and go to Design Basis" placement="top">
+              <Button type="primary">Electrical</Button>
+            </Tooltip>
+          </div>
         </div>
       </form>
     </div>
