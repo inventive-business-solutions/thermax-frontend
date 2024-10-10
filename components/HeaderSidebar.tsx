@@ -1,27 +1,35 @@
 "use client"
 import {
   AppstoreAddOutlined,
+  CarryOutOutlined,
   DashboardOutlined,
   MenuOutlined,
   UnorderedListOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons"
 import { Drawer, Menu, MenuProps, Tag } from "antd"
-import { set } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { BTG, HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, TagColors, USER_MANAGEMENT_PAGE } from "configs/constants"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import {
+  BTG,
+  COMPLETE_PROJECT_PAGE,
+  HOME_PAGE,
+  PACKAGE_PAGE,
+  PROJECTS_PAGE,
+  TagColors,
+  USER_MANAGEMENT_PAGE,
+} from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
-import { UserButton } from "./UserButton"
 import { useLoading } from "hooks/useLoading"
+import { UserButton } from "./UserButton"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const userInfo = useCurrentUser()
+  const userInfo: { division: keyof typeof TagColors } = useCurrentUser()
   const router = useRouter()
   const { setLoading } = useLoading()
 
@@ -39,19 +47,24 @@ export default function HeaderSidebar() {
     },
     {
       key: "2",
-      label: <div onClick={() => handleLinkClick(PROJECTS_PAGE)}> Project List</div>,
+      label: <div onClick={() => handleLinkClick(PROJECTS_PAGE)}>Project List</div>,
       icon: <UnorderedListOutlined />,
     },
     {
       key: "3",
-      label: <div onClick={() => handleLinkClick(USER_MANAGEMENT_PAGE)}> User Management</div>,
+      label: <div onClick={() => handleLinkClick(USER_MANAGEMENT_PAGE)}>User Management</div>,
 
       icon: <UserSwitchOutlined />,
     },
     {
       key: "4",
-      label: <div onClick={() => handleLinkClick(PACKAGE_PAGE)}> Package Management</div>,
+      label: <div onClick={() => handleLinkClick(PACKAGE_PAGE)}>Package Management</div>,
       icon: <AppstoreAddOutlined />,
+    },
+    {
+      key: "5",
+      label: <div onClick={() => handleLinkClick(COMPLETE_PROJECT_PAGE)}>Complete Project</div>,
+      icon: <CarryOutOutlined />,
     },
   ]
 

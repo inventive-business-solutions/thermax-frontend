@@ -12,7 +12,7 @@ import type { ColumnsType } from "antd/es/table"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
-import { deleteData } from "actions/crud-actions"
+import { deleteData, updateData } from "actions/crud-actions"
 import { PROJECT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
@@ -41,12 +41,12 @@ const changeNameToKey = (projectList: any[]) => {
   return projectList
 }
 
-export default function ProjectList({ userInfo }: any) {
+export default function ProjectList({ userInfo, isComplete }: any) {
   const [open, setOpen] = useState(false)
   const [uploadFileOpen, setUploadFileOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
-  const getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]&order_by=creation desc`
+  const getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   const { data: projectList, isLoading } = useGetData(getProjectUrl, false)
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function ProjectList({ userInfo }: any) {
       title: "Action",
       dataIndex: "action",
       align: "center",
-      render: (text, record) => (
+      render: (text, record: any) => (
         <div className="flex justify-center gap-2">
           <Tooltip placement="top" title="Edit">
             <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEditProject(record)} />
@@ -82,7 +82,15 @@ export default function ProjectList({ userInfo }: any) {
             <Button type="link" shape="circle" icon={<UploadOutlined />} onClick={() => handleUploadFiles(record)} />
           </Tooltip>
           <Tooltip placement="top" title="Complete Project">
-            <Button type="link" shape="circle" icon={<FileDoneOutlined />} />
+            <Popconfirm
+              title="Are you sure to mark this project as complete?"
+              onConfirm={async () => await handleCompleteProject(record)}
+              okText="Yes"
+              cancelText="No"
+              placement="topRight"
+            >
+              <Button type="link" shape="circle" icon={<FileDoneOutlined />} />
+            </Popconfirm>
           </Tooltip>
           <Tooltip placement="top" title="Delete">
             <Popconfirm
@@ -122,6 +130,11 @@ export default function ProjectList({ userInfo }: any) {
   const handleDeleteProject = async (selectedRowID: string) => {
     await deleteData(`${PROJECT_API}/${selectedRowID}`, false)
     // Revalidate the cache
+    mutate(getProjectUrl)
+  }
+
+  const handleCompleteProject = async (selectedRow: { name: string; is_complete: boolean }) => {
+    await updateData(`${PROJECT_API}/${selectedRow?.name}`, false, { is_complete: !selectedRow?.is_complete })
     mutate(getProjectUrl)
   }
 

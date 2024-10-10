@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckCircleOutlined, CheckSquareTwoTone, CloseSquareTwoTone } from "@ant-design/icons"
+import { CheckCircleOutlined, CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons"
 import { getBucketObjects } from "actions/aws/s3-actions"
 import { Modal } from "antd"
 import S3BucketUpload from "components/FormInputs/S3BucketUpload"
@@ -75,9 +75,9 @@ export const UploadProjectFilesModal = ({
         <div className="flex items-center justify-between gap-2">
           <div className="flex gap-2">
             {fileExist.panelSpec ? (
-              <CheckSquareTwoTone twoToneColor="#52c41a" />
+              <CheckCircleTwoTone twoToneColor="#52c41a" className="text-lg" />
             ) : (
-              <CloseSquareTwoTone twoToneColor="#eb2f96" />
+              <CloseCircleTwoTone twoToneColor="#eb2f96" className="text-lg" />
             )}
             <h4 className="font-semibold text-slate-700">Panel Specification</h4>
           </div>
@@ -91,9 +91,9 @@ export const UploadProjectFilesModal = ({
         <div className="flex items-center justify-between gap-2">
           <div className="flex gap-2">
             {fileExist.motorSpec ? (
-              <CheckSquareTwoTone twoToneColor="#52c41a" />
+              <CheckCircleTwoTone twoToneColor="#52c41a" className="text-lg" />
             ) : (
-              <CloseSquareTwoTone twoToneColor="#eb2f96" />
+              <CloseCircleTwoTone twoToneColor="#eb2f96" className="text-lg" />
             )}
             <h4 className="font-semibold text-slate-700">Motor Specification</h4>
           </div>
@@ -107,9 +107,9 @@ export const UploadProjectFilesModal = ({
         <div className="flex items-center justify-between gap-2">
           <div className="flex gap-2">
             {fileExist.lpbsSpec ? (
-              <CheckSquareTwoTone twoToneColor="#52c41a" />
+              <CheckCircleTwoTone twoToneColor="#52c41a" className="text-lg" />
             ) : (
-              <CloseSquareTwoTone twoToneColor="#eb2f96" />
+              <CloseCircleTwoTone twoToneColor="#eb2f96" className="text-lg" />
             )}
             <h4 className="font-semibold text-slate-700">LPBS Specification</h4>
           </div>
@@ -123,9 +123,9 @@ export const UploadProjectFilesModal = ({
         <div className="flex items-center justify-between gap-2">
           <div className="flex gap-2">
             {fileExist.localIsolatorSpec ? (
-              <CheckSquareTwoTone twoToneColor="#52c41a" />
+              <CheckCircleTwoTone twoToneColor="#52c41a" className="text-lg" />
             ) : (
-              <CloseSquareTwoTone twoToneColor="#eb2f96" />
+              <CloseCircleTwoTone twoToneColor="#eb2f96" className="text-lg" />
             )}
             <h4 className="font-semibold text-slate-700">Local Isolator Specification</h4>
           </div>
@@ -141,9 +141,9 @@ export const UploadProjectFilesModal = ({
         <div className="flex items-center justify-between gap-2">
           <div className="flex gap-2">
             {fileExist.cableSpec ? (
-              <CheckSquareTwoTone twoToneColor="#52c41a" />
+              <CheckCircleTwoTone twoToneColor="#52c41a" className="text-lg" />
             ) : (
-              <CloseSquareTwoTone twoToneColor="#eb2f96" />
+              <CloseCircleTwoTone twoToneColor="#eb2f96" className="text-lg" />
             )}
             <h4 className="font-semibold text-slate-700">Cable Specification</h4>
           </div>
