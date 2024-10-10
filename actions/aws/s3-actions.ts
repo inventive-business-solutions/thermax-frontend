@@ -10,8 +10,8 @@ export const getBucketObjects = async (folderPath: string) => {
     const s3Client = await getS3BucketClient()
 
     const listFolderObjects = new ListObjectsV2Command({ Bucket: bucketName, Prefix: `${baseFolder}/${folderPath}` })
-    const { Contents: FolderContents } = await s3Client.send(listFolderObjects)
-    return FolderContents
+    const { Contents } = await s3Client.send(listFolderObjects)
+    return Contents
   } catch (error) {
     throw error
   }
@@ -28,7 +28,6 @@ export const uploadBucketObject = async (folderPath: string, formData: any, file
       Body: buffer,
     })
     const response = await s3Client.send(command)
-
     return response
   } catch (error) {
     throw error
