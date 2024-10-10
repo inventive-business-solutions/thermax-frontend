@@ -56,7 +56,9 @@ export default function CustomTable() {
         {hasSelected ? <Tag color="purple">Selected {selectedRowKeys.length} items</Tag> : null}
         <div onClick={start} className="flex cursor-pointer items-center gap-2">
           <Tooltip title="refresh" placement="topLeft">
-            <SyncOutlined spin={loading} color="#492971" />
+            <div className="rounded-full hover:bg-blue-100">
+              <SyncOutlined spin={loading} color="#492971" />
+            </div>
           </Tooltip>
           <Button type="primary" danger onClick={start} disabled={!hasSelected} loading={loading}>
             Bulk Delete

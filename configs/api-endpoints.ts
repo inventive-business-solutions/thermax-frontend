@@ -10,8 +10,10 @@ export const PROJECT_INFO_API = `/document/Project Information`
 export const USER_API = `/document/User`
 export const NEXT_AUTH_USER_API = `/document/NextAuthUser`
 export const THERMAX_USER_API = `/document/Thermax Extended User`
-export const DIVISION_API = `/document/Division`
+export const PROJECT_PANEL_API = `/document/Project Panel Data`
 
+// Master Data
+export const DIVISION_API = `/document/Division`
 export const PANEL_TYPE_API = `document/Panel Type`
 export const MAIN_SUPPLY_MV_API = `document/Main Supply MV`
 export const MAIN_SUPPLY_LV_API = `document/Main Supply LV`

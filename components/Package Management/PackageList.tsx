@@ -8,13 +8,14 @@ import {
   SyncOutlined,
 } from "@ant-design/icons"
 import { Button, Popconfirm, Table, TableColumnsType, Tooltip } from "antd"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
 import { GET_PKG_API, MAIN_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import MainPackageModal from "./MainPackageModal"
 import SubPackageModal from "./SubPackageModal"
+import { useLoading } from "hooks/useLoading"
 
 interface DataType {
   key: string
@@ -51,6 +52,10 @@ export default function PackageList() {
   const [editEventTrigger, setEditEventTrigger] = useState(false)
   const [mainPkgRowData, setMainPkgRowData] = useState<any>(null)
   const [subPkgRowData, setSubPkgRowData] = useState<any>(null)
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+  }, [])
 
   const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API, false)
 
@@ -180,12 +185,14 @@ export default function PackageList() {
     <div className="flex flex-col gap-2 px-20 py-4">
       <div className="flex justify-end gap-2">
         <Tooltip title="Refresh">
-          <Button
-            type="link"
-            shape="circle"
-            icon={<SyncOutlined spin={packageLoading} />}
-            onClick={() => mutate(GET_PKG_API)}
-          />
+          <div className="rounded-full hover:bg-blue-100">
+            <Button
+              type="link"
+              shape="circle"
+              icon={<SyncOutlined spin={packageLoading} />}
+              onClick={() => mutate(GET_PKG_API)}
+            />
+          </div>
         </Tooltip>
         <Button type="primary" onClick={handleAddMainPkg}>
           Add Main Package

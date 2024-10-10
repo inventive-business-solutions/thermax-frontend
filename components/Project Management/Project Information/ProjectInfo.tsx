@@ -1,7 +1,7 @@
 "use client"
 import { DownOutlined, PercentageOutlined, PlusOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Divider, message, Tooltip } from "antd"
+import { Button, message, Tooltip } from "antd"
 import React, { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
@@ -9,10 +9,11 @@ import * as zod from "zod"
 import { updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { PROJECT_API, PROJECT_INFO_API } from "configs/api-endpoints"
+import { PROJECT_API, PROJECT_INFO_API, PROJECT_PANEL_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
+import PanelDataList from "./PanelDataList"
 
 const ProjectInfoSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
@@ -111,12 +112,13 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
 const ProjectInfo = ({ params }: any) => {
   const getProjectMetadataUrl = `${PROJECT_API}/${params.project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${params.project_id}`
+
   const { data: projectMetadata } = useGetData(getProjectMetadataUrl, false)
   const { data: projectInfo } = useGetData(getProjectInfoUrl, false)
+
   const [loading, setLoading] = useState(false)
   const projectData = React.useMemo(() => ({ ...projectMetadata, ...projectInfo }), [projectMetadata, projectInfo])
   const {
-    panelTypeOptions,
     mainSupplyMVOptions,
     voltageVariationOptions,
     frequencyVariationOptions,
@@ -493,15 +495,8 @@ const ProjectInfo = ({ params }: any) => {
             />
           </div>
         </div>
-
-        <div className="flex flex-col">
-          <h4 className="font-bold text-slate-800">Panel Summary</h4>
-          <div className="flex items-center justify-start gap-4">
-            <h4 className="text-sm font-semibold text-slate-700">Number of Panels: 1</h4>
-            <Button type="primary" iconPosition="start" icon={<PlusOutlined />} size="small">
-              Add Panel
-            </Button>
-          </div>
+        <div className="w-2/3">
+          <PanelDataList projectId={params?.project_id} />
         </div>
 
         <div className="mt-4 flex items-end justify-end gap-2">

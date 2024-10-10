@@ -147,12 +147,14 @@ export default function ProjectList({ userInfo, isComplete }: any) {
         </div>
         <div className="flex gap-3">
           <Tooltip title="Refresh">
-            <Button
-              type="link"
-              shape="circle"
-              icon={<SyncOutlined spin={isLoading} />}
-              onClick={() => mutate(getProjectUrl)}
-            />
+            <div className="rounded-full hover:bg-blue-100">
+              <Button
+                type="link"
+                shape="circle"
+                icon={<SyncOutlined spin={isLoading} />}
+                onClick={() => mutate(getProjectUrl)}
+              />
+            </div>
           </Tooltip>
           <Button type="primary" icon={<FolderAddOutlined />} iconPosition={"end"} onClick={handleAddProject}>
             Add Project
@@ -162,6 +164,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       <div className="shadow-md">
         <Table
           columns={columns}
+          bordered
           dataSource={changeNameToKey(projectList)}
           pagination={{ size: "small", pageSize: 5 }}
           size="small"
