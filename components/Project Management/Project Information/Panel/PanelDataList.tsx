@@ -67,7 +67,7 @@ export default function PanelDataList({ projectId }: any) {
       <div className="flex flex-col gap-2">
         <h4 className="font-bold text-slate-800">Panel Summary</h4>
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-semibold text-slate-700">Number of Panels: {projectPanelData.length}</h4>
+          <h4 className="text-sm font-semibold text-slate-700">Number of Panels: {projectPanelData?.length}</h4>
           <Button
             type="primary"
             iconPosition="start"

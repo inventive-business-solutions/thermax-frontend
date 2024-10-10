@@ -13,7 +13,8 @@ import { PROJECT_API, PROJECT_INFO_API, PROJECT_PANEL_API } from "configs/api-en
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
-import PanelDataList from "./PanelDataList"
+import PanelDataList from "./Panel/PanelDataList"
+import DocumentListModal from "./DocumentListModal"
 
 const ProjectInfoSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
@@ -110,13 +111,15 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
 }
 
 const ProjectInfo = ({ params }: any) => {
-  const getProjectMetadataUrl = `${PROJECT_API}/${params.project_id}`
-  const getProjectInfoUrl = `${PROJECT_INFO_API}/${params.project_id}`
+  const project_id = params.project_id
+  const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
+  const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
 
   const { data: projectMetadata } = useGetData(getProjectMetadataUrl, false)
   const { data: projectInfo } = useGetData(getProjectInfoUrl, false)
 
   const [loading, setLoading] = useState(false)
+  const [openDocumentList, setOpenDocumentList] = useState(false)
   const projectData = React.useMemo(() => ({ ...projectMetadata, ...projectInfo }), [projectMetadata, projectInfo])
   const {
     mainSupplyMVOptions,
@@ -501,7 +504,9 @@ const ProjectInfo = ({ params }: any) => {
 
         <div className="mt-4 flex items-end justify-end gap-2">
           <div className="">
-            <Button type="primary">Go to SLD</Button>
+            <Button type="primary" htmlType="button" disabled={!formState.isValid}>
+              Go to SLD
+            </Button>
           </div>
           <div className="">
             <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
@@ -509,18 +514,26 @@ const ProjectInfo = ({ params }: any) => {
             </Button>
           </div>
           <div className="">
-            <Button type="primary">Document List</Button>
+            <Button type="primary" htmlType="button" onClick={() => setOpenDocumentList(true)}>
+              Document List
+            </Button>
           </div>
           <div className="">
-            <Button type="primary">Instrumental</Button>
+            <Button type="primary" htmlType="button">
+              Instrumental
+            </Button>
           </div>
           <div className="">
-            <Tooltip title="Save and go to Design Basis" placement="top">
-              <Button type="primary">Electrical</Button>
+            <Tooltip title="Save and Go to Electrical Load List" placement="top">
+              <Button type="primary" htmlType="button" disabled={!formState.isValid}>
+                Electrical
+              </Button>
             </Tooltip>
           </div>
         </div>
       </form>
+
+      <DocumentListModal open={openDocumentList} setOpen={setOpenDocumentList} projectId={project_id} />
     </div>
   )
 }
