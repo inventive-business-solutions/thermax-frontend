@@ -1,7 +1,7 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons"
 import { Button, Popconfirm, Table, Tooltip } from "antd"
 import { useState } from "react"
-import { PROJECT_PANEL_API } from "configs/api-endpoints"
+import { DYNAMIC_DOCUMENT_API, PROJECT_PANEL_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import PanelFormModal from "./PanelFormModal"
 import { mutate } from "swr"
@@ -57,6 +57,7 @@ export default function PanelDataList({ projectId }: any) {
   }
 
   const handleDeletePanel = async (selectedRowID: string) => {
+    await deleteData(`${DYNAMIC_DOCUMENT_API}/${selectedRowID}`, false)
     await deleteData(`${PROJECT_PANEL_API}/${selectedRowID}`, false)
     // Revalidate the cache
     mutate(getProjectPanelDataUrl)

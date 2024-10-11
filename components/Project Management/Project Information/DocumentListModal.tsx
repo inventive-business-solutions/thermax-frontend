@@ -2,13 +2,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Modal } from "antd"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { mutate } from "swr"
 import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import { DYNAMIC_DOCUMENT_API, PROJECT_PANEL_API, STATIC_DOCUMENT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { mergeLists } from "utils/helpers"
-import { stat } from "fs"
 
 const fieldObject: any = {
   electrical_load_list: "Electrical Load List",
@@ -268,10 +268,17 @@ export default function DocumentListModal({ open, setOpen, projectId }: any) {
             </div>
           </div>
         ))}
-        <div className="mt-2 text-end">
-          <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
-            Save
-          </Button>
+        <div className="mt-2 flex justify-end gap-2">
+          <div>
+            <Button type="primary" onClick={() => mutate(dynamicDocUrl)}>
+              Refresh
+            </Button>
+          </div>
+          <div>
+            <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
+              Save
+            </Button>
+          </div>
         </div>
       </form>
     </Modal>
