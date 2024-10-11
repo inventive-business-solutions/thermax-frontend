@@ -145,7 +145,7 @@ const ProjectInfo = ({ params }: any) => {
   const { control, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(ProjectInfoSchema),
     defaultValues: getDefaultValues(true, projectData),
-    mode: "onBlur",
+    mode: "onSubmit",
   })
 
   useEffect(() => {
