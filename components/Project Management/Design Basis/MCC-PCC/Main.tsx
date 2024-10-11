@@ -1,11 +1,17 @@
+"use client"
 import { Tabs } from "antd"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import CommonConfiguration from "./commonConfiguration"
 import MakeOfComponent from "./MakeOfComponent"
 import MccComponent from "./MccComponent"
+import { useLoading } from "hooks/useLoading"
 
-const MainMCC: React.FC = () => {
+const MainMCCPCC: React.FC = () => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+  }, [])
 
   const TabMCC = [
     {
@@ -50,4 +56,4 @@ const MainMCC: React.FC = () => {
   )
 }
 
-export default MainMCC
+export default MainMCCPCC

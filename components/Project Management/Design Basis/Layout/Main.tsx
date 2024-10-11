@@ -1,10 +1,15 @@
 import { Tabs } from "antd"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import CableTray from "./CableTray"
 import Earthing from "./Earthing"
+import { useLoading } from "hooks/useLoading"
 
 const MainLayout: React.FC = () => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+  }, [])
 
   const TabMCC = [
     {

@@ -1,7 +1,7 @@
-import DesignBasis from "components/Project Management/Design Basis/DesignBasis"
+import { redirect } from "next/navigation"
 
-const DesignBasisPage = () => {
-  return <DesignBasis />
+const DesignBasisPage = ({ params }: any) => {
+  redirect(`/project/${params.project_id}/design-basis/document-revision`)
 }
 
 export default DesignBasisPage

@@ -9,6 +9,7 @@ import CustomTextInput from "components/FormInputs/CustomInput"
 import { DYNAMIC_DOCUMENT_API, PROJECT_PANEL_API, STATIC_DOCUMENT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { mergeLists } from "utils/helpers"
+import { SyncOutlined } from "@ant-design/icons"
 
 const fieldObject: any = {
   electrical_load_list: "Electrical Load List",
@@ -270,7 +271,7 @@ export default function DocumentListModal({ open, setOpen, projectId }: any) {
         ))}
         <div className="mt-2 flex justify-end gap-2">
           <div>
-            <Button type="primary" onClick={() => mutate(dynamicDocUrl)}>
+            <Button type="primary" onClick={() => mutate(dynamicDocUrl)} icon={<SyncOutlined />}>
               Refresh
             </Button>
           </div>

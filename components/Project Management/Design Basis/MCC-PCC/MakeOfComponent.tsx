@@ -1,82 +1,4 @@
-// import React, { useState } from "react"
-// import { Button, Select } from "antd"
-
-// const { Option } = Select
-
-// // Define the option type
-// interface OptionType {
-//   value: string
-//   label: string
-// }
-
-// // Define the component prop type
-// interface MakeOfComponentProps {
-//     handleSwitchTab : () => void
-// }
-
-// // Define the dropdown data structure
-// interface DropdownData {
-//   heading: string
-//   options: OptionType[]
-// }
-
-// // Create a common set of options
-// const options: OptionType[] = [
-//   { value: "motor1", label: "Motor Option 1" },
-//   { value: "motor2", label: "Motor Option 2" },
-//   { value: "motor3", label: "Motor Option 3" },
-// ]
-
-// // Manually create the dropdown data
-// const dropdownData: DropdownData[] = [
-//   { heading: "Motors", options },
-//   { heading: "Cables", options },
-//   { heading: "LV switchgear", options },
-//   { heading: "Panel Enclosure", options },
-//   { heading: "Variable frequency/Speed drive (VFD/VSD)", options },
-//   { heading: "Soft Starter", options },
-//   { heading: "PLC", options },
-// ]
-
-// const MakeOfComponent: React.FC<MakeOfComponentProps> = ({handleSwitchTab}) => {
-//   const [selectedOptions, setSelectedOptions] = useState<(string | null)[]>(Array(7).fill(null))
-
-//   const handleChange = (index: number) => (value: string | undefined) => {
-//     const updatedSelections = [...selectedOptions]
-//     updatedSelections[index] = value || null // Set to null if undefined
-//     setSelectedOptions(updatedSelections)
-//   }
-
-//   return (
-//     <div>
-//       <div className="grid grid-cols-3 gap-4">
-//         {dropdownData.map((dropdown, index) => (
-//           <div key={index} >
-//             <h4 className="text-lg">{dropdown.heading}</h4>
-//             <Select
-//
-//               placeholder="Select an option"
-//               onChange={handleChange(index)}
-//               allowClear
-//             >
-//               {dropdown.options.map((option) => (
-//                 <Option key={option.value} value={option.value}>
-//                   <span className="bg-primary-500 px-3 rounded-lg text-md py-2 text-white">{option.label}</span>
-//                 </Option>
-//               ))}
-//             </Select>
-//           </div>
-//         ))}
-//       </div>
-
-//       <div className="flex flex-row justify-end">
-//         <Button type="primary"  onClick={handleSwitchTab}>Save and Next</Button>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default MakeOfComponent
+"use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "antd"
@@ -141,36 +63,40 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ handleSwitchTab }) =>
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="grid grid-cols-3 gap-4">
-        {dropdownData.map((dropdown, index) => (
-          <div key={index}>
-            <h4 className="text-lg">{dropdown.heading}</h4>
-            {/* <Controller
-              name={`selections.${index}`}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  
-                  placeholder="Select an option"
-                  allowClear
-                  onChange={(value) => field.onChange(value)} // Update form state on change
-                >
-                  {dropdown.options.map((option) => (
-                    <Option key={option.value} value={option.value}>
-                      <span className="text-md rounded-lg bg-primary-500 px-3 py-2 text-white">{option.label}</span>
-                    </Option>
-                  ))}
-                </Select>
-              )}
-            /> */}
-            <CustomSingleSelect name={`selections.${index}`} control={control} label="" options={options} />
-          </div>
-        ))}
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <h2 className="font-semibold text-slate-700">Make of Components</h2>
+      <div className="flex justify-between gap-4">
+        <div className="flex-1">
+          <CustomSingleSelect control={control} name="motors" label="Motors" options={[]} />
+        </div>
+        <div className="flex-1">
+          <CustomSingleSelect control={control} name="cables" label="Cables" options={[]} />
+        </div>
+        <div className="flex-1">
+          <CustomSingleSelect control={control} name="lv_switchgear" label="LV Switchgear" options={[]} />
+        </div>
+      </div>
+      <div className="flex justify-between gap-4">
+        <div className="flex-1">
+          <CustomSingleSelect control={control} name="panel_enclosure" label="Panel Enclosure" options={[]} />
+        </div>
+        <div className="flex-1">
+          <CustomSingleSelect
+            control={control}
+            name="vfd_vsd"
+            label="Variable frequency/Speed drive (VFD/VSD)"
+            options={[]}
+          />
+        </div>
+        <div className="flex-1">
+          <CustomSingleSelect control={control} name="soft_starter" label="Soft Starter" options={[]} />
+        </div>
+      </div>
+      <div className="w-1/3">
+        <CustomSingleSelect control={control} name="plc" label="PLC" options={[]} />
       </div>
 
-      <div className="flex flex-row justify-end">
+      <div className="flex justify-end">
         <Button type="primary" htmlType="submit">
           Save and Next
         </Button>

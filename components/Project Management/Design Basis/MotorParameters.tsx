@@ -165,6 +165,8 @@ import { z } from "zod"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
+import { useLoading } from "hooks/useLoading"
+import { useEffect } from "react"
 
 interface MotorParametersProps {
   handleSave: () => void
@@ -180,7 +182,11 @@ const schema = z.object({
   motor3HazardousArea: z.string().nonempty("Motor 3 Hazardous Area is required"),
 })
 
-const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
+const MotorParameters = () => {
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+  }, [])
   const { control, handleSubmit } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -201,7 +207,6 @@ const MotorParameters: React.FC<MotorParametersProps> = ({ handleSave }) => {
 
   const onSubmit = (data: any) => {
     console.log(data) // handle form submission data
-    handleSave() // Call the parent save function
   }
 
   return (
