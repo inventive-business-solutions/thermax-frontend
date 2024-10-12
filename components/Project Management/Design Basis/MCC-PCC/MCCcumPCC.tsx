@@ -5,10 +5,12 @@ import { useLoading } from "hooks/useLoading"
 import CommonConfiguration from "./CommonConfiguration"
 import MakeOfComponent from "./MakeOfComponent"
 import MCCcumPCCPanel from "./MCCcumPCC"
+import MCCcumPCCMCCPanel from "./MCCcumPCCMCC"
+import MCCcumPCCPLCPanel from "./MCCcumPCCPLC"
 import MCCPanel from "./MCCPanel"
 import PCCPanel from "./PCCPanel"
 
-const MainMCCPCC: React.FC = () => {
+const MCCcumPCC: React.FC = () => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -19,27 +21,12 @@ const MainMCCPCC: React.FC = () => {
     {
       label: "Make",
       key: "1",
-      children: <MakeOfComponent handleSwitchTab={() => handleSwitchTab("2")} />,
+      children: <MCCcumPCCMCCPanel />,
     },
     {
       label: "Common Configuration",
       key: "2",
-      children: <CommonConfiguration handleSwitchTab={() => handleSwitchTab("3")} />,
-    },
-    {
-      label: "MCC",
-      key: "3",
-      children: <MCCPanel />,
-    },
-    {
-      label: "PCC",
-      key: "4",
-      children: <PCCPanel />,
-    },
-    {
-      label: "MCCcumPCC",
-      key: "5",
-      children: <MCCcumPCCPanel />,
+      children: <MCCcumPCCPLCPanel />,
     },
   ]
 
@@ -68,4 +55,4 @@ const MainMCCPCC: React.FC = () => {
   )
 }
 
-export default MainMCCPCC
+export default MCCcumPCC

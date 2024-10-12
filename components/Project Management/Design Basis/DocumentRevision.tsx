@@ -10,9 +10,9 @@ import {
   FolderOpenTwoTone,
 } from "@ant-design/icons"
 import { Badge, Button, Table, TableColumnsType, Tag, Tooltip } from "antd"
+import { ColumnType } from "antd/es/table"
 import { useEffect } from "react"
 import { useLoading } from "hooks/useLoading"
-import { ColumnType } from "antd/es/table"
 
 export default function DocumentRevision() {
   const { setLoading: setModalLoading } = useLoading()

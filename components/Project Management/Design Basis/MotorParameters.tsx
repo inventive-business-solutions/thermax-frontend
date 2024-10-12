@@ -160,13 +160,13 @@
 // export default MotorParameters
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Table } from "antd"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 import { useLoading } from "hooks/useLoading"
-import { useEffect } from "react"
 
 interface MotorParametersProps {
   handleSave: () => void

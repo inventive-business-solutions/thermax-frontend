@@ -1,17 +1,15 @@
 "use client"
-import { CloseOutlined, DownOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Checkbox, Divider, Dropdown, message, Radio, Select, Tabs } from "antd"
-import React, { useEffect, useState } from "react"
+import { Button, Divider, Select } from "antd"
+import React, { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { useLoading } from "hooks/useLoading"
-import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
-import { MAIN_PKG_API } from "configs/api-endpoints"
-import CustomMultiSelect from "components/FormInputs/CustomMultiSelect"
 import CustomMultiSelectOption from "components/FormInputs/CustomMultiSelectChoice"
+import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
+import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
+import { MAIN_PKG_API } from "configs/api-endpoints"
+import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { useLoading } from "hooks/useLoading"
 
 // Define validation schema using zod
 const GeneralInfoSchema = z
@@ -121,26 +119,14 @@ const GeneralInfo = () => {
       </div>
 
       <Divider />
-      <div className="m-0 flex flex-col gap-6 p-0 ">
-        <div className="text-2xl font-bold">Battery Limit</div>
-        <div className="ms-6 flex flex-row justify-start gap-4">
-          <div>Power Supply at the </div>
-          <Controller
-            name="powerSupply"
-            control={control}
-            render={({ field }) => (
-              <Select
-                {...field}
-                options={[
-                  { value: "jack", label: "Jack" },
-                  { value: "lucy", label: "Lucy" },
-                  { value: "Yiminghe", label: "Yiminghe" },
-                ]}
-              />
-            )}
-          />
+      <div className="flex flex-col gap-3">
+        <div className="font-bold text-slate-800">Battery Limit</div>
+        <div className="flex items-center gap-4">
+          <div className="text-sm font-semibold text-slate-700">Power Supply at the </div>
+          <div className="w-1/2">
+            <CustomSingleSelect control={control} name="powerSupply" label="" options={[]} />
+          </div>
         </div>
-        {errors.powerSupply && <span className="text-red-500">{errors.powerSupply.message}</span>}
       </div>
 
       <div className="flex w-full justify-end gap-4">

@@ -9,9 +9,9 @@ import { deleteData } from "actions/crud-actions"
 import { getUsersUrl, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
 import { BTG, TagColors } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
 import { changeNameToKey, mergeLists } from "utils/helpers"
 import UserFormModal from "./UserModal"
-import { useLoading } from "hooks/useLoading"
 
 interface DataType {
   key: string

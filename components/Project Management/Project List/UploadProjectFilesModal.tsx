@@ -1,11 +1,11 @@
 "use client"
 
 import { CheckCircleOutlined, CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons"
-import { getBucketObjects } from "actions/aws/s3-actions"
 import { Modal } from "antd"
+import { useEffect, useState } from "react"
+import { getBucketObjects } from "actions/aws/s3-actions"
 import S3BucketUpload from "components/FormInputs/S3BucketUpload"
 import { S3FolderMapping } from "configs/constants"
-import { useEffect, useState } from "react"
 
 interface UserInfo {
   division: keyof typeof S3FolderMapping

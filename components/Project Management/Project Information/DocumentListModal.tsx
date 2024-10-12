@@ -1,3 +1,4 @@
+import { SyncOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Modal } from "antd"
 import React, { useEffect, useState } from "react"
@@ -9,7 +10,6 @@ import CustomTextInput from "components/FormInputs/CustomInput"
 import { DYNAMIC_DOCUMENT_API, PROJECT_PANEL_API, STATIC_DOCUMENT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { mergeLists } from "utils/helpers"
-import { SyncOutlined } from "@ant-design/icons"
 
 const fieldObject: any = {
   electrical_load_list: "Electrical Load List",

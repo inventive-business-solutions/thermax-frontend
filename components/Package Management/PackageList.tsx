@@ -13,9 +13,9 @@ import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
 import { GET_PKG_API, MAIN_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
 import MainPackageModal from "./MainPackageModal"
 import SubPackageModal from "./SubPackageModal"
-import { useLoading } from "hooks/useLoading"
 
 interface DataType {
   key: string

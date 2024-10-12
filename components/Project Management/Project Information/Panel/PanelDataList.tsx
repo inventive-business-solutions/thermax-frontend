@@ -1,12 +1,12 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons"
 import { Button, Popconfirm, Table, Tooltip } from "antd"
 import { useState } from "react"
-import { DYNAMIC_DOCUMENT_API, PROJECT_PANEL_API } from "configs/api-endpoints"
-import { useGetData } from "hooks/useCRUD"
-import PanelFormModal from "./PanelFormModal"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
+import { DYNAMIC_DOCUMENT_API, PROJECT_PANEL_API } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 import { changeNameToKey } from "utils/helpers"
+import PanelFormModal from "./PanelFormModal"
 
 export default function PanelDataList({ projectId }: any) {
   const [open, setOpen] = useState(false)
