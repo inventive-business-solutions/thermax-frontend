@@ -1,0 +1,10 @@
+.my-custom-grid {
+    font-family: Arial, sans-serif;
+    background-color: white;
+  }
+  
+  .my-custom-grid .rdg-cell {
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+  }
