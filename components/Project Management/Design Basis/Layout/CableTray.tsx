@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "antd" // Import Select for dropdown
+import { Button, Divider } from "antd" // Import Select for dropdown
 import React from "react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"
@@ -7,6 +7,7 @@ import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
+import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 
 const configItemValidationSchema = zod.object({
   id: zod.number(),
@@ -36,32 +37,502 @@ const CableTray: React.FC = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit(SubmitCommonConfig)}>
-        <div className="text-xl font-bold"> Supply Feeder</div>
+      <form onSubmit={handleSubmit(SubmitCommonConfig)} className="flex flex-col">
+        <Divider>Power Cable</Divider>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Number of Cores"
+                options={[]}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Specific requirement"
+                options={[]}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Type of insulation"
+                options={[]}
+                size="small"
+              />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Color Scheme" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Motor voltage drop during running"
+                options={[]}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Conductor" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Cable Installation (Provided on trays whenever possible)"
+                options={[]}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Motor voltage drop during starting"
+                options={[]}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Voltage grade"
+                options={[]}
+                size="small"
+              />
+            </div>
+          </div>
+          <div className="w-1/3 flex-1">
+            <CustomTextInput control={control} name="dol_starter" label="Derating Factor" size="small" />
+          </div>
+        </div>
+        <Divider>Gland Details</Divider>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="dol_starter" label="Gland Make" options={[]} size="small" />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="dol_starter" label="MOC" options={[]} size="small" />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="dol_starter" label="Type of Gland" options={[]} size="small" />
+          </div>
+        </div>
+        <Divider>Cable Trays</Divider>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Future Space on Trays"
+                options={[]}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Cable Placement"
+                options={[]}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Orientation" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Vertical Distance"
+                options={[]}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="dol_starter"
+                label="Horizontal Distance"
+                options={[]}
+                size="small"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <h4 className="text-sm font-bold text-slate-700">Material Construction</h4>
+            <div className="flex gap-4">
+              <div className="flex flex-1 items-center gap-2">
+                <div className="flex items-center gap-4">
+                  <h4 className="text-sm font-semibold text-slate-700">Dry Area</h4>
+                  <div className="flex-1">
+                    <CustomRadioSelect
+                      control={control}
+                      name="supply_feeder_standard"
+                      label=""
+                      options={[
+                        { label: "Yes", value: "Yes" },
+                        { label: "No", value: "No" },
+                      ]}
+                    />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                </div>
+              </div>
+              <div className="flex flex-1 items-center gap-2">
+                <div className="flex items-center gap-4">
+                  <h4 className="text-sm font-semibold text-slate-700">Wet Area</h4>
+                  <div className="flex-1">
+                    <CustomRadioSelect
+                      control={control}
+                      name="supply_feeder_standard"
+                      label=""
+                      options={[
+                        { label: "Yes", value: "Yes" },
+                        { label: "No", value: "No" },
+                      ]}
+                    />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Divider orientation="left" orientationMargin={0}>
+          <span className="text-sm font-bold text-blue-500">Power Cable Tray</span>
+        </Divider>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Perforated Type (upto below)</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Width" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Height" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Thickness" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Width" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Height" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Thickness" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Width" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Height" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Thickness" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Conduit</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="MOC" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Size" options={[]} size="small" />
+            </div>
+          </div>
+        </div>
+        <Divider orientation="left" orientationMargin={0}>
+          <span className="text-sm font-bold text-blue-500">Control Cable Tray</span>
+        </Divider>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Perforated Type (upto below)</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Width" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Height" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Thickness" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Width" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Height" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Thickness" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Width" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Height" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Thickness" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Conduit</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="MOC" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Size" options={[]} size="small" />
+            </div>
+          </div>
+        </div>
+        <Divider orientation="left" orientationMargin={0}>
+          <span className="text-sm font-bold text-blue-500">Single Cable Tray</span>
+        </Divider>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Perforated Type (upto below)</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Width" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Height" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Thickness" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Width" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Height" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Thickness" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Width" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Height" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Thickness" options={[]} size="small" />
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-4">
+              <h4 className="text-sm font-semibold text-slate-700">Conduit</h4>
+              <div className="flex-1">
+                <CustomRadioSelect
+                  control={control}
+                  name="supply_feeder_standard"
+                  label=""
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="MOC" options={[]} size="small" />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect control={control} name="dol_starter" label="Size" options={[]} size="small" />
+            </div>
+          </div>
+        </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <CustomTextInput name="dol_starter" control={control} label="DOL Starter" type="text" />
-          <CustomSingleSelect
-            name="mcc_switchgear_type"
-            control={control}
-            label="MCC Switchgear type"
-            options={[
-              { value: "Male", label: "Male" },
-              { value: "Female", label: "Female" },
-            ]}
-          />
-          <CustomCheckboxInput name="check_switch" control={control} label="Check Switch" />
-          <CustomTextAreaInput name="star_delta_starter" control={control} label="Star Delta Starter" />
-
-          {/* Additional fields can be added here */}
+        <div className="mt-2 flex w-full justify-end">
+          <Button type="primary" onClick={handleSubmit(SubmitCommonConfig)}>
+            Save and Continue
+          </Button>
         </div>
       </form>
-
-      <div className="mt-2 flex w-full justify-end">
-        <Button type="primary" onClick={handleSubmit(SubmitCommonConfig)}>
-          Save and Continue
-        </Button>
-      </div>
     </>
   )
 }
