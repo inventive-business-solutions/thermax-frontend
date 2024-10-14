@@ -67,18 +67,24 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ handleSwitchTab }) =>
       <h2 className="font-semibold text-slate-700">Make of Components</h2>
       <div className="flex justify-between gap-4">
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="motors" label="Motors" options={[]} />
+          <CustomSingleSelect control={control} name="motors" label="Motors" options={[]} size="small" />
         </div>
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="cables" label="Cables" options={[]} />
+          <CustomSingleSelect control={control} name="cables" label="Cables" options={[]} size="small" />
         </div>
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="lv_switchgear" label="LV Switchgear" options={[]} />
+          <CustomSingleSelect control={control} name="lv_switchgear" label="LV Switchgear" options={[]} size="small" />
         </div>
       </div>
       <div className="flex justify-between gap-4">
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="panel_enclosure" label="Panel Enclosure" options={[]} />
+          <CustomSingleSelect
+            control={control}
+            name="panel_enclosure"
+            label="Panel Enclosure"
+            options={[]}
+            size="small"
+          />
         </div>
         <div className="flex-1">
           <CustomSingleSelect
@@ -86,14 +92,15 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ handleSwitchTab }) =>
             name="vfd_vsd"
             label="Variable frequency/Speed drive (VFD/VSD)"
             options={[]}
+            size="small"
           />
         </div>
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="soft_starter" label="Soft Starter" options={[]} />
+          <CustomSingleSelect control={control} name="soft_starter" label="Soft Starter" options={[]} size="small" />
         </div>
       </div>
       <div className="w-1/3">
-        <CustomSingleSelect control={control} name="plc" label="PLC" options={[]} />
+        <CustomSingleSelect control={control} name="plc" label="PLC" options={[]} size="small" />
       </div>
 
       <div className="flex justify-end">

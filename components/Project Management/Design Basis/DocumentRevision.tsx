@@ -1,16 +1,6 @@
 "use client"
-import {
-  BellFilled,
-  BellTwoTone,
-  CloudDownloadOutlined,
-  CopyOutlined,
-  DownloadOutlined,
-  FolderOpenFilled,
-  FolderOpenOutlined,
-  FolderOpenTwoTone,
-} from "@ant-design/icons"
-import { Badge, Button, Table, TableColumnsType, Tag, Tooltip } from "antd"
-import { ColumnType } from "antd/es/table"
+import { BellTwoTone, CloudDownloadOutlined, CopyOutlined, FolderOpenOutlined } from "@ant-design/icons"
+import { Button, Table, TableColumnsType, Tag, Tooltip } from "antd"
 import { useEffect } from "react"
 import { useLoading } from "hooks/useLoading"
 

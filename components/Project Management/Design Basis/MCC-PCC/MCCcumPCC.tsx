@@ -19,12 +19,12 @@ const MCCcumPCC: React.FC = () => {
 
   const TabMCC = [
     {
-      label: "Make",
+      label: "MCC",
       key: "1",
       children: <MCCcumPCCMCCPanel />,
     },
     {
-      label: "Common Configuration",
+      label: "PLC",
       key: "2",
       children: <MCCcumPCCPLCPanel />,
     },

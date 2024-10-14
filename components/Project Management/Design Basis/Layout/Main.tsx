@@ -1,3 +1,4 @@
+"use client"
 import { Tabs } from "antd"
 import React, { useEffect, useState } from "react"
 import { useLoading } from "hooks/useLoading"
