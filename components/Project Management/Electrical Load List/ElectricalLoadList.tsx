@@ -80,9 +80,7 @@ const ElectricalLoadList: React.FC<ElectricalLoadListProps> = ({ project_id }) =
         </div>
       </div>
       <div className="flex w-full flex-row justify-end">
-        <Button type="primary" onClick={handleSave}>
-          Save
-        </Button>
+        <Button type="primary">Save</Button>
       </div>
     </>
   )

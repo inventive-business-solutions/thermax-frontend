@@ -7,6 +7,10 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
+import AlertNotification from "components/AlertNotification"
+import CustomAutoComplete from "components/FormInputs/AutocompleteWithCreate"
+import CustomTextInput from "components/FormInputs/CustomInput"
+import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import {
   CLIENT_NAME_API,
   CONSULTANT_NAME_API,
@@ -16,10 +20,6 @@ import {
   USER_API,
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
-import AlertNotification from "../AlertNotification"
-import CustomAutoComplete from "../FormInputs/AutocompleteWithCreate"
-import CustomTextInput from "../FormInputs/CustomInput"
-import CustomSingleSelect from "../FormInputs/CustomSingleSelect"
 
 const ProjectFormValidationSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),

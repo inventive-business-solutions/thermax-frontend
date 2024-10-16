@@ -20,7 +20,6 @@ import {
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
 export default function useProjectInfoDropdowns() {
-  const { dropdownOptions: panelTypeOptions } = useDropdownOptions(`${PANEL_TYPE_API}?fields=["*"]`, "panel_name")
   const { dropdownOptions: mainSupplyMVOptions } = useDropdownOptions(`${MAIN_SUPPLY_MV_API}?fields=["*"]`, "voltage")
   const { dropdownOptions: voltageVariationOptions } = useDropdownOptions(
     `${VOLTAGE_VARIATION_API}?fields=["*"]`,
@@ -61,7 +60,6 @@ export default function useProjectInfoDropdowns() {
   const { dropdownOptions: seismicZoneOptions } = useDropdownOptions(`${SEISMIC_ZONE_API}?fields=["*"]`, "zone")
 
   return {
-    panelTypeOptions,
     mainSupplyMVOptions,
     voltageVariationOptions,
     frequencyVariationOptions,

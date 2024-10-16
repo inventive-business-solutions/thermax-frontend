@@ -10,3 +10,4 @@ export default async function Page({ params }: { params: { project_id: string } 
     </>
   )
 }
+

@@ -2,7 +2,8 @@
 
 import { BellFilled, CopyOutlined, DownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
 import { Button, Table, TableColumnType, Tooltip } from "antd"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { useLoading } from "hooks/useLoading"
 import GeneralInfo from "./GeneralInfo"
 import MainLayout from "./Layout/Main"
 import MainMCC from "./MCC-PCC/Main"
@@ -42,9 +43,13 @@ interface DesignBasisProps {
   handleSave: () => void
 }
 
-const DesignBasis: React.FC<DesignBasisProps> = ({ handleSave }) => {
+const DesignBasis = () => {
   const [openTab, setOpenTab] = useState<string>("1")
-  const [tabsEnabled, setTabsEnabled] = useState<boolean[]>([true, false, false, false, false])
+  const [tabsEnabled, setTabsEnabled] = useState<boolean[]>([true, true, true, true, true])
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+  }, [])
 
   const enableTabs = () => {
     setTabsEnabled(new Array(tabData.length).fill(true))
@@ -139,9 +144,7 @@ const DesignBasis: React.FC<DesignBasisProps> = ({ handleSave }) => {
             </div>
           </div>
           <div className="flex w-full flex-row justify-end">
-            <Button type="primary" onClick={handleSave}>
-              Save
-            </Button>
+            <Button type="primary">Save</Button>
           </div>
         </div>
       </div>

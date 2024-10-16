@@ -10,7 +10,7 @@ export const HOME_PAGE = "/"
 export const DASHBOARD_PAGE = "/dashboard"
 export const PROJECTS_PAGE = "/project"
 export const PACKAGE_PAGE = "/package-management"
-export const COMPLETE_PROJECT_PAGE = "/complete_project"
+export const COMPLETE_PROJECT_PAGE = "/complete-project"
 export const USER_MANAGEMENT_PAGE = "/user-management"
 
 // Division Names
@@ -20,6 +20,14 @@ export const HEATING = "Heating"
 export const SERVICES = "Services"
 export const WWS_IPG = "WWS IPG"
 export const WWS_SPG = "WWS SPG"
+
+export const S3FolderMapping = {
+  [ENVIRO]: "ENVIRO",
+  [HEATING]: "HEATING",
+  [SERVICES]: "WWS-SERVICES",
+  [WWS_IPG]: "WWS-IPG",
+  [WWS_SPG]: "WWS-SPG",
+}
 
 // Role Names
 export const THERMAX_USER = "Thermax User"

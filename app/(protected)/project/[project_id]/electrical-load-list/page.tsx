@@ -5,7 +5,7 @@ export default async function Page({ params }: { params: { project_id: string } 
   console.log("params", params)
   return (
     <>
-      <ElectricalLoadList/>
+      <ElectricalLoadList project_id={params.project_id}/>
     </>
   )
 }
