@@ -1,7 +1,6 @@
 "use client"
 
-import { BellFilled, CopyOutlined, DownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
-import { Button, Table, TableColumnType, Tooltip } from "antd"
+import { Button } from "antd"
 import React, { useEffect, useState } from "react"
 import { useLoading } from "hooks/useLoading"
 import GeneralInfo from "./GeneralInfo"
@@ -17,27 +16,12 @@ const tabData = [
   { label: "Layout", key: "5" },
 ]
 
-interface TableDataType {
-  key: React.Key
-  documentName: React.ReactNode
-  status: string
-  documentRevision: string
-  createdDate: string
-  action: React.ReactNode
-  download: React.ReactNode
-  release: React.ReactNode
-}
-
-interface DesignBasisProps {
-  handleSave: () => void
-}
-
 const DesignBasis = () => {
-  const [openTab, setOpenTab] = useState<string>("1")
+  const [openTab] = useState<string>("1")
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [])
+  }, [setModalLoading])
 
   return (
     <div className="flex flex-col gap-2">
@@ -46,7 +30,7 @@ const DesignBasis = () => {
         <div className="flex gap-2">
           {tabData.map((tab, index) => (
             <div
-              key={tab.key}
+              key={index.toString()}
               className={
                 "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-300 p-2 text-sm font-bold uppercase tracking-wide text-gray-600"
               }
@@ -58,17 +42,16 @@ const DesignBasis = () => {
         <div className="relative mb-6 flex w-full min-w-0 flex-col break-words rounded bg-white">
           <div className="flex-auto px-4 py-5">
             <div className="tab-content tab-space">
-              {/* Tab Content */}
               <div className={openTab === "1" ? "block" : "hidden"} id="link1"></div>
 
               <div className={openTab === "2" ? "block" : "hidden"} id="link2">
-                <GeneralInfo handleSave={() => setOpenTab("3")} />
+                <GeneralInfo />
               </div>
 
               <div className={openTab === "3" ? "block" : "hidden"} id="link3">
                 <p>Content of Motor Parameters</p>
 
-                <MotorParameters handleSave={() => setOpenTab("4")} />
+                <MotorParameters />
               </div>
 
               <div className={openTab === "4" ? "block" : "hidden"} id="link4">

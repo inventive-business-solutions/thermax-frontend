@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckCircleOutlined, CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons"
+import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons"
 import { Modal } from "antd"
 import { useEffect, useState } from "react"
 import { getBucketObjects } from "actions/aws/s3-actions"

@@ -42,8 +42,7 @@ export default function MainPackageModal({ open, setOpen, editMode, values, edit
     startTransition(async () => {
       if (editMode) {
         try {
-          await updateData(`${MAIN_PKG_API}/${values.name}`, data)
-          // await updateMainPackage(MAIN_PKG_URL, values.name, data)
+          await updateData(`${MAIN_PKG_API}/${values.name}`, false, data)
           setStatus("success")
           setMessage("Main package updated successfully")
         } catch (error: any) {
@@ -53,7 +52,7 @@ export default function MainPackageModal({ open, setOpen, editMode, values, edit
         }
       } else {
         try {
-          await createData(MAIN_PKG_API, data)
+          await createData(MAIN_PKG_API, false, data)
           setStatus("success")
           setMessage("Main package created successfully")
         } catch (error: any) {

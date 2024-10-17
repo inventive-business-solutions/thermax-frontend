@@ -8,7 +8,7 @@ export default function DocumentRevision() {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [])
+  }, [setModalLoading])
   // Ensure columns is defined as an array of ColumnType
   const columns: TableColumnsType = [
     {
@@ -29,11 +29,11 @@ export default function DocumentRevision() {
     { title: "Status", dataIndex: "status", render: (text) => <Tag color="green">{text}</Tag> },
     { title: "Document Revision", dataIndex: "documentRevision" },
     { title: "Created Date", dataIndex: "createdDate" }, // New column added here
-    { title: "Action", dataIndex: "action", render: (text) => <CopyOutlined /> },
+    { title: "Action", dataIndex: "action", render: () => <CopyOutlined /> },
     {
       title: () => <div className="text-center">Download</div>,
       dataIndex: "download",
-      render(value, record, index) {
+      render() {
         return (
           <div className="flex flex-row justify-center gap-4 hover:cursor-pointer">
             <Tooltip title={"Download"}>
@@ -49,7 +49,7 @@ export default function DocumentRevision() {
     {
       title: "Release",
       dataIndex: "release",
-      render: (text) => (
+      render: () => (
         <Button type="primary" size="small" name="Release">
           Release
         </Button>

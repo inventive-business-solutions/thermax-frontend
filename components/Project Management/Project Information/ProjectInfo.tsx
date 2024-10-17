@@ -1,5 +1,5 @@
 "use client"
-import { DownOutlined, PercentageOutlined, PlusOutlined } from "@ant-design/icons"
+import { DownOutlined, PercentageOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Tooltip } from "antd"
 import React, { useEffect, useState } from "react"
@@ -9,7 +9,7 @@ import * as zod from "zod"
 import { updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { PROJECT_API, PROJECT_INFO_API, PROJECT_PANEL_API } from "configs/api-endpoints"
+import { PROJECT_API, PROJECT_INFO_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import DocumentListModal from "./DocumentListModal"
@@ -140,7 +140,7 @@ const ProjectInfo = ({ params }: any) => {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [])
+  }, [setModalLoading])
 
   const { control, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(ProjectInfoSchema),

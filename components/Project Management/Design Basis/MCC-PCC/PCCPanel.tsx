@@ -7,7 +7,6 @@ import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 
 const configItemValidationSchema = zod.object({
   id: zod.number(),

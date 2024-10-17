@@ -55,9 +55,10 @@ export default function PackageList() {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [])
+  }, [setModalLoading])
 
   const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API, false)
+  console.log(packageData)
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
     await deleteData(`${MAIN_PKG_API}/${selectedRowID}`, false)

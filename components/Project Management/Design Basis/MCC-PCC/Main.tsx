@@ -13,7 +13,7 @@ const MainMCCPCC: React.FC = () => {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [])
+  }, [setModalLoading])
 
   const TabMCC = [
     {

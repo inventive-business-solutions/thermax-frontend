@@ -51,7 +51,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [])
+  }, [setModalLoading])
 
   const columns: ColumnsType<DataType> = [
     { title: "Project OC No", dataIndex: "project_oc_number", key: "project_oc_number" },

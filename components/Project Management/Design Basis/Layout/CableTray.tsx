@@ -3,11 +3,9 @@ import { Button, Divider } from "antd" // Import Select for dropdown
 import React from "react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"
-import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
+import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 
 const configItemValidationSchema = zod.object({
   id: zod.number(),

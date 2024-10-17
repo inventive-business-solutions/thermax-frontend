@@ -22,8 +22,6 @@ export default function CustomMultiSelectOption({
   placeholder,
   options,
   showSearch = true,
-  onChange,
-  onSearch,
   ...props
 }: MultiSelectProps) {
   const [selectedValues, setSelectedValues] = useState<string[]>([]) // Track selected values manually
@@ -31,10 +29,12 @@ export default function CustomMultiSelectOption({
   const [open, setOpen] = useState(false) // Popconfirm visibility
   const [actionType, setActionType] = useState<"select" | "deselect">() // Track action type
 
-  const handleConfirm = () => {
+  const handleConfirm = (field: any) => {
     if (actionType === "select" && pendingValue) {
+      field.onChange([...selectedValues, pendingValue]) // Update form state
       setSelectedValues([...selectedValues, pendingValue])
     } else if (actionType === "deselect" && pendingValue) {
+      field.onChange(selectedValues.filter((v) => v !== pendingValue)) // Update form state
       setSelectedValues(selectedValues.filter((v) => v !== pendingValue))
     }
     setOpen(false)
@@ -44,14 +44,6 @@ export default function CustomMultiSelectOption({
   const handleCancel = () => {
     setOpen(false)
     setPendingValue(null)
-  }
-
-  const handleSelectChange = (field: any, newValue: string[], selectValue?: string) => {
-    setOpen(false)
-    setPendingValue(null)
-
-    field.onChange(newValue) // Update form state
-    if (onChange) onChange(newValue) // Trigger onChange if passed as a prop
   }
 
   return (
@@ -67,7 +59,7 @@ export default function CustomMultiSelectOption({
           <Popconfirm
             title={`Are you sure you want to ${actionType === "select" ? "select" : "deselect"} this option?`}
             open={open}
-            onConfirm={handleConfirm}
+            onConfirm={() => handleConfirm(field)}
             onCancel={handleCancel}
             okText="Yes"
             cancelText="No"
@@ -90,9 +82,9 @@ export default function CustomMultiSelectOption({
                 setActionType("deselect")
                 setOpen(true) // Show confirmation for deselection
               }}
-              onChange={(newValue) => {
-                handleSelectChange(field, newValue)
-              }}
+              // onChange={(newValue) => {
+              //   handleSelectChange(field, newValue)
+              // }}
               options={options}
               status={fieldState.error && "error"}
               className="!w-full"

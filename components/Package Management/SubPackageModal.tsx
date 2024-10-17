@@ -27,7 +27,7 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 }
 
 export default function SubPackageModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
-  const { data: areaClassificationData } = useGetData(AREA_CLASSIFICATION_API)
+  const { data: areaClassificationData } = useGetData(AREA_CLASSIFICATION_API, false)
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
@@ -61,7 +61,7 @@ export default function SubPackageModal({ open, setOpen, editMode, values, editE
       } else {
         data["main_package_name"] = values.name
         try {
-          await createData(SUB_PKG_API, data)
+          await createData(SUB_PKG_API, false, data)
           setStatus("success")
           setMessage("Sub package created successfully")
         } catch (error: any) {
