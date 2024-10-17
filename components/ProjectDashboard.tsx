@@ -2,7 +2,7 @@
 import { Card } from "antd"
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { PROJECTS_PAGE } from "configs/constants"
 import { useLoading } from "hooks/useLoading"
 import LogoImage from "../public/eni_max_logo.png"
@@ -35,6 +35,7 @@ const ProjectDashboard = () => {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
     <>

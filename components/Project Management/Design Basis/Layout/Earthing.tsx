@@ -1,12 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "antd" // Import Select for dropdown
+import { Button, Divider } from "antd" // Import Select for dropdown
 import React from "react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"
-import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 
 const configItemValidationSchema = zod.object({
   id: zod.number(),
@@ -36,32 +34,44 @@ const Earthing: React.FC = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit(SubmitCommonConfig)}>
-        <div className="text-xl font-bold"> Supply Feeder</div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <CustomTextInput name="dol_starter" control={control} label="DOL Starter" type="text" />
-          <CustomSingleSelect
-            name="mcc_switchgear_type"
-            control={control}
-            label="MCC Switchgear type"
-            options={[
-              { value: "Male", label: "Male" },
-              { value: "Female", label: "Female" },
-            ]}
-          />
-          <CustomCheckboxInput name="check_switch" control={control} label="Check Switch" />
-          <CustomTextAreaInput name="star_delta_starter" control={control} label="Star Delta Starter" />
-
-          {/* Additional fields can be added here */}
+      <Divider orientation="left" orientationMargin={0}>
+        Material of Construction
+      </Divider>
+      <form onSubmit={handleSubmit(SubmitCommonConfig)} className="flex flex-col gap-4">
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="dol_starter"
+              label="Earthing System"
+              options={[]}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="dol_starter" label="Earth Strip" options={[]} size="small" />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="dol_starter" label="Earthing Pit" options={[]} size="small" />
+          </div>
+          <div className="flex-1">
+            <CustomTextInput
+              control={control}
+              name="dol_starter"
+              label="Soil Resistivity"
+              addonAfter={"ohm"}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="mt-2 flex w-full justify-end">
+          <Button type="primary" htmlType="submit">
+            Save and Continue
+          </Button>
         </div>
       </form>
-
-      <div className="mt-2 flex w-full justify-end">
-        <Button type="primary" onClick={handleSubmit(SubmitCommonConfig)}>
-          Save and Continue
-        </Button>
-      </div>
     </>
   )
 }

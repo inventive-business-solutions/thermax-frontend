@@ -38,7 +38,7 @@ export default function CustomAutoComplete({
       setTypedValue(defaultOption)
     }
     setFilteredOptions(options) // Sync filteredOptions with the new options from parent
-  }, [options])
+  }, [defaultOption, options])
 
   const handleCreateOption = async (value: string, onChange: (value: string) => void) => {
     if (!value) return

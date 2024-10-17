@@ -10,7 +10,7 @@ import { createData, updateData } from "actions/crud-actions"
 import AlertNotification from "components/AlertNotification"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { getProjectListUrl, PANEL_TYPE_API, PROJECT_PANEL_API } from "configs/api-endpoints"
+import { DYNAMIC_DOCUMENT_API, getProjectListUrl, PANEL_TYPE_API, PROJECT_PANEL_API } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
 const PanelFormValidationSchema = zod.object({
@@ -59,7 +59,8 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
 
   const handleCreatePanel = async (panelData: any) => {
     try {
-      await createData(PROJECT_PANEL_API, false, panelData)
+      const panelRes = await createData(PROJECT_PANEL_API, false, panelData)
+      await createData(DYNAMIC_DOCUMENT_API, false, { panel_id: panelRes.name })
       setStatus("success")
       setMessage("New panel created successfully")
     } catch (error: any) {

@@ -1,17 +1,16 @@
 "use client"
 
 import { DeleteOutlined, EditOutlined, SyncOutlined, UserAddOutlined } from "@ant-design/icons"
-import { Button, Popconfirm, Table, Tag, Tooltip } from "antd"
+import { Button, Popconfirm, Table, Tooltip } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
 import { getUsersUrl, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
-import { BTG, TagColors } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
 import { changeNameToKey, mergeLists } from "utils/helpers"
 import UserFormModal from "./UserModal"
-import { useLoading } from "hooks/useLoading"
 
 interface DataType {
   key: string
@@ -34,6 +33,7 @@ export const UserList = ({ userInfo }: any) => {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleEdit = (selectedRow: any) => {

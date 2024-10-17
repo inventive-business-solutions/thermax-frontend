@@ -2,10 +2,10 @@
 import { Tabs } from "antd"
 import React, { useEffect, useState } from "react"
 import { useLoading } from "hooks/useLoading"
-import CableTray from "./CableTray"
-import Earthing from "./Earthing"
+import MCCcumPCCMCCPanel from "./MCCcumPCCMCC"
+import MCCcumPCCPLCPanel from "./MCCcumPCCPLC"
 
-const MainLayout: React.FC = () => {
+const MCCcumPCC: React.FC = () => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -15,18 +15,19 @@ const MainLayout: React.FC = () => {
 
   const TabMCC = [
     {
-      label: "Cable Tray",
+      label: "MCC",
       key: "1",
-      children: <CableTray />,
+      children: <MCCcumPCCMCCPanel />,
     },
     {
-      label: "Earthing",
+      label: "PLC",
       key: "2",
-      children: <Earthing />,
+      children: <MCCcumPCCPLCPanel />,
     },
   ]
 
   const onChange = (key: string) => {
+    console.log(key)
     setActiveKey(key) // Update active tab
   }
 
@@ -46,4 +47,4 @@ const MainLayout: React.FC = () => {
   )
 }
 
-export default MainLayout
+export default MCCcumPCC

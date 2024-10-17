@@ -1,6 +1,6 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Modal } from "antd"
+import { Button } from "antd"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
@@ -34,6 +34,7 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
 
   useEffect(() => {
     setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { control, handleSubmit, watch } = useForm<zod.infer<typeof signInSchema>>({

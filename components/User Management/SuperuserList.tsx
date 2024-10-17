@@ -53,7 +53,7 @@ export default function SuperuserList() {
       title: "Division",
       dataIndex: "division",
       key: "division",
-      render: (text, record) => <Tag color={TagColors[record.division]}>{text}</Tag>,
+      render: (text, record) => <Tag color={TagColors[record.division as keyof typeof TagColors]}>{text}</Tag>,
     },
 
     { title: "Modified Date", dataIndex: "modified", key: "modified", render: (text) => new Date(text).toDateString() },

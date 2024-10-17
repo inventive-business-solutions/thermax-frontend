@@ -13,9 +13,9 @@ import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
 import { GET_PKG_API, MAIN_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
 import MainPackageModal from "./MainPackageModal"
 import SubPackageModal from "./SubPackageModal"
-import { useLoading } from "hooks/useLoading"
 
 interface DataType {
   key: string
@@ -55,9 +55,11 @@ export default function PackageList() {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API, false)
+  console.log(packageData)
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
     await deleteData(`${MAIN_PKG_API}/${selectedRowID}`, false)

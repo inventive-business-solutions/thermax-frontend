@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Modal } from "antd"
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
@@ -17,7 +17,6 @@ import {
   getProjectListUrl,
   PROJECT_API,
   THERMAX_USER_API,
-  USER_API,
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 

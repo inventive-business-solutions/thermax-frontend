@@ -11,6 +11,8 @@ export const USER_API = `/document/User`
 export const NEXT_AUTH_USER_API = `/document/NextAuthUser`
 export const THERMAX_USER_API = `/document/Thermax Extended User`
 export const PROJECT_PANEL_API = `/document/Project Panel Data`
+export const STATIC_DOCUMENT_API = `/document/Static Document List`
+export const DYNAMIC_DOCUMENT_API = `/document/Dynamic Document List`
 
 // Master Data
 export const DIVISION_API = `/document/Division`

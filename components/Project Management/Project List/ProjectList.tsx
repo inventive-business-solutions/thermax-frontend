@@ -51,6 +51,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const columns: ColumnsType<DataType> = [
