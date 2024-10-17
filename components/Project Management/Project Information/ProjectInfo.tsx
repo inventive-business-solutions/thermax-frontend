@@ -140,7 +140,8 @@ const ProjectInfo = ({ params }: any) => {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [setModalLoading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { control, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(ProjectInfoSchema),

@@ -10,7 +10,8 @@ const MainLayout: React.FC = () => {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [setModalLoading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const TabMCC = [
     {

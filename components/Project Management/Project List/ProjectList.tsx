@@ -51,7 +51,8 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [setModalLoading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const columns: ColumnsType<DataType> = [
     { title: "Project OC No", dataIndex: "project_oc_number", key: "project_oc_number" },

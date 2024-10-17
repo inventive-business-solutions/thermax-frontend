@@ -55,7 +55,8 @@ export default function PackageList() {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [setModalLoading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API, false)
   console.log(packageData)

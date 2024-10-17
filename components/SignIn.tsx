@@ -34,7 +34,8 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
 
   useEffect(() => {
     setModalLoading(false)
-  }, [setModalLoading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { control, handleSubmit, watch } = useForm<zod.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),

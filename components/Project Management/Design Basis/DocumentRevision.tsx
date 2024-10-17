@@ -8,7 +8,9 @@ export default function DocumentRevision() {
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
-  }, [setModalLoading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Ensure columns is defined as an array of ColumnType
   const columns: TableColumnsType = [
     {
