@@ -14,6 +14,99 @@ export const PROJECT_PANEL_API = `/document/Project Panel Data`
 export const STATIC_DOCUMENT_API = `/document/Static Document List`
 export const DYNAMIC_DOCUMENT_API = `/document/Dynamic Document List`
 
+
+// Make of components Api end Points
+
+export const MAKE_MOTORS = `/document/Motors Make`
+export const MAKE_CABLE = `/document/Cables Make`
+export const MAKE_LV_SWITCHGEAR = `/document/LV switchgear Make`
+export const MAKE_PANEL_ENCLOSURE = `/document/Panel Enclosure Make`
+export const MAKE_VFD_VSD = `/document/VFD VSD Make`
+export const MAKE_SOFT_STARTER = `/document/Soft Starter Make`
+export const MAKE_PLC = `/document/PLC Make`
+
+// Common Coniguration on MCC/PCC : 
+
+export const DOL_STARTER = `/document/DOL Starter`
+export const STAR_DELTA_STARTER = `/document/Star Delta Starter`
+export const AMMETER = `/document/Ammeter`
+export const AMMETER_CONFIGURATION = `/document/Ammeter Configuration`
+export const MCC_SWITCHGEAR_TYPE = `/document/MCC Switchgear type`
+export const SWITCHGEAR_COMBINATION = `/document/Switchgear Combination`
+
+export const SUPPLY_FEEDER_POLE = `/document/Supply Feeder Pole`
+export const SUPPLY_FEEDER_DM_STANDARD = `/document/Supply Feeder DM Standard`
+export const SUPPLY_FEEDER_TESTING_STANDARD = `/document/Supply Feeder Testing Standard`
+export const POWER_WIRING_COLOR = `/document/Power Wiring Color`
+export const POWER_WIRING_LENGTH = `/document/Power Wiring Length`
+export const CONTROL_WIRING_COLOR = `/document/Control Wiring Color`
+export const CONTROL_WIRING_LENGTH = `/document/Control Wiring Length`
+export const VDC_24_WIRING_COLOR = `/document/VDC 24 Wiring Color`
+export const VDC_24_WIRING_LENGTH = `/document/VDC 24 Wiring Length`
+export const ANALOG_SIGNAL_WIRING_COLOR = `/document/Analog Signal Wiring Color`
+export const ANALOG_SIGNAL_WIRING_LENGTH = `/document/Analog Signal Wiring Length`
+export const CT_WIRING_COLOR = `/document/CT Wiring Color`
+export const CT_WIRING_LENGTH = `/document/CT Wiring Length`
+export const CABLE_WIRING_PVC = `/document/Cable Insulation PVC`
+export const FERRULE = `/document/Ferrule`
+export const SPARE_TERMINAL = `/document/Spare Terminal`
+
+export const TEST_RESET = `/document/Test Reset`
+export const ALARM_ACKNOWLEDGE_AND_LAMP_TEST = `/document/Alarm Acknowledge and Lamp Test`
+export const SPEED_DECREASE_PB = `/document/Speed Decrease PB`
+export const SPEED_INCREASE_PB = `/document/Speed Increase PB`
+export const PUSH_BUTTON_ESS = `/document/Push Button ESS`
+export const PUSH_BUTTON_STOP = `/document/Push Button Stop`
+export const PUSH_BUTTON_START = `/document/Push Button Start`
+
+export const LR_SELECTOR_SWITCH_APPLICABLE = `/document/Applicable Selector Switch On MCC Panel Front Door`
+export const LR_SELECTOR_LOCK_TYPE = `/document/Lockable Selector Switch On MCC Panel Front Door`
+
+export const RUNNING_OPEN = `/document/Indicating Lamp Running Open`
+export const STOPPED_CLOSED = `/document/Indicating Lamp Stopped Closed`
+export const TRIP = `/document/Indicating Lamp Trip`
+
+export const FIELD_MOTOR_TYPE = `/document/Field Motor Isolator General Type`
+export const FIELD_MOTOR_ENCLOSURE = `/document/Field Motor Isolator General Enclosure`
+export const FIELD_MOTOR_MATERIAL = `/document/Field Motor Isolator General Material`
+export const FIELD_MOTOR_QTY = `/document/Field Motor Isolator General QTY`
+export const FIELD_MOTOR_COLOUR_SHADE = `/document/Field Motor Isolator Color Shade`
+export const FIELD_MOTOR_CABLE_ENTRY = `/document/Field Motor Isolator General Cable Entry`
+export const FIELD_MOTOR_CANOPY_ON_TOP = `/document/Field Motor Isolator Canopy On Top`
+
+export const LPBS_TYPE = `/document/Local Push Button Station Type`
+export const LPBS_ENCLOSURE = `/document/Local Push Button Station Enclosure`
+export const LPBS_MATERIAL = `/document/Local Push Button Station Material`
+export const LPBS_QTY = `/document/Local Push Button Station Qty`
+export const LPBS_COLOR_SHADE = `/documentLocal Push Button Station LPBS Color Shade/`
+export const LPBS_CANOPY_ON_TOP = `/document/Field Motor Isolator Canopy On Top/`
+export const LPBS_COLOR = `/document/LPBS Start Push Button Color/`
+export const LPBS_INDICATOR_ON_COLOR = `/document/LPBS Start ON Indication Lamp Color/`
+export const LPBS_INDICATOR_OFF_COLOR = `/document/LPBS Stop OFF Indication Lamp Color/`
+export const LPBS_SPEED_INCREASE_BUTTON = `/document/LPBS Speed Increase Push Button/`
+export const LPBS_SPEED_DECREASE_BUTTON = `/document/LPBS Speed Decrease Push Button/`
+
+export const APFC_RELAY = `/document/APFC Relay`
+
+export const PB_MAIN_BUSBAR_SELECTION = `/document/PB Main Busbar Selection`
+export const PB_HEAT_PVC_SLEEVE = `/document/PB Heat Shrinkable Color PVC sleeve`
+export const PB_CURRENT_DENSITY = `/document/PB Current Density`
+export const CB_MAIN_BUSBAR_SELECTION = `/document/CB Main Busbar Selection`
+export const CB_HEAT_PVC_SLEEVE = `/document/CB Heat Shrinkable Color PVC sleeve`
+export const CB_CURRENT_DENSITY = `/document/CB Current Density`
+export const EB_MAIN_BUSBAR_SELECTION = `/document/EB Main Busbar Selection`
+export const EB_EARTH_BUSBAR_POSITION = `/document/EB Earth Busbar Position`
+export const EB_CURRENT_DENSITY = `/document/EB Current Density`
+
+export const METERING_FOR_FEEDER = `/document/Metering for Feeder`
+
+
+
+
+// export const SUPPLY_FEEDER_DM_STANDARD = `/document/Supply Feeder DM Standard`
+
+
+
 // Master Data
 export const DIVISION_API = `/document/Division`
 export const PANEL_TYPE_API = `document/Panel Type`
