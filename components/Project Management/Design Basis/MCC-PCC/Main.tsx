@@ -2,13 +2,13 @@
 import { Tabs } from "antd"
 import React, { useEffect, useState } from "react"
 import { useLoading } from "hooks/useLoading"
-import CommonConfiguration from "./CommonConfiguration"
-import MakeOfComponent from "./MakeOfComponent"
+import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
+import CommonConfiguration from "./CommonConfiguration/CommonConfiguration"
 import MCCcumPCCPanel from "./MCCcumPCC"
 import MCCPanel from "./MCCPanel"
 import PCCPanel from "./PCCPanel"
 
-const MainMCCPCC: React.FC = () => {
+const MainMCCPCC = ({params} : any) => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -20,12 +20,12 @@ const MainMCCPCC: React.FC = () => {
     {
       label: "Make",
       key: "1",
-      children: <MakeOfComponent handleSwitchTab={() => handleSwitchTab("2")} />,
+      children: <MakeOfComponent params={params} handleSwitchTab={() => handleSwitchTab("2")} />,
     },
     {
       label: "Common Configuration",
       key: "2",
-      children: <CommonConfiguration handleSwitchTab={() => handleSwitchTab("3")} />,
+      children: <CommonConfiguration params={params} handleSwitchTab={() => handleSwitchTab("3")} />,
     },
     {
       label: "MCC",
