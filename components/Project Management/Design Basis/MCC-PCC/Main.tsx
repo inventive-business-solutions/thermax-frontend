@@ -5,7 +5,7 @@ import { useLoading } from "hooks/useLoading"
 import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
 import CommonConfiguration from "./CommonConfiguration/CommonConfiguration"
 import MCCcumPCCPanel from "./MCCcumPCC"
-import MCCPanel from "./MCCPanel"
+import MCCPanel from "./MCC/MCCPanel"
 import PCCPanel from "./PCCPanel"
 
 const MainMCCPCC = ({params} : any) => {
@@ -30,7 +30,7 @@ const MainMCCPCC = ({params} : any) => {
     {
       label: "MCC",
       key: "3",
-      children: <MCCPanel />,
+      children: <MCCPanel params={params} handleSwitchTab={() => handleSwitchTab("3")} />,
     },
     {
       label: "PCC",
