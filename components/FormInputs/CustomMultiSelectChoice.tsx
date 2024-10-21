@@ -82,9 +82,6 @@ export default function CustomMultiSelectOption({
                 setActionType("deselect")
                 setOpen(true) // Show confirmation for deselection
               }}
-              // onChange={(newValue) => {
-              //   handleSelectChange(field, newValue)
-              // }}
               options={options}
               status={fieldState.error && "error"}
               className="!w-full"

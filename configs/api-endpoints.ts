@@ -14,6 +14,12 @@ export const PROJECT_PANEL_API = `/document/Project Panel Data`
 export const STATIC_DOCUMENT_API = `/document/Static Document List`
 export const DYNAMIC_DOCUMENT_API = `/document/Dynamic Document List`
 
+export const CLASSIFICATION_AREA_STANDARD_API = `/document/Classification Area Standard`
+export const CLASSIFICATION_AREA_ZONE_API = `/document/Classification Area Zone`
+export const CLASSIFICATION_AREA_GAS_GROUP_API = `/document/Classification Area Gas Group`
+export const CLASSIFICATION_AREA_TEMPERATURE_CLASS_API = `/document/Classification Area Temperature Class`
+
+export const PROJECT_MAIN_PKG_API = `/document/Project Main Package`
 
 // Make of components Api end Points
 
@@ -25,7 +31,7 @@ export const MAKE_VFD_VSD = `/document/VFD VSD Make`
 export const MAKE_SOFT_STARTER = `/document/Soft Starter Make`
 export const MAKE_PLC = `/document/PLC Make`
 
-// Common Coniguration on MCC/PCC : 
+// Common Coniguration on MCC/PCC :
 
 export const DOL_STARTER = `/document/DOL Starter`
 export const STAR_DELTA_STARTER = `/document/Star Delta Starter`
@@ -100,12 +106,7 @@ export const EB_CURRENT_DENSITY = `/document/EB Current Density`
 
 export const METERING_FOR_FEEDER = `/document/Metering for Feeder`
 
-
-
-
 // export const SUPPLY_FEEDER_DM_STANDARD = `/document/Supply Feeder DM Standard`
-
-
 
 // Master Data
 export const DIVISION_API = `/document/Division`
