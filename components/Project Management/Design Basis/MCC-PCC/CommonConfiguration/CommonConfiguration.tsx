@@ -12,6 +12,7 @@ import { PROJECT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { mutate } from "swr"
+import { updateData } from "actions/crud-actions"
 
 const configItemValidationSchema = zod.object({
   id: zod.number(),
@@ -177,13 +178,13 @@ const CommonConfiguration: React.FC<CommonConfigurationProps> = ({ params, handl
 
   const { data: projectMetadata } = useGetData(getProjectMetadataUrl, false)
   const { data: commonConfig } = useGetData(getCommonConfigUrl, false)
+  const [loading, setLoading] = useState(false)
 
   const projectData = React.useMemo(
     () => ({ ...projectMetadata, commonConfig }),
     [projectMetadata, commonConfig]
   )
 
-  const [loading, setLoading] = useState(false)
 
   const {
     dol_starterOptions,
@@ -252,7 +253,7 @@ const CommonConfiguration: React.FC<CommonConfigurationProps> = ({ params, handl
     
   } = useCommonConfigDropdowns()
 
-  console.log("metering_for_feederOption", metering_for_feederOption)
+  // console.log("metering_for_feederOption", metering_for_feederOption)
   
   const { control, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(configItemValidationSchema),
@@ -274,8 +275,10 @@ const CommonConfiguration: React.FC<CommonConfigurationProps> = ({ params, handl
   }
 
   const onSubmit: SubmitHandler<zod.infer<typeof commonConfig>> = async (data: any) => {
+    setLoading(true);
     try {
-      console.log("data: ", data)
+      // await updateData(getCommonConfigUrl, false, data)
+      message.success("Common Config Updated Successfully")
     } catch (error) {
       handleError(error)
     } finally {

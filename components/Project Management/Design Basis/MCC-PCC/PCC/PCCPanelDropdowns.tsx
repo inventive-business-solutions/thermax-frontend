@@ -43,7 +43,7 @@ import {
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
-export default function useMCCPanelDropdowns() {
+export default function usePCCPanelDropdowns() {
   const { dropdownOptions: sd_incomer_ampereOptions } = useDropdownOptions(
     `${SD_INCOMER_AMPERE}?fields=["*"]`,
     "incomer"

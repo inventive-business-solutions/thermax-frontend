@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react"
 import { useLoading } from "hooks/useLoading"
 import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
 import CommonConfiguration from "./CommonConfiguration/CommonConfiguration"
-import MCCcumPCCPanel from "./MCCcumPCC"
+import MCCcumPCCPanel from "./PLC/MCCcumPCC"
 import MCCPanel from "./MCC/MCCPanel"
-import PCCPanel from "./PCCPanel"
+import PCCPanel from "./PCC/PCCPanel"
 
 const MainMCCPCC = ({params} : any) => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
@@ -30,7 +30,7 @@ const MainMCCPCC = ({params} : any) => {
     {
       label: "MCC",
       key: "3",
-      children: <MCCPanel params={params} handleSwitchTab={() => handleSwitchTab("3")} />,
+      children: <MCCPanel  />,
     },
     {
       label: "PCC",

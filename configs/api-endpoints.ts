@@ -149,6 +149,7 @@ export const PC_PAINT_SHADE_FOR_BASE_FRAME = `document/PC Paint shade for base f
 export const PC_MIN_COATING_THICKNESS = `document/PC Min Coating Thickness`
 export const PC_STANDARD_FOR_PRETREATMENT_PANEL = `document/PC Standard for pretreatment Panel`
 export const VFD_AUTO_MANUAL_SELECTION = `document/VFD Auto Manual Selection`
+
 // Punching details or BOILER
 export const PDFB_MODEL = `document/PDFB Model`
 export const PDFB_YEAR = `document/PDFB Year`
