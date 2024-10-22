@@ -33,7 +33,15 @@ const getDefaultValues = (mainPkgData: any) => {
   return defaultValues
 }
 
-export default function GISubPkgList({ main_package, generalInfoData }: { main_package: any; generalInfoData: any }) {
+export default function GISubPkgList({
+  main_package,
+  generalInfoData,
+  setGeneralInfoData,
+}: {
+  main_package: any
+  generalInfoData: any
+  setGeneralInfoData: any
+}) {
   const { dropdownOptions: standardOptions } = useDropdownOptions(CLASSIFICATION_AREA_STANDARD_API, "name")
   const { dropdownOptions: zoneOptions } = useDropdownOptions(CLASSIFICATION_AREA_ZONE_API, "name")
   const { dropdownOptions: gasGroupOptions } = useDropdownOptions(CLASSIFICATION_AREA_GAS_GROUP_API, "name")
@@ -44,16 +52,66 @@ export default function GISubPkgList({ main_package, generalInfoData }: { main_p
 
   const [hasHazardousArea, setHasHazardousArea] = useState(false)
 
+  const getSubPkg = (main_package, subPkg, generalInfoData) => {
+    const main_package_name = main_package.main_package_name
+    const sub_package_name = subPkg.sub_package_name
+    const defaultMainPkg = generalInfoData?.pkgList?.find((pkg: any) => pkg.main_package_name === main_package_name)
+    const defaultSubPkg = defaultMainPkg?.sub_packages?.find((pkg: any) => pkg.sub_package_name === sub_package_name)
+    return defaultSubPkg
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {main_package?.sub_packages?.map((subPkg: any, index: any) => (
         <div key={index.toString()} className="flex flex-col gap-4">
           <div className="flex items-center gap-10">
             <div>
-              <Checkbox disabled={generalInfoData.package_selection === 0}>{subPkg.sub_package_name}</Checkbox>
+              <Checkbox
+                disabled={generalInfoData.is_package_selection_enabled === 0}
+                checked={(() => {
+                  const subPkgValue = getSubPkg(main_package, subPkg, generalInfoData)
+                  return subPkgValue?.is_sub_package_selected
+                })()}
+                onChange={(e) => {
+                  const newGeneralInfoData = { ...generalInfoData }
+                  const main_package_name = main_package.main_package_name
+                  const sub_package_name = subPkg.sub_package_name
+                  const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
+                    (pkg: any) => pkg.main_package_name === main_package_name
+                  )
+                  const defaultSubPkg = defaultMainPkg?.sub_packages?.find(
+                    (pkg: any) => pkg.sub_package_name === sub_package_name
+                  )
+                  defaultSubPkg.is_sub_package_selected = e.target.checked
+                  setGeneralInfoData(newGeneralInfoData)
+                }}
+              >
+                {subPkg.sub_package_name}
+              </Checkbox>
             </div>
             <div>
-              <Radio.Group disabled={generalInfoData.package_selection === 0}>
+              <Radio.Group
+                disabled={generalInfoData.is_package_selection_enabled === 0}
+                value={(() => {
+                  const subPkgValue = getSubPkg(main_package, subPkg, generalInfoData)
+                  return subPkgValue?.area_of_classification
+                })()}
+                onChange={
+                  ((e) => {
+                    const newGeneralInfoData = { ...generalInfoData }
+                    const main_package_name = main_package.main_package_name
+                    const sub_package_name = subPkg.sub_package_name
+                    const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
+                      (pkg: any) => pkg.main_package_name === main_package_name
+                    )
+                    const defaultSubPkg = defaultMainPkg?.sub_packages?.find(
+                      (pkg: any) => pkg.sub_package_name === sub_package_name
+                    )
+                    defaultSubPkg.area_of_classification = e.target.value
+                    setGeneralInfoData(newGeneralInfoData)
+                  }) as any
+                }
+              >
                 <Radio value={"Safe Area"}>Safe Area</Radio>
                 <Radio value={"Hazardous Area"}>Hazardous Area</Radio>
               </Radio.Group>

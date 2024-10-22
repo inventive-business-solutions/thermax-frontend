@@ -1,8 +1,8 @@
 "use client"
-import { Button, Divider, Radio, RadioChangeEvent, Select } from "antd"
+import { Button, Divider, message, Radio, RadioChangeEvent, Select } from "antd"
 import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
-import { createData, getData } from "actions/crud-actions"
+import { createData, getData, updateData } from "actions/crud-actions"
 import { createDropdownOptions } from "components/Package Management/package-management.logic"
 import {
   BATTERY_LIMIT_API,
@@ -23,29 +23,29 @@ const GeneralInfo = () => {
   const [addPkgLoading, setAddPkgLoading] = useState(false)
   const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`, false)
   const [generalInfoData, setGeneralInfoData] = useState({})
+  const [refresh, setRefresh] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
       const generalInfoDefaultData = await getData(`${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]`, false)
-      console.log(generalInfoDefaultData)
+      const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?project_id=${params.project_id}`, false)
       if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
         setGeneralInfoData({
-          package_selection: generalInfoDefaultData[0]?.is_package_selection_enabled,
-          pkgList: [],
+          is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
+          pkgList: mainPkgData,
           battery_limit: generalInfoDefaultData[0]?.battery_limit,
         })
       }
     }
     fetchData()
-  }, [])
-  console.log("generalInfoData", generalInfoData)
+  }, [refresh])
 
   const projectMainPkgUrl = `${PROJECT_MAIN_PKG_LIST_API}?project_id=${params.project_id}`
-  const { data: mainPkgData } = useGetData(projectMainPkgUrl, false)
+
   const filteredOptions = dbPkgList?.filter(
     (pkg: any) =>
       pkg.package_name !== selectedPkg &&
-      !mainPkgData?.some((mainPkg: any) => mainPkg.main_package_name === pkg.package_name)
+      !generalInfoData?.pkgList?.some((mainPkg: any) => mainPkg.main_package_name === pkg.package_name)
   )
   const { dropdownOptions: batteryLimitOptions } = useDropdownOptions(BATTERY_LIMIT_API, "name")
   // wrap in useMemo to prevent re-rendering
@@ -75,10 +75,31 @@ const GeneralInfo = () => {
       main_package_name: selectedPkg,
       sub_packages: subPkgCreateData,
     })
-    // const mainPkgData = await getData(projectMainPkgUrl, false)
+    setRefresh(!refresh)
     setSelectedPkg("")
-    // setMainPkgData(mainPkgData)
     setAddPkgLoading(false)
+  }
+
+  const handleSave = async () => {
+    const existingDesignBasis = await getData(
+      `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["project_id", "=", "${params.project_id}"]]`,
+      false
+    )
+    if (existingDesignBasis && existingDesignBasis.length > 0) {
+      // update
+      await updateData(`${DESIGN_BASIS_GENERAL_INFO_API}/${existingDesignBasis[0].name}`, false, {
+        is_package_selection_enabled: generalInfoData.is_package_selection_enabled,
+        battery_limit: generalInfoData.battery_limit,
+      })
+    } else {
+      await createData(DESIGN_BASIS_GENERAL_INFO_API, false, {
+        project_id: params.project_id,
+        is_package_selection_enabled: generalInfoData.is_package_selection_enabled,
+        battery_limit: generalInfoData.battery_limit,
+      })
+    }
+    message.success("Design Basis General Info saved successfully")
+    console.log("existingDesignBasis", existingDesignBasis)
   }
 
   return (
@@ -88,9 +109,9 @@ const GeneralInfo = () => {
           <div className="font-bold text-slate-800">Package Selection</div>
           <div>
             <Radio.Group
-              value={generalInfoData.package_selection}
+              value={generalInfoData.is_package_selection_enabled}
               onChange={(e: RadioChangeEvent) =>
-                setGeneralInfoData({ ...generalInfoData, package_selection: e.target.value })
+                setGeneralInfoData({ ...generalInfoData, is_package_selection_enabled: e.target.value })
               }
             >
               <Radio value={1}>Yes</Radio>
@@ -107,7 +128,7 @@ const GeneralInfo = () => {
               options={createDropdownOptions(filteredOptions, "package_name")}
               style={{ width: "100%" }}
               allowClear={false}
-              disabled={generalInfoData.package_selection === 0}
+              disabled={generalInfoData.is_package_selection_enabled === 0}
             />
           </div>
           <div className="">
@@ -115,7 +136,7 @@ const GeneralInfo = () => {
               type="primary"
               onClick={handleAddPkg}
               loading={addPkgLoading}
-              disabled={generalInfoData.package_selection === 0}
+              disabled={generalInfoData.is_package_selection_enabled === 0}
             >
               Add
             </Button>
@@ -123,10 +144,12 @@ const GeneralInfo = () => {
         </div>
       </div>
       <GIPkgSelectionTabs
-        main_package_list={mainPkgData}
         mainPkgUrl={projectMainPkgUrl}
         generalInfoData={generalInfoData}
         setMainPkgData={null}
+        setGeneralInfoData={setGeneralInfoData}
+        refresh={refresh}
+        setRefresh={setRefresh}
       />
       <Divider>
         <span className="font-bold text-slate-700">Battery Limit</span>
@@ -150,7 +173,7 @@ const GeneralInfo = () => {
       </div>
 
       <div className="flex w-full justify-end gap-4">
-        <Button type="primary" onClick={() => console.log(generalInfoData)}>
+        <Button type="primary" onClick={handleSave}>
           Save
         </Button>
       </div>

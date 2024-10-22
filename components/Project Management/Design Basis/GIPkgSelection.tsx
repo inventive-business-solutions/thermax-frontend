@@ -7,12 +7,32 @@ import { PROJECT_MAIN_PKG_API } from "configs/api-endpoints"
 import GISubPkgList from "./GISubPkgList"
 import { mutate } from "swr"
 
-export default function GIPkgSelectionTabs({ main_package_list, mainPkgUrl, generalInfoData, setMainPkgData }: any) {
-  const tabItems = main_package_list?.map((main_package: any, index: number) => ({
+export default function GIPkgSelectionTabs({
+  mainPkgUrl,
+  generalInfoData,
+  setMainPkgData,
+  setGeneralInfoData,
+  refresh,
+  setRefresh,
+}: {
+  mainPkgUrl: string
+  generalInfoData: any
+  setMainPkgData: any
+  setGeneralInfoData: any
+  refresh?: boolean
+  setRefresh?: any
+}) {
+  const tabItems = generalInfoData?.pkgList?.map((main_package: any, index: number) => ({
     key: index.toString(),
     label: main_package?.main_package_name,
-    children: <GISubPkgList main_package={main_package} generalInfoData={generalInfoData} />,
-    disabled: generalInfoData.package_selection === 0,
+    children: (
+      <GISubPkgList
+        main_package={main_package}
+        generalInfoData={generalInfoData}
+        setGeneralInfoData={setGeneralInfoData}
+      />
+    ),
+    disabled: generalInfoData.is_package_selection_enabled === 0,
   }))
   const remove = async (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
     const item = tabItems.find((item: any) => item.key === targetKey)
@@ -24,8 +44,7 @@ export default function GIPkgSelectionTabs({ main_package_list, mainPkgUrl, gene
     if (data && data.length > 0) {
       await deleteData(`${PROJECT_MAIN_PKG_API}/${data[0].name}`, false)
     }
-    const remainingData = await getData(mainPkgUrl, false)
-    setMainPkgData(remainingData)
+    setRefresh(!refresh)
   }
   if (tabItems && tabItems.length === 0) {
     return null
@@ -45,12 +64,12 @@ export default function GIPkgSelectionTabs({ main_package_list, mainPkgUrl, gene
               onConfirm={() => remove(tab.key)}
               okText="Yes"
               cancelText="No"
-              disabled={generalInfoData.package_selection === 0}
+              disabled={generalInfoData.is_package_selection_enabled === 0}
             >
               <DeleteTwoTone
                 twoToneColor="#ff7875"
                 style={{ marginLeft: 8, cursor: "pointer" }}
-                disabled={generalInfoData.package_selection === 0}
+                disabled={generalInfoData.is_package_selection_enabled === 0}
               />
             </Popconfirm>
           </span>
