@@ -51,9 +51,9 @@ export default function GISubPkgList({ main_package_id }: { main_package_id: str
     defaultValues: getDefaultValues(mainPkgData),
   })
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: any) => {
     data["project_id"] = params.project_id
-    data["main_package_name"] = main_package_name
+    data["main_package_name"] = main_package_id
 
     try {
       if (mainPkgData.length === 0) {

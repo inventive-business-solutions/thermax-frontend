@@ -13,7 +13,7 @@ export default function GIPkgSelectionTabs({ main_package_list }: any) {
     children: <GISubPkgList main_package_id={main_package?.name} />,
   }))
   const remove = async (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
-    const item = tabItems.find((item) => item.key === targetKey)
+    const item = tabItems.find((item: any) => item.key === targetKey)
     const label = item?.label
     const data = await getData(
       `${PROJECT_MAIN_PKG_API}?fields=["name"]&filters=[["main_package_name", "=", "${label}"]]`,
@@ -30,7 +30,7 @@ export default function GIPkgSelectionTabs({ main_package_list }: any) {
     <Tabs
       defaultActiveKey="0"
       type="editable-card"
-      items={tabItems?.map((tab) => ({
+      items={tabItems?.map((tab: any) => ({
         ...tab,
         label: (
           <span>

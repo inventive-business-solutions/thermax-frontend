@@ -50,7 +50,7 @@ const GeneralInfo = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([])
 
   const { dropdownOptions: packageOptions } = useDropdownOptions(`${MAIN_PKG_API}?fields=["*"]`, "package_name")
-  const filteredOptions = packageOptions?.filter((o) => !selectedItems.includes(o.name))
+  const filteredOptions = packageOptions?.filter((o: any) => !selectedItems.includes(o.name))
   const mainPkgUrl = `${PROJECT_MAIN_PKG_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`
   const { data: mainPkgData } = useGetData(mainPkgUrl, false)
   // wrap in useMemo to prevent re-rendering
@@ -62,7 +62,7 @@ const GeneralInfo = () => {
 
   useEffect(() => {
     if (mainPkgData) {
-      setSelectedItems(mainPkgData?.map((pkg) => pkg.main_package_name))
+      setSelectedItems(mainPkgData?.map((pkg: any) => pkg.main_package_name))
     }
   }, [mainPkgData])
 
@@ -74,7 +74,7 @@ const GeneralInfo = () => {
   })
 
   const handleAddPkg = async () => {
-    const alreadyAdded = mainPkgData?.map((pkg) => pkg.main_package_name)
+    const alreadyAdded = mainPkgData?.map((pkg: any) => pkg.main_package_name)
     const newlyAdded = selectedItems?.filter((pkg) => !alreadyAdded.includes(pkg))
 
     newlyAdded.forEach(async (pkg) => {
