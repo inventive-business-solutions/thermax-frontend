@@ -1,58 +1,40 @@
 "use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Divider, Select, Tabs, TabsProps } from "antd"
+import { Button, Divider, Radio, RadioChangeEvent, Select } from "antd"
+import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import CustomMultiSelectOption from "components/FormInputs/CustomMultiSelectChoice"
-import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { MAIN_PKG_API, PROJECT_MAIN_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
+import { createData, getData } from "actions/crud-actions"
+import { createDropdownOptions } from "components/Package Management/package-management.logic"
+import {
+  BATTERY_LIMIT_API,
+  MAIN_PKG_API,
+  PROJECT_MAIN_PKG_API,
+  PROJECT_MAIN_PKG_LIST_API,
+  SUB_PKG_API,
+} from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { useLoading } from "hooks/useLoading"
 import GIPkgSelectionTabs from "./GIPkgSelection"
-import { useParams } from "next/navigation"
-import { useGetData } from "hooks/useCRUD"
-import { createData, getData } from "actions/crud-actions"
-
-// Define validation schema using zod
-const GeneralInfoSchema = z
-  .object({
-    selectedPackage: z.string(),
-    checkboxOne: z.boolean(),
-    checkboxTwo: z.boolean(),
-    radioOne: z.string().optional(),
-    radioTwo: z.string().optional(),
-    powerSupply: z.string(),
-    // Only validate area classification fields if one of the areas is hazardous
-    standard: z.string().optional(),
-    zone: z.string().optional(),
-    gasGroup: z.string().optional(),
-    temperature: z.string().optional(),
-  })
-  .refine(
-    (data) => {
-      // Only require area classification fields when either radio is "hazardous"
-      const isHazardous = data.radioOne === "hazardous" || data.radioTwo === "hazardous"
-      if (isHazardous) {
-        return data.standard && data.zone && data.gasGroup && data.temperature
-      }
-      return true // No validation if none are hazardous
-    },
-    {
-      message: "All area classification fields are required if any checkbox is hazardous",
-      path: ["standard"],
-    }
-  )
 
 const GeneralInfo = () => {
   const params = useParams()
-  const [selectedItems, setSelectedItems] = useState<string[]>([])
+  const [selectedPkg, setSelectedPkg] = useState("")
+  const [addPkgLoading, setAddPkgLoading] = useState(false)
+  const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`, false)
+  const [generalInfoData, setGeneralInfoData] = useState({
+    package_selection: 1,
+    pkgList: [],
+    battery_limit: "",
+  })
 
-  const { dropdownOptions: packageOptions } = useDropdownOptions(`${MAIN_PKG_API}?fields=["*"]`, "package_name")
-  const filteredOptions = packageOptions?.filter((o: any) => !selectedItems.includes(o.name))
-  const mainPkgUrl = `${PROJECT_MAIN_PKG_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`
-  const { data: mainPkgData } = useGetData(mainPkgUrl, false)
+  const projectMainPkgUrl = `${PROJECT_MAIN_PKG_LIST_API}?project_id=${params.project_id}`
+  const { data: mainPkgData } = useGetData(projectMainPkgUrl, false)
+  const filteredOptions = dbPkgList?.filter(
+    (pkg: any) =>
+      pkg.package_name !== selectedPkg &&
+      !mainPkgData?.some((mainPkg: any) => mainPkg.main_package_name === pkg.package_name)
+  )
+  const { dropdownOptions: batteryLimitOptions } = useDropdownOptions(BATTERY_LIMIT_API, "name")
   // wrap in useMemo to prevent re-rendering
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -60,103 +42,105 @@ const GeneralInfo = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    if (mainPkgData) {
-      setSelectedItems(mainPkgData?.map((pkg: any) => pkg.main_package_name))
-    }
-  }, [mainPkgData])
-
-  const { control, handleSubmit, watch } = useForm({
-    resolver: zodResolver(GeneralInfoSchema),
-    defaultValues: {
-      is_package_selected: "1",
-    },
-  })
-
   const handleAddPkg = async () => {
-    const alreadyAdded = mainPkgData?.map((pkg: any) => pkg.main_package_name)
-    const newlyAdded = selectedItems?.filter((pkg) => !alreadyAdded.includes(pkg))
+    setAddPkgLoading(true)
 
-    newlyAdded.forEach(async (pkg) => {
-      const subPkgUrl = `${SUB_PKG_API}?fields=["*"]&filters=[["main_package_name", "=", "${pkg}"]]`
-      const subPkgData = await getData(subPkgUrl, false)
-      const subPkgCreateData = subPkgData?.map((subPkg: any) => ({
-        main_package_name: pkg,
-        sub_package_name: subPkg?.package_name,
-        area_of_classification: subPkg?.classification_area,
-        is_sub_package_selected: false,
-      }))
-      await createData(PROJECT_MAIN_PKG_API, false, {
-        project_id: params.project_id,
-        main_package_name: pkg,
-        sub_packages: subPkgCreateData,
-      })
+    const subPkgUrl = `${SUB_PKG_API}?fields=["*"]&filters=[["main_package_name", "=", "${selectedPkg}"]]`
+    if (!selectedPkg) {
+      setAddPkgLoading(false)
+      return
+    }
+    const subPkgData = await getData(subPkgUrl, false)
+    const subPkgCreateData = subPkgData?.map((subPkg: any) => ({
+      main_package_name: selectedPkg,
+      sub_package_name: subPkg?.package_name,
+      area_of_classification: subPkg?.classification_area,
+      is_sub_package_selected: false,
+    }))
+    await createData(PROJECT_MAIN_PKG_API, false, {
+      project_id: params.project_id,
+      main_package_name: selectedPkg,
+      sub_packages: subPkgCreateData,
     })
-  }
-
-  const onSubmit = (data: any) => {
-    console.log(data)
+    // const mainPkgData = await getData(projectMainPkgUrl, false)
+    setSelectedPkg("")
+    // setMainPkgData(mainPkgData)
+    setAddPkgLoading(false)
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
         <div className="flex gap-4">
           <div className="font-bold text-slate-800">Package Selection</div>
           <div>
-            <CustomRadioSelect
-              control={control}
-              name="is_package_selected"
-              label=""
-              options={[
-                { label: "Yes", value: "1" },
-                { label: "No", value: "0" },
-              ]}
-            />
+            <Radio.Group
+              onChange={(e: RadioChangeEvent) =>
+                setGeneralInfoData({ ...generalInfoData, package_selection: e.target.value })
+              }
+              value={generalInfoData.package_selection}
+            >
+              <Radio value={1}>Yes</Radio>
+              <Radio value={0}>No</Radio>
+            </Radio.Group>
           </div>
         </div>
-        {watch("is_package_selected") === "1" && (
-          <div className="flex flex-1 items-center gap-4">
-            <div className="text-sm font-semibold text-slate-700">Main Package</div>
-            <div className="flex flex-1">
-              <Select
-                mode="multiple"
-                placeholder="Inserted are removed"
-                value={selectedItems}
-                onChange={(values) => setSelectedItems(values)}
-                style={{ width: "100%" }}
-                options={filteredOptions}
-                size="small"
-                removeIcon={null}
-              />
-            </div>
-            <div className="">
-              <Button type="primary" htmlType="button" size="small" onClick={handleAddPkg}>
-                Add
-              </Button>
-            </div>
+        <div className="flex flex-1 items-center gap-4">
+          <div className="text-sm font-semibold text-slate-700">Main Package</div>
+          <div className="flex w-1/2">
+            <Select
+              placeholder="Select main package"
+              onChange={setSelectedPkg}
+              options={createDropdownOptions(filteredOptions, "package_name")}
+              style={{ width: "100%" }}
+              allowClear={false}
+              disabled={generalInfoData.package_selection === 0}
+            />
           </div>
-        )}
+          <div className="">
+            <Button
+              type="primary"
+              onClick={handleAddPkg}
+              loading={addPkgLoading}
+              disabled={generalInfoData.package_selection === 0}
+            >
+              Add
+            </Button>
+          </div>
+        </div>
       </div>
-      {watch("is_package_selected") === "1" && <GIPkgSelectionTabs main_package_list={mainPkgData} />}
+      <GIPkgSelectionTabs
+        main_package_list={mainPkgData}
+        mainPkgUrl={projectMainPkgUrl}
+        generalInfoData={generalInfoData}
+        setMainPkgData={null}
+      />
       <Divider>
         <span className="font-bold text-slate-700">Battery Limit</span>
       </Divider>
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-4">
-          <div className="w-1/2">
-            <CustomSingleSelect control={control} name="powerSupply" label="Power Supply" options={[]} size="small" />
+          <div className="flex w-3/4 gap-4">
+            <p className="text-sm font-semibold"> Power Supply At </p>
+            <div className="flex-1">
+              <Select
+                options={batteryLimitOptions}
+                size="small"
+                style={{ width: "100%" }}
+                onChange={(value) => setGeneralInfoData({ ...generalInfoData, battery_limit: value })}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       <div className="flex w-full justify-end gap-4">
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" onClick={() => console.log(generalInfoData)}>
           Save
         </Button>
       </div>
-    </form>
+    </div>
   )
 }
 

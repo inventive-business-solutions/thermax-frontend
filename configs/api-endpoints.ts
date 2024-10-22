@@ -19,7 +19,9 @@ export const CLASSIFICATION_AREA_ZONE_API = `/document/Classification Area Zone`
 export const CLASSIFICATION_AREA_GAS_GROUP_API = `/document/Classification Area Gas Group`
 export const CLASSIFICATION_AREA_TEMPERATURE_CLASS_API = `/document/Classification Area Temperature Class`
 
+export const PROJECT_MAIN_PKG_LIST_API = `/method/thermax_extended_user.get_project_main_package_list`
 export const PROJECT_MAIN_PKG_API = `/document/Project Main Package`
+export const BATTERY_LIMIT_API = `/document/Battery Limit`
 
 // Make of components Api end Points
 
