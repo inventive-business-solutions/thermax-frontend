@@ -42,6 +42,7 @@ export default function GISubPkgList({
   generalInfoData: any
   setGeneralInfoData: any
 }) {
+  console.log("main_package", main_package)
   const { dropdownOptions: standardOptions } = useDropdownOptions(CLASSIFICATION_AREA_STANDARD_API, "name")
   const { dropdownOptions: zoneOptions } = useDropdownOptions(CLASSIFICATION_AREA_ZONE_API, "name")
   const { dropdownOptions: gasGroupOptions } = useDropdownOptions(CLASSIFICATION_AREA_GAS_GROUP_API, "name")
@@ -51,6 +52,27 @@ export default function GISubPkgList({
   )
 
   const [hasHazardousArea, setHasHazardousArea] = useState(false)
+
+  useEffect(() => {
+    if (!generalInfoData?.pkgList) return // Safeguard if data is undefined or empty
+
+    const mainPkgList = generalInfoData.pkgList
+    const selectedMainPkg = mainPkgList.find((pkg: any) => pkg.main_package_name === main_package.main_package_name)
+
+    // Check if any main package has a hazardous sub-package selected
+    const hasHazardous = selectedMainPkg?.sub_packages?.some((subPkg: any) => {
+      const isHazardous =
+        (subPkg.is_sub_package_selected === 1 || subPkg.is_sub_package_selected === true) &&
+        subPkg.area_of_classification === "Hazardous Area"
+
+      return isHazardous
+    })
+
+    // Update state only if necessary
+    if (hasHazardous !== hasHazardousArea) {
+      setHasHazardousArea(hasHazardous)
+    }
+  }, [generalInfoData, hasHazardousArea, main_package.main_package_name])
 
   const getSubPkg = (main_package, subPkg, generalInfoData) => {
     const main_package_name = main_package.main_package_name
@@ -124,16 +146,84 @@ export default function GISubPkgList({
           <h4 className="font-semibold text-slate-800">Area of Classification</h4>
           <div className="flex gap-2">
             <div className="flex-1">
-              <Select options={standardOptions} size="small" />
+              <p className="font-semibold text-slate-700">Standard</p>
+              <Select
+                options={standardOptions}
+                size="small"
+                style={{ width: "100%" }}
+                value={main_package?.standard}
+                onChange={
+                  ((value: any) => {
+                    const newGeneralInfoData = { ...generalInfoData }
+                    const main_package_name = main_package.main_package_name
+                    const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
+                      (pkg: any) => pkg.main_package_name === main_package_name
+                    )
+                    defaultMainPkg.standard = value
+                    setGeneralInfoData(newGeneralInfoData)
+                  }) as any
+                }
+              />
             </div>
             <div className="flex-1">
-              <Select options={zoneOptions} size="small" />
+              <p className="font-semibold text-slate-700">Zone</p>
+              <Select
+                options={zoneOptions}
+                size="small"
+                style={{ width: "100%" }}
+                value={main_package?.zone}
+                onChange={
+                  ((value: any) => {
+                    const newGeneralInfoData = { ...generalInfoData }
+                    const main_package_name = main_package.main_package_name
+                    const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
+                      (pkg: any) => pkg.main_package_name === main_package_name
+                    )
+                    defaultMainPkg.zone = value
+                    setGeneralInfoData(newGeneralInfoData)
+                  }) as any
+                }
+              />
             </div>
             <div className="flex-1">
-              <Select options={gasGroupOptions} size="small" />
+              <p className="font-semibold text-slate-700">Gas Group</p>
+              <Select
+                options={gasGroupOptions}
+                size="small"
+                style={{ width: "100%" }}
+                value={main_package?.gas_group}
+                onChange={
+                  ((value: any) => {
+                    const newGeneralInfoData = { ...generalInfoData }
+                    const main_package_name = main_package.main_package_name
+                    const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
+                      (pkg: any) => pkg.main_package_name === main_package_name
+                    )
+                    defaultMainPkg.gas_group = value
+                    setGeneralInfoData(newGeneralInfoData)
+                  }) as any
+                }
+              />
             </div>
             <div className="flex-1">
-              <Select options={temperatureClassOptions} size="small" />
+              <p className="font-semibold text-slate-700">Temperature Class</p>
+              <Select
+                options={temperatureClassOptions}
+                size="small"
+                style={{ width: "100%" }}
+                value={main_package?.temperature_class}
+                onChange={
+                  ((value: any) => {
+                    const newGeneralInfoData = { ...generalInfoData }
+                    const main_package_name = main_package.main_package_name
+                    const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
+                      (pkg: any) => pkg.main_package_name === main_package_name
+                    )
+                    defaultMainPkg.temperature_class = value
+                    setGeneralInfoData(newGeneralInfoData)
+                  }) as any
+                }
+              />
             </div>
           </div>
         </div>

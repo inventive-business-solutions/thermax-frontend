@@ -33,12 +33,12 @@ const GeneralInfo = () => {
         setGeneralInfoData({
           is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
           pkgList: mainPkgData,
-          battery_limit: generalInfoDefaultData[0]?.battery_limit,
         })
       }
     }
     fetchData()
-  }, [refresh])
+  }, [params.project_id, refresh])
+  console.log("generalInfoData", generalInfoData)
 
   const projectMainPkgUrl = `${PROJECT_MAIN_PKG_LIST_API}?project_id=${params.project_id}`
 
@@ -89,8 +89,8 @@ const GeneralInfo = () => {
     if (existingDesignBasis && existingDesignBasis.length > 0) {
       // update
       await updateData(`${DESIGN_BASIS_GENERAL_INFO_API}/${existingDesignBasis[0].name}`, false, {
-        is_package_selection_enabled: generalInfoData.is_package_selection_enabled,
-        battery_limit: generalInfoData.battery_limit,
+        is_package_selection_enabled: generalInfoData?.is_package_selection_enabled,
+        battery_limit: generalInfoData?.battery_limit,
       })
     } else {
       await createData(DESIGN_BASIS_GENERAL_INFO_API, false, {
@@ -116,12 +116,18 @@ const GeneralInfo = () => {
         await updateData(`${PROJECT_MAIN_PKG_API}/${mainPkg.name}`, false, {
           main_package_name: mainPkg.main_package_name,
           sub_packages: updateSubPkgList,
+          standard: mainPkg?.standard,
+          zone: mainPkg?.zone,
+          gas_group: mainPkg?.gas_group,
+          temperature_class: mainPkg?.temperature_class,
         })
       }
     }
     message.success("Design Basis General Info saved successfully")
     console.log("existingDesignBasis", existingDesignBasis)
   }
+
+  console.log("generalInfoData", generalInfoData)
 
   return (
     <div className="flex flex-col gap-4">
@@ -130,7 +136,7 @@ const GeneralInfo = () => {
           <div className="font-bold text-slate-800">Package Selection</div>
           <div>
             <Radio.Group
-              value={generalInfoData.is_package_selection_enabled}
+              value={generalInfoData?.is_package_selection_enabled}
               onChange={(e: RadioChangeEvent) =>
                 setGeneralInfoData({ ...generalInfoData, is_package_selection_enabled: e.target.value })
               }
@@ -149,7 +155,7 @@ const GeneralInfo = () => {
               options={createDropdownOptions(filteredOptions, "package_name")}
               style={{ width: "100%" }}
               allowClear={false}
-              disabled={generalInfoData.is_package_selection_enabled === 0}
+              disabled={generalInfoData?.is_package_selection_enabled === 0}
             />
           </div>
           <div className="">
@@ -157,7 +163,7 @@ const GeneralInfo = () => {
               type="primary"
               onClick={handleAddPkg}
               loading={addPkgLoading}
-              disabled={generalInfoData.is_package_selection_enabled === 0}
+              disabled={generalInfoData?.is_package_selection_enabled === 0}
             >
               Add
             </Button>
