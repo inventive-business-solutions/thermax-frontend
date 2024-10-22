@@ -3,6 +3,8 @@ import { BellTwoTone, CloudDownloadOutlined, CopyOutlined, FolderOpenOutlined } 
 import { Button, Table, TableColumnsType, Tag, Tooltip } from "antd"
 import { useEffect } from "react"
 import { useLoading } from "hooks/useLoading"
+import Link from "next/link"
+import { useParams } from "next/navigation"
 
 export default function DocumentRevision() {
   const { setLoading: setModalLoading } = useLoading()
