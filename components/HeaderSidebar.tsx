@@ -1,6 +1,7 @@
 "use client"
 import {
   AppstoreAddOutlined,
+  CarryOutOutlined,
   DashboardOutlined,
   MenuOutlined,
   UnorderedListOutlined,
@@ -9,62 +10,61 @@ import {
 import { Drawer, Menu, MenuProps, Tag } from "antd"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { BTG, HOME_PAGE, PACKAGE_PAGE, PROJECTS_PAGE, TagColors, USER_MANAGEMENT_PAGE } from "configs/constants"
-import { useCurrentUser } from "hooks/use-current-user"
-import Loader from "./Loader"
+import {
+  BTG,
+  COMPLETE_PROJECT_PAGE,
+  HOME_PAGE,
+  PACKAGE_PAGE,
+  PROJECTS_PAGE,
+  TagColors,
+  USER_MANAGEMENT_PAGE,
+} from "configs/constants"
+import { useCurrentUser } from "hooks/useCurrentUser"
+import { useLoading } from "hooks/useLoading"
 import { UserButton } from "./UserButton"
 
 type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const userInfo = useCurrentUser()
+  const userInfo: { division: keyof typeof TagColors } = useCurrentUser()
+  const router = useRouter()
+  const { setLoading } = useLoading()
 
-  const handleLinkClick = () => {
+  const handleLinkClick = (path: string) => {
     setLoading(true)
     setIsSidebarOpen(false)
-    setLoading(false)
+    router.push(path)
   }
 
   const items: MenuItem[] = [
     {
       key: "1",
-      label: (
-        <Link href={HOME_PAGE} onClick={handleLinkClick}>
-          Dashboard
-        </Link>
-      ),
+      label: <div onClick={() => handleLinkClick(HOME_PAGE)}>Dashboard</div>,
       icon: <DashboardOutlined />,
     },
     {
       key: "2",
-      label: (
-        <Link href={PROJECTS_PAGE} onClick={handleLinkClick}>
-          {" "}
-          Project List
-        </Link>
-      ),
+      label: <div onClick={() => handleLinkClick(PROJECTS_PAGE)}>Project List</div>,
       icon: <UnorderedListOutlined />,
     },
     {
       key: "3",
-      label: (
-        <Link href={USER_MANAGEMENT_PAGE} onClick={handleLinkClick}>
-          User Management
-        </Link>
-      ),
+      label: <div onClick={() => handleLinkClick(USER_MANAGEMENT_PAGE)}>User Management</div>,
+
       icon: <UserSwitchOutlined />,
     },
     {
       key: "4",
-      label: (
-        <Link href={PACKAGE_PAGE} onClick={handleLinkClick}>
-          Package Management
-        </Link>
-      ),
+      label: <div onClick={() => handleLinkClick(PACKAGE_PAGE)}>Package Management</div>,
       icon: <AppstoreAddOutlined />,
+    },
+    {
+      key: "5",
+      label: <div onClick={() => handleLinkClick(COMPLETE_PROJECT_PAGE)}>Complete Project</div>,
+      icon: <CarryOutOutlined />,
     },
   ]
 
@@ -80,10 +80,6 @@ export default function HeaderSidebar() {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
-  }
-
-  if (loading) {
-    return <Loader />
   }
 
   return (

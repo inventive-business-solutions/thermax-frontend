@@ -18,7 +18,7 @@ const config = {
 
   providers: [
     Credentials({
-      async authorize(credentials) {
+      async authorize(credentials: any) {
         const { email, password } = credentials
         const nextUser = await getData(
           `${NEXT_AUTH_USER_API}?fields=["hashed_password", "email_verified"]&filters=[["name", "=", "${email}"]]`,

@@ -4,6 +4,8 @@ import { Poppins, Roboto } from "next/font/google"
 import "styles/tailwind.css"
 import { SessionProvider } from "next-auth/react"
 import { auth } from "auth"
+import ModalLoader from "components/ModalLoader"
+import { LoadingProvider } from "./context/BaseContext"
 
 export const metadata: Metadata = {
   title: "EniMax",
@@ -30,7 +32,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <SessionProvider session={session}>
         <AntdRegistry>
-          <body className={`${poppins.variable} ${roboto.variable}`}>{children}</body>
+          <body className={`${poppins.variable} ${roboto.variable}`}>
+            <LoadingProvider>
+              <ModalLoader />
+              {children}
+            </LoadingProvider>
+          </body>
         </AntdRegistry>
       </SessionProvider>
     </html>

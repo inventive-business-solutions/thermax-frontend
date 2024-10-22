@@ -1,16 +1,16 @@
 "use client"
 
 import { DeleteOutlined, EditOutlined, SyncOutlined, UserAddOutlined } from "@ant-design/icons"
-import { Button, Popconfirm, Table, Tag, Tooltip } from "antd"
-import { useState } from "react"
+import { Button, Popconfirm, Table, Tooltip } from "antd"
+import { ColumnsType } from "antd/es/table"
+import { useEffect, useState } from "react"
 import { mutate } from "swr"
+import { deleteData } from "actions/crud-actions"
 import { getUsersUrl, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
 import { changeNameToKey, mergeLists } from "utils/helpers"
 import UserFormModal from "./UserModal"
-import { ColumnsType } from "antd/es/table"
-import { BTG, TagColors } from "configs/constants"
-import { deleteData } from "actions/crud-actions"
 
 interface DataType {
   key: string
@@ -26,12 +26,15 @@ export const UserList = ({ userInfo }: any) => {
   const [editMode, setEditMode] = useState(false)
   const [userRow, setUserRow] = useState<any>(null)
   const [editEventTrigger, setEditEventTrigger] = useState(false)
-  const { data: thermaxUserList } = useGetData(
-    `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`,
-    false
-  )
+  const thermaxUserUrl = `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`
+  const { data: thermaxUserList } = useGetData(thermaxUserUrl, false)
   const { data: userList } = useGetData(`${USER_API}?fields=["*"]`, false)
   const mergedList = mergeLists([thermaxUserList, userList], [{ fromKey: "name", toKey: "name" }])
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleEdit = (selectedRow: any) => {
     setEditEventTrigger(!editEventTrigger)
@@ -115,12 +118,7 @@ export const UserList = ({ userInfo }: any) => {
         <div className="flex gap-3">
           <Tooltip title="Refresh">
             <div className="rounded-full hover:bg-blue-100">
-              <Button
-                type="link"
-                shape="circle"
-                icon={<SyncOutlined />}
-                // onClick={() => mutate(`${DIVISION_API}?fields=["*"]`)}
-              />
+              <Button type="link" shape="circle" icon={<SyncOutlined />} onClick={() => mutate(thermaxUserUrl)} />
             </div>
           </Tooltip>
           <Button type="primary" icon={<UserAddOutlined />} iconPosition={"start"} onClick={handleAdd}>

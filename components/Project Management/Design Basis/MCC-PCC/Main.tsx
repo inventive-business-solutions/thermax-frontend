@@ -1,27 +1,46 @@
+"use client"
 import { Tabs } from "antd"
-import React, { useState } from "react"
-import CommonConfiguration from "./commonConfiguration"
-import MakeOfComponent from "./MakeOfComponent"
-import MccComponent from "./MccComponent"
+import React, { useEffect, useState } from "react"
+import { useLoading } from "hooks/useLoading"
+import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
+import CommonConfiguration from "./CommonConfiguration/CommonConfiguration"
+import MCCcumPCCPanel from "./MCCcumPCC"
+import MCCPanel from "./MCCPanel"
+import PCCPanel from "./PCCPanel"
 
-const MainMCC: React.FC = () => {
+const MainMCCPCC = ({params} : any) => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const TabMCC = [
     {
       label: "Make",
       key: "1",
-      children: <MakeOfComponent handleSwitchTab={() => handleSwitchTab("2")} />,
+      children: <MakeOfComponent params={params} handleSwitchTab={() => handleSwitchTab("2")} />,
     },
     {
       label: "Common Configuration",
       key: "2",
-      children: <CommonConfiguration handleSwitchTab={() => handleSwitchTab("3")} />,
+      children: <CommonConfiguration params={params} handleSwitchTab={() => handleSwitchTab("3")} />,
     },
     {
       label: "MCC",
       key: "3",
-      children: <MccComponent />,
+      children: <MCCPanel />,
+    },
+    {
+      label: "PCC",
+      key: "4",
+      children: <PCCPanel />,
+    },
+    {
+      label: "MCCcumPCC",
+      key: "5",
+      children: <MCCcumPCCPanel />,
     },
   ]
 
@@ -50,4 +69,4 @@ const MainMCC: React.FC = () => {
   )
 }
 
-export default MainMCC
+export default MainMCCPCC

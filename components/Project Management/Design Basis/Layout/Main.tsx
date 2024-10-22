@@ -1,10 +1,17 @@
+"use client"
 import { Tabs } from "antd"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { useLoading } from "hooks/useLoading"
 import CableTray from "./CableTray"
 import Earthing from "./Earthing"
 
 const MainLayout: React.FC = () => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const TabMCC = [
     {
@@ -20,7 +27,6 @@ const MainLayout: React.FC = () => {
   ]
 
   const onChange = (key: string) => {
-    console.log(key)
     setActiveKey(key) // Update active tab
   }
 

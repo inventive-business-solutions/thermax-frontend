@@ -2,24 +2,23 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Modal } from "antd"
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
+import AlertNotification from "components/AlertNotification"
+import CustomAutoComplete from "components/FormInputs/AutocompleteWithCreate"
+import CustomTextInput from "components/FormInputs/CustomInput"
+import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import {
-  CLIENT_NAME_URL,
-  CONSULTANT_NAME_URL,
+  CLIENT_NAME_API,
+  CONSULTANT_NAME_API,
   getProjectListUrl,
-  PROJECT_URL,
+  PROJECT_API,
   THERMAX_USER_API,
-  USER_API,
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
-import AlertNotification from "../AlertNotification"
-import CustomAutoComplete from "../FormInputs/AutocompleteWithCreate"
-import CustomTextInput from "../FormInputs/CustomInput"
-import CustomSingleSelect from "../FormInputs/CustomSingleSelect"
 
 const ProjectFormValidationSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
@@ -50,8 +49,8 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const { dropdownOptions: clientNameOptions } = useDropdownOptions(CLIENT_NAME_URL, "client_name")
-  const { dropdownOptions: consultantNameOptions } = useDropdownOptions(CONSULTANT_NAME_URL, "consultant_name")
+  const { dropdownOptions: clientNameOptions } = useDropdownOptions(CLIENT_NAME_API, "client_name")
+  const { dropdownOptions: consultantNameOptions } = useDropdownOptions(CONSULTANT_NAME_API, "consultant_name")
   const { dropdownOptions: approverOptions } = useDropdownOptions(
     `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`,
     "name"
@@ -76,7 +75,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
 
   const handleCreateProject = async (projectData: any) => {
     try {
-      await createData(PROJECT_URL, false, projectData)
+      await createData(PROJECT_API, false, projectData)
       setStatus("success")
       setMessage("New project created successfully")
     } catch (error: any) {
@@ -88,7 +87,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
 
   const handleUpdateProject = async (projectData: any) => {
     try {
-      await updateData(`${PROJECT_URL}/${values.name}`, false, projectData)
+      await updateData(`${PROJECT_API}/${values.name}`, false, projectData)
       setStatus("success")
       setMessage("Project information updated successfully")
     } catch (error: any) {
@@ -152,7 +151,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
               label="Client Name"
               options={clientNameOptions}
               optionKeyName="client_name"
-              createOptionUrl={CLIENT_NAME_URL}
+              createOptionUrl={CLIENT_NAME_API}
               placeholder="Select or create a new client by typing..."
             />
           </div>
@@ -164,7 +163,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
               label="Consultant Name"
               options={consultantNameOptions}
               optionKeyName="consultant_name"
-              createOptionUrl={CONSULTANT_NAME_URL}
+              createOptionUrl={CONSULTANT_NAME_API}
               placeholder="Select or create a new consultant by typing..."
             />
           </div>

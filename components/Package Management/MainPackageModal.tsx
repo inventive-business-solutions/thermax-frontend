@@ -7,7 +7,7 @@ import * as zod from "zod"
 import { createData, updateData } from "actions/crud-actions"
 import AlertNotification from "components/AlertNotification"
 import CustomTextInput from "components/FormInputs/CustomInput"
-import { GET_PKG_URL, MAIN_PKG_URL } from "configs/api-endpoints"
+import { GET_PKG_API, MAIN_PKG_API } from "configs/api-endpoints"
 
 const MainPackageSchema = zod.object({
   package_name: zod.string({ required_error: "Package name is required" }),
@@ -42,8 +42,7 @@ export default function MainPackageModal({ open, setOpen, editMode, values, edit
     startTransition(async () => {
       if (editMode) {
         try {
-          await updateData(`${MAIN_PKG_URL}/${values.name}`, data)
-          // await updateMainPackage(MAIN_PKG_URL, values.name, data)
+          await updateData(`${MAIN_PKG_API}/${values.name}`, false, data)
           setStatus("success")
           setMessage("Main package updated successfully")
         } catch (error: any) {
@@ -53,7 +52,7 @@ export default function MainPackageModal({ open, setOpen, editMode, values, edit
         }
       } else {
         try {
-          await createData(MAIN_PKG_URL, data)
+          await createData(MAIN_PKG_API, false, data)
           setStatus("success")
           setMessage("Main package created successfully")
         } catch (error: any) {
@@ -63,7 +62,7 @@ export default function MainPackageModal({ open, setOpen, editMode, values, edit
         }
       }
     })
-    mutate(GET_PKG_URL)
+    mutate(GET_PKG_API)
   }
   return (
     <Modal

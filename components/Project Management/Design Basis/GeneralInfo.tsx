@@ -1,11 +1,19 @@
 "use client"
-import { CloseOutlined, DownOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Checkbox, Divider, Dropdown, message, Radio, Select, Tabs } from "antd"
-import React, { useState } from "react"
-import { Controller, useForm } from "react-hook-form"
+import { Button, Divider, Select, Tabs, TabsProps } from "antd"
+import React, { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
+import CustomMultiSelectOption from "components/FormInputs/CustomMultiSelectChoice"
+import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
+import { MAIN_PKG_API, PROJECT_MAIN_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
+import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { useLoading } from "hooks/useLoading"
+import GIPkgSelectionTabs from "./GIPkgSelection"
+import { useParams } from "next/navigation"
+import { useGetData } from "hooks/useCRUD"
+import { createData, getData } from "actions/crud-actions"
 
 // Define validation schema using zod
 const GeneralInfoSchema = z
@@ -37,239 +45,116 @@ const GeneralInfoSchema = z
     }
   )
 
-interface GeneralInfoProps {
-  handleSave: (data: any) => void
-}
+const GeneralInfo = () => {
+  const params = useParams()
+  const [selectedItems, setSelectedItems] = useState<string[]>([])
 
-const packageOptions = [
-  { label: "Package 1", key: "1" },
-  { label: "Package 2", key: "2" },
-  { label: "Package 3", key: "3" },
-  { label: "Package 4", key: "4" },
-]
+  const { dropdownOptions: packageOptions } = useDropdownOptions(`${MAIN_PKG_API}?fields=["*"]`, "package_name")
+  const filteredOptions = packageOptions?.filter((o) => !selectedItems.includes(o.name))
+  const mainPkgUrl = `${PROJECT_MAIN_PKG_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`
+  const { data: mainPkgData } = useGetData(mainPkgUrl, false)
+  // wrap in useMemo to prevent re-rendering
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-const GeneralInfo: React.FC<GeneralInfoProps> = ({ handleSave }) => {
-  const [tabs, setTabs] = useState<{ key: string; label: string }[]>([])
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm({
+  useEffect(() => {
+    if (mainPkgData) {
+      setSelectedItems(mainPkgData?.map((pkg) => pkg.main_package_name))
+    }
+  }, [mainPkgData])
+
+  const { control, handleSubmit, watch } = useForm({
     resolver: zodResolver(GeneralInfoSchema),
     defaultValues: {
-      selectedPackage: "",
-      checkboxOne: false,
-      checkboxTwo: false,
-      radioOne: "safe",
-      radioTwo: "safe",
-      powerSupply: "lucy",
-      standard: "",
-      zone: "",
-      gasGroup: "",
-      temperature: "",
+      is_package_selected: "1",
     },
   })
 
-  const selectedPackage = watch("selectedPackage")
-  const checkboxOne = watch("checkboxOne")
-  const checkboxTwo = watch("checkboxTwo")
-  const radioOne = watch("radioOne")
-  const radioTwo = watch("radioTwo")
+  const handleAddPkg = async () => {
+    const alreadyAdded = mainPkgData?.map((pkg) => pkg.main_package_name)
+    const newlyAdded = selectedItems?.filter((pkg) => !alreadyAdded.includes(pkg))
 
-  const handleMenuClick = (e: any) => {
-    setValue("selectedPackage", e.key)
-  }
-
-  const addTab = () => {
-    const newTab = packageOptions.find((pkg) => pkg.key === selectedPackage)
-    if (newTab && !tabs.some((tab) => tab.key === newTab.key)) {
-      setTabs([...tabs, { key: newTab.key, label: newTab.label }])
-    }
-    setValue("selectedPackage", "") // Reset after adding
-  }
-
-  const removeTab = (key: string) => {
-    setTabs(tabs.filter((tab) => tab.key !== key))
+    newlyAdded.forEach(async (pkg) => {
+      const subPkgUrl = `${SUB_PKG_API}?fields=["*"]&filters=[["main_package_name", "=", "${pkg}"]]`
+      const subPkgData = await getData(subPkgUrl, false)
+      const subPkgCreateData = subPkgData?.map((subPkg: any) => ({
+        main_package_name: pkg,
+        sub_package_name: subPkg?.package_name,
+        area_of_classification: subPkg?.classification_area,
+        is_sub_package_selected: false,
+      }))
+      await createData(PROJECT_MAIN_PKG_API, false, {
+        project_id: params.project_id,
+        main_package_name: pkg,
+        sub_packages: subPkgCreateData,
+      })
+    })
   }
 
   const onSubmit = (data: any) => {
-    message.success("Form saved successfully!")
-    handleSave(data) // Pass the form data to handleSave function
-    reset()
+    console.log(data)
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col gap-4">
-        <div className="text-2xl font-bold">Package Selection</div>
-
-        {/* Package Dropdown */}
-        <div className="ms-4 flex flex-row items-center gap-2">
-          <div>Package Name</div>
-          <Dropdown
-            menu={{
-              items: packageOptions.map((option) => ({
-                key: option.key,
-                label: option.label,
-              })),
-              onClick: handleMenuClick,
-            }}
-          >
-            <Button>
-              {selectedPackage ? packageOptions.find((pkg) => pkg.key === selectedPackage)?.label : "Select Package"}{" "}
-              <DownOutlined />
-            </Button>
-          </Dropdown>
-          <Button type="primary" onClick={addTab} disabled={!selectedPackage}>
-            Add
-          </Button>
-        </div>
-        {errors.selectedPackage && <span className="text-red-500">{errors.selectedPackage.message}</span>}
-
-        {/* Dynamic Tabs */}
-        <Tabs
-          className="ms-4"
-          items={tabs.map((tab) => ({
-            key: tab.key,
-            label: (
-              <span>
-                {tab.label}
-                <Button type="link" onClick={() => removeTab(tab.key)} icon={<CloseOutlined />} />
-              </span>
-            ),
-            children: (
-              <div className="ms-4 flex flex-col gap-6 ">
-                {/* Checkboxes and Radio Buttons */}
-                <Controller
-                  name="checkboxOne"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox {...field} checked={checkboxOne}>
-                      One
-                    </Checkbox>
-                  )}
-                />
-                <Controller
-                  name="radioOne"
-                  control={control}
-                  render={({ field }) => (
-                    <Radio.Group {...field} disabled={!checkboxOne}>
-                      <Radio value="safe">Safe Area</Radio>
-                      <Radio value="hazardous">Hazardous Area</Radio>
-                    </Radio.Group>
-                  )}
-                />
-
-                <Controller
-                  name="checkboxTwo"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox {...field} checked={checkboxTwo}>
-                      Two
-                    </Checkbox>
-                  )}
-                />
-                <Controller
-                  name="radioTwo"
-                  control={control}
-                  render={({ field }) => (
-                    <Radio.Group {...field} disabled={!checkboxTwo}>
-                      <Radio value="safe">Safe Area</Radio>
-                      <Radio value="hazardous">Hazardous Area</Radio>
-                    </Radio.Group>
-                  )}
-                />
-
-                {/* Area Classification Section (conditional rendering) */}
-                {(radioOne === "hazardous" || radioTwo === "hazardous") && (
-                  <div className="mt-4">
-                    <h3 className="text-xl font-bold">Area Classification</h3>
-
-                    <div className="grid grid-cols-4 gap-4">
-                      <CustomSingleSelect
-                        name="standard"
-                        control={control}
-                        label="Standard"
-                        options={[
-                          { value: "iso", label: "ISO" },
-                          { value: "iec", label: "IEC" },
-                          { value: "nema", label: "NEMA" },
-                        ]}
-                      />
-                      <CustomSingleSelect
-                        name="zone"
-                        control={control}
-                        label="Zone"
-                        options={[
-                          { value: "zone0", label: "Zone 0" },
-                          { value: "zone1", label: "Zone 1" },
-                          { value: "zone2", label: "Zone 2" },
-                        ]}
-                      />
-
-                      <CustomSingleSelect
-                        name="gasGroup"
-                        control={control}
-                        label="Gas Group"
-                        options={[
-                          { value: "groupI", label: "Group I" },
-                          { value: "groupIIA", label: "Group IIA" },
-                          { value: "groupIIB", label: "Group IIB" },
-                          { value: "groupIIC", label: "Group IIC" },
-                        ]}
-                      />
-
-                      <CustomSingleSelect
-                        name="temperature"
-                        control={control}
-                        label="Zone"
-                        placeholder="Temperature"
-                        options={[
-                          { value: "-20C to +40C", label: "-20°C to +40°C" },
-                          { value: "-20C to +60C", label: "-20°C to +60°C" },
-                          { value: "+40C to +70C", label: "+40°C to +70°C" },
-                        ]}
-                      />
-                    </div>
-                    {errors.standard && <span className="text-red-500">{errors.standard.message}</span>}
-                  </div>
-                )}
-              </div>
-            ),
-          }))}
-        />
-
-        <Divider />
-        <div className="m-0 flex flex-col gap-6 p-0 ">
-          <div className="text-2xl font-bold">Battery Limit</div>
-          <div className="ms-6 flex flex-row justify-start gap-4">
-            <div>Power Supply at the </div>
-            <Controller
-              name="powerSupply"
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <div className="flex items-center gap-4">
+        <div className="flex gap-4">
+          <div className="font-bold text-slate-800">Package Selection</div>
+          <div>
+            <CustomRadioSelect
               control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  options={[
-                    { value: "jack", label: "Jack" },
-                    { value: "lucy", label: "Lucy" },
-                    { value: "Yiminghe", label: "Yiminghe" },
-                  ]}
-                />
-              )}
+              name="is_package_selected"
+              label=""
+              options={[
+                { label: "Yes", value: "1" },
+                { label: "No", value: "0" },
+              ]}
             />
           </div>
-          {errors.powerSupply && <span className="text-red-500">{errors.powerSupply.message}</span>}
         </div>
+        {watch("is_package_selected") === "1" && (
+          <div className="flex flex-1 items-center gap-4">
+            <div className="text-sm font-semibold text-slate-700">Main Package</div>
+            <div className="flex flex-1">
+              <Select
+                mode="multiple"
+                placeholder="Inserted are removed"
+                value={selectedItems}
+                onChange={(values) => setSelectedItems(values)}
+                style={{ width: "100%" }}
+                options={filteredOptions}
+                size="small"
+                removeIcon={null}
+              />
+            </div>
+            <div className="">
+              <Button type="primary" htmlType="button" size="small" onClick={handleAddPkg}>
+                Add
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+      {watch("is_package_selected") === "1" && <GIPkgSelectionTabs main_package_list={mainPkgData} />}
+      <Divider>
+        <span className="font-bold text-slate-700">Battery Limit</span>
+      </Divider>
 
-        <div className="flex w-full justify-end gap-4">
-          <Button type="primary" htmlType="submit">
-            Save
-          </Button>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-4">
+          <div className="w-1/2">
+            <CustomSingleSelect control={control} name="powerSupply" label="Power Supply" options={[]} size="small" />
+          </div>
         </div>
+      </div>
+
+      <div className="flex w-full justify-end gap-4">
+        <Button type="primary" htmlType="submit">
+          Save
+        </Button>
       </div>
     </form>
   )

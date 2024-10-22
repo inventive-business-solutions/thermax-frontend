@@ -8,11 +8,12 @@ import {
   SyncOutlined,
 } from "@ant-design/icons"
 import { Button, Popconfirm, Table, TableColumnsType, Tooltip } from "antd"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { mutate } from "swr"
 import { deleteData } from "actions/crud-actions"
-import { GET_PKG_URL, MAIN_PKG_URL, SUB_PKG_URL } from "configs/api-endpoints"
+import { GET_PKG_API, MAIN_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
 import MainPackageModal from "./MainPackageModal"
 import SubPackageModal from "./SubPackageModal"
 
@@ -51,19 +52,25 @@ export default function PackageList() {
   const [editEventTrigger, setEditEventTrigger] = useState(false)
   const [mainPkgRowData, setMainPkgRowData] = useState<any>(null)
   const [subPkgRowData, setSubPkgRowData] = useState<any>(null)
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_URL, false)
+  const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API, false)
+  console.log(packageData)
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
-    await deleteData(`${MAIN_PKG_URL}/${selectedRowID}`, false)
+    await deleteData(`${MAIN_PKG_API}/${selectedRowID}`, false)
     // Revalidate the cache
-    mutate(GET_PKG_URL)
+    mutate(GET_PKG_API)
   }
 
   const handleSubPkgDelete = async (selectedRowID: string) => {
-    await deleteData(`${SUB_PKG_URL}/${selectedRowID}`, false)
+    await deleteData(`${SUB_PKG_API}/${selectedRowID}`, false)
     // Revalidate the cache
-    mutate(GET_PKG_URL)
+    mutate(GET_PKG_API)
   }
 
   const handleAddMainPkg = () => {
@@ -180,12 +187,14 @@ export default function PackageList() {
     <div className="flex flex-col gap-2 px-20 py-4">
       <div className="flex justify-end gap-2">
         <Tooltip title="Refresh">
-          <Button
-            type="link"
-            shape="circle"
-            icon={<SyncOutlined spin={packageLoading} />}
-            onClick={() => mutate(GET_PKG_URL)}
-          />
+          <div className="rounded-full hover:bg-blue-100">
+            <Button
+              type="link"
+              shape="circle"
+              icon={<SyncOutlined spin={packageLoading} />}
+              onClick={() => mutate(GET_PKG_API)}
+            />
+          </div>
         </Tooltip>
         <Button type="primary" onClick={handleAddMainPkg}>
           Add Main Package
