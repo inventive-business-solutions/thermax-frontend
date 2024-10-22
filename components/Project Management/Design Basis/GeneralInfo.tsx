@@ -81,6 +81,7 @@ const GeneralInfo = () => {
   }
 
   const handleSave = async () => {
+    console.log("generalInfoData", generalInfoData)
     const existingDesignBasis = await getData(
       `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["project_id", "=", "${params.project_id}"]]`,
       false
@@ -97,6 +98,26 @@ const GeneralInfo = () => {
         is_package_selection_enabled: generalInfoData.is_package_selection_enabled,
         battery_limit: generalInfoData.battery_limit,
       })
+    }
+    const pkgList = generalInfoData?.pkgList
+    if (pkgList && pkgList.length > 0) {
+      for (const mainPkg of pkgList) {
+        const subPkgList = mainPkg?.sub_packages
+        const updateSubPkgList = []
+        if (subPkgList && subPkgList.length > 0) {
+          for (const subPkg of subPkgList) {
+            updateSubPkgList.push({
+              sub_package_name: subPkg.sub_package_name,
+              area_of_classification: subPkg.area_of_classification,
+              is_sub_package_selected: subPkg.is_sub_package_selected,
+            })
+          }
+        }
+        await updateData(`${PROJECT_MAIN_PKG_API}/${mainPkg.name}`, false, {
+          main_package_name: mainPkg.main_package_name,
+          sub_packages: updateSubPkgList,
+        })
+      }
     }
     message.success("Design Basis General Info saved successfully")
     console.log("existingDesignBasis", existingDesignBasis)
