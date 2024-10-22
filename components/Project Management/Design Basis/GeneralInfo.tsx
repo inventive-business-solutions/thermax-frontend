@@ -6,6 +6,7 @@ import { createData, getData } from "actions/crud-actions"
 import { createDropdownOptions } from "components/Package Management/package-management.logic"
 import {
   BATTERY_LIMIT_API,
+  DESIGN_BASIS_GENERAL_INFO_API,
   MAIN_PKG_API,
   PROJECT_MAIN_PKG_API,
   PROJECT_MAIN_PKG_LIST_API,
@@ -21,11 +22,23 @@ const GeneralInfo = () => {
   const [selectedPkg, setSelectedPkg] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
   const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`, false)
-  const [generalInfoData, setGeneralInfoData] = useState({
-    package_selection: 1,
-    pkgList: [],
-    battery_limit: "",
-  })
+  const [generalInfoData, setGeneralInfoData] = useState({})
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const generalInfoDefaultData = await getData(`${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]`, false)
+      console.log(generalInfoDefaultData)
+      if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
+        setGeneralInfoData({
+          package_selection: generalInfoDefaultData[0]?.is_package_selection_enabled,
+          pkgList: [],
+          battery_limit: generalInfoDefaultData[0]?.battery_limit,
+        })
+      }
+    }
+    fetchData()
+  }, [])
+  console.log("generalInfoData", generalInfoData)
 
   const projectMainPkgUrl = `${PROJECT_MAIN_PKG_LIST_API}?project_id=${params.project_id}`
   const { data: mainPkgData } = useGetData(projectMainPkgUrl, false)
@@ -75,10 +88,10 @@ const GeneralInfo = () => {
           <div className="font-bold text-slate-800">Package Selection</div>
           <div>
             <Radio.Group
+              value={generalInfoData.package_selection}
               onChange={(e: RadioChangeEvent) =>
                 setGeneralInfoData({ ...generalInfoData, package_selection: e.target.value })
               }
-              value={generalInfoData.package_selection}
             >
               <Radio value={1}>Yes</Radio>
               <Radio value={0}>No</Radio>
@@ -126,6 +139,7 @@ const GeneralInfo = () => {
             <div className="flex-1">
               <Select
                 options={batteryLimitOptions}
+                value={generalInfoData?.battery_limit}
                 size="small"
                 style={{ width: "100%" }}
                 onChange={(value) => setGeneralInfoData({ ...generalInfoData, battery_limit: value })}

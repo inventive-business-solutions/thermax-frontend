@@ -8,7 +8,6 @@ import GISubPkgList from "./GISubPkgList"
 import { mutate } from "swr"
 
 export default function GIPkgSelectionTabs({ main_package_list, mainPkgUrl, generalInfoData, setMainPkgData }: any) {
-  console.log("main_package_list", main_package_list)
   const tabItems = main_package_list?.map((main_package: any, index: number) => ({
     key: index.toString(),
     label: main_package?.main_package_name,

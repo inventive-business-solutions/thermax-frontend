@@ -22,6 +22,7 @@ export const CLASSIFICATION_AREA_TEMPERATURE_CLASS_API = `/document/Classificati
 export const PROJECT_MAIN_PKG_LIST_API = `/method/thermax_extended_user.get_project_main_package_list`
 export const PROJECT_MAIN_PKG_API = `/document/Project Main Package`
 export const BATTERY_LIMIT_API = `/document/Battery Limit`
+export const DESIGN_BASIS_GENERAL_INFO_API = `/document/Design Basis General Info`
 
 // Make of components Api end Points
 
