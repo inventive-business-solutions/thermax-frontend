@@ -125,6 +125,47 @@ export const MI_ANALOG = `document/MI Analog`
 export const MI_DIGITAL = `document/MI Digital`
 export const MI_COMMUNICATION_PROTOCOL = `document/MI Communication Protocol`
 
+export const DI_MODULE_DENSITY = `document/DI Modules Density`
+export const DI_MODULE_TYPE_OF_INPUT = `document/DI Modules Type Of Input`
+export const DI_MODULE_INTERROGATION_VOLTAGE = `document/DI Modules Interrogation Voltage`
+export const DI_MODULE_MOTOR = `document/AO Modules Density`
+
+export const DO_MODULE_DENSITY = `document/DO Modules Density`
+export const DO_MODULE_TYPE_OF_OUTPUT = `document/DO Modules Type Of Output`
+export const DO_MODULE_NO_OF_CONTACTS = `document/DO No Of Contacts`
+
+export const AI_MODULE_DENSITY = `document/AI Module Density`
+export const AI_MODULE_TYPE_OF_OUTPUT = `document/AI Modules Type of Output`
+
+export const AO_MODULE_DENSITY = `document/AO Modules Density`
+export const AO_MODULE_TYPE_OF_OUTPUT = `document/AO Modules Type of Output`
+
+export const RTD_DENSITY = `document/RTD Density`
+export const RTD_TYPE_OF_INPUT = `document/RTD Type Of Input`
+
+export const IO_COUNT = `document/IO Count`
+export const PLC_SPARE_MEMORY = `document/PLC Spare Memory`
+export const ESNOS = `document/ES NOs`
+export const OSNOS = `document/OS NOs`
+export const HMINOS = `document/HMI NOs`
+export const HMI_SIZE_IN_INCH = `document/HMI Size in Inch`
+export const SCADA_DEVELOPMENT_LIC = `document/SCADA Development License`
+export const SCADA_RUNTIME_LIC = `document/SCADA Runtime License`
+export const HMI_DEVELOPMENT_LIC = `document/HMI Development License`
+export const PLC_PROGRAMMING_LIC = `document/PLC Programming License Software`
+
+export const EO_SYSTEM_HARDWARE = `document/RTD Type Of Input`
+export const EO_COMMERCIAL_GRADE_PC = `document/RTD Type Of Input`
+export const EO_MONITOR_SIZE = `document/RTD Type Of Input`
+export const EO_WINDOW_OS = `document/RTD Type Of Input`
+export const EO_PRINTER_CC = `document/RTD Type Of Input`
+export const EO_PRINTER_QTY = `document/RTD Type Of Input`
+export const EO_PRINTER_TABLE = `document/RTD Type Of Input`
+export const EO_FURNITURE_CONSOLE = `document/RTD Type Of Input`
+export const EO_COMMUNICATION_CABLE = `document/RTD Type Of Input`
+export const EO_COMMUNICATION_CABLE_2 = `document/RTD Type Of Input`
+export const EO_MANDATORY_SPARES = `document/RTD Type Of Input`
+
 // GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA
 export const GA_MOC = `document/GA MOC`
 export const GA_MOC_THICKNESS_DOOR = `document/GA MOC Thickness Door`
@@ -149,6 +190,28 @@ export const PC_PAINT_SHADE_FOR_BASE_FRAME = `document/PC Paint shade for base f
 export const PC_MIN_COATING_THICKNESS = `document/PC Min Coating Thickness`
 export const PC_STANDARD_FOR_PRETREATMENT_PANEL = `document/PC Standard for pretreatment Panel`
 export const VFD_AUTO_MANUAL_SELECTION = `document/VFD Auto Manual Selection`
+
+// PLC PANEL PCC TAB ENDPOINTS
+
+export const UPS_SCOPE = `document/PLC UPS Scope`
+export const UPS_TYPE = `document/PLC UPS Type`
+export const UPS_BATTERY_TYPE = `document/PLC UPS Battery Type`
+export const UPS_BATTERY_BACKUP_TIME = `document/PLC UPS Battery Backup Time In Min`
+export const PLC_CPU_MODULE = `document/PLC Hardware CPU`
+export const PLC_COMMUNICAION_BETWEEN_CPU_AND_IO_CARD = `document/PLC Hardware Communication`
+export const THIRD_PARTY_COMMUNICATION_PROTOCOL = `document/PLC Hardware Third Party Communication Protocol`
+export const CLIENT_SYSTEM_COMMUNICATION = `document/PLC Hardware Client System Communication`
+export const CPU_REDUNDANCY = `document/PLC CPU Redundancy`
+
+export const PLC_PANEL_MEMORY = `document/PLC Panel Memory`
+export const PLC_PANEL_MOUNTED_AC = `document/PLC Panel mounted AC`
+export const PLC_PANEL_CONTROL_VOLTAGE = `documentPLC Control Voltage`
+export const MARSHALLING_CABINET_FOR_PLC = `document/Marshalling Cabinet for PLC and UPS`
+export const PUSH_BUTTON_COLOR_ACKNOWLEDGE = `document/Push Button Color Acknowledge`
+export const PUSH_BUTTON_COLOR_RESET = `document/Push Button Color Reset`
+export const INDICATING_LAMP_NON_UPS = `document/Indicating Lamp Color for Non-UPS Power Supply`
+export const INDICATING_LAMP_UPS = `document/Indicating Lamp Color for UPS Power Supply`
+// export const
 
 // Punching details or BOILER
 export const PDFB_MODEL = `document/PDFB Model`

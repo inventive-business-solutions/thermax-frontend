@@ -1,36 +1,217 @@
+"use client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Divider } from "antd"
-import React from "react"
-import { useForm } from "react-hook-form"
+import { Button, Divider, message } from "antd"
+import React, { useEffect, useState } from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
 import * as zod from "zod"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
+import useMCCcumPCCDropdowns from "./MCCcumPCCDropdowns"
+import { useParams } from "next/navigation"
+import { PROJECT_API } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
+import { mutate } from "swr"
 
 const configItemValidationSchema = zod.object({
   id: zod.number(),
-  dol_starter: zod.string(),
-  star_delta_starter: zod.string(),
-  mcc_switchgear_type: zod.string(),
-  check_switch: zod.boolean(),
+  ups_scope: zod.string({ required_error: "This field is required", message: "This field is requied" }),
+  ups_type: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  ups_battery_type: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  ups_battery_backup_time: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  plc_cpu_module: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  plc_communication_cpu_io_card: zod.string({
+    required_error: "This field is required",
+    message: "This field is required",
+  }),
+  third_party_communication_protocol: zod.string({
+    required_error: "This field is required",
+    message: "This field is required",
+  }),
+  client_system_communication: zod.string({
+    required_error: "This field is required",
+    message: "This field is required",
+  }),
+  cpu_redundancy: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  plc_panel_memory: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  plc_panel_mounted_ac: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  plc_panel_control_voltage: zod.string({
+    required_error: "This field is required",
+    message: "This field is required",
+  }),
+  marshalling_cabinet_for_plc: zod.string({
+    required_error: "This field isr required",
+    message: "This field is required",
+  }),
+  push_button_color_acknowledge: zod.string({
+    required_error: "This field is required",
+    message: "This field is required",
+  }),
+  push_button_color_reset: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  indicating_lamp_non_ups: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  indicating_lamp_ups: zod.string({ required_error: "This field is required", message: "This field is required" }),
+
+  di_module_density: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  di_module_typeOfInput: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  di_module_integorration_voltage: zod.string({
+    required_error: "This field is required",
+    message: "This field is required",
+  }),
+  do_module_density: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  do_module_typeOfOutput: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  do_module_no_of_contacts: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  ai_module_density: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  ai_module_typeOfOutput: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  ao_module_density: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  ao_module_typeOfOutput: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  rtd_density: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  rtd_typeOfInput: zod.string({ required_error: "This field is required", message: "This field is required" }),
+
+  io_count: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  plc_spare_memoty: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  es_nos: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  os_nos: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  hmi_nos: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  hmi_size_in_inch: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  scada_development_lic: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  scada_runtime_lic: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  hmi_development_lic: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  plc_programming_lic: zod.string({ required_error: "This field is required", message: "This field is required" }),
 })
 
 type MccComponentFormData = zod.infer<typeof configItemValidationSchema>
 
+const getDefaultValues = (isEdit: boolean, projectData: any) => {
+  return {
+    ups_scope: projectData?.ups_scope || "NA",
+    ups_type: projectData?.ups_scope || "NA",
+    ups_battery_type: projectData?.ups_scope || "NA",
+    ups_battery_backup_time: projectData?.ups_scope || "NA",
+    plc_cpu_module: projectData?.plc_cpu_module || "NA",
+    plc_communication_cpu_io_card: projectData?.plc_communication_cpu_io_card || "NA",
+    third_party_communication_protocol: projectData?.third_party_communication_protocol || "NA",
+    client_system_communication: projectData?.client_system_communication || "NA",
+    cpu_redundancy: projectData?.cpu_redundancy || "NA",
+    plc_panel_memory: projectData?.plc_panel_memory || "NA",
+    plc_panel_mounted_ac: projectData?.plc_panel_mounted_ac || "NA",
+    plc_panel_control_voltage: projectData?.plc_panel_control_voltage || "NA",
+    marshalling_cabinet_for_plc: projectData?.marshalling_cabinet_for_plc || "NA",
+    push_button_color_acknowledge: projectData?.push_button_color_acknowledge || "NA",
+    push_button_color_reset: projectData?.push_button_color_reset || "NA",
+    indicating_lamp_non_ups: projectData?.indicating_lamp_non_ups || "NA",
+    indicating_lamp_ups: projectData?.indicating_lamp_ups || "NA",
+
+    di_module_density: projectData?.di_module_density || "NA",
+    di_module_typeOfInput: projectData?.di_module_typeOfInput || "NA",
+    di_module_integorration_voltage: projectData?.di_module_integorration_voltage || "NA",
+    do_module_density: projectData?.do_module_density || "NA",
+    do_module_typeOfOutput: projectData?.do_module_typeOfOutput || "NA",
+    do_module_no_of_contacts: projectData?.do_module_no_of_contacts || "NA",
+    ai_module_density: projectData?.ai_module_density || "NA",
+    ai_module_typeOfOutput: projectData?.ai_module_typeOfOutput || "NA",
+    ao_module_density: projectData?.ao_module_density || "NA",
+    ao_module_typeOfOutput: projectData?.ao_module_typeOfOutput || "NA",
+    rtd_density: projectData?.rtd_density || "NA",
+    rtd_typeOfInput: projectData?.rtd_typeOfInput || "NA",
+
+    io_count: projectData?.io_count || "NA",
+    plc_spare_memoty: projectData?.rtd_typeOfInput || "NA",
+    es_nos: projectData?.es_nos || "NA",
+    os_nos: projectData?.os_nos || "NA",
+    hmi_nos: projectData?.hmi_nos || "NA",
+    hmi_size_in_inch: projectData?.rtd_typeOfInput || "NA",
+    scada_development_lic: projectData?.scada_development_lic || "NA",
+    scada_runtime_lic: projectData?.scada_runtime_lic || "NA",
+    hmi_development_lic: projectData?.hmi_development_lic || "NA",
+    plc_programming_lic: projectData?.plc_programming_lic || "NA",
+  }
+}
+
 const MCCcumPCCPLCPanel = () => {
-  const { control, handleSubmit } = useForm<MccComponentFormData>({
+  const params = useParams()
+  const project_id = params.project_id
+  const getPProjectMetaDataUrl = `${PROJECT_API}/${project_id}`
+  const getMccPanelUrl = `${PROJECT_API}/${project_id}`
+  const [loading, setLoading] = useState(false)
+
+  const { data: projectMetadata } = useGetData(getPProjectMetaDataUrl, false)
+  const { data: mccPanel } = useGetData(getMccPanelUrl, false)
+
+  const projectData = React.useMemo(() => ({ ...projectMetadata, mccPanel }), [projectMetadata, mccPanel])
+
+  const {
+    ups_scopeOptions,
+    ups_typeOptions,
+    ups_battery_typeOptions,
+    ups_battery_backup_time_in_minOptions,
+    plc_hardware_cpuOptions,
+    plc_hardware_communicationOptions,
+    third_party_communicationOptions,
+    client_system_communicationOptions,
+    cpu_redundancyOptions,
+    plc_panel_memoryOptions,
+    plc_panelMounted_acOptions,
+    marshalling_cabinetOptions,
+    push_button_color_acknowledgeOptions,
+    push_button_color_resetOptions,
+    plc_panel_control_voltageOptions,
+    indicating_lamp_non_upsOptions,
+    indicating_lamp_upsOptions,
+    di_module_densityOptions,
+    di_module_typeOfInputOptions,
+    di_module_integorration_voltageOptions,
+    do_module_densityOptions,
+    do_module_typeOfOutputOptions,
+    do_module_no_of_contactsOptions,
+    ai_module_densityOptions,
+    ai_module_typeOfOutputOptions,
+    ao_module_densityOptions,
+    ao_module_typeOfOutputOptions,
+    rtd_densityOptions,
+    rtd_typeOfInputOptions,
+    io_countOptions,
+    plc_spare_memotyOptions,
+    es_nosOptions,
+    os_nosOptions,
+    hmi_nosOptions,
+    hmi_size_in_inchOptions,
+    scada_development_licOptions,
+    scada_runtime_licOptions,
+    hmi_development_licOptions,
+    plc_programming_licOptions,
+  } = useMCCcumPCCDropdowns()
+
+  const { control, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(configItemValidationSchema),
-    defaultValues: {
-      id: 0,
-      dol_starter: "",
-      star_delta_starter: "",
-      mcc_switchgear_type: "",
-    },
-    mode: "onBlur",
+    defaultValues: getDefaultValues(true, projectData),
+    mode: "onSubmit",
   })
 
-  const SubmitCommonConfig = (data: MccComponentFormData) => {
-    console.log("MCC Data", data)
+  console.log("ups_scopeOptions", ups_scopeOptions)
+
+  useEffect(() => {
+    reset(getDefaultValues(true, projectData))
+  }, [reset, projectData])
+
+  const handleError = (error: any) => {
+    try {
+      const errorObj = JSON.parse(error?.message) as any
+      message.error(errorObj?.message)
+    } catch (parseError) {
+      message.error(error?.message || "An Unknown error occurred")
+    }
+  }
+
+  const onSubmit: SubmitHandler<zod.infer<typeof mccPanel>> = async (data: any) => {
+    setLoading(true)
+    try {
+      console.log("data: ", data)
+    } catch (err) {
+      handleError(err)
+    } finally {
+      setLoading(false)
+      mutate(getMccPanelUrl)
+    }
   }
 
   return (
@@ -38,26 +219,32 @@ const MCCcumPCCPLCPanel = () => {
       <Divider>
         <span className="font-bold text-slate-700">UPS</span>
       </Divider>
-      <form onSubmit={handleSubmit(SubmitCommonConfig)} className="flex flex-col gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="push_button_color"
+              name="ups_scope"
               label="UPS Scope"
-              options={[]}
+              options={ups_scopeOptions}
               size="small"
             />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="push_button_color" label="UPS Type" options={[]} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="ups_type"
+              label="UPS Type"
+              options={ups_typeOptions}
+              size="small"
+            />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="push_button_color"
+              name="ups_battery_type"
               label="UPS Battery Type"
-              options={[]}
+              options={ups_battery_typeOptions}
               size="small"
             />
           </div>
@@ -80,9 +267,9 @@ const MCCcumPCCPLCPanel = () => {
           <div className="basis-1/3">
             <CustomSingleSelect
               control={control}
-              name="push_button_color"
+              name="ups_battery_backup_time"
               label="UPS Battery Backup Time In Min"
-              options={[]}
+              options={ups_battery_backup_time_in_minOptions}
               size="small"
             />
           </div>
@@ -108,7 +295,7 @@ const MCCcumPCCPLCPanel = () => {
           <div className="flex-1">
             <CustomTextInput
               control={control}
-              name="dol_starter"
+              name="plc_hardware_cpu"
               label="PLC CPU /Processor Module/Series"
               size="small"
             />
@@ -116,7 +303,7 @@ const MCCcumPCCPLCPanel = () => {
           <div className="flex-1">
             <CustomTextInput
               control={control}
-              name="dol_starter"
+              name="plc_hardware_communication"
               label="PLC Communication between CPU and I/O card"
               size="small"
             />
@@ -127,7 +314,7 @@ const MCCcumPCCPLCPanel = () => {
             <div>
               <CustomRadioSelect
                 control={control}
-                name="supply_feeder_standard"
+                name="third_party_communication_protocol"
                 label="Third party communication protocol"
                 options={[
                   { label: "Yes", value: "Yes" },
@@ -136,14 +323,20 @@ const MCCcumPCCPLCPanel = () => {
               />
             </div>
             <div>
-              <CustomSingleSelect control={control} name="push_button_color" label="" options={[]} size="small" />
+              <CustomSingleSelect
+                control={control}
+                name="third_party_communication_protocol"
+                label=""
+                options={third_party_communicationOptions}
+                size="small"
+              />
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-4">
             <div>
               <CustomRadioSelect
                 control={control}
-                name="supply_feeder_standard"
+                name="client_system_communication"
                 label="Client system communication"
                 options={[
                   { label: "Yes", value: "Yes" },
@@ -152,7 +345,13 @@ const MCCcumPCCPLCPanel = () => {
               />
             </div>
             <div>
-              <CustomSingleSelect control={control} name="push_button_color" label="" options={[]} size="small" />
+              <CustomSingleSelect
+                control={control}
+                name="client_system_communication"
+                label=""
+                options={client_system_communicationOptions}
+                size="small"
+              />
             </div>
           </div>
         </div>
@@ -222,7 +421,7 @@ const MCCcumPCCPLCPanel = () => {
             <div className="">
               <CustomRadioSelect
                 control={control}
-                name="supply_feeder_standard"
+                name="cpu_redundancy"
                 label=""
                 options={[
                   { label: "Yes", value: "Yes" },
@@ -232,7 +431,13 @@ const MCCcumPCCPLCPanel = () => {
             </div>
           </div>
           <div className="basis-1/3">
-            <CustomSingleSelect control={control} name="dol_starter" label="CPU Redundancy" size="small" options={[]} />
+            <CustomSingleSelect
+              control={control}
+              name="cpu_redundancy"
+              label="CPU Redundancy"
+              size="small"
+              options={cpu_redundancyOptions}
+            />
           </div>
         </div>
         <Divider>
@@ -240,20 +445,26 @@ const MCCcumPCCPLCPanel = () => {
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="push_button_color" label="Memory" options={[]} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="plc_panel_memory"
+              label="Memory"
+              options={plc_panel_memoryOptions}
+              size="small"
+            />
           </div>
           <div className="flex-1">
-            <CustomTextInput control={control} name="dol_starter" label="Panel Mounted AC" size="small" />
+            <CustomTextInput control={control} name="plc_panel_mounted_ac" label="Panel Mounted AC" size="small" />
           </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="dol_starter"
+              name="plc_panel_control_voltage"
               label=" Control Voltage : Ǿ : Wire : Frequency : ± 5 (UPS)"
               size="small"
-              options={[]}
+              options={plc_panel_control_voltageOptions}
             />
           </div>
           <div className="flex flex-1 items-center gap-2">
@@ -262,7 +473,7 @@ const MCCcumPCCPLCPanel = () => {
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
-                  name="supply_feeder_standard"
+                  name="marshalling_cabinet_for_plc"
                   label=""
                   options={[
                     { label: "Yes", value: "Yes" },
@@ -272,7 +483,13 @@ const MCCcumPCCPLCPanel = () => {
               </div>
             </div>
             <div className="flex-1">
-              <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+              <CustomSingleSelect
+                control={control}
+                name="marshalling_cabinet_for_plc"
+                label=""
+                size="small"
+                options={marshalling_cabinetOptions}
+              />
             </div>
           </div>
         </div>
@@ -283,18 +500,18 @@ const MCCcumPCCPLCPanel = () => {
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="push_button_color"
+              name="push_button_color_acknowledge"
               label="Push Button Colour Acknowledge"
-              options={[]}
+              options={push_button_color_acknowledgeOptions}
               size="small"
             />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="dol_starter"
+              name="push_button_color_reset"
               label="Push Button Colour Reset"
-              options={[]}
+              options={push_button_color_resetOptions}
               size="small"
             />
           </div>
@@ -303,18 +520,18 @@ const MCCcumPCCPLCPanel = () => {
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="push_button_color"
+              name="indicating_lamp_non_ups"
               label="Indicating Lamp Colour for Non-UPS Power Supply"
-              options={[]}
+              options={indicating_lamp_non_upsOptions}
               size="small"
             />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="dol_starter"
+              name="indicating_lamp_ups"
               label="Indicating Lamp Colour for UPS Power Supply"
-              options={[]}
+              options={indicating_lamp_upsOptions}
               size="small"
             />
           </div>
@@ -334,7 +551,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="di_module_density"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -344,7 +561,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="di_module_density"
+                    label=""
+                    size="small"
+                    options={di_module_densityOptions}
+                  />
                 </div>
               </div>
               <div className="flex flex-1 items-center gap-2">
@@ -353,7 +576,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="di_module_typeOfInput"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -363,7 +586,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="di_module_typeOfInput"
+                    label=""
+                    size="small"
+                    options={di_module_typeOfInputOptions}
+                  />
                 </div>
               </div>
             </div>
@@ -374,7 +603,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="di_module_integorration_voltage"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -384,7 +613,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="di_module_integorration_voltage"
+                    label=""
+                    size="small"
+                    options={di_module_integorration_voltageOptions}
+                  />
                 </div>
               </div>
               <div className="flex-1">
@@ -403,7 +638,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="do_module_density"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -413,7 +648,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="do_module_density"
+                    label=""
+                    size="small"
+                    options={do_module_densityOptions}
+                  />
                 </div>
               </div>
               <div className="flex flex-1 items-center gap-2">
@@ -422,7 +663,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="do_module_typeOfOutput"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -432,7 +673,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="do_module_typeOfOutput"
+                    label=""
+                    size="small"
+                    options={do_module_typeOfOutputOptions}
+                  />
                 </div>
               </div>
             </div>
@@ -459,7 +706,7 @@ const MCCcumPCCPLCPanel = () => {
               <div className="">
                 <CustomRadioSelect
                   control={control}
-                  name="supply_feeder_standard"
+                  name="do_module_no_of_contacts"
                   label=""
                   options={[
                     { label: "Yes", value: "Yes" },
@@ -468,7 +715,13 @@ const MCCcumPCCPLCPanel = () => {
                 />
               </div>
               <div className="flex-1">
-                <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                <CustomSingleSelect
+                  control={control}
+                  name="do_module_no_of_contacts"
+                  label=""
+                  size="small"
+                  options={do_module_no_of_contactsOptions}
+                />
               </div>
             </div>
           </div>
@@ -483,7 +736,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="ai_module_density"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -493,7 +746,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="ai_module_density"
+                    label=""
+                    size="small"
+                    options={ai_module_densityOptions}
+                  />
                 </div>
               </div>
               <div className="flex flex-1 items-center gap-2">
@@ -502,7 +761,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="ai_module_typeOfOutput"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -512,7 +771,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="ai_module_typeOfOutput"
+                    label=""
+                    size="small"
+                    options={ai_module_typeOfOutputOptions}
+                  />
                 </div>
               </div>
             </div>
@@ -547,7 +812,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="rtd_density"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -557,7 +822,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="rtd_density"
+                    label=""
+                    size="small"
+                    options={rtd_densityOptions}
+                  />
                 </div>
               </div>
               <div className="flex flex-1 items-center gap-2">
@@ -566,7 +837,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="rtd_typeOfInput"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -576,7 +847,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="rtd_typeOfInput"
+                    label=""
+                    size="small"
+                    options={rtd_typeOfInputOptions}
+                  />
                 </div>
               </div>
             </div>
@@ -611,7 +888,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="ao_module_density"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -621,7 +898,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="ao_module_density"
+                    label=""
+                    size="small"
+                    options={ao_module_densityOptions}
+                  />
                 </div>
               </div>
               <div className="flex flex-1 items-center gap-2">
@@ -630,7 +913,7 @@ const MCCcumPCCPLCPanel = () => {
                   <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
-                      name="supply_feeder_standard"
+                      name="ao_module_typeOfOutput"
                       label=""
                       options={[
                         { label: "Yes", value: "Yes" },
@@ -640,7 +923,13 @@ const MCCcumPCCPLCPanel = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomSingleSelect control={control} name="dol_starter" label="" size="small" options={[]} />
+                  <CustomSingleSelect
+                    control={control}
+                    name="ao_module_typeOfOutput"
+                    label=""
+                    size="small"
+                    options={ao_module_typeOfOutputOptions}
+                  />
                 </div>
               </div>
             </div>
@@ -664,6 +953,165 @@ const MCCcumPCCPLCPanel = () => {
               </div>
             </div>
           </div>
+        </div>
+        <Divider />
+
+        <Divider>
+          <span className="font-bold text-slate-700">PLC Spare</span>
+        </Divider>
+
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="io_count" label="IO Count" options={io_countOptions} size="small" />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="plc_spare_memoty" label="Memory" options={plc_spare_memotyOptions} size="small" />
+          </div>
+        </div>
+
+        <Divider>
+          <span className="font-bold text-slate-700">Human Interface Device</span>
+        </Divider>
+
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="es_nos" label="ES (NOs)" options={es_nosOptions} size="small" />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="os_nos" label="OS (NOs)" options={os_nosOptions} size="small" />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="hmi_nos" label="HMI (NOs)" options={hmi_nosOptions} size="small" />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="hmi_size_in_inch" label="HMI Size in Inch" options={hmi_size_in_inchOptions} size="small" />
+          </div>
+        </div>
+        <Divider>
+          <span className="font-bold text-slate-700">Software</span>
+        </Divider>
+
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="scada_development_lic"
+              label="SCADA Development License (NOs)"
+              options={scada_development_licOptions}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="scada_runtime_lic"
+              label="SCADA Runtime License (NOs)"
+              options={scada_runtime_licOptions}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hmi_development_lic"
+              label="HMI Development License (NOs)"
+              options={hmi_development_licOptions}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="plc_programming_lic"
+              label="PLC Programming License Software"
+              options={plc_programming_licOptions}
+              size="small"
+            />
+          </div>
+        </div>
+        <Divider>
+          <span className="font-bold text-slate-700">Engineering/Operating SCADA Station</span>
+        </Divider>
+
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="io_count" label="System Hardware" options={[]} size="small" />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="memory" label="Commercial Grade PC" options={[]} size="small" />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="memory" label="Monitor Size" options={[]} size="small" />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="memory"
+              label="Window Operating System,Microsoft Office, Anti Virus ( 3 Year) License, Quantity As Per ES & OS"
+              options={[]}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="memory"
+              label="Printer with Suitable Communication Cable"
+              options={[]}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="memory" label="Printer - Qty" options={[]} size="small" />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="memory" label="Printer Table" options={[]} size="small" />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="memory"
+              label="Furniture/Console of Computer/SCADA Station (ES/OS)"
+              options={[]}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="memory"
+              label="Communication Cable & Hardware Between PLC & SCADA PC"
+              options={[]}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="memory"
+              label="Communication Cable & Hardware Between PLC & Third Party"
+              options={[]}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect control={control} name="memory" label="Mandatory Spares" options={[]} size="small" />
+          </div>
+          <div className="flex-1"></div>
         </div>
 
         <div className="mt-2 flex w-full justify-end">

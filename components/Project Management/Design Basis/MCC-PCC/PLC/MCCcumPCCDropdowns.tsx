@@ -1,8 +1,22 @@
 "use client"
 
 import {
+  AI_MODULE_DENSITY,
+  AI_MODULE_TYPE_OF_OUTPUT,
+  AO_MODULE_DENSITY,
+  AO_MODULE_TYPE_OF_OUTPUT,
+  CLIENT_SYSTEM_COMMUNICATION,
+  CPU_REDUNDANCY,
+  // MCCcumPCC MCC DROPDOWN
   CURRENT_TRANSFORMER_A,
   CURRENT_TRANSFORMER_B,
+  DI_MODULE_DENSITY,
+  DI_MODULE_INTERROGATION_VOLTAGE,
+  DI_MODULE_TYPE_OF_INPUT,
+  DO_MODULE_DENSITY,
+  DO_MODULE_NO_OF_CONTACTS,
+  DO_MODULE_TYPE_OF_OUTPUT,
+  ESNOS,
   GA_BUSBAR_CHAMBER_POSITION,
   GA_CABLE_ENTRY_POSITION,
   GA_CURRENT_DENSITY,
@@ -19,15 +33,36 @@ import {
   GA_PCC_CONSTRUCTION_C,
   GA_PCC_CONSTRUCTION_D,
   GA_SEPARATION_POWER_CHAMBER,
+  HMI_DEVELOPMENT_LIC,
+  HMI_SIZE_IN_INCH,
+  HMINOS,
+  INDICATING_LAMP_NON_UPS,
+  INDICATING_LAMP_UPS,
+  IO_COUNT,
+  MARSHALLING_CABINET_FOR_PLC,
   MI_ANALOG,
   MI_COMMUNICATION_PROTOCOL,
   MI_DIGITAL,
+  OSNOS,
   PC_MIN_COATING_THICKNESS,
   PC_PAINT_SHADE_FOR_BASE_FRAME,
   PC_PAINT_SHADE_FOR_COMPONENT,
   PC_PAINT_SHADE_FOR_INTERIOR_EXTERIOR,
   PC_PAINTING_STANDARDS,
   PC_STANDARD_FOR_PRETREATMENT_PANEL,
+  PLC_COMMUNICAION_BETWEEN_CPU_AND_IO_CARD,
+  PLC_CPU_MODULE,
+  PLC_PANEL_CONTROL_VOLTAGE,
+  PLC_PANEL_MEMORY,
+  PLC_PANEL_MOUNTED_AC,
+  PLC_PROGRAMMING_LIC,
+  PLC_SPARE_MEMORY,
+  PUSH_BUTTON_COLOR_ACKNOWLEDGE,
+  PUSH_BUTTON_COLOR_RESET,
+  RTD_DENSITY,
+  RTD_TYPE_OF_INPUT,
+  SCADA_DEVELOPMENT_LIC,
+  SCADA_RUNTIME_LIC,
   SD_INCOMER_ABOVE_AMPERE,
   SD_INCOMER_ABOVE_LSI,
   SD_INCOMER_ABOVE_LSIG,
@@ -39,7 +74,14 @@ import {
   SD_INCOMER_POLE,
   SD_INCOMER_TYPE,
   SD_INDICATION_ALARM_ANNUNCIATOR,
+  THIRD_PARTY_COMMUNICATION_PROTOCOL,
+  UPS_BATTERY_BACKUP_TIME,
+  UPS_BATTERY_TYPE,
+  UPS_SCOPE,
+  UPS_TYPE,
   VFD_AUTO_MANUAL_SELECTION,
+
+  // MCCcumPCC PLC DROPDOWN
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
@@ -186,6 +228,141 @@ export default function useMCCcumPCCDropdowns() {
     "auto_manual_selection"
   )
 
+  const { dropdownOptions: ups_scopeOptions } = useDropdownOptions(`${UPS_SCOPE}?fields=["*"]`, "ups_scope")
+  const { dropdownOptions: ups_typeOptions } = useDropdownOptions(`${UPS_TYPE}?fields=["*"]`, "ups_type")
+  const { dropdownOptions: ups_battery_typeOptions } = useDropdownOptions(
+    `${UPS_BATTERY_TYPE}?fields=["*"]`,
+    "ups_battery_type"
+  )
+  const { dropdownOptions: ups_battery_backup_time_in_minOptions } = useDropdownOptions(
+    `${UPS_BATTERY_BACKUP_TIME}?fields=["*"]`,
+    "ups_battery_backup_time_in_min"
+  )
+  const { dropdownOptions: plc_hardware_cpuOptions } = useDropdownOptions(
+    `${PLC_CPU_MODULE}?fields=["*"]`,
+    "cpu_processor"
+  )
+  const { dropdownOptions: plc_hardware_communicationOptions } = useDropdownOptions(
+    `${PLC_COMMUNICAION_BETWEEN_CPU_AND_IO_CARD}?fields=["*"]`,
+    "ups_battery_backup_time_in_min"
+  )
+  const { dropdownOptions: third_party_communicationOptions } = useDropdownOptions(
+    `${THIRD_PARTY_COMMUNICATION_PROTOCOL}?fields=["*"]`,
+    "third_party_communication_protocol"
+  )
+  const { dropdownOptions: client_system_communicationOptions } = useDropdownOptions(
+    `${CLIENT_SYSTEM_COMMUNICATION}?fields=["*"]`,
+    "client_system_communication"
+  )
+  const { dropdownOptions: cpu_redundancyOptions } = useDropdownOptions(
+    `${CPU_REDUNDANCY}?fields=["*"]`,
+    "cpu_redundancy"
+  )
+  const { dropdownOptions: plc_panel_memoryOptions } = useDropdownOptions(
+    `${PLC_PANEL_MEMORY}?fields=["*"]`,
+    "panel_memory"
+  )
+  const { dropdownOptions: plc_panelMounted_acOptions } = useDropdownOptions(
+    `${PLC_PANEL_MOUNTED_AC}?fields=["*"]`,
+    "panel_mounted_ac"
+  )
+  const { dropdownOptions: plc_panel_control_voltageOptions } = useDropdownOptions(
+    `${PLC_PANEL_CONTROL_VOLTAGE}?fields=["*"]`,
+    "control_voltage"
+  )
+  const { dropdownOptions: marshalling_cabinetOptions } = useDropdownOptions(
+    `${MARSHALLING_CABINET_FOR_PLC}?fields=["*"]`,
+    "marshalling_cabinet"
+  )
+  const { dropdownOptions: push_button_color_acknowledgeOptions } = useDropdownOptions(
+    `${PUSH_BUTTON_COLOR_ACKNOWLEDGE}?fields=["*"]`,
+    "push_button_color_acknowledge"
+  )
+  const { dropdownOptions: push_button_color_resetOptions } = useDropdownOptions(
+    `${PUSH_BUTTON_COLOR_RESET}?fields=["*"]`,
+    "push_button_color_reset"
+  )
+  const { dropdownOptions: indicating_lamp_non_upsOptions } = useDropdownOptions(
+    `${INDICATING_LAMP_NON_UPS}?fields=["*"]`,
+    "indicating_lamp_color_for_non_ups_power_supply"
+  )
+  const { dropdownOptions: indicating_lamp_upsOptions } = useDropdownOptions(
+    `${INDICATING_LAMP_UPS}?fields=["*"]`,
+    "power_supply"
+  )
+
+  const { dropdownOptions: di_module_densityOptions } = useDropdownOptions(
+    `${DI_MODULE_DENSITY}?fields=["*"]`,
+    "density"
+  )
+  const { dropdownOptions: di_module_typeOfInputOptions } = useDropdownOptions(
+    `${DI_MODULE_TYPE_OF_INPUT}?fields=["*"]`,
+    "type_of_input"
+  )
+  const { dropdownOptions: di_module_integorration_voltageOptions } = useDropdownOptions(
+    `${DI_MODULE_INTERROGATION_VOLTAGE}?fields=["*"]`,
+    "interrogation_voltage"
+  )
+  const { dropdownOptions: do_module_densityOptions } = useDropdownOptions(
+    `${DO_MODULE_DENSITY}?fields=["*"]`,
+    "density"
+  )
+  const { dropdownOptions: do_module_typeOfOutputOptions } = useDropdownOptions(
+    `${DO_MODULE_TYPE_OF_OUTPUT}?fields=["*"]`,
+    "type_of_output"
+  )
+  const { dropdownOptions: do_module_no_of_contactsOptions } = useDropdownOptions(
+    `${DO_MODULE_NO_OF_CONTACTS}?fields=["*"]`,
+    "contacts"
+  )
+  const { dropdownOptions: ai_module_densityOptions } = useDropdownOptions(
+    `${AI_MODULE_DENSITY}?fields=["*"]`,
+    "density"
+  )
+  const { dropdownOptions: ai_module_typeOfOutputOptions } = useDropdownOptions(
+    `${AI_MODULE_TYPE_OF_OUTPUT}?fields=["*"]`,
+    "type_of_output"
+  )
+  const { dropdownOptions: ao_module_densityOptions } = useDropdownOptions(
+    `${AO_MODULE_DENSITY}?fields=["*"]`,
+    "density"
+  )
+  const { dropdownOptions: ao_module_typeOfOutputOptions } = useDropdownOptions(
+    `${AO_MODULE_TYPE_OF_OUTPUT}?fields=["*"]`,
+    "type_of_output"
+  )
+  const { dropdownOptions: rtd_densityOptions } = useDropdownOptions(`${RTD_DENSITY}?fields=["*"]`, "density")
+  const { dropdownOptions: rtd_typeOfInputOptions } = useDropdownOptions(
+    `${RTD_TYPE_OF_INPUT}?fields=["*"]`,
+    "type_of_input"
+  )
+
+  const { dropdownOptions: io_countOptions } = useDropdownOptions(`${IO_COUNT}?fields=["*"]`, "count")
+  const { dropdownOptions: plc_spare_memotyOptions } = useDropdownOptions(`${PLC_SPARE_MEMORY}?fields=["*"]`, "memory")
+  const { dropdownOptions: es_nosOptions } = useDropdownOptions(`${ESNOS}?fields=["*"]`, "es")
+  const { dropdownOptions: os_nosOptions } = useDropdownOptions(`${OSNOS}?fields=["*"]`, "os")
+  const { dropdownOptions: hmi_nosOptions } = useDropdownOptions(`${HMINOS}?fields=["*"]`, "hmi")
+  const { dropdownOptions: hmi_size_in_inchOptions } = useDropdownOptions(
+    `${HMI_SIZE_IN_INCH}?fields=["*"]`,
+    "hmi_size"
+  )
+  const { dropdownOptions: scada_development_licOptions } = useDropdownOptions(
+    `${SCADA_DEVELOPMENT_LIC}?fields=["*"]`,
+    "scada_development_licence"
+  )
+  const { dropdownOptions: scada_runtime_licOptions } = useDropdownOptions(
+    `${SCADA_RUNTIME_LIC}?fields=["*"]`,
+    "scada_runtime_license"
+  )
+  const { dropdownOptions: hmi_development_licOptions } = useDropdownOptions(
+    `${HMI_DEVELOPMENT_LIC}?fields=["*"]`,
+    "hmi_development_license"
+  )
+  const { dropdownOptions: plc_programming_licOptions } = useDropdownOptions(
+    `${PLC_PROGRAMMING_LIC}?fields=["*"]`,
+    "plc_programming_license_software "
+  )
+
   return {
     sd_incomer_ampereOptions,
     sd_incomer_poleOptions,
@@ -227,5 +404,47 @@ export default function useMCCcumPCCDropdowns() {
     pc_min_coating_thicknessOptions,
     pc_pretreatment_panelOptions,
     vfd_auto_manual_selectionOptions,
+
+    ups_scopeOptions,
+    ups_typeOptions,
+    ups_battery_typeOptions,
+    ups_battery_backup_time_in_minOptions,
+    plc_hardware_cpuOptions,
+    plc_hardware_communicationOptions,
+    third_party_communicationOptions,
+    client_system_communicationOptions,
+    cpu_redundancyOptions,
+    plc_panel_memoryOptions,
+    plc_panelMounted_acOptions,
+    plc_panel_control_voltageOptions,
+    marshalling_cabinetOptions,
+    push_button_color_acknowledgeOptions,
+    push_button_color_resetOptions,
+    indicating_lamp_non_upsOptions,
+    indicating_lamp_upsOptions,
+
+    di_module_densityOptions,
+    di_module_typeOfInputOptions,
+    di_module_integorration_voltageOptions,
+    do_module_densityOptions,
+    do_module_typeOfOutputOptions,
+    do_module_no_of_contactsOptions,
+    ai_module_densityOptions,
+    ai_module_typeOfOutputOptions,
+    ao_module_densityOptions,
+    ao_module_typeOfOutputOptions,
+    rtd_densityOptions,
+    rtd_typeOfInputOptions,
+
+    io_countOptions,
+    plc_spare_memotyOptions,
+    es_nosOptions,
+    os_nosOptions,
+    hmi_nosOptions,
+    hmi_size_in_inchOptions,
+    scada_development_licOptions,
+    scada_runtime_licOptions,
+    hmi_development_licOptions,
+    plc_programming_licOptions,
   }
 }
