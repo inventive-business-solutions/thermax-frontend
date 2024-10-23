@@ -62,12 +62,12 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ params, handleSwitchT
 
   const { data: projectMetadata } = useGetData(getProjectMetadataUrl, false)
   const { data: makeOfComponentInfo } = useGetData(getmakeOfComponentUrl, false)
-
+  
+  const [loading, setLoading] = useState(false)
   const projectData = React.useMemo(
     () => ({ ...projectMetadata, makeOfComponentInfo }),
     [projectMetadata, makeOfComponentInfo]
   )
-  const [loading, setLoading] = useState(false)
 
   const {
     motorsMakeOptions,
@@ -83,7 +83,7 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ params, handleSwitchT
   // console.log("motorsMakeOptions", motorsMakeOptions)
   useEffect(() => {
     setModalLoading(false)
-  })
+  },[])
 
   const { control, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(makeOfComponentSchema),
@@ -105,6 +105,7 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ params, handleSwitchT
   }
 
   const onSubmit: SubmitHandler<zod.infer<typeof makeOfComponentInfo>> = async (data: any) => {
+    setLoading(true)
     try {
       console.log(data)
     } catch (error) {
