@@ -1,12 +1,13 @@
 "use client"
 import { BellTwoTone, CloudDownloadOutlined, CopyOutlined, FolderOpenOutlined } from "@ant-design/icons"
 import { Button, Table, TableColumnsType, Tag, Tooltip } from "antd"
-import { useEffect } from "react"
-import { useLoading } from "hooks/useLoading"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useEffect } from "react"
+import { useLoading } from "hooks/useLoading"
 
 export default function DocumentRevision() {
+  const params = useParams()
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
@@ -20,13 +21,16 @@ export default function DocumentRevision() {
       dataIndex: "documentName",
       render: (text) => (
         <Tooltip title="Edit Revision" placement="top">
-          <Button
-            type="link"
-            iconPosition="start"
-            icon={<FolderOpenOutlined style={{ color: "#fef65b", fontSize: "1.2rem" }} />}
-          >
-            {text}
-          </Button>
+          <Link href={`/project/${params.project_id}/design-basis/general-info`}>
+            <Button
+              type="link"
+              iconPosition="start"
+              onClick={() => setModalLoading(true)}
+              icon={<FolderOpenOutlined style={{ color: "#fef65b", fontSize: "1.2rem" }} />}
+            >
+              {text}
+            </Button>
+          </Link>
         </Tooltip>
       ),
     },

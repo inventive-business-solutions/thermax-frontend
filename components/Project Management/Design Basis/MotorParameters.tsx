@@ -1,26 +1,122 @@
 "use client"
-import { useEffect } from "react"
-import { useLoading } from "hooks/useLoading"
+import { Button, message } from "antd"
+import { useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
+import { updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInputNumber"
-import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 import CustomTextNumber from "components/FormInputs/CustomInputNumber"
+import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
+import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
+import { MOTOR_PARAMETER_API } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
+import useMotorParametersDropdowns from "./MotorParametersDropdown"
+
+const getDefaultValues = (defaultData: any) => ({
+  safe_area_efficiency_level: defaultData?.safe_area_efficiency_level || "IE-2",
+  hazardous_area_efficiency_level: defaultData?.hazardous_area_efficiency_level || "IE-2",
+  safe_area_insulation_class: defaultData?.safe_area_insulation_class || "Class-F",
+  hazardous_area_insulation_class: defaultData?.hazardous_area_insulation_class || "Class-F",
+  safe_area_temperature_rise: defaultData?.safe_area_temperature_rise || "Class-B",
+  hazardous_area_temperature_rise: defaultData?.hazardous_area_temperature_rise || "Class-B",
+  safe_area_enclosure_ip_rating: defaultData?.safe_area_enclosure_ip_rating || "IP55",
+  hazardous_area_enclosure_ip_rating: defaultData?.hazardous_area_enclosure_ip_rating || "IP55",
+  safe_area_max_temperature: defaultData?.safe_area_max_temperature || 40,
+  hazardous_area_max_temperature: defaultData?.hazardous_area_max_temperature || 40,
+  safe_area_min_temperature: defaultData?.safe_area_min_temperature || 10,
+  hazardous_area_min_temperature: defaultData?.hazardous_area_min_temperature || 10,
+  safe_area_altitude: defaultData?.safe_area_altitude || 7.5,
+  hazardous_area_altitude: defaultData?.hazardous_area_altitude || 7.5,
+  safe_area_terminal_box_ip_rating: defaultData?.safe_area_terminal_box_ip_rating || "IP55",
+  hazardous_area_terminal_box_ip_rating: defaultData?.hazardous_area_terminal_box_ip_rating || "IP55",
+  safe_area_thermister: defaultData?.safe_area_thermister || "110",
+  hazardous_area_themister: defaultData?.hazardous_area_themister || "110",
+  safe_area_space_heater: defaultData?.safe_area_space_heater || "110",
+  hazardous_area_space_heater: defaultData?.hazardous_area_space_heater || "110",
+  hazardous_area_certification: defaultData?.hazardous_area_certification || "PESO",
+  safe_area_bearing_rtd: defaultData?.safe_area_bearing_rtd || 110,
+  hazardous_area_bearing_rtd: defaultData?.hazardous_area_bearing_rtd || "110",
+  safe_area_winding_rtd: defaultData?.safe_area_winding_rtd || "110",
+  hazardous_area_winding_rtd: defaultData?.hazardous_area_winding_rtd || "110",
+  safe_area_bearing_type: defaultData?.safe_area_bearing_type || "",
+  hazardous_area_bearing_type: defaultData?.hazardous_area_bearing_type || "",
+  safe_area_duty: defaultData?.safe_area_duty || "S1",
+  hazardous_area_duty: defaultData?.hazardous_area_duty || "S1",
+  safe_area_service_factor: defaultData?.safe_area_service_factor || 1,
+  hazardous_area_service_factor: defaultData?.hazardous_area_service_factor || 1,
+  safe_area_cooling_type: defaultData?.safe_area_cooling_type || "TEFC",
+  hazardous_area_cooling_type: defaultData?.hazardous_area_cooling_type || "TEFC",
+  safe_area_body_material: defaultData?.safe_area_body_material || null,
+  hazardous_area_body_material: defaultData?.hazardous_area_body_material || null,
+  safe_area_terminal_box_material: defaultData?.safe_area_terminal_box_material || null,
+  hazardous_area_terminal_box_material: defaultData?.hazardous_area_terminal_box_material || null,
+  safe_area_paint_type_and_shade: defaultData?.safe_area_paint_type_and_shade || "User Defined",
+  hazardous_area_paint_type_and_shade: defaultData?.hazardous_area_paint_type_and_shade || "User Defined",
+  safe_area_starts_hour_permissible: defaultData?.safe_area_starts_hour_permissible || "2 Hot and 3 Cold",
+  hazardous_area_starts_hour_permissible: defaultData?.hazardous_area_starts_hour_permissible || "2 Hot and 3 Cold",
+})
 
 const MotorParameters = () => {
+  const params = useParams()
+  const [loading, setLoading] = useState(false)
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  const { data: motorParameters } = useGetData(
+    `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    false
+  )
+  console.log("motorParameters", motorParameters)
+
+  const {
+    safeEfficiencyLevelOptions,
+    hazardousEfficiencyLevelOptions,
+    safeInsulationClassOptions,
+    hazardousInsulationClassOptions,
+    safeTempRiseOptions,
+    hazardousTempRiseOptions,
+    safeEnclosureIpRatingOptions,
+    hazardousEnclosureIpRatingOptions,
+    safeTerminalBoxIpRatingOptions,
+    hazardousTerminalBoxIpRatingOptions,
+    safeThermistorOptions,
+    hazardousThermistorOptions,
+    safeSpaceHeaterOptions,
+    hazardousSpaceHeaterOptions,
+    hazardousCertificationOptions,
+    safeBearingRTDOptions,
+    hazardousBearingRTDOptions,
+    safeWindingRTDOptions,
+    hazardousWindingRTDOptions,
+    safeBodyMaterialOptions,
+    hazardousBodyMaterialOptions,
+    safeTerminalBoxOptions,
+    hazardousTerminalBoxOptions,
+  } = useMotorParametersDropdowns()
 
   const { control, handleSubmit, formState, reset } = useForm({
     // resolver: zodResolver(fieldSchema),
-    // defaultValues: getDefaultValues(staticDocumentList, dynamicPanelDoc as any),
+    defaultValues: getDefaultValues(motorParameters?.[0]),
     mode: "onBlur",
   })
 
-  const onSubmit = async (data: any) => {}
+  const onSubmit = async (data: any) => {
+    setLoading(true)
+    console.log("data", data)
+    try {
+      if (motorParameters?.[0]) {
+        await updateData(`${MOTOR_PARAMETER_API}/${motorParameters?.[0].name}`, false, data)
+        message.success("Motor parameters saved successfully")
+      }
+    } catch (error) {
+      message.error("Failed to save motor parameters")
+      console.error("Failed to save motor parameters", error)
+    }
+    setLoading(false)
+  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -39,7 +135,7 @@ const MotorParameters = () => {
               name="safe_area_efficiency_level"
               placeholder="Select safe area efficiency level"
               label=""
-              options={[]}
+              options={safeEfficiencyLevelOptions}
               variant="borderless"
             />
           </div>
@@ -49,7 +145,7 @@ const MotorParameters = () => {
               name="hazardous_area_efficiency_level"
               placeholder="Select hazardous area efficiency level"
               label=""
-              options={[]}
+              options={hazardousEfficiencyLevelOptions}
               variant="borderless"
             />
           </div>
@@ -62,7 +158,7 @@ const MotorParameters = () => {
               name="safe_area_insulation_class"
               placeholder="Select safe area insulation class"
               label=""
-              options={[]}
+              options={safeInsulationClassOptions}
               variant="borderless"
             />
           </div>
@@ -72,7 +168,7 @@ const MotorParameters = () => {
               name="hazardous_area_insulation_class"
               placeholder="Select hazardous area insulation class"
               label=""
-              options={[]}
+              options={hazardousInsulationClassOptions}
               variant="borderless"
             />
           </div>
@@ -85,7 +181,7 @@ const MotorParameters = () => {
               name="safe_area_temperature_rise"
               placeholder="Select safe area temperature rise"
               label=""
-              options={[]}
+              options={safeTempRiseOptions}
               variant="borderless"
             />
           </div>
@@ -95,7 +191,7 @@ const MotorParameters = () => {
               name="hazardous_area_temperature_rise"
               placeholder="Select hazardous area temperature rise"
               label=""
-              options={[]}
+              options={hazardousTempRiseOptions}
               variant="borderless"
             />
           </div>
@@ -108,7 +204,7 @@ const MotorParameters = () => {
               name="safe_area_enclosure_ip_rating"
               placeholder="Select safe area enclosure IP rating"
               label=""
-              options={[]}
+              options={safeEnclosureIpRatingOptions}
               variant="borderless"
             />
           </div>
@@ -118,7 +214,7 @@ const MotorParameters = () => {
               name="hazardous_area_enclosure_ip_rating"
               placeholder="Select hazardous area enclosure IP rating"
               label=""
-              options={[]}
+              options={hazardousEnclosureIpRatingOptions}
               variant="borderless"
             />
           </div>
@@ -191,7 +287,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={safeTerminalBoxIpRatingOptions}
               name="safe_area_terminal_box_ip_rating"
               placeholder="Select safe area terminal box IP rating"
               label=""
@@ -201,7 +297,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={hazardousTerminalBoxIpRatingOptions}
               name="hazardous_area_terminal_box_ip_rating"
               placeholder="Select hazardous area terminal box IP rating"
               label=""
@@ -216,7 +312,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={safeThermistorOptions}
               name="safe_area_thermister"
               placeholder="Select safe area thermister"
               label=""
@@ -226,7 +322,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={hazardousThermistorOptions}
               name="hazardous_area_themister"
               placeholder="Select hazardous area thermister"
               label=""
@@ -241,7 +337,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={safeSpaceHeaterOptions}
               name="safe_area_space_heater"
               placeholder="Select safe area space heater"
               label=""
@@ -251,7 +347,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={hazardousSpaceHeaterOptions}
               name="hazardous_area_space_heater"
               placeholder="Select hazardous area space heater"
               label=""
@@ -269,13 +365,13 @@ const MotorParameters = () => {
               placeholder="Select safe area certification"
               disabled
               label=""
-              variant="borderless"
+              variant="filled"
             />
           </div>
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={hazardousCertificationOptions}
               name="hazardous_area_certification"
               placeholder="Select hazardous area certification"
               label=""
@@ -290,7 +386,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={safeBearingRTDOptions}
               name="safe_area_bearing_rtd"
               placeholder="Select safe area bearing RTD"
               label=""
@@ -300,7 +396,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={hazardousBearingRTDOptions}
               name="hazardous_area_bearing_rtd"
               placeholder="Select hazardous area bearing RTD"
               label=""
@@ -315,7 +411,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={safeWindingRTDOptions}
               name="safe_area_winding_rtd"
               placeholder="Select safe area winding RTD"
               label=""
@@ -325,7 +421,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={hazardousWindingRTDOptions}
               name="hazardous_area_winding_rtd"
               placeholder="Select hazardous area winding RTD"
               label=""
@@ -420,7 +516,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={safeBodyMaterialOptions}
               name="safe_area_body_material"
               placeholder="Select safe area body material"
               label=""
@@ -430,7 +526,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={hazardousBodyMaterialOptions}
               name="hazardous_area_body_material"
               placeholder="Select hazardous area body material"
               label=""
@@ -443,7 +539,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={safeTerminalBoxOptions}
               name="safe_area_terminal_box_material"
               placeholder="Select safe area terminal box material"
               label=""
@@ -453,7 +549,7 @@ const MotorParameters = () => {
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
-              options={[]}
+              options={hazardousTerminalBoxOptions}
               name="hazardous_area_terminal_box_material"
               placeholder="Select hazardous area terminal box material"
               label=""
@@ -483,7 +579,7 @@ const MotorParameters = () => {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <div className="flex-1 border p-1.5 text-sm font-semibold">Starts / Hour permissibe</div>
+          <div className="flex-1 border p-1.5 text-sm font-semibold">Starts / Hour Permissibe</div>
           <div className="flex-1 border">
             <CustomTextInput
               control={control}
@@ -502,6 +598,11 @@ const MotorParameters = () => {
               variant="borderless"
             />
           </div>
+        </div>
+        <div className="mt-4 text-end">
+          <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
+            Save
+          </Button>
         </div>
       </form>
     </div>

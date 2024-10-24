@@ -33,12 +33,12 @@ const GeneralInfo = () => {
         setGeneralInfoData({
           is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
           pkgList: mainPkgData,
+          battery_limit: generalInfoDefaultData[0]?.battery_limit,
         })
       }
     }
     fetchData()
   }, [params.project_id, refresh])
-  console.log("generalInfoData", generalInfoData)
 
   const projectMainPkgUrl = `${PROJECT_MAIN_PKG_LIST_API}?project_id=${params.project_id}`
 
@@ -126,8 +126,6 @@ const GeneralInfo = () => {
     message.success("Design Basis General Info saved successfully")
     console.log("existingDesignBasis", existingDesignBasis)
   }
-
-  console.log("generalInfoData", generalInfoData)
 
   return (
     <div className="flex flex-col gap-4">

@@ -24,6 +24,40 @@ export const PROJECT_MAIN_PKG_API = `/document/Project Main Package`
 export const BATTERY_LIMIT_API = `/document/Battery Limit`
 export const DESIGN_BASIS_GENERAL_INFO_API = `/document/Design Basis General Info`
 
+// Motor Parameters API Endpoints
+export const MOTOR_PARAMETER_API = `/document/Design Basis Motor Parameters`
+export const SAFE_EFFICIENCY_LEVEL = `/document/Efficiency Level Safe Area`
+export const HAZARDOUS_EFFICIENCY_LEVEL = `/document/Efficiency Level Hazardous Area`
+export const SAFE_INSULATION_CLASS = `/document/Insulation Class Safe Area`
+export const HAZARDOUS_INSULATION_CLASS = `/document/Insulation Class Hazardous Area`
+export const SAFE_TEMPERATURE_RISE = `/document/Safe Temperature Rise`
+export const HAZARDOUS_TEMPERATURE_RISE = `/document/Hazardous Temperature Rise`
+export const SAFE_MAXIMUM_TEMPERATURE = `/document/Maximum Deg C Safe`
+export const HAZARDOUS_MAXIMUM_TEMPERATURE = `/document/Maximum Deg C Hazardous`
+export const SAFE_MINIMUM_TEMPERATURE = `/document/Minimum Deg C Safe`
+export const HAZARDOUS_MINIMUM_TEMPERATURE = `/document/Minimum Deg C Hazardous`
+export const SAFE_ALTITUDE = `/document/Altitude Safe`
+export const HAZARDOUS_ALTITUDE = `/document/Altitude Hazardous`
+export const SAFE_ENCLOSURE_IP_RATING = `/document/Enclosure IP Rating Safe`
+export const HAZARDOUS_ENCLOSURE_IP_RATING = `/document/Enclosure IP Rating Hazardous`
+export const SAFE_TERMINAL_BOX_IP_RATING = `/document/IP rating for Terminal Box Safe`
+export const HAZARDOUS_TERMINAL_BOX_IP_RATING = `/document/IP rating for Terminal Box Hazardous`
+export const SAFE_THERMISTOR = `/document/Thermister Safe`
+export const HAZARDOUS_THERMISTOR = `/document/Thermister Hazardous`
+export const SAFE_SPACE_HEATER = `/document/Space Heater Safe`
+export const HAZARDOUS_SPACE_HEATER = `/document/Space Heater Hazardous`
+export const HAZARDOUS_CERTIFICATION = `/document/Hazardous Area Certification`
+export const SAFE_BEARING_RTD = `/document/Bearing RTD Safe`
+export const HAZARDOUS_BEARING_RTD = `/document/Bearing RTD Hazardous`
+export const SAFE_WINDING_RTD = `/document/Winding RTD Safe`
+export const HAZARDOUS_WINDING_RTD = `/document/Winding RTD Hazardous`
+export const SAFE_DUTY = `/document/Duty Safe`
+export const HAZARDOUS_DUTY = `/document/Duty Hazardous`
+export const SAFE_BODY_MATERIAL = `/document/Body Material Safe`
+export const HAZARDOUS_BODY_MATERIAL = `/document/Body Material Hazardous`
+export const SAFE_TERMINAL_BOX_MATERIAL = `/document/Material of Terminal Box Safe`
+export const HAZARDOUS_TERMINAL_BOX_MATERIAL = `/document/Material of Terminal Box Hazardous`
+
 // Make of components Api end Points
 
 export const MAKE_MOTORS = `/document/Motors Make`
