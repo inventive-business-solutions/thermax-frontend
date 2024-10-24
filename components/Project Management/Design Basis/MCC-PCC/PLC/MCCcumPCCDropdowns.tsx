@@ -16,6 +16,17 @@ import {
   DO_MODULE_DENSITY,
   DO_MODULE_NO_OF_CONTACTS,
   DO_MODULE_TYPE_OF_OUTPUT,
+  EO_COMMERCIAL_GRADE_PC,
+  EO_COMMUNICATION_CABLE,
+  EO_COMMUNICATION_CABLE_2,
+  EO_FURNITURE_CONSOLE,
+  EO_MANDATORY_SPARES,
+  EO_MONITOR_SIZE,
+  EO_PRINTER_CC,
+  EO_PRINTER_QTY,
+  EO_PRINTER_TABLE,
+  EO_SYSTEM_HARDWARE,
+  EO_WINDOW_OS,
   ESNOS,
   GA_BUSBAR_CHAMBER_POSITION,
   GA_CABLE_ENTRY_POSITION,
@@ -363,6 +374,18 @@ export default function useMCCcumPCCDropdowns() {
     "plc_programming_license_software "
   )
 
+  const { dropdownOptions: eo_system_hardwareOptions } = useDropdownOptions(`${EO_SYSTEM_HARDWARE}?fields=["*"]`, "system_hardware")
+  const { dropdownOptions: eo_commercial_grade_pcOptions } = useDropdownOptions(`${EO_COMMERCIAL_GRADE_PC}?fields=["*"]`, "commercial_grade_pc")
+  const { dropdownOptions: eo_monitor_sizeOptions } = useDropdownOptions(`${EO_MONITOR_SIZE}?fields=["*"]`, "monitor_size")
+  const { dropdownOptions: eo_windows_osOptions } = useDropdownOptions(`${EO_WINDOW_OS}?fields=["*"]`, "window_operating_system")
+  const { dropdownOptions: eo_printer_ccOptions } = useDropdownOptions(`${EO_PRINTER_CC}?fields=["*"]`, "printer_and_cc")
+  const { dropdownOptions: eo_printer_qtyOptions } = useDropdownOptions(`${EO_PRINTER_QTY}?fields=["*"]`, "printer_qty")
+  const { dropdownOptions: eo_printer_tableOptions } = useDropdownOptions(`${EO_PRINTER_TABLE}?fields=["*"]`, "printer_table")
+  const { dropdownOptions: eo_furniture_consoleOptions } = useDropdownOptions(`${EO_FURNITURE_CONSOLE}?fields=["*"]`, "furniture")
+  const { dropdownOptions: eo_communication_cableOptions } = useDropdownOptions(`${EO_COMMUNICATION_CABLE}?fields=["*"]`, "cc_and_hardware")
+  const { dropdownOptions: eo_communication_cable2Options } = useDropdownOptions(`${EO_COMMUNICATION_CABLE_2}?fields=["*"]`, "cc_and_hardware")
+  const { dropdownOptions: eo_mandatory_spareOptions } = useDropdownOptions(`${EO_MANDATORY_SPARES}?fields=["*"]`, "mandatory_spares")
+
   return {
     sd_incomer_ampereOptions,
     sd_incomer_poleOptions,
@@ -446,5 +469,17 @@ export default function useMCCcumPCCDropdowns() {
     scada_runtime_licOptions,
     hmi_development_licOptions,
     plc_programming_licOptions,
+
+    eo_system_hardwareOptions,
+    eo_commercial_grade_pcOptions,
+    eo_monitor_sizeOptions,
+    eo_windows_osOptions,
+    eo_printer_ccOptions,
+    eo_printer_qtyOptions,
+    eo_printer_tableOptions,
+    eo_furniture_consoleOptions,
+    eo_communication_cableOptions,
+    eo_communication_cable2Options,
+    eo_mandatory_spareOptions,
   }
 }

@@ -162,17 +162,17 @@ export const SCADA_RUNTIME_LIC = `document/SCADA Runtime License`
 export const HMI_DEVELOPMENT_LIC = `document/HMI Development License`
 export const PLC_PROGRAMMING_LIC = `document/PLC Programming License Software`
 
-export const EO_SYSTEM_HARDWARE = `document/RTD Type Of Input`
-export const EO_COMMERCIAL_GRADE_PC = `document/RTD Type Of Input`
-export const EO_MONITOR_SIZE = `document/RTD Type Of Input`
-export const EO_WINDOW_OS = `document/RTD Type Of Input`
-export const EO_PRINTER_CC = `document/RTD Type Of Input`
-export const EO_PRINTER_QTY = `document/RTD Type Of Input`
-export const EO_PRINTER_TABLE = `document/RTD Type Of Input`
-export const EO_FURNITURE_CONSOLE = `document/RTD Type Of Input`
-export const EO_COMMUNICATION_CABLE = `document/RTD Type Of Input`
-export const EO_COMMUNICATION_CABLE_2 = `document/RTD Type Of Input`
-export const EO_MANDATORY_SPARES = `document/RTD Type Of Input`
+export const EO_SYSTEM_HARDWARE = `document/EO System Hardware`
+export const EO_COMMERCIAL_GRADE_PC = `document/EO Commercial Grade PC`
+export const EO_MONITOR_SIZE = `document/EO Monitor Size`
+export const EO_WINDOW_OS = `document/EO Window Operating System`
+export const EO_PRINTER_CC = `document/EO Printer and Communication Cable`
+export const EO_PRINTER_QTY = `document/EO Printer Qty`
+export const EO_PRINTER_TABLE = `document/EO Printer Table`
+export const EO_FURNITURE_CONSOLE = `document/EO Furniture`
+export const EO_COMMUNICATION_CABLE = `document/Communication Cable Hardware Between PLC SCADA PC`
+export const EO_COMMUNICATION_CABLE_2 = `document/RCommunication Cable Hardware Between PLC Third Party`
+export const EO_MANDATORY_SPARES = `document/EO Mandatory Spares`
 
 // GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA
 export const GA_MOC = `document/GA MOC`

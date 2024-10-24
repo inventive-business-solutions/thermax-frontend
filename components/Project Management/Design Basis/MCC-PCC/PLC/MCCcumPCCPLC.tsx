@@ -77,6 +77,18 @@ const configItemValidationSchema = zod.object({
   scada_runtime_lic: zod.string({ required_error: "This field is required", message: "This field is required" }),
   hmi_development_lic: zod.string({ required_error: "This field is required", message: "This field is required" }),
   plc_programming_lic: zod.string({ required_error: "This field is required", message: "This field is required" }),
+
+  eo_system_hardware: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_commercial_grade_pc: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_monitor_size: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_windows_os: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_printer_cc: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_printer_qty: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_printer_table: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_furniture_console: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_communication_cable: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_communication_cable2: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  eo_mandatory_spare: zod.string({ required_error: "This field is required", message: "This field is required" }),
 })
 
 type MccComponentFormData = zod.infer<typeof configItemValidationSchema>
@@ -124,6 +136,18 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
     scada_runtime_lic: projectData?.scada_runtime_lic || "NA",
     hmi_development_lic: projectData?.hmi_development_lic || "NA",
     plc_programming_lic: projectData?.plc_programming_lic || "NA",
+
+    eo_system_hardware: projectData?.eo_system_hardware || "NA",
+    eo_commercial_grade_pc: projectData?.eo_commercial_grade_pc || "NA",
+    eo_monitor_size: projectData?.eo_monitor_size || "NA",
+    eo_windows_os: projectData?.eo_windows_os || "NA",
+    eo_printer_cc: projectData?.eo_printer_cc || "NA",
+    eo_printer_qty: projectData?.eo_printer_qty || "NA",
+    eo_printer_table: projectData?.eo_printer_table || "NA",
+    eo_furniture_console: projectData?.eo_furniture_console || "NA",
+    eo_communication_cable: projectData?.eo_communication_cable || "NA",
+    eo_communication_cable2: projectData?.eo_communication_cable2 || "NA",
+    eo_mandatory_spare: projectData?.eo_mandatory_spare || "NA",
   }
 }
 
@@ -179,6 +203,18 @@ const MCCcumPCCPLCPanel = () => {
     scada_runtime_licOptions,
     hmi_development_licOptions,
     plc_programming_licOptions,
+
+    eo_system_hardwareOptions,
+    eo_commercial_grade_pcOptions,
+    eo_monitor_sizeOptions,
+    eo_windows_osOptions,
+    eo_printer_ccOptions,
+    eo_printer_qtyOptions,
+    eo_printer_tableOptions,
+    eo_furniture_consoleOptions,
+    eo_communication_cableOptions,
+    eo_communication_cable2Options,
+    eo_mandatory_spareOptions,
   } = useMCCcumPCCDropdowns()
 
   const { control, handleSubmit, reset, formState } = useForm({
@@ -962,10 +998,22 @@ const MCCcumPCCPLCPanel = () => {
 
         <div className="flex gap-4">
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="io_count" label="IO Count" options={io_countOptions} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="io_count"
+              label="IO Count"
+              options={io_countOptions}
+              size="small"
+            />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="plc_spare_memoty" label="Memory" options={plc_spare_memotyOptions} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="plc_spare_memoty"
+              label="Memory"
+              options={plc_spare_memotyOptions}
+              size="small"
+            />
           </div>
         </div>
 
@@ -983,10 +1031,22 @@ const MCCcumPCCPLCPanel = () => {
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="hmi_nos" label="HMI (NOs)" options={hmi_nosOptions} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="hmi_nos"
+              label="HMI (NOs)"
+              options={hmi_nosOptions}
+              size="small"
+            />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="hmi_size_in_inch" label="HMI Size in Inch" options={hmi_size_in_inchOptions} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="hmi_size_in_inch"
+              label="HMI Size in Inch"
+              options={hmi_size_in_inchOptions}
+              size="small"
+            />
           </div>
         </div>
         <Divider>
@@ -1039,22 +1099,40 @@ const MCCcumPCCPLCPanel = () => {
 
         <div className="flex gap-4">
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="io_count" label="System Hardware" options={[]} size="small" />
-          </div>
-          <div className="flex-1">
-            <CustomSingleSelect control={control} name="memory" label="Commercial Grade PC" options={[]} size="small" />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomSingleSelect control={control} name="memory" label="Monitor Size" options={[]} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="eo_system_hardware"
+              label="System Hardware"
+              options={eo_system_hardwareOptions}
+              size="small"
+            />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="memory"
+              name="eo_commercial_grade_pc"
+              label="Commercial Grade PC"
+              options={eo_commercial_grade_pcOptions}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="eo_monitor_size"
+              label="Monitor Size"
+              options={eo_monitor_sizeOptions}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="eo_windows_os"
               label="Window Operating System,Microsoft Office, Anti Virus ( 3 Year) License, Quantity As Per ES & OS"
-              options={[]}
+              options={eo_windows_osOptions}
               size="small"
             />
           </div>
@@ -1063,53 +1141,66 @@ const MCCcumPCCPLCPanel = () => {
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="memory"
+              name="eo_printer_cc"
               label="Printer with Suitable Communication Cable"
-              options={[]}
+              options={eo_printer_ccOptions}
               size="small"
             />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="memory" label="Printer - Qty" options={[]} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="eo_printer_qty"
+              label="Printer - Qty"
+              options={eo_printer_qtyOptions}
+              size="small"
+            />
           </div>
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="memory" label="Printer Table" options={[]} size="small" />
+            <CustomTextInput
+              control={control}
+              name="eo_printer_table"
+              label="Printer Table"
+              size="small"
+            />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect
+            <CustomTextInput
               control={control}
-              name="memory"
+              name="eo_furniture_console"
               label="Furniture/Console of Computer/SCADA Station (ES/OS)"
-              options={[]}
               size="small"
             />
           </div>
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
-            <CustomSingleSelect
+            <CustomTextInput
               control={control}
-              name="memory"
+              name="eo_communication_cable"
               label="Communication Cable & Hardware Between PLC & SCADA PC"
-              options={[]}
               size="small"
             />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect
+            <CustomTextInput
               control={control}
-              name="memory"
+              name="eo_communication_cable2"
               label="Communication Cable & Hardware Between PLC & Third Party"
-              options={[]}
               size="small"
             />
           </div>
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="memory" label="Mandatory Spares" options={[]} size="small" />
+            <CustomTextInput
+              control={control}
+              name="eo_mandatory_spare"
+              label="Mandatory Spares"
+              size="small"
+            />
           </div>
           <div className="flex-1"></div>
         </div>
