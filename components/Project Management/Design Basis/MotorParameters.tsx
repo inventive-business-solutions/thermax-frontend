@@ -60,6 +60,7 @@ const getDefaultValues = (defaultData: any) => ({
 const MotorParameters = () => {
   const params = useParams()
   const [loading, setLoading] = useState(false)
+  const [isHazardous, setIsHazardous] = useState(false)
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
@@ -69,7 +70,13 @@ const MotorParameters = () => {
     `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
     false
   )
-  console.log("motorParameters", motorParameters)
+  useEffect(() => {
+    console.log("motorParameters", motorParameters)
+    if (motorParameters?.[0]) {
+      console.log("Boolean value", Boolean(motorParameters?.[0].is_hazardous_area_present))
+      setIsHazardous(Boolean(motorParameters?.[0].is_hazardous_area_present))
+    }
+  }, [motorParameters])
 
   const {
     safeEfficiencyLevelOptions,
@@ -105,7 +112,6 @@ const MotorParameters = () => {
 
   const onSubmit = async (data: any) => {
     setLoading(true)
-    console.log("data", data)
     try {
       if (motorParameters?.[0]) {
         await updateData(`${MOTOR_PARAMETER_API}/${motorParameters?.[0].name}`, false, data)
@@ -146,7 +152,8 @@ const MotorParameters = () => {
               placeholder="Select hazardous area efficiency level"
               label=""
               options={hazardousEfficiencyLevelOptions}
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -169,7 +176,8 @@ const MotorParameters = () => {
               placeholder="Select hazardous area insulation class"
               label=""
               options={hazardousInsulationClassOptions}
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -192,7 +200,8 @@ const MotorParameters = () => {
               placeholder="Select hazardous area temperature rise"
               label=""
               options={hazardousTempRiseOptions}
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -215,7 +224,8 @@ const MotorParameters = () => {
               placeholder="Select hazardous area enclosure IP rating"
               label=""
               options={hazardousEnclosureIpRatingOptions}
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -235,8 +245,9 @@ const MotorParameters = () => {
               control={control}
               name="hazardous_area_max_temperature"
               label=""
-              variant="borderless"
               placeholder="Enter hazardous area maximum temperature"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -256,8 +267,9 @@ const MotorParameters = () => {
               control={control}
               name="hazardous_area_min_temperature"
               label=""
-              variant="borderless"
               placeholder="Enter hazardous area minimum temperature"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -277,8 +289,9 @@ const MotorParameters = () => {
               control={control}
               name="hazardous_area_altitude"
               label=""
-              variant="borderless"
               placeholder="Enter hazardous area altitude"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -301,7 +314,8 @@ const MotorParameters = () => {
               name="hazardous_area_terminal_box_ip_rating"
               placeholder="Select hazardous area terminal box IP rating"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -326,7 +340,8 @@ const MotorParameters = () => {
               name="hazardous_area_themister"
               placeholder="Select hazardous area thermister"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -351,7 +366,8 @@ const MotorParameters = () => {
               name="hazardous_area_space_heater"
               placeholder="Select hazardous area space heater"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -375,7 +391,8 @@ const MotorParameters = () => {
               name="hazardous_area_certification"
               placeholder="Select hazardous area certification"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -400,7 +417,8 @@ const MotorParameters = () => {
               name="hazardous_area_bearing_rtd"
               placeholder="Select hazardous area bearing RTD"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -425,7 +443,8 @@ const MotorParameters = () => {
               name="hazardous_area_winding_rtd"
               placeholder="Select hazardous area winding RTD"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -445,6 +464,7 @@ const MotorParameters = () => {
               name="hazardous_area_bearing_type"
               placeholder="Bearing type description for hazardous area"
               label=""
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -465,7 +485,8 @@ const MotorParameters = () => {
               name="hazardous_area_duty"
               placeholder="Enter hazardous area duty"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -486,7 +507,8 @@ const MotorParameters = () => {
               name="hazardous_area_service_factor"
               placeholder="Enter hazardous area service factor"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -507,7 +529,8 @@ const MotorParameters = () => {
               name="hazardous_area_cooling_type"
               placeholder="Enter hazardous area cooling type"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -530,7 +553,8 @@ const MotorParameters = () => {
               name="hazardous_area_body_material"
               placeholder="Select hazardous area body material"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -544,6 +568,7 @@ const MotorParameters = () => {
               placeholder="Select safe area terminal box material"
               label=""
               variant="borderless"
+              disabled={!isHazardous}
             />
           </div>
           <div className="flex-1 border">
@@ -553,7 +578,8 @@ const MotorParameters = () => {
               name="hazardous_area_terminal_box_material"
               placeholder="Select hazardous area terminal box material"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -574,7 +600,8 @@ const MotorParameters = () => {
               name="hazardous_area_paint_type_and_shade"
               placeholder="Select hazardous area paint type and shade"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>
@@ -595,7 +622,8 @@ const MotorParameters = () => {
               name="hazardous_area_starts_hour_permissible"
               placeholder="Select hazardous area starts per hour permissible"
               label=""
-              variant="borderless"
+              variant={isHazardous ? "borderless" : "filled"}
+              disabled={!isHazardous}
             />
           </div>
         </div>

@@ -53,7 +53,6 @@ export default function PanelDataList({ projectId }: any) {
     setOpen(true)
     setEditMode(true)
     setProjectRow(record)
-    console.log("record", record)
   }
 
   const handleDeletePanel = async (selectedRowID: string) => {

@@ -42,7 +42,6 @@ export default function GISubPkgList({
   generalInfoData: any
   setGeneralInfoData: any
 }) {
-  console.log("main_package", main_package)
   const { dropdownOptions: standardOptions } = useDropdownOptions(CLASSIFICATION_AREA_STANDARD_API, "name")
   const { dropdownOptions: zoneOptions } = useDropdownOptions(CLASSIFICATION_AREA_ZONE_API, "name")
   const { dropdownOptions: gasGroupOptions } = useDropdownOptions(CLASSIFICATION_AREA_GAS_GROUP_API, "name")

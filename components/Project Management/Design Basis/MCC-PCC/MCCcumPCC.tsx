@@ -27,7 +27,6 @@ const MCCcumPCC: React.FC = () => {
   ]
 
   const onChange = (key: string) => {
-    console.log(key)
     setActiveKey(key) // Update active tab
   }
 

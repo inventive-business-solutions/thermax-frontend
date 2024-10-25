@@ -45,7 +45,6 @@ const MainMCCPCC = ({params} : any) => {
   ]
 
   const onChange = (key: string) => {
-    console.log(key)
     setActiveKey(key) // Update active tab
   }
 

@@ -80,7 +80,6 @@ const MakeOfComponent: React.FC<MakeOfComponentProps> = ({ params, handleSwitchT
   } = useMakeOfComponentDropdowns()
   const { setLoading: setModalLoading } = useLoading()
 
-  // console.log("motorsMakeOptions", motorsMakeOptions)
   useEffect(() => {
     setModalLoading(false)
   })

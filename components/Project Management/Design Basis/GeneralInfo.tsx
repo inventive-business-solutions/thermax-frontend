@@ -1,6 +1,6 @@
 "use client"
 import { Button, Divider, message, Radio, RadioChangeEvent, Select } from "antd"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { createData, getData, updateData } from "actions/crud-actions"
 import { createDropdownOptions } from "components/Package Management/package-management.logic"
@@ -8,6 +8,7 @@ import {
   BATTERY_LIMIT_API,
   DESIGN_BASIS_GENERAL_INFO_API,
   MAIN_PKG_API,
+  MOTOR_PARAMETER_API,
   PROJECT_MAIN_PKG_API,
   PROJECT_MAIN_PKG_LIST_API,
   SUB_PKG_API,
@@ -24,6 +25,15 @@ const GeneralInfo = () => {
   const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`, false)
   const [generalInfoData, setGeneralInfoData] = useState({})
   const [refresh, setRefresh] = useState(false)
+  const [saveLoading, setSaveLoading] = useState(false)
+
+  const router = useRouter()
+
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,12 +58,6 @@ const GeneralInfo = () => {
       !generalInfoData?.pkgList?.some((mainPkg: any) => mainPkg.main_package_name === pkg.package_name)
   )
   const { dropdownOptions: batteryLimitOptions } = useDropdownOptions(BATTERY_LIMIT_API, "name")
-  // wrap in useMemo to prevent re-rendering
-  const { setLoading: setModalLoading } = useLoading()
-  useEffect(() => {
-    setModalLoading(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const handleAddPkg = async () => {
     setAddPkgLoading(true)
@@ -81,7 +85,7 @@ const GeneralInfo = () => {
   }
 
   const handleSave = async () => {
-    console.log("generalInfoData", generalInfoData)
+    setSaveLoading(true)
     const existingDesignBasis = await getData(
       `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["project_id", "=", "${params.project_id}"]]`,
       false
@@ -101,11 +105,15 @@ const GeneralInfo = () => {
     }
     const pkgList = generalInfoData?.pkgList
     if (pkgList && pkgList.length > 0) {
+      let hasHazardousArea = false
       for (const mainPkg of pkgList) {
         const subPkgList = mainPkg?.sub_packages
         const updateSubPkgList = []
         if (subPkgList && subPkgList.length > 0) {
           for (const subPkg of subPkgList) {
+            if (subPkg.area_of_classification === "Hazardous Area" && Boolean(subPkg.is_sub_package_selected)) {
+              hasHazardousArea = true
+            }
             updateSubPkgList.push({
               sub_package_name: subPkg.sub_package_name,
               area_of_classification: subPkg.area_of_classification,
@@ -113,6 +121,7 @@ const GeneralInfo = () => {
             })
           }
         }
+
         await updateData(`${PROJECT_MAIN_PKG_API}/${mainPkg.name}`, false, {
           main_package_name: mainPkg.main_package_name,
           sub_packages: updateSubPkgList,
@@ -122,9 +131,34 @@ const GeneralInfo = () => {
           temperature_class: mainPkg?.temperature_class,
         })
       }
+
+      const motorParameters = await getData(
+        `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        false
+      )
+
+      const isHazardousAreaPresent = hasHazardousArea ? true : false
+
+      console.log("isHazardousAreaPresent", isHazardousAreaPresent)
+      console.log("motorParameters", motorParameters)
+
+      if (motorParameters && motorParameters.length > 0) {
+        // Update existing motor parameters
+        await updateData(`${MOTOR_PARAMETER_API}/${motorParameters[0].name}`, false, {
+          is_hazardous_area_present: isHazardousAreaPresent,
+        })
+      } else {
+        // Create new motor parameters if none exist
+        await createData(MOTOR_PARAMETER_API, false, {
+          project_id: params.project_id,
+          is_hazardous_area_present: isHazardousAreaPresent,
+        })
+      }
     }
+    setSaveLoading(false)
     message.success("Design Basis General Info saved successfully")
-    console.log("existingDesignBasis", existingDesignBasis)
+    setModalLoading(true)
+    router.push(`/project/${params.project_id}/design-basis/motor-parameters`)
   }
 
   return (
@@ -198,7 +232,7 @@ const GeneralInfo = () => {
       </div>
 
       <div className="flex w-full justify-end gap-4">
-        <Button type="primary" onClick={handleSave}>
+        <Button type="primary" onClick={handleSave} loading={saveLoading}>
           Save
         </Button>
       </div>

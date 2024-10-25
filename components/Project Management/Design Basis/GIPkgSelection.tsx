@@ -5,12 +5,9 @@ import { Popconfirm, Tabs } from "antd"
 import { deleteData, getData } from "actions/crud-actions"
 import { PROJECT_MAIN_PKG_API } from "configs/api-endpoints"
 import GISubPkgList from "./GISubPkgList"
-import { mutate } from "swr"
 
 export default function GIPkgSelectionTabs({
-  mainPkgUrl,
   generalInfoData,
-  setMainPkgData,
   setGeneralInfoData,
   refresh,
   setRefresh,

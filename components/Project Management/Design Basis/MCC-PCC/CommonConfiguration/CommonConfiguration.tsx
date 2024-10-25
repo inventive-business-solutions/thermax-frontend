@@ -252,7 +252,6 @@ const CommonConfiguration: React.FC<CommonConfigurationProps> = ({ params, handl
     
   } = useCommonConfigDropdowns()
 
-  console.log("metering_for_feederOption", metering_for_feederOption)
   
   const { control, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(configItemValidationSchema),
