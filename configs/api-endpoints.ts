@@ -59,10 +59,10 @@ export const SAFE_TERMINAL_BOX_MATERIAL = `/document/Material of Terminal Box Sa
 export const HAZARDOUS_TERMINAL_BOX_MATERIAL = `/document/Material of Terminal Box Hazardous`
 
 // Make of components Api end Points
-
+export const MAKE_OF_COMPONENT_API = `/document/Make Of Components`
 export const MAKE_MOTORS = `/document/Motors Make`
 export const MAKE_CABLE = `/document/Cables Make`
-export const MAKE_LV_SWITCHGEAR = `/document/LV switchgear Make`
+export const MAKE_LV_SWITCHGEAR = `/document/LV Switchgear Make`
 export const MAKE_PANEL_ENCLOSURE = `/document/Panel Enclosure Make`
 export const MAKE_VFD_VSD = `/document/VFD VSD Make`
 export const MAKE_SOFT_STARTER = `/document/Soft Starter Make`

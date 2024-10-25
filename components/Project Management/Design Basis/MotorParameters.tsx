@@ -71,7 +71,6 @@ const MotorParameters = () => {
     false
   )
   useEffect(() => {
-    console.log("motorParameters", motorParameters)
     if (motorParameters?.[0]) {
       console.log("Boolean value", Boolean(motorParameters?.[0].is_hazardous_area_present))
       setIsHazardous(Boolean(motorParameters?.[0].is_hazardous_area_present))
