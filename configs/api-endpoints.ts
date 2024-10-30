@@ -69,27 +69,27 @@ export const MAKE_SOFT_STARTER = `/document/Soft Starter Make`
 export const MAKE_PLC = `/document/PLC Make`
 
 // Common Coniguration on MCC/PCC :
-
+export const COMMON_CONFIGURATION = `/document/Common Configuration`
 export const DOL_STARTER = `/document/DOL Starter`
 export const STAR_DELTA_STARTER = `/document/Star Delta Starter`
 export const AMMETER = `/document/Ammeter`
 export const AMMETER_CONFIGURATION = `/document/Ammeter Configuration`
-export const MCC_SWITCHGEAR_TYPE = `/document/MCC Switchgear type`
+export const MCC_SWITCHGEAR_TYPE = `/document/MCC Switchgear Type`
 export const SWITCHGEAR_COMBINATION = `/document/Switchgear Combination`
 
 export const SUPPLY_FEEDER_POLE = `/document/Supply Feeder Pole`
 export const SUPPLY_FEEDER_DM_STANDARD = `/document/Supply Feeder DM Standard`
 export const SUPPLY_FEEDER_TESTING_STANDARD = `/document/Supply Feeder Testing Standard`
 export const POWER_WIRING_COLOR = `/document/Power Wiring Color`
-export const POWER_WIRING_LENGTH = `/document/Power Wiring Length`
+export const POWER_WIRING_SIZE = `/document/Power Wiring Size`
 export const CONTROL_WIRING_COLOR = `/document/Control Wiring Color`
-export const CONTROL_WIRING_LENGTH = `/document/Control Wiring Length`
+export const CONTROL_WIRING_SIZE = `/document/Control Wiring Size`
 export const VDC_24_WIRING_COLOR = `/document/VDC 24 Wiring Color`
-export const VDC_24_WIRING_LENGTH = `/document/VDC 24 Wiring Length`
+export const VDC_24_WIRING_SIZE = `/document/VDC 24 Wiring Size`
 export const ANALOG_SIGNAL_WIRING_COLOR = `/document/Analog Signal Wiring Color`
-export const ANALOG_SIGNAL_WIRING_LENGTH = `/document/Analog Signal Wiring Length`
+export const ANALOG_SIGNAL_WIRING_LENGTH = `/document/Analog Signal Wiring Size`
 export const CT_WIRING_COLOR = `/document/CT Wiring Color`
-export const CT_WIRING_LENGTH = `/document/CT Wiring Length`
+export const CT_WIRING_SIZE = `/document/CT Wiring Size`
 export const CABLE_WIRING_PVC = `/document/Cable Insulation PVC`
 export const FERRULE = `/document/Ferrule`
 export const SPARE_TERMINAL = `/document/Spare Terminal`
@@ -99,8 +99,8 @@ export const ALARM_ACKNOWLEDGE_AND_LAMP_TEST = `/document/Alarm Acknowledge and 
 export const SPEED_DECREASE_PB = `/document/Speed Decrease PB`
 export const SPEED_INCREASE_PB = `/document/Speed Increase PB`
 export const PUSH_BUTTON_ESS = `/document/Push Button ESS`
-export const PUSH_BUTTON_STOP = `/document/Push Button Stop`
-export const PUSH_BUTTON_START = `/document/Push Button Start`
+export const PUSH_BUTTON_STOP_COLOR = `/document/Push Button Stop Color`
+export const PUSH_BUTTON_START_COLOR = `/document/Push Button Start Color`
 
 export const LR_SELECTOR_SWITCH_APPLICABLE = `/document/Applicable Selector Switch On MCC Panel Front Door`
 export const LR_SELECTOR_LOCK_TYPE = `/document/Lockable Selector Switch On MCC Panel Front Door`
@@ -121,25 +121,25 @@ export const LPBS_TYPE = `/document/Local Push Button Station Type`
 export const LPBS_ENCLOSURE = `/document/Local Push Button Station Enclosure`
 export const LPBS_MATERIAL = `/document/Local Push Button Station Material`
 export const LPBS_QTY = `/document/Local Push Button Station Qty`
-export const LPBS_COLOR_SHADE = `/documentLocal Push Button Station LPBS Color Shade/`
-export const LPBS_CANOPY_ON_TOP = `/document/Field Motor Isolator Canopy On Top/`
-export const LPBS_COLOR = `/document/LPBS Start Push Button Color/`
-export const LPBS_INDICATOR_ON_COLOR = `/document/LPBS Start ON Indication Lamp Color/`
-export const LPBS_INDICATOR_OFF_COLOR = `/document/LPBS Stop OFF Indication Lamp Color/`
-export const LPBS_SPEED_INCREASE_BUTTON = `/document/LPBS Speed Increase Push Button/`
-export const LPBS_SPEED_DECREASE_BUTTON = `/document/LPBS Speed Decrease Push Button/`
+export const LPBS_COLOR_SHADE = `/document/Local Push Button Station LPBS Color Shade`
+export const LPBS_CANOPY_ON_TOP = `/document/Local Push Button Station Canopy On top`
+export const LPBS_PUSH_BUTTON_START_COLOR = `/document/LPBS Start Push Button Color`
+export const LPBS_INDICATOR_ON_COLOR = `/document/LPBS Start On Indication Lamp Color`
+export const LPBS_INDICATOR_OFF_COLOR = `/document/LPBS Stop Off Indication Lamp Color`
+export const LPBS_SPEED_INCREASE_BUTTON = `/document/LPBS Speed Increase Push Button`
+export const LPBS_SPEED_DECREASE_BUTTON = `/document/LPBS Speed Decrease Push Button`
 
 export const APFC_RELAY = `/document/APFC Relay`
 
-export const PB_MAIN_BUSBAR_SELECTION = `/document/PB Main Busbar Selection`
-export const PB_HEAT_PVC_SLEEVE = `/document/PB Heat Shrinkable Color PVC sleeve`
-export const PB_CURRENT_DENSITY = `/document/PB Current Density`
-export const CB_MAIN_BUSBAR_SELECTION = `/document/CB Main Busbar Selection`
-export const CB_HEAT_PVC_SLEEVE = `/document/CB Heat Shrinkable Color PVC sleeve`
-export const CB_CURRENT_DENSITY = `/document/CB Current Density`
-export const EB_MAIN_BUSBAR_SELECTION = `/document/EB Main Busbar Selection`
-export const EB_EARTH_BUSBAR_POSITION = `/document/EB Earth Busbar Position`
-export const EB_CURRENT_DENSITY = `/document/EB Current Density`
+export const POWER_BUS_MAIN_BUSBAR_SELECTION = `/document/Power Bus Main Busbar Selection`
+export const POWER_BUS_HEAT_PVC_SLEEVE = `/document/Power Bus Heat Shrinkable Color PVC sleeve`
+export const POWER_BUS_CURRENT_DENSITY = `/document/Power Bus Current Density`
+export const CONTROL_BUS_MAIN_BUSBAR_SELECTION = `/document/Control Bus Main Busbar Selection`
+export const CONTROL_BUS_HEAT_PVC_SLEEVE = `/document/Control Bus Heat Shrinkable Color PVC sleeve`
+export const CONTROL_BUS_CURRENT_DENSITY = `/document/Control Bus Current Density`
+export const EARTH_BUS_MAIN_BUSBAR_SELECTION = `/document/Earth Bus Main Busbar Selection`
+export const EARTH_BUS_BUSBAR_POSITION = `/document/Earth Bus Busbar Position`
+export const EARTH_BUS_CURRENT_DENSITY = `/document/Earth Bus Current Density`
 
 export const METERING_FOR_FEEDER = `/document/Metering for Feeder`
 

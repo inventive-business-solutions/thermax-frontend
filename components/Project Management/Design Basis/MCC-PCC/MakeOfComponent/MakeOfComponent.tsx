@@ -56,7 +56,7 @@ const MakeOfComponent = () => {
     plcMakeOptions,
     soft_starterOptions,
     vfd_vsdOptions,
-    panel_enclosureOptins,
+    panel_enclosureOptions: panel_enclosureOptins,
     lv_switchgearOptions,
     cableMakeOptions,
   } = useMakeOfComponentDropdowns()

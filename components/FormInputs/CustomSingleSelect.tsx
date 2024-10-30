@@ -5,7 +5,7 @@ import { Control, Controller } from "react-hook-form"
 interface SingleSelectProps extends SelectProps {
   control: Control<any>
   name: string
-  label: string
+  label: string | JSX.Element
   size?: "small" | "large"
   placeholder?: string
   options: { value: string; label: string; [key: string]: any }[]
