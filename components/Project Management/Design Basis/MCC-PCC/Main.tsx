@@ -8,7 +8,7 @@ import MCCcumPCCPanel from "./MCCcumPCC"
 import MCCPanel from "./MCCPanel"
 import PCCPanel from "./PCCPanel"
 
-const MainMCCPCC = ({params} : any) => {
+const MainMCCPCC = ({ params }: any) => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -20,12 +20,12 @@ const MainMCCPCC = ({params} : any) => {
     {
       label: "Make",
       key: "1",
-      children: <MakeOfComponent params={params} handleSwitchTab={() => handleSwitchTab("2")} />,
+      children: <MakeOfComponent />,
     },
     {
       label: "Common Configuration",
       key: "2",
-      children: <CommonConfiguration params={params} handleSwitchTab={() => handleSwitchTab("3")} />,
+      children: <CommonConfiguration />,
     },
     {
       label: "MCC",

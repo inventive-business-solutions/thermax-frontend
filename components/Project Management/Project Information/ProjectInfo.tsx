@@ -15,6 +15,7 @@ import { useLoading } from "hooks/useLoading"
 import DocumentListModal from "./DocumentListModal"
 import PanelDataList from "./Panel/PanelDataList"
 import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
+import { useParams } from "next/navigation"
 
 const ProjectInfoSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
@@ -110,7 +111,8 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
   }
 }
 
-const ProjectInfo = ({ params }: any) => {
+const ProjectInfo = () => {
+  const params = useParams()
   const project_id = params.project_id
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`

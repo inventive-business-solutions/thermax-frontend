@@ -22,11 +22,12 @@ export default function DesignBasisLayout({
   }
   return (
     <div className="flex flex-col gap-2 px-2 pb-2 shadow-lg">
+      <div className="font-bold underline">DESIGN BASIS TAB</div>
       <nav className="flex gap-2">
         <Link
           href={`/project/${params.project_id}/design-basis/document-revision`}
           className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-sm font-bold uppercase tracking-wide text-white"
+            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
           }
           onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/document-revision`)}
         >
@@ -35,7 +36,7 @@ export default function DesignBasisLayout({
         <Link
           href={`/project/${params.project_id}/design-basis/general-info`}
           className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-sm font-bold uppercase tracking-wide text-white"
+            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
           }
           onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/general-info`)}
         >
@@ -45,7 +46,7 @@ export default function DesignBasisLayout({
         <Link
           href={`/project/${params.project_id}/design-basis/motor-parameters`}
           className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-sm font-bold uppercase tracking-wide text-white"
+            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
           }
           onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/motor-parameters`)}
         >
@@ -54,7 +55,7 @@ export default function DesignBasisLayout({
         <Link
           href={`/project/${params.project_id}/design-basis/mcc-pcc`}
           className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-sm font-bold uppercase tracking-wide text-white"
+            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
           }
           onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/mcc-pcc`)}
         >
@@ -63,7 +64,7 @@ export default function DesignBasisLayout({
         <Link
           href={`/project/${params.project_id}/design-basis/layout`}
           className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-sm font-bold uppercase tracking-wide text-white"
+            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
           }
           onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/layout`)}
         >

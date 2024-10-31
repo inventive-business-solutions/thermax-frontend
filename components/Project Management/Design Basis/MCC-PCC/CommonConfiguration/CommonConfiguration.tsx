@@ -2,115 +2,108 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Divider, message } from "antd" // Import Select for dropdown
-import React, { useEffect, useState } from "react"
-import { SubmitHandler, useForm } from "react-hook-form"
-import * as zod from "zod"
+import { useParams } from "next/navigation"
+import React, { use, useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { createData, getData, updateData } from "actions/crud-actions"
+import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { COMMON_CONFIGURATION, PROJECT_API } from "configs/api-endpoints"
+import { COMMON_CONFIGURATION } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
-import { mutate } from "swr"
-import { useParams } from "next/navigation"
-import CustomTextInput from "components/FormInputs/CustomInput"
 import { configItemValidationSchema } from "../schemas"
-import { createData, getData, updateData } from "actions/crud-actions"
 
-const getDefaultValues = (isEdit: boolean, projectData: any) => {
+const getDefaultValues = (commonConfigData: any) => {
   return {
-    dol_starter: projectData?.dol_starter || "0.37",
-    star_delta_starter: projectData?.star_delta_starter || "0.55",
-    ammeter: projectData?.ammeter || "0.37",
-    ammeter_configuration: projectData?.ammeter_configuration || "All Phase With CT",
-    mcc_switchgear_type: projectData?.mcc_switchgear_type || "Type II Coordination-Fuseless-One Size Higher",
-    switchgear_combination: projectData?.switchgear_combination || "Without MCB",
-    pole: projectData?.pole || "4 POLE",
-    supply_feeder_standard: projectData?.supply_feeder_standard || "IEC",
-    dm_standard: projectData?.dm_standard || "IEC 61439",
-    testing_standard: projectData?.testing_standard || "IEC 61439",
-    power_wiring_color: projectData?.power_wiring_color || "Brown, Black, Grey, Blue",
-    power_wiring_size: projectData?.power_wiring_size || "Min. 2.5 Sq. mm",
-    control_wiring_color: projectData?.control_wiring_color || "Grey, Black",
-    control_wiring_size: projectData?.control_wiring_size || "1 Sq. mm",
-    vdc_24_wiring_color: projectData?.vdc_24_wiring_color || "Orange, White",
-    vdc_24_wiring_size: projectData?.vdc_24_wiring_size || "0.75 Sq. mm",
-    analog_signal_wiring_color: projectData?.analog_signal_wiring_color || "Blue, White Shielded Cable",
-    analog_signal_wiring_size: projectData?.analog_signal_wiring_size || "1 Sq. mm",
-    ct_wiring_color: projectData?.ct_wiring_color || "Red, Yellow, Blue, Black",
-    ct_wiring_size: projectData?.ct_wiring_size || "2.5 Sq. mm",
-    cable_insulation_pvc: projectData?.cable_insulation_pvc || "FRLS",
-    ferrule: projectData?.ferrule || "Cross Ferrule",
-    common_requirement: projectData?.common_requirement || "",
-    spare_terminal: projectData?.spare_terminal || "10",
-    push_button_start: projectData?.push_button_start || "Green",
-    push_button_stop: projectData?.push_button_stop || "Green",
-    push_button_ess: projectData?.push_button_ess || "Stayput (RED)",
-    is_push_button_speed_selected: projectData?.is_push_button_speed_selected || "Yes",
-    speed_increase_pb: projectData?.speed_increase_pb || "Yellow",
-    speed_decrease_pb: projectData?.speed_decrease_pb || "Black",
-    alarm_acknowledge_and_lamp_test: projectData?.alarm_acknowledge_and_lamp_test || "Black",
-    test_reset: projectData?.test_reset || "Black",
-    selector_switch_applicable: projectData?.selector_switch_applicable || "Not Applicable",
-    selector_switch_lockable: projectData?.selector_switch_lockable || "Lockable",
-    running_open: projectData?.running_open || "Green",
-    stopped_closed: projectData?.stopped_closed || "Red",
-    trip: projectData?.trip || "Amber",
-    field_motor_type: projectData?.type || "Exd",
-    field_motor_enclosure: projectData?.enclosure || "IP 65",
-    field_motor_material: projectData?.material || "SS 316",
-    field_motor_qty: projectData?.qty || "As Mentioned in Electrical Load List",
-    field_motor_isolator_color_shade: projectData?.field_motor_isolator_color_shade || "RAL 7035",
-    field_motor_cable_entry: projectData?.cable_entry || "Side",
-    field_motor_canopy_on_top: projectData?.canopy_on_top || "All",
-    lpbs_type: projectData?.lpbs_type || "Exd",
-    lpbs_enclosure: projectData?.lpbs_enclosure || "IP 65",
-    lpbs_material: projectData?.lpbs_material || "CRCA",
-    lpbs_qty: projectData?.lpbs_qty || "As mentioned in Electrical Load List",
-    lpbs_color_shade: projectData?.lpbs_color_shade || "RAL 7035",
-    lpbs_canopy_on_top: projectData?.lpbs_canopy_on_top || "All",
-    lpbs_push_button_start_color: projectData?.lpbs_push_button_start_color || "Green",
-    lpbs_indication_lamp_start_color: projectData?.lpbs_indication_lamp_start_color || "Green",
-    lpbs_indication_lamp_stop_color: projectData?.lpbs_indication_lamp_stop_color || "Red",
-    lpbs_speed_increase: projectData?.lpbs_speed_increase || "Yellow",
-    lpbs_speed_decrease: projectData?.lpbs_speed_decrease || "Black",
-    apfc_relay: projectData?.apfc_relay || "4 Stage",
-    power_bus_main_busbar_selection: projectData?.power_bus_main_busbar_selection || "As per IS",
-    power_bus_heat_pvc_sleeve: projectData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
-    power_bus_material: projectData?.power_bus_material || "Copper",
-    power_bus_current_density: projectData?.power_bus_current_density || "0.8 A/Sq. mm",
-    power_bus_rating_of_busbar: projectData?.power_bus_rating_of_busbar || "VTS",
-    control_bus_main_busbar_selection: projectData?.control_bus_main_busbar_selection || "As per IS",
-    control_bus_heat_pvc_sleeve: projectData?.control_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
-    control_bus_material: projectData?.control_bus_material || "Aluminium",
-    control_bus_current_density: projectData?.control_bus_current_density || "0.8 A/Sq. mm",
-    control_bus_rating_of_busbar: projectData?.control_bus_rating_of_busbar || "VTS (Min-1R X 30mm X 10mm)",
-    earth_bus_main_busbar_selection: projectData?.earth_bus_main_busbar_selection || "As per IS",
-    earth_bus_busbar_position: projectData?.earth_bus_busbar_position || "Top",
-    earth_bus_material: projectData?.earth_bus_material || "Aluminium",
-    earth_bus_current_density: projectData?.earth_bus_current_density || "0.8 A/Sq. mm",
-    earth_bus_rating_of_busbar: projectData?.earth_bus_rating_of_busbar || "VTS (Min-1R X 30mm X 10mm)",
-    metering_for_feeder: projectData?.metering_for_feeder || "Ammeter (Digital)",
-    cooling_fans: projectData?.cooling_fans || "Not Applicable",
-    louvers_and_filters: projectData?.louvers_and_filters || "Not Applicable",
-    alarm_annunciator: projectData?.alarm_annunciator || "Not Applicable",
-    control_transformer: projectData?.control_transformer || "Not Applicable",
-    commissioning_spare: projectData?.commissioning_spare,
-    two_year_operational_spare: projectData?.two_year_operational_spare,
+    dol_starter: commonConfigData?.dol_starter || "0.37",
+    star_delta_starter: commonConfigData?.star_delta_starter || "0.55",
+    ammeter: commonConfigData?.ammeter || "0.37",
+    ammeter_configuration: commonConfigData?.ammeter_configuration || "All Phase With CT",
+    mcc_switchgear_type: commonConfigData?.mcc_switchgear_type || "Type II Coordination-Fuseless-One Size Higher",
+    switchgear_combination: commonConfigData?.switchgear_combination || "Without MCB",
+    pole: commonConfigData?.pole || "4 POLE",
+    supply_feeder_standard: commonConfigData?.supply_feeder_standard || "IEC",
+    dm_standard: commonConfigData?.dm_standard || "IEC 61439",
+    testing_standard: commonConfigData?.testing_standard || "IEC 61439",
+    power_wiring_color: commonConfigData?.power_wiring_color || "Brown, Black, Grey, Blue",
+    power_wiring_size: commonConfigData?.power_wiring_size || "Min. 2.5 Sq. mm",
+    control_wiring_color: commonConfigData?.control_wiring_color || "Grey, Black",
+    control_wiring_size: commonConfigData?.control_wiring_size || "1 Sq. mm",
+    vdc_24_wiring_color: commonConfigData?.vdc_24_wiring_color || "Orange, White",
+    vdc_24_wiring_size: commonConfigData?.vdc_24_wiring_size || "0.75 Sq. mm",
+    analog_signal_wiring_color: commonConfigData?.analog_signal_wiring_color || "Blue, White Shielded Cable",
+    analog_signal_wiring_size: commonConfigData?.analog_signal_wiring_size || "1 Sq. mm",
+    ct_wiring_color: commonConfigData?.ct_wiring_color || "Red, Yellow, Blue, Black",
+    ct_wiring_size: commonConfigData?.ct_wiring_size || "2.5 Sq. mm",
+    cable_insulation_pvc: commonConfigData?.cable_insulation_pvc || "FRLS",
+    ferrule: commonConfigData?.ferrule || "Cross Ferrule",
+    common_requirement: commonConfigData?.common_requirement || "",
+    spare_terminal: commonConfigData?.spare_terminal || "10",
+    push_button_start: commonConfigData?.push_button_start || "Green",
+    push_button_stop: commonConfigData?.push_button_stop || "Green",
+    push_button_ess: commonConfigData?.push_button_ess || "Stayput (RED)",
+    is_push_button_speed_selected: commonConfigData?.is_push_button_speed_selected || "Yes",
+    speed_increase_pb: commonConfigData?.speed_increase_pb || "Yellow",
+    speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
+    alarm_acknowledge_and_lamp_test: commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
+    test_reset: commonConfigData?.test_reset || "Black",
+    selector_switch_applicable: commonConfigData?.selector_switch_applicable || "Not Applicable",
+    selector_switch_lockable: commonConfigData?.selector_switch_lockable || "Lockable",
+    running_open: commonConfigData?.running_open || "Green",
+    stopped_closed: commonConfigData?.stopped_closed || "Red",
+    trip: commonConfigData?.trip || "Amber",
+    field_motor_type: commonConfigData?.type || "Exd",
+    field_motor_enclosure: commonConfigData?.enclosure || "IP 65",
+    field_motor_material: commonConfigData?.material || "SS 316",
+    field_motor_qty: commonConfigData?.qty || "As Mentioned in Electrical Load List",
+    field_motor_isolator_color_shade: commonConfigData?.field_motor_isolator_color_shade || "RAL 7035",
+    field_motor_cable_entry: commonConfigData?.cable_entry || "Side",
+    field_motor_canopy_on_top: commonConfigData?.canopy_on_top || "All",
+    lpbs_type: commonConfigData?.lpbs_type || "Exd",
+    lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
+    lpbs_material: commonConfigData?.lpbs_material || "CRCA",
+    lpbs_qty: commonConfigData?.lpbs_qty || "As mentioned in Electrical Load List",
+    lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
+    lpbs_canopy_on_top: commonConfigData?.lpbs_canopy_on_top || "All",
+    lpbs_push_button_start_color: commonConfigData?.lpbs_push_button_start_color || "Green",
+    lpbs_indication_lamp_start_color: commonConfigData?.lpbs_indication_lamp_start_color || "Green",
+    lpbs_indication_lamp_stop_color: commonConfigData?.lpbs_indication_lamp_stop_color || "Red",
+    lpbs_speed_increase: commonConfigData?.lpbs_speed_increase || "Yellow",
+    lpbs_speed_decrease: commonConfigData?.lpbs_speed_decrease || "Black",
+    apfc_relay: commonConfigData?.apfc_relay || "4 Stage",
+    power_bus_main_busbar_selection: commonConfigData?.power_bus_main_busbar_selection || "As per IS",
+    power_bus_heat_pvc_sleeve: commonConfigData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
+    power_bus_material: commonConfigData?.power_bus_material || "Copper",
+    power_bus_current_density: commonConfigData?.power_bus_current_density || "0.8 A/Sq. mm",
+    power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "VTS",
+    control_bus_main_busbar_selection: commonConfigData?.control_bus_main_busbar_selection || "As per IS",
+    control_bus_heat_pvc_sleeve: commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
+    control_bus_material: commonConfigData?.control_bus_material || "Aluminium",
+    control_bus_current_density: commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
+    control_bus_rating_of_busbar: commonConfigData?.control_bus_rating_of_busbar || "VTS (Min-1R X 30mm X 10mm)",
+    earth_bus_main_busbar_selection: commonConfigData?.earth_bus_main_busbar_selection || "As per IS",
+    earth_bus_busbar_position: commonConfigData?.earth_bus_busbar_position || "Top",
+    earth_bus_material: commonConfigData?.earth_bus_material || "Aluminium",
+    earth_bus_current_density: commonConfigData?.earth_bus_current_density || "0.8 A/Sq. mm",
+    earth_bus_rating_of_busbar: commonConfigData?.earth_bus_rating_of_busbar || "VTS (Min-1R X 30mm X 10mm)",
+    metering_for_feeder: commonConfigData?.metering_for_feeder || "Ammeter (Digital)",
+    cooling_fans: commonConfigData?.cooling_fans || "Not Applicable",
+    louvers_and_filters: commonConfigData?.louvers_and_filters || "Not Applicable",
+    alarm_annunciator: commonConfigData?.alarm_annunciator || "Not Applicable",
+    control_transformer: commonConfigData?.control_transformer || "Not Applicable",
+    commissioning_spare: commonConfigData?.commissioning_spare,
+    two_year_operational_spare: commonConfigData?.two_year_operational_spare,
   }
 }
 
 const CommonConfiguration = () => {
   const params = useParams()
-  const project_id = params.project_id
-  const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
-  const getCommonConfigUrl = `${PROJECT_API}/${project_id}`
-
-  const { data: projectMetadata } = useGetData(getProjectMetadataUrl, false)
-  const { data: commonConfig } = useGetData(getCommonConfigUrl, false)
-
-  const projectData = React.useMemo(() => ({ ...projectMetadata, commonConfig }), [projectMetadata, commonConfig])
-
+  const { data: commonConfigurationData } = useGetData(
+    `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    false
+  )
   const [loading, setLoading] = useState(false)
 
   const {
@@ -143,10 +136,8 @@ const CommonConfiguration = () => {
     ess_options,
     push_button_stop_options,
     push_button_start_options,
-    lr_selector_lock_switch_applicable_options: lr_selector_lock_switch_applicableOptions,
-    lr_selector_lock_options: lr_selector_lockOptions,
-    running_open_options: running_openOption,
-    stopped_closed_options: stopped_closedOption,
+    running_open_options,
+    stopped_closed_options,
     trip_options,
     field_motor_type_options,
     field_motor_enclosure_options,
@@ -179,15 +170,15 @@ const CommonConfiguration = () => {
     metering_for_feeder_options,
   } = useCommonConfigDropdowns()
 
-  const { control, handleSubmit, reset, formState } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     resolver: zodResolver(configItemValidationSchema),
-    defaultValues: getDefaultValues(true, projectData),
+    defaultValues: getDefaultValues(commonConfigurationData?.[0]),
     mode: "onSubmit",
   })
 
   useEffect(() => {
-    reset(getDefaultValues(true, projectData))
-  }, [reset, projectData])
+    reset(getDefaultValues(commonConfigurationData?.[0]))
+  }, [commonConfigurationData, reset])
 
   const handleError = (error: any) => {
     try {
@@ -197,9 +188,8 @@ const CommonConfiguration = () => {
       message?.error(error?.message || "An unknown error occured")
     }
   }
-  console.log("formErrors: ", formState.errors)
 
-  const onSubmit: SubmitHandler<zod.infer<typeof commonConfig>> = async (data: any) => {
+  const onSubmit = async (data: any) => {
     setLoading(true)
     try {
       const commonConfigData = await getData(
@@ -597,7 +587,7 @@ const CommonConfiguration = () => {
               control={control}
               name="running_open"
               label="Running / Open"
-              options={running_openOption}
+              options={running_open_options}
               size="small"
             />
           </div>
@@ -606,7 +596,7 @@ const CommonConfiguration = () => {
               control={control}
               name="stopped_closed"
               label="Stopped / Closed"
-              options={stopped_closedOption}
+              options={stopped_closed_options}
               size="small"
             />
           </div>

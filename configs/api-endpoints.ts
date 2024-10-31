@@ -143,7 +143,52 @@ export const EARTH_BUS_CURRENT_DENSITY = `/document/Earth Bus Current Density`
 
 export const METERING_FOR_FEEDER = `/document/Metering for Feeder`
 
-// export const SUPPLY_FEEDER_DM_STANDARD = `/document/Supply Feeder DM Standard`
+// MCC Panel
+export const MCC_PANEL = `/document/MCC Panel`
+export const INCOMER_AMPERE = `/document/SD Incomer Ampere`
+export const INCOMER_POLE = `/document/SD Incomer Pole`
+export const INCOMER_TYPE = `/document/SD Incomer Type`
+export const INCOMER_ABOVE_AMPERE = `/document/SD Incomer Above Ampere`
+export const INCOMER_ABOVE_POLE = `/document/SD Incomer Above Pole`
+export const INCOMER_ABOVE_TYPE = `/document/SD Incomer Above Type`
+export const CURRENT_TRANSFORMER_COATING = `/document/Current Transformer Coating`
+export const CURRENT_TRANSFORMER_NUMBER = `/document/Current Transformer Number`
+export const ALARM_ANNUNCIATOR = `/document/Alarm Annunciator`
+export const MI_ANALOG = `/document/MI Analog`
+export const MI_DIGITAL = `/document/MI Digital`
+export const MI_COMMUNICATION_PROTOCOL = `/document/MI Communication Protocol`
+export const GA_MOC = `/document/GA MOC`
+export const GA_MOC_THICKNESS_DOOR = `/document/GA MOC Thickness Door`
+export const GA_MOC_THICKNESS_COVERS = `/document/GA MOC Thickness Covers`
+export const GA_MCC_COMPARTMENTAL = `/document/GA MCC Compartmental`
+export const GA_MCC_CONSTRUCTION_FRONT_TYPE = `/document/GA MCC Construction Front Type`
+export const GA_MCC_CONSTRUCTION_DRAWOUT_TYPE = `/document/GA MCC Construction Draw Out Type`
+export const GA_MCC_CONSTRUCTION_TYPE = `/document/GA MCC Construction Type`
+export const GA_CURRENT_DENSITY = `/document/GA Current Density`
+export const GA_PANEL_MOUNTING_FRAME = `/document/GA Panel Mounting Frame`
+export const GA_PANEL_MOUNTING_HEIGHT = `/document/GA Panel Mounting Height`
+export const GA_GLAND_PLATE_3MM_DRILL_TYPE = `/document/GA Gland Plate 3mm Drill Type`
+export const GA_GLAND_PLATE_3MM_ATTACHMENT_TYPE = `/document/GA Gland Plate 3mm Attachment Type`
+// GA Busbar Chamber Position
+export const GA_BUSBAR_CHAMBER_POSITION = `/document/GA Busbar Chamber Position`
+// GA Power and Control Busbar Separation
+export const GA_POWER_CONTROL_BUSBAR_SEPARATION = `/document/GA Power and Control Busbar Separation`
+// GA Enclosure Protection Degree
+export const GA_ENCLOSURE_PROTECTION_DEGREE = `/document/GA Enclosure Protection Degree`
+// GA Cable Entry Position
+export const GA_CABLE_ENTRY_POSITION = `/document/GA Cable Entry Position`
+// PPC Painting Standards
+export const PPC_PAINTING_STANDARDS = `/document/PPC Painting Standards`
+// PPC Interior and Exterior Paint Shade
+export const PPC_INTERIOR_EXTERIOR_PAINT_SHADE = `/document/PPC Interior and Exterior Paint Shade`
+// PPC Component Mounting Plate Paint Shade
+export const PPC_COMPONENT_MOUNTING_PLATE_PAINT_SHADE = `/document/PPC Component Mounting Plate Paint Shade`
+// PPC Base Frame Paint Shade
+export const PPC_BASE_FRAME_PAINT_SHADE = `/document/PPC Base Frame Paint Shade`
+// PPC Minimum Coating Thickness
+export const PPC_MINIMUM_COATING_THICKNESS = `/document/PPC Minimum Coating Thickness`
+// PPC Pretreatment Panel Standard
+export const PPC_PRETREATMENT_PANEL_STANDARD = `/document/PPC Pretreatment Panel Standard`
 
 // Master Data
 export const DIVISION_API = `/document/Division`
