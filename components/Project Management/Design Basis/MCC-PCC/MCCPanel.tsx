@@ -12,238 +12,7 @@ import { useParams } from "next/navigation"
 import { MCC_PANEL } from "configs/api-endpoints"
 import useMCCPanelDropdowns from "./MCCPanelDropdown"
 import { createData, getData, updateData } from "actions/crud-actions"
-
-const mccPanelValidationSchema = zod.object({
-  incomer_ampere: zod.string({ required_error: "Incomer Ampere is required", message: "Incomer Ampere is required" }),
-  incomer_pole: zod.string({ required_error: "Incomer Pole is required", message: "Incomer Pole is required" }),
-  incomer_type: zod.string({ required_error: "Incomer Type is required", message: "Incomer Type is required" }),
-  incomer_above_ampere: zod.string({
-    required_error: "Incomer Above Ampere is required",
-    message: "Incomer Above Ampere is required",
-  }),
-  incomer_above_pole: zod.string({
-    required_error: "Incomer Above Pole is required",
-    message: "Incomer Above Pole is required",
-  }),
-  incomer_above_type: zod.string({
-    required_error: "Incomer Above Type is required",
-    message: "Incomer Above Type is required",
-  }),
-  is_under_or_over_voltage_selected: zod.number().optional(),
-  is_lsig_selected: zod.number().optional(),
-  is_lsi_selected: zod.number().optional(),
-  is_neural_link_with_disconnect_facility_selected: zod.number().optional(),
-  is_led_type_lamp_selected: zod.number({
-    required_error: "LED Type Lamp is required",
-    message: "LED Type Lamp is required",
-  }),
-  is_blue_cb_spring_charge_selected: zod.number().optional(),
-  is_red_cb_in_service: zod.number().optional(),
-  is_white_healthy_trip_circuit_selected: zod.number().optional(),
-  current_transformer_coating: zod.string({
-    required_error: "Current Transformer Coating is required",
-    message: "Current Transformer Coating is required",
-  }),
-  current_transformer_number: zod.string({
-    required_error: "Current Transformer Number is required",
-    message: "Current Transformer Number is required",
-  }),
-  alarm_annunciator: zod.string({
-    required_error: "Alarm Annunciator is required",
-    message: "Alarm Annunciator is required",
-  }),
-  mi_analog: zod.string({ required_error: "Analog is required", message: "Analog is required" }),
-  mi_digital: zod.string({ required_error: "Digital is required", message: "Digital is required" }),
-  mi_communication_protocol: zod.string({
-    required_error: "Communication Protocol is required",
-    message: "Communication Protocol is required",
-  }),
-  ga_moc_material: zod.string({ required_error: "MOC Material is required", message: "MOC Material is required" }),
-  ga_moc_thickness_door: zod.string({
-    required_error: "MOC Thickness Door is required",
-    message: "MOC Thickness Door is required",
-  }),
-  ga_moc_thickness_covers: zod.string({
-    required_error: "MOC Thickness Covers is required",
-    message: "MOC Thickness Covers is required",
-  }),
-  ga_mcc_compartmental: zod.string({
-    required_error: "MCC Compartmental is required",
-    message: "MCC Compartmental is required",
-  }),
-  ga_mcc_construction_front_type: zod.string({
-    required_error: "MCC Construction Front Type is required",
-    message: "MCC Construction Front Type is required",
-  }),
-  ga_mcc_construction_drawout_type: zod.string({
-    required_error: "MCC Construction Drawout Type is required",
-    message: "MCC Construction Drawout Type is required",
-  }),
-  ga_mcc_construction_type: zod.string({
-    required_error: "MCC Construction Type is required",
-    message: "MCC Construction Type is required",
-  }),
-  busbar_material_of_construction: zod.string({
-    required_error: "Busbar Material Of Construction is required",
-    message: "Busbar Material Of Construction is required",
-  }),
-  ga_current_density: zod.string({
-    required_error: "Current Density is required",
-    message: "Current Density is required",
-  }),
-  ga_panel_mounting_frame: zod.string({
-    required_error: "Panel Mounting Frame is required",
-    message: "Panel Mounting Frame is required",
-  }),
-  ga_panel_mounting_height: zod.string({
-    required_error: "Panel Mounting Height is required",
-    message: "Panel Mounting Height is required",
-  }),
-  is_marshalling_section_selected: zod.number().optional(),
-  is_cable_alley_section_selected: zod.number().optional(),
-  is_power_and_bus_separation_section_selected: zod.number().optional(),
-  is_both_side_extension_section_selected: zod.number().optional(),
-  ga_gland_plate_3mm_drill_type: zod.string({
-    required_error: "Gland Plate Drill Type is required",
-    message: "Gland Plate Drill Type is required",
-  }),
-  ga_gland_plate_3mm_attachment_type: zod.string({
-    required_error: "Gland Plate Attachment Type is required",
-    message: "Gland Plate Attachment Type is required",
-  }),
-  ga_busbar_chamber_position: zod.string({
-    required_error: "Busbar Chamber Position is required",
-    message: "Busbar Chamber Position is required",
-  }),
-  ga_power_and_control_busbar_separation: zod.string({
-    required_error: "Power and Control Busbar Separation is required",
-    message: "Power and Control Busbar Separation is required",
-  }),
-  ga_enclosure_protection_degree: zod.string({
-    required_error: "Enclosure Protection Degree is required",
-    message: "Enclosure Protection Degree is required",
-  }),
-  ga_cable_entry_position: zod.string({
-    required_error: "Cable Entry Position is required",
-    message: "Cable Entry Position is required",
-  }),
-  ppc_painting_standards: zod.string({
-    required_error: "Painting Standards is required",
-    message: "Painting Standards is required",
-  }),
-  ppc_interior_and_exterior_paint_shade: zod.string({
-    required_error: "Interior and Exterior Paint Shade is required",
-    message: "Interior and Exterior Paint Shade is required",
-  }),
-  ppc_component_mounting_plate_paint_shade: zod.string({
-    required_error: "Component Mounting Plate Paint Shade is required",
-    message: "Component Mounting Plate Paint Shade is required",
-  }),
-  ppc_base_frame_paint_shade: zod.string({
-    required_error: "Base Frame Paint Shade is required",
-    message: "Base Frame Paint Shade is required",
-  }),
-  ppc_minimum_coating_thickness: zod.string({
-    required_error: "Minimum Coating Thickness is required",
-    message: "Minimum Coating Thickness is required",
-  }),
-  ppc_pretreatment_panel_standard: zod.string({
-    required_error: "Pretreatment Panel Standard is required",
-    message: "Pretreatment Panel Standard is required",
-  }),
-  vfd_auto_manual_selection: zod.string({
-    required_error: "VFD Auto Manual Selection is required",
-    message: "VFD Auto Manual Selection is required",
-  }),
-  is_punching_details_for_boiler_selected: zod.number({
-    required_error: "Punching Details For Boiler is required",
-    message: "Punching Details For Boiler is required",
-  }),
-  boiler_model: zod.string({ required_error: "Boiler Model is required", message: "Boiler Model is required" }),
-  boiler_fuel: zod.string({ required_error: "Boiler Fuel is required", message: "Boiler Fuel is required" }),
-  boiler_year: zod.string({ required_error: "Boiler Year is required", message: "Boiler Year is required" }),
-  boiler_power_supply_vac: zod.string({
-    required_error: "Boiler Power Supply VAC is required",
-    message: "Boiler Power Supply VAC is required",
-  }),
-  boiler_power_supply_phase: zod.string({
-    required_error: "Boiler Power Supply Phase is required",
-    message: "Boiler Power Supply Phase is required",
-  }),
-  boiler_power_supply_frequency: zod.string({
-    required_error: "Boiler Power Supply Frequency is required",
-    message: "Boiler Power Supply Frequency is required",
-  }),
-  boiler_control_supply_vac: zod.string({
-    required_error: "Boiler Control Supply VAC is required",
-    message: "Boiler Control Supply VAC is required",
-  }),
-  boiler_control_supply_phase: zod.string({
-    required_error: "Boiler Control Supply Phase is required",
-    message: "Boiler Control Supply Phase is required",
-  }),
-  boiler_control_supply_frequency: zod.string({
-    required_error: "Boiler Control Supply Frequency is required",
-    message: "Boiler Control Supply Frequency is required",
-  }),
-  boiler_evaporation: zod.string({
-    required_error: "Boiler Evaporation is required",
-    message: "Boiler Evaporation is required",
-  }),
-  boiler_output: zod.string({ required_error: "Boiler Output is required", message: "Boiler Output is required" }),
-  boiler_connected_load: zod.string({
-    required_error: "Boiler Connected Load is required",
-    message: "Boiler Connected Load is required",
-  }),
-  boiler_design_pressure: zod.string({
-    required_error: "Boiler Design Pressure is required",
-    message: "Boiler Design Pressure is required",
-  }),
-  is_punching_details_for_heater_selected: zod.number({
-    required_error: "Punching Details For Heater is required",
-    message: "Punching Details For Heater is required",
-  }),
-  heater_motor: zod.string({ required_error: "Heater Motor is required", message: "Heater Motor is required" }),
-  heater_fuel: zod.string({ required_error: "Heater Fuel is required", message: "Heater Fuel is required" }),
-  heater_year: zod.string({ required_error: "Heater Year is required", message: "Heater Year is required" }),
-  heater_power_supply_vac: zod.string({
-    required_error: "Heater Power Supply VAC is required",
-    message: "Heater Power Supply VAC is required",
-  }),
-  heater_power_supply_phase: zod.string({
-    required_error: "Heater Power Supply Phase is required",
-    message: "Heater Power Supply Phase is required",
-  }),
-  heater_power_supply_frequency: zod.string({
-    required_error: "Heater Power Supply Frequency is required",
-    message: "Heater Power Supply Frequency is required",
-  }),
-  heater_control_supply_vac: zod.string({
-    required_error: "Heater Control Supply VAC is required",
-    message: "Heater Control Supply VAC is required",
-  }),
-  heater_control_supply_phase: zod.string({
-    required_error: "Heater Control Supply Phase is required",
-    message: "Heater Control Supply Phase is required",
-  }),
-  heater_control_supply_frequency: zod.string({
-    required_error: "Heater Control Supply Frequency is required",
-    message: "Heater Control Supply Frequency is required",
-  }),
-  heater_evaporation: zod.string({
-    required_error: "Heater Evaporation is required",
-    message: "Heater Evaporation is required",
-  }),
-  heater_output: zod.string({ required_error: "Heater Output is required", message: "Heater Output is required" }),
-  heater_connected_load: zod.string({
-    required_error: "Heater Connected Load is required",
-    message: "Heater Connected Load is required",
-  }),
-  heater_temperature: zod.string({
-    required_error: "Heater Temperature is required",
-    message: "Heater Temperature is required",
-  }),
-})
+import { mccPanelValidationSchema } from "./schemas"
 
 const getDefaultValues = (mccPanelData: any) => {
   return {
@@ -342,6 +111,33 @@ const MCCPanel = () => {
     incomer_above_ampere_options,
     incomer_above_pole_options,
     incomer_above_type_options,
+    current_transformer_coating_options,
+    current_transformer_number_options,
+    mi_analog_options,
+    mi_digital_options,
+    mi_communication_protocol_options,
+    ga_moc_material_options,
+    ga_moc_thickness_door_options,
+    ga_moc_thickness_covers_options,
+    ga_mcc_compartmental_options,
+    ga_mcc_construction_front_type_options,
+    ga_mcc_construction_drawout_type_options,
+    ga_mcc_construction_type_options,
+    ga_current_density_options,
+    ga_panel_mounting_frame_options,
+    ga_panel_mounting_height_options,
+    ga_gland_plate_3mm_drill_type_options,
+    ga_gland_plate_3mm_attachment_type_options,
+    ga_busbar_chamber_position_options,
+    ga_power_and_control_busbar_separation_options,
+    ga_enclosure_protection_degree_options,
+    ga_cable_entry_position_options,
+    ppc_painting_standards_options,
+    ppc_interior_and_exterior_paint_shade_options,
+    ppc_component_mounting_plate_paint_shade_options,
+    ppc_base_frame_paint_shade_options,
+    ppc_minimum_coating_thickness_options,
+    ppc_pretreatment_panel_standard_options,
   } = useMCCPanelDropdowns()
 
   const { control, handleSubmit, reset, watch, formState } = useForm({
@@ -521,7 +317,7 @@ const MCCPanel = () => {
               control={control}
               name="current_transformer_coating"
               label="Current Transformer Coating"
-              options={[]}
+              options={current_transformer_coating_options}
               size="small"
             />
           </div>
@@ -530,17 +326,19 @@ const MCCPanel = () => {
               control={control}
               name="current_transformer_number"
               label="Current Transformer Number"
-              options={[]}
+              options={current_transformer_number_options}
               size="small"
             />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect
+            <CustomRadioSelect
               control={control}
               name="alarm_annunciator"
               label="Alarm Annunciator"
-              options={[]}
-              size="small"
+              options={[
+                { label: "Applicable", value: "Applicable" },
+                { label: "Not Applicable", value: "Not Applicable" },
+              ]}
             />
           </div>
         </div>
@@ -549,17 +347,29 @@ const MCCPanel = () => {
         </Divider>
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="mi_analog" label="Analog" options={[]} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="mi_analog"
+              label="Analog"
+              options={mi_analog_options}
+              size="small"
+            />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="mi_digital" label="Digital" options={[]} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="mi_digital"
+              label="Digital"
+              options={mi_digital_options}
+              size="small"
+            />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
               name="mi_communication_protocol"
               label="Communication Protocol"
-              options={[]}
+              options={mi_communication_protocol_options}
               size="small"
             />
           </div>
@@ -573,7 +383,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_moc_material"
               label="MOC Material"
-              options={[]}
+              options={ga_moc_material_options}
               size="small"
             />
           </div>
@@ -582,7 +392,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_moc_thickness_door"
               label="MOC Thickness (Door & Component mounting plate thickness in mm)"
-              options={[]}
+              options={ga_moc_thickness_door_options}
               size="small"
             />
           </div>
@@ -591,7 +401,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_moc_thickness_covers"
               label="MOC Thickness (Top & Side covers thickness in mm)"
-              options={[]}
+              options={ga_moc_thickness_covers_options}
               size="small"
             />
           </div>
@@ -602,7 +412,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_mcc_compartmental"
               label="MCC Compartmental"
-              options={[]}
+              options={ga_mcc_compartmental_options}
               size="small"
             />
           </div>
@@ -611,7 +421,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_mcc_construction_front_type"
               label="MCC Construction Front Type"
-              options={[]}
+              options={ga_mcc_construction_front_type_options}
               size="small"
             />
           </div>
@@ -621,7 +431,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_mcc_construction_drawout_type"
               label="MCC Construction Drawout Type"
-              options={[]}
+              options={ga_mcc_construction_drawout_type_options}
               size="small"
             />
           </div>
@@ -630,7 +440,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_mcc_construction_type"
               label="GA MCC Construction Type"
-              options={[]}
+              options={ga_mcc_construction_type_options}
               size="small"
             />
           </div>
@@ -652,7 +462,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_current_density"
               label="Current Density"
-              options={[]}
+              options={ga_current_density_options}
               size="small"
             />
           </div>
@@ -661,7 +471,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_panel_mounting_frame"
               label="Panel Mounting"
-              options={[]}
+              options={ga_panel_mounting_frame_options}
               size="small"
             />
           </div>
@@ -670,7 +480,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_panel_mounting_height"
               label="Height of base frame (mm)"
-              options={[]}
+              options={ga_panel_mounting_height_options}
               size="small"
             />
           </div>
@@ -704,7 +514,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_gland_plate_3mm_drill_type"
               label="Gland Plate (3mm) Drill Type"
-              options={[]}
+              options={ga_gland_plate_3mm_drill_type_options}
               size="small"
             />
           </div>
@@ -713,7 +523,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_gland_plate_3mm_attachment_type"
               label="Gland Plate (3mm) Opening Type"
-              options={[]}
+              options={ga_gland_plate_3mm_attachment_type_options}
               size="small"
             />
           </div>
@@ -722,7 +532,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_busbar_chamber_position"
               label="Busbar Chamber Position"
-              options={[]}
+              options={ga_busbar_chamber_position_options}
               size="small"
             />
           </div>
@@ -733,7 +543,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_power_and_control_busbar_separation"
               label="Separation between power & control busbar"
-              options={[]}
+              options={ga_power_and_control_busbar_separation_options}
               size="small"
             />
           </div>
@@ -742,7 +552,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_enclosure_protection_degree"
               label="Degree of Enclosure Protection"
-              options={[]}
+              options={ga_enclosure_protection_degree_options}
               size="small"
             />
           </div>
@@ -751,7 +561,7 @@ const MCCPanel = () => {
               control={control}
               name="ga_cable_entry_position"
               label="Cable Entry Position"
-              options={[]}
+              options={ga_cable_entry_position_options}
               size="small"
             />
           </div>
@@ -765,7 +575,7 @@ const MCCPanel = () => {
               control={control}
               name="ppc_painting_standards"
               label="Painting Standards"
-              options={[]}
+              options={ppc_painting_standards_options}
               size="small"
             />
           </div>
@@ -774,7 +584,7 @@ const MCCPanel = () => {
               control={control}
               name="ppc_interior_and_exterior_paint_shade"
               label="Paint Shade for Interior and Exterior"
-              options={[]}
+              options={ppc_interior_and_exterior_paint_shade_options}
               size="small"
             />
           </div>
@@ -783,7 +593,7 @@ const MCCPanel = () => {
               control={control}
               name="ppc_component_mounting_plate_paint_shade"
               label="Paint shade for component mounting plate"
-              options={[]}
+              options={ppc_component_mounting_plate_paint_shade_options}
               size="small"
             />
           </div>
@@ -794,7 +604,7 @@ const MCCPanel = () => {
               control={control}
               name="ppc_base_frame_paint_shade"
               label="Paint shade for base frame"
-              options={[]}
+              options={ppc_base_frame_paint_shade_options}
               size="small"
             />
           </div>
@@ -803,7 +613,7 @@ const MCCPanel = () => {
               control={control}
               name="ppc_minimum_coating_thickness"
               label="Minimum Coating Thickness"
-              options={[]}
+              options={ppc_minimum_coating_thickness_options}
               size="small"
             />
           </div>
@@ -812,7 +622,7 @@ const MCCPanel = () => {
               control={control}
               name="ppc_pretreatment_panel_standard"
               label="Standard for pretreatment Panel Shall Be Degreased And Derusted (7 Tank Pretreatment)"
-              options={[]}
+              options={ppc_pretreatment_panel_standard_options}
               size="small"
             />
           </div>
@@ -821,12 +631,14 @@ const MCCPanel = () => {
           <span className="font-bold text-slate-700">VFD</span>
         </Divider>
         <div className="w-1/3 flex-1">
-          <CustomSingleSelect
+          <CustomRadioSelect
             control={control}
             name="vfd_auto_manual_selection"
             label="VFD Auto / Manual Selection"
-            options={[]}
-            size="small"
+            options={[
+              { label: "Applicable", value: "Applicable" },
+              { label: "Not Applicable", value: "Not Applicable" },
+            ]}
           />
         </div>
         <Divider>

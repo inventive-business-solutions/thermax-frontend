@@ -169,25 +169,15 @@ export const GA_PANEL_MOUNTING_FRAME = `/document/GA Panel Mounting Frame`
 export const GA_PANEL_MOUNTING_HEIGHT = `/document/GA Panel Mounting Height`
 export const GA_GLAND_PLATE_3MM_DRILL_TYPE = `/document/GA Gland Plate 3mm Drill Type`
 export const GA_GLAND_PLATE_3MM_ATTACHMENT_TYPE = `/document/GA Gland Plate 3mm Attachment Type`
-// GA Busbar Chamber Position
 export const GA_BUSBAR_CHAMBER_POSITION = `/document/GA Busbar Chamber Position`
-// GA Power and Control Busbar Separation
 export const GA_POWER_CONTROL_BUSBAR_SEPARATION = `/document/GA Power and Control Busbar Separation`
-// GA Enclosure Protection Degree
 export const GA_ENCLOSURE_PROTECTION_DEGREE = `/document/GA Enclosure Protection Degree`
-// GA Cable Entry Position
 export const GA_CABLE_ENTRY_POSITION = `/document/GA Cable Entry Position`
-// PPC Painting Standards
 export const PPC_PAINTING_STANDARDS = `/document/PPC Painting Standards`
-// PPC Interior and Exterior Paint Shade
 export const PPC_INTERIOR_EXTERIOR_PAINT_SHADE = `/document/PPC Interior and Exterior Paint Shade`
-// PPC Component Mounting Plate Paint Shade
 export const PPC_COMPONENT_MOUNTING_PLATE_PAINT_SHADE = `/document/PPC Component Mounting Plate Paint Shade`
-// PPC Base Frame Paint Shade
 export const PPC_BASE_FRAME_PAINT_SHADE = `/document/PPC Base Frame Paint Shade`
-// PPC Minimum Coating Thickness
 export const PPC_MINIMUM_COATING_THICKNESS = `/document/PPC Minimum Coating Thickness`
-// PPC Pretreatment Panel Standard
 export const PPC_PRETREATMENT_PANEL_STANDARD = `/document/PPC Pretreatment Panel Standard`
 
 // Master Data
