@@ -1,9 +1,11 @@
 "use client"
-import { BellTwoTone, CloudDownloadOutlined, CopyOutlined, FolderOpenOutlined } from "@ant-design/icons"
+import { BellTwoTone, CloudDownloadOutlined, CopyTwoTone, FolderOpenOutlined } from "@ant-design/icons"
 import { Button, Table, TableColumnsType, Tag, Tooltip } from "antd"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useEffect } from "react"
+import { DESIGN_BASIS_REVISION_HISTORY_API } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 
 export default function DocumentRevision() {
@@ -34,10 +36,30 @@ export default function DocumentRevision() {
         </Tooltip>
       ),
     },
-    { title: "Status", dataIndex: "status", render: (text) => <Tag color="green">{text}</Tag> },
-    { title: "Document Revision", dataIndex: "documentRevision" },
+    {
+      title: () => <div className="text-center">Status</div>,
+      dataIndex: "status",
+      render: (text) => (
+        <div className="text-center">
+          <Tag color="green">{text}</Tag>
+        </div>
+      ),
+    },
+    {
+      title: () => <div className="text-center">Document Revision</div>,
+      dataIndex: "documentRevision",
+      render: (text) => <div className="text-center">{text}</div>,
+    },
     { title: "Created Date", dataIndex: "createdDate" }, // New column added here
-    { title: "Action", dataIndex: "action", render: () => <CopyOutlined /> },
+    {
+      title: () => <div className="text-center">Action</div>,
+      dataIndex: "action",
+      render: () => (
+        <div className="text-center">
+          <CopyTwoTone />
+        </div>
+      ),
+    },
     {
       title: () => <div className="text-center">Download</div>,
       dataIndex: "download",
@@ -55,24 +77,29 @@ export default function DocumentRevision() {
       },
     },
     {
-      title: "Release",
+      title: () => <div className="text-center">Release</div>,
       dataIndex: "release",
       render: () => (
-        <Button type="primary" size="small" name="Release">
-          Release
-        </Button>
+        <div className="text-center">
+          <Button type="primary" size="small" name="Release">
+            Release
+          </Button>
+        </div>
       ),
     },
   ]
-  const dataSource = [
-    {
-      key: 1,
-      documentName: "Document 1",
-      status: "Approved",
-      documentRevision: "Rev 1",
-      createdDate: "2024-09-19", // Sample created date
-    },
-  ]
+  const { data: revisionHistory } = useGetData(
+    `${DESIGN_BASIS_REVISION_HISTORY_API}?fields=["*"]&order_by=creation desc`,
+    false
+  )
+  const dataSource = revisionHistory?.map((item: any, index: number) => ({
+    key: item.name,
+    documentName: "Design Basis",
+    status: item.status,
+    documentRevision: `R${index}`,
+    createdDate: item.creation,
+  }))
+
   return (
     <div>
       <Table columns={columns} dataSource={dataSource} size="small" />

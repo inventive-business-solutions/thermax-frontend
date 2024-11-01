@@ -8,7 +8,7 @@ import CustomTextInput from "components/FormInputs/CustomInputNumber"
 import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { MOTOR_PARAMETER_API } from "configs/api-endpoints"
+import { DESIGN_BASIS_REVISION_HISTORY_API, MOTOR_PARAMETER_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import useMotorParametersDropdowns from "./MotorParametersDropdown"
@@ -62,17 +62,22 @@ const MotorParameters = () => {
   const [loading, setLoading] = useState(false)
   const [isHazardous, setIsHazardous] = useState(false)
   const { setLoading: setModalLoading } = useLoading()
+
+  const { data: revisionHistory } = useGetData(
+    `${DESIGN_BASIS_REVISION_HISTORY_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"], ["is_released", "=", "0"]]`,
+    false
+  )
+
   useEffect(() => {
     setModalLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const { data: motorParameters } = useGetData(
-    `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revisionHistory?.[0]?.name}"]]`,
     false
   )
   useEffect(() => {
     if (motorParameters?.[0]) {
-      console.log("Boolean value", Boolean(motorParameters?.[0].is_hazardous_area_present))
       setIsHazardous(Boolean(motorParameters?.[0].is_hazardous_area_present))
     }
   }, [motorParameters])

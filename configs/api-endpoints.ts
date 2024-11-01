@@ -23,6 +23,7 @@ export const PROJECT_MAIN_PKG_LIST_API = `/method/thermax_extended_user.get_proj
 export const PROJECT_MAIN_PKG_API = `/document/Project Main Package`
 export const BATTERY_LIMIT_API = `/document/Battery Limit`
 export const DESIGN_BASIS_GENERAL_INFO_API = `/document/Design Basis General Info`
+export const DESIGN_BASIS_REVISION_HISTORY_API = `/document/Design Basis Revision History`
 
 // Motor Parameters API Endpoints
 export const MOTOR_PARAMETER_API = `/document/Design Basis Motor Parameters`
