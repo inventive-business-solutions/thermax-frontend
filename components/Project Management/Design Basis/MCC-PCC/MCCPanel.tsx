@@ -10,7 +10,7 @@ import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { useGetData } from "hooks/useCRUD"
 import { useParams } from "next/navigation"
 import { MCC_PANEL } from "configs/api-endpoints"
-import useMCCPanelDropdowns from "./MCCPanelDropdown"
+import useMCCPCCPanelDropdowns from "./MCCPanelDropdown"
 import { createData, getData, updateData } from "actions/crud-actions"
 import { mccPanelValidationSchema } from "./schemas"
 
@@ -138,7 +138,7 @@ const MCCPanel = () => {
     ppc_base_frame_paint_shade_options,
     ppc_minimum_coating_thickness_options,
     ppc_pretreatment_panel_standard_options,
-  } = useMCCPanelDropdowns()
+  } = useMCCPCCPanelDropdowns()
 
   const { control, handleSubmit, reset, watch, formState } = useForm({
     resolver: zodResolver(mccPanelValidationSchema),
@@ -147,7 +147,6 @@ const MCCPanel = () => {
   })
 
   console.log("Form Errors", formState.errors)
-  console.log(watch("is_lsi_selected"))
 
   useEffect(() => {
     reset(getDefaultValues(mccPanelData?.[0]))
@@ -411,7 +410,7 @@ const MCCPanel = () => {
             <CustomSingleSelect
               control={control}
               name="ga_mcc_compartmental"
-              label="MCC Compartmental"
+              label="MCC Compartmentalization"
               options={ga_mcc_compartmental_options}
               size="small"
             />
@@ -420,7 +419,7 @@ const MCCPanel = () => {
             <CustomSingleSelect
               control={control}
               name="ga_mcc_construction_front_type"
-              label="MCC Construction Front Type"
+              label="MCC Front Type"
               options={ga_mcc_construction_front_type_options}
               size="small"
             />
@@ -430,7 +429,7 @@ const MCCPanel = () => {
             <CustomSingleSelect
               control={control}
               name="ga_mcc_construction_drawout_type"
-              label="MCC Construction Drawout Type"
+              label="MCC Drawout Type"
               options={ga_mcc_construction_drawout_type_options}
               size="small"
             />
@@ -439,7 +438,7 @@ const MCCPanel = () => {
             <CustomSingleSelect
               control={control}
               name="ga_mcc_construction_type"
-              label="GA MCC Construction Type"
+              label="MCC Construction Type"
               options={ga_mcc_construction_type_options}
               size="small"
             />
