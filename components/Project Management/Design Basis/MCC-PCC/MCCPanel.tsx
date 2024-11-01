@@ -29,32 +29,17 @@ const mccPanelValidationSchema = zod.object({
     required_error: "Incomer Above Type is required",
     message: "Incomer Above Type is required",
   }),
-  is_under_or_over_voltage_selected: zod.number({
-    required_error: "Under or Over Voltage is required",
-    message: "Under or Over Voltage is required",
-  }),
-  is_lsig_selected: zod.number({ required_error: "LSIG is required", message: "LSIG is required" }),
-  is_lsi_selected: zod.number({ required_error: "LSI is required", message: "LSI is required" }),
-  is_neural_link_with_disconnect_facility_selected: zod.number({
-    required_error: "Neural Link With Disconnect Facility is required",
-    message: "Neural Link With Disconnect Facility is required",
-  }),
+  is_under_or_over_voltage_selected: zod.number().optional(),
+  is_lsig_selected: zod.number().optional(),
+  is_lsi_selected: zod.number().optional(),
+  is_neural_link_with_disconnect_facility_selected: zod.number().optional(),
   is_led_type_lamp_selected: zod.number({
     required_error: "LED Type Lamp is required",
     message: "LED Type Lamp is required",
   }),
-  is_blue_cb_spring_charge_selected: zod.number({
-    required_error: "CB Spring Charge is required",
-    message: "CB Spring Charge is required",
-  }),
-  is_red_cb_in_service: zod.number({
-    required_error: "CB in Service is required",
-    message: "CB in Service is required",
-  }),
-  is_white_healthy_trip_circuit_selected: zod.number({
-    required_error: "Trip Circuit Healthy is required",
-    message: "Trip Circuit Healthy is required",
-  }),
+  is_blue_cb_spring_charge_selected: zod.number().optional(),
+  is_red_cb_in_service: zod.number().optional(),
+  is_white_healthy_trip_circuit_selected: zod.number().optional(),
   current_transformer_coating: zod.string({
     required_error: "Current Transformer Coating is required",
     message: "Current Transformer Coating is required",
@@ -114,22 +99,10 @@ const mccPanelValidationSchema = zod.object({
     required_error: "Panel Mounting Height is required",
     message: "Panel Mounting Height is required",
   }),
-  is_marshalling_section_selected: zod.number({
-    required_error: "Marshalling Section is required",
-    message: "Marshalling Section is required",
-  }),
-  is_cable_alley_section_selected: zod.number({
-    required_error: "Cable Alley Section is required",
-    message: "Cable Alley Section is required",
-  }),
-  is_power_and_bus_separation_section_selected: zod.number({
-    required_error: "Power and Bus Separation Section is required",
-    message: "Power and Bus Separation Section is required",
-  }),
-  is_both_side_extension_section_selected: zod.number({
-    required_error: "Both Side Extension Section is required",
-    message: "Both Side Extension Section is required",
-  }),
+  is_marshalling_section_selected: zod.number().optional(),
+  is_cable_alley_section_selected: zod.number().optional(),
+  is_power_and_bus_separation_section_selected: zod.number().optional(),
+  is_both_side_extension_section_selected: zod.number().optional(),
   ga_gland_plate_3mm_drill_type: zod.string({
     required_error: "Gland Plate Drill Type is required",
     message: "Gland Plate Drill Type is required",
@@ -378,7 +351,7 @@ const MCCPanel = () => {
   })
 
   console.log("Form Errors", formState.errors)
-  console.log(watch("is_blue_cb_spring_charge_selected"))
+  console.log(watch("is_lsi_selected"))
 
   useEffect(() => {
     reset(getDefaultValues(mccPanelData?.[0]))
@@ -989,6 +962,7 @@ const MCCPanel = () => {
             />
           </div>
         </div>
+        <Divider />
         <div className="mt-2 flex items-center gap-4">
           <h4 className="font-bold text-slate-700">Punching Details For Heater</h4>
           <div>
