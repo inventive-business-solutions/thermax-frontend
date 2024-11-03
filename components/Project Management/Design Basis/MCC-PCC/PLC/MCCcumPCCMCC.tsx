@@ -35,6 +35,7 @@ const configItemValidationSchema = zod.object({
   alarm_annunciator: zod.string({ required_error: "This field is required", message: "This field is required" }),
   mi_analog: zod.string({ required_error: "This field is required", message: "This field is required" }),
   mi_digital: zod.string({ required_error: "This field is required", message: "This field is required" }),
+  
   mi_communication_protocol: zod.string({
     required_error: "This field is required",
     message: "This field is required",

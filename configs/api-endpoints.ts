@@ -109,7 +109,6 @@ export const METERING_FOR_FEEDER = `/document/Metering for Feeder`
 
 // MCC Panel on MCC/PCC :
 
-// export const SD Incomer Ampere = `/document/Metering for Feeder`
 export const SD_INCOMER_AMPERE = `/document/SD Incomer Ampere`
 export const SD_INCOMER_POLE = `/document/SD Incomer Pole`
 export const SD_INCOMER_TYPE = `/document/SD Incomer Type`
@@ -174,6 +173,40 @@ export const EO_COMMUNICATION_CABLE = `document/Communication Cable Hardware Bet
 export const EO_COMMUNICATION_CABLE_2 = `document/RCommunication Cable Hardware Between PLC Third Party`
 export const EO_MANDATORY_SPARES = `document/EO Mandatory Spares`
 
+// LAYOUT CABLE TRAY
+
+export const NUMBER_OF_CORES = `document/Layout Number Of Cores` 
+export const SPECIFIC_REQUIREMENTS = `document/Layout Specific requirement` 
+export const TYPE_OF_INSULATION = `document/Layout Type Of Insulation`
+export const LAYOUT_COLOR_SCHEME = `document/Layout Colour Scheme`
+export const MV_DROP_RUNNING = `document/Layout Motor voltage drop during running`
+export const LAYOUT_CONDUCTOR = `document/Layout Conductor`
+export const LAYOUT_CABLE_INSTALLATION = `document/Layout Cable Installation`
+export const MV_DROP_STARTING = `document/Layout Motor voltage drop during starting`
+export const LAYOUT_VOLTAGE_GRADE = `document/Layout Voltage grade`
+export const LAYOUT_DERATING_FACTOR = `document/Layout Derating Factor`
+
+export const GLAND_MAKE = `document/Gland Make`
+export const GLAND_MOC = `document/Gland MOC`
+export const TYPE_OF_GLAND = `document/Type Of Gland`
+export const CT_FUTURE_SPACE_ON_TRAYS = `document/Future Space on Trays`
+export const CT_CABLE_PLACEMENT = `document/Cable Placement`
+export const CT_ORIENTATION = `document/Cable Tray Orientation`
+export const CT_VERTICAL_DISTANCE = `document/Vertical Distance`
+export const CT_HORIZONTAL_DISTANCE = `document/Horizontal Distance`
+
+export const CT_WIDTH = `document/Cable Tray Width`
+export const CT_HEIGHT = `document/Cable Tray Height`
+export const CT_THICKNESS = `document/Cable Tray Thickness`
+export const CT_MOC = `document/Layout MOC`
+export const CT_SIZE = `document/Layout Size`
+
+export const EARTHING_SYSTEM = `document/Earthing System`
+export const EARTH_STRIP = `document/Earth Strip`
+export const EARTHING_PIT = `document/Earth Pit`
+export const SOIL_RESISTIVITY = `document/Soil Resistivity`
+
+
 // GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA GA
 export const GA_MOC = `document/GA MOC`
 export const GA_MOC_THICKNESS_DOOR = `document/GA MOC Thickness Door`
@@ -213,7 +246,7 @@ export const CPU_REDUNDANCY = `document/PLC CPU Redundancy`
 
 export const PLC_PANEL_MEMORY = `document/PLC Panel Memory`
 export const PLC_PANEL_MOUNTED_AC = `document/PLC Panel mounted AC`
-export const PLC_PANEL_CONTROL_VOLTAGE = `documentPLC Control Voltage`
+export const PLC_PANEL_CONTROL_VOLTAGE = `document/PLC Control Voltage`
 export const MARSHALLING_CABINET_FOR_PLC = `document/Marshalling Cabinet for PLC and UPS`
 export const PUSH_BUTTON_COLOR_ACKNOWLEDGE = `document/Push Button Color Acknowledge`
 export const PUSH_BUTTON_COLOR_RESET = `document/Push Button Color Reset`
