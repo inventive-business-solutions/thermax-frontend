@@ -10,7 +10,7 @@ import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { useParams } from "next/navigation"
 import { useGetData } from "hooks/useCRUD"
 import { PCC_PANEL } from "configs/api-endpoints"
-import useMCCPCCPanelDropdowns from "./MCCPanelDropdown"
+import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
 import { pccPanelValidationSchema } from "./schemas"
 import { createData, getData, updateData } from "actions/crud-actions"
 

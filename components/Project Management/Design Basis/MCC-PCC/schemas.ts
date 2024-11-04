@@ -747,3 +747,350 @@ export const pccPanelValidationSchema = zod.object({
     message: "Heater Temperature is required",
   }),
 })
+
+export const plcPanelValidationSchema = zod.object({
+  ups_scope: zod.string({ required_error: "UPS Scope is required", message: "UPS Scope is required" }),
+  ups_type: zod.string({ required_error: "UPS Type is required", message: "UPS Type is required" }),
+  ups_battery_type: zod.string({
+    required_error: "UPS Battery Type is required",
+    message: "UPS Battery Type is required",
+  }),
+  ups_battery_backup_time: zod.string({
+    required_error: "UPS Battery Backup Time is required",
+    message: "UPS Battery Backup Time is required",
+  }),
+  is_ups_battery_mounting_rack_selected: zod.number({
+    required_error: "UPS Battery Mounting Rack is required",
+    message: "UPS Battery Mounting Rack is required",
+  }),
+  plc_cpu_or_processor_module_or_series: zod.string({
+    required_error: "PLC CPU/Processor Module/Series is required",
+    message: "PLC CPU/Processor Module/Series is required",
+  }),
+  is_bulk_power_supply_selected: zod.number({
+    required_error: "Bulk Power Supply is required",
+    message: "Bulk Power Supply is required",
+  }),
+  plc_communication_between_cpu_and_io_card: zod.string({
+    required_error: "PLC Communication between CPU and I/O card is required",
+    message: "PLC Communication between CPU and I/O card is required",
+  }),
+  is_third_party_communication_protocol_selected: zod.number({
+    required_error: "Third party communication protocol is required",
+    message: "Third party communication protocol is required",
+  }),
+  third_party_communication_protocol: zod.string({
+    required_error: "Third party communication protocol is required",
+    message: "Third party communication protocol is required",
+  }),
+  is_client_system_communication_selected: zod.number({
+    required_error: "Client system communication is required",
+    message: "Client system communication is required",
+  }),
+  client_system_communication: zod.string({
+    required_error: "Client system communication is required",
+    message: "Client system communication is required",
+  }),
+  is_power_supply_redundancy_selected: zod.number({
+    required_error: "Power Supply Redundancy is required",
+    message: "Power Supply Redundancy is required",
+  }),
+  is_cpu_redundancy_selected: zod.number({
+    required_error: "CPU Redundancy is required",
+    message: "CPU Redundancy is required",
+  }),
+  cpu_redundancy: zod.string({ required_error: "CPU Redundancy is required", message: "CPU Redundancy is required" }),
+  is_io_redundancy_selected: zod.number({
+    required_error: "I/O Redundancy is required",
+    message: "I/O Redundancy is required",
+  }),
+  is_cpu_and_io_card_redundancy_selected: zod.number({
+    required_error: "PLC Communication Redundancy between CPU and I/O card is required",
+    message: "PLC Communication Redundancy between CPU and I/O card is required",
+  }),
+  is_cpu_and_hmi_scada_card_redundancy_selected: zod.number({
+    required_error: "PLC Communication Redundancy between CPU and HMI/SCADA is required",
+    message: "PLC Communication Redundancy between CPU and HMI/SCADA is required",
+  }),
+  is_cpu_and_third_party_services_redundancy_selected: zod.number({
+    required_error: "PLC Communication Redundancy between CPU and Third party devices is required",
+    message: "PLC Communication Redundancy between CPU and Third party devices is required",
+  }),
+  plc_panel_memory: zod.string({ required_error: "Memory is required", message: "Memory is required" }),
+  is_plc_and_ups_marshalling_cabinet_selected: zod.number({
+    required_error: "Marshalling Cabinet For PLC and UPS is required",
+    message: "Marshalling Cabinet For PLC and UPS is required",
+  }),
+  marshalling_cabinet_for_plc_and_ups: zod.string({
+    required_error: "Marshalling Cabinet For PLC and UPS is required",
+    message: "Marshalling Cabinet For PLC and UPS is required",
+  }),
+  panel_mounted_ac: zod.string({
+    required_error: "Panel Mounted AC is required",
+    message: "Panel Mounted AC is required",
+  }),
+  control_voltage: zod.string({
+    required_error: "Control Voltage is required",
+    message: "Control Voltage is required",
+  }),
+  push_button_colour_acknowledge: zod.string({
+    required_error: "Push Button Colour Acknowledge is required",
+    message: "Push Button Colour Acknowledge is required",
+  }),
+  push_button_color_reset: zod.string({
+    required_error: "Push Button Colour Reset is required",
+    message: "Push Button Colour Reset is required",
+  }),
+  indicating_lamp_color_for_nonups_power_supply: zod.string({
+    required_error: "Indicating Lamp Colour for Non-UPS Power Supply is required",
+    message: "Indicating Lamp Colour for Non-UPS Power Supply is required",
+  }),
+  indicating_lamp_colour_for_ups_power_supply: zod.string({
+    required_error: "Indicating Lamp Colour for UPS Power Supply is required",
+    message: "Indicating Lamp Colour for UPS Power Supply is required",
+  }),
+  is_di_module_density_selected: zod.number({
+    required_error: "DI Module Density is required",
+    message: "DI Module Density is required",
+  }),
+  di_module_density: zod.string({
+    required_error: "DI Module Density is required",
+    message: "DI Module Density is required",
+  }),
+  is_di_module_input_type_selected: zod.number({
+    required_error: "Type of Input is required",
+    message: "Type of Input is required",
+  }),
+  di_module_input_type: zod.string({
+    required_error: "Type of Input is required",
+    message: "Type of Input is required",
+  }),
+  is_interrogation_voltage_selected: zod.number({
+    required_error: "Interrogation Voltage is required",
+    message: "Interrogation Voltage is required",
+  }),
+  interrogation_voltage: zod.string({
+    required_error: "Interrogation Voltage is required",
+    message: "Interrogation Voltage is required",
+  }),
+  di_module_scan_time: zod.string({ required_error: "Scan Time is required", message: "Scan Time is required" }),
+  is_do_module_density_selected: zod.number({
+    required_error: "DO Module Density is required",
+    message: "DO Module Density is required",
+  }),
+  do_module_density: zod.string({
+    required_error: "DO Module Density is required",
+    message: "DO Module Density is required",
+  }),
+  is_do_module_output_type_selected: zod.number({
+    required_error: "DO Module Output Type is required",
+    message: "DO Module Output Type is required",
+  }),
+  do_module_output_type: zod.string({
+    required_error: "DO Module Output Type is required",
+    message: "DO Module Output Type is required",
+  }),
+  output_contact_rating_of_interposing_relay: zod.string({
+    required_error: "Output Contact Rating of Interposing Relay is required",
+    message: "Output Contact Rating of Interposing Relay is required",
+  }),
+  is_no_of_contact_selected: zod.number({
+    required_error: "No of Contact is required",
+    message: "No of Contact is required",
+  }),
+  do_module_no_of_contact: zod.string({
+    required_error: "No of Contact is required",
+    message: "No of Contact is required",
+  }),
+  output_status_on_processor_or_module_failure: zod.string({
+    required_error: "Output Status on Processor or Module Failure is required",
+    message: "Output Status on Processor or Module Failure is required",
+  }),
+  is_ai_module_density_selected: zod.number({
+    required_error: "AI Module Density is required",
+    message: "AI Module Density is required",
+  }),
+  ai_module_density: zod.string({
+    required_error: "AI Module Density is required",
+    message: "AI Module Density is required",
+  }),
+  is_ai_module_output_type_selected: zod.number({
+    required_error: "AI Module Output Type is required",
+    message: "AI Module Output Type is required",
+  }),
+  ai_module_output_type: zod.string({
+    required_error: "AI Module Output Type is required",
+    message: "AI Module Output Type is required",
+  }),
+  ai_module_scan_time: zod.string({
+    required_error: "AI Module Scan Time is required",
+    message: "AI Module Scan Time is required",
+  }),
+  is_ai_module_hart_protocol_support_selected: zod.number({
+    required_error: "AI Module HART Protocol Support is required",
+    message: "AI Module HART Protocol Support is required",
+  }),
+  is_rtd_tc_module_density_selected: zod.number({
+    required_error: "RTD/TC Module Density is required",
+    message: "RTD/TC Module Density is required",
+  }),
+  rtd_tc_module_density: zod.string({
+    required_error: "RTD/TC Module Density is required",
+    message: "RTD/TC Module Density is required",
+  }),
+  is_rtd_tc_module_input_type_selected: zod.number({
+    required_error: "RTD/TC Module Input Type is required",
+    message: "RTD/TC Module Input Type is required",
+  }),
+  rtd_tc_module_input_type: zod.string({
+    required_error: "RTD/TC Module Input Type is required",
+    message: "RTD/TC Module Input Type is required",
+  }),
+  rtd_tc_module_scan_time: zod.string({
+    required_error: "RTD/TC Module Scan Time is required",
+    message: "RTD/TC Module Scan Time is required",
+  }),
+  is_rtd_tc_module_hart_protocol_support_selected: zod.number({
+    required_error: "RTD/TC Module HART Protocol Support is required",
+    message: "RTD/TC Module HART Protocol Support is required",
+  }),
+  is_ao_module_density_selected: zod.number({
+    required_error: "AO Module Density is required",
+    message: "AO Module Density is required",
+  }),
+  ao_module_density: zod.string({
+    required_error: "AO Module Density is required",
+    message: "AO Module Density is required",
+  }),
+  is_ao_module_output_type_selected: zod.number({
+    required_error: "AO Module Output Type is required",
+    message: "AO Module Output Type is required",
+  }),
+  ao_module_output_type: zod.string({
+    required_error: "AO Module Output Type is required",
+    message: "AO Module Output Type is required",
+  }),
+  ao_module_scan_time: zod.string({
+    required_error: "AO Module Scan Time is required",
+    message: "AO Module Scan Time is required",
+  }),
+  is_ao_module_hart_protocol_support_selected: zod.number({
+    required_error: "AO Module HART Protocol Support is required",
+    message: "AO Module HART Protocol Support is required",
+  }),
+  is_plc_spare_io_count_selected: zod.number({
+    required_error: "PLC Spare I/O Count is required",
+    message: "PLC Spare I/O Count is required",
+  }),
+  plc_spare_io_count: zod.string({
+    required_error: "PLC Spare I/O Count is required",
+    message: "PLC Spare I/O Count is required",
+  }),
+  is_plc_spare_memory_selected: zod.number({
+    required_error: "PLC Spare Memory is required",
+    message: "PLC Spare Memory is required",
+  }),
+  plc_spare_memory: zod.string({
+    required_error: "PLC Spare Memory is required",
+    message: "PLC Spare Memory is required",
+  }),
+  is_no_of_hid_es_selected: zod.number({
+    required_error: "No of HID ES is required",
+    message: "No of HID ES is required",
+  }),
+  no_of_hid_es: zod.number({ required_error: "No of HID ES is required", message: "No of HID ES is required" }),
+  is_no_of_hid_os_selected: zod.number({
+    required_error: "No of HID OS is required",
+    message: "No of HID OS is required",
+  }),
+  no_of_hid_os: zod.number({ required_error: "No of HID OS is required", message: "No of HID OS is required" }),
+  is_no_of_hid_hmi_selected: zod.number({
+    required_error: "No of HID HMI is required",
+    message: "No of HID HMI is required",
+  }),
+  no_of_hid_hmi: zod.number({ required_error: "No of HID HMI is required", message: "No of HID HMI is required" }),
+  is_hid_hmi_size_selected: zod.number({
+    required_error: "HID HMI Size is required",
+    message: "HID HMI Size is required",
+  }),
+  hid_hmi_size: zod.string({ required_error: "HID HMI Size is required", message: "HID HMI Size is required" }),
+  is_scada_development_license_selected: zod.number({
+    required_error: "SCADA Development License is required",
+    message: "SCADA Development License is required",
+  }),
+  no_of_scada_development_license: zod.number({
+    required_error: "No of SCADA Development License is required",
+    message: "No of SCADA Development License is required",
+  }),
+  is_scada_runtime_license_selected: zod.number({
+    required_error: "SCADA Runtime License is required",
+    message: "SCADA Runtime License is required",
+  }),
+  no_of_scada_runtime_license: zod.number({
+    required_error: "No of SCADA Runtime License is required",
+    message: "No of SCADA Runtime License is required",
+  }),
+  is_hmi_development_license_selected: zod.number({
+    required_error: "HMI Development License is required",
+    message: "HMI Development License is required",
+  }),
+  no_of_hmi_development_license: zod.number({
+    required_error: "No of HMI Development License is required",
+    message: "No of HMI Development License is required",
+  }),
+  is_plc_programming_license_software_selected: zod.number({
+    required_error: "PLC Programming License Software is required",
+    message: "PLC Programming License Software is required",
+  }),
+  no_of_plc_programming_license_software: zod.number({
+    required_error: "No of PLC Programming License Software is required",
+    message: "No of PLC Programming License Software is required",
+  }),
+  system_hardware: zod.string({
+    required_error: "System Hardware is required",
+    message: "System Hardware is required",
+  }),
+  commercial_grade_pc: zod.string({
+    required_error: "Commercial Grade PC is required",
+    message: "Commercial Grade PC is required",
+  }),
+  monitor_size: zod.string({ required_error: "Monitor Size is required", message: "Monitor Size is required" }),
+  windows_operating_system: zod.string({
+    required_error: "Windows Operating System is required",
+    message: "Windows Operating System is required",
+  }),
+  is_printer_with_cable_selected: zod.number({
+    required_error: "Printer with Communication Cable is required",
+    message: "Printer with Communication Cable is required",
+  }),
+  printer_with_communication_cable: zod.string({
+    required_error: "Printer with Communication Cable is required",
+    message: "Printer with Communication Cable is required",
+  }),
+  no_of_printer: zod.number({ required_error: "No of Printer is required", message: "No of Printer is required" }),
+  printer_cable: zod.string({ required_error: "Printer Cable is required", message: "Printer Cable is required" }),
+  furniture_for_scada_station: zod.string({
+    required_error: "Furniture for SCADA Station is required",
+    message: "Furniture for SCADA Station is required",
+  }),
+  hardware_between_plc_and_scada_pc: zod.string({
+    required_error: "Hardware between PLC and SCADA PC is required",
+    message: "Hardware between PLC and SCADA PC is required",
+  }),
+  hardware_between_plc_and_third_party: zod.string({
+    required_error: "Hardware between PLC and Third Party is required",
+    message: "Hardware between PLC and Third Party is required",
+  }),
+  hardware_between_plc_and_client_system: zod.string({
+    required_error: "Hardware between PLC and Client System is required",
+    message: "Hardware between PLC and Client System is required",
+  }),
+  iiot_requirement: zod.string({
+    required_error: "IIOT Requirement is required",
+    message: "IIOT Requirement is required",
+  }),
+  mandatory_spares: zod.string({
+    required_error: "Mandatory Spares is required",
+    message: "Mandatory Spares is required",
+  }),
+})

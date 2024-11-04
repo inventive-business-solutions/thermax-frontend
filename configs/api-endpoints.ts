@@ -182,6 +182,66 @@ export const PPC_BASE_FRAME_PAINT_SHADE = `/document/PPC Base Frame Paint Shade`
 export const PPC_MINIMUM_COATING_THICKNESS = `/document/PPC Minimum Coating Thickness`
 export const PPC_PRETREATMENT_PANEL_STANDARD = `/document/PPC Pretreatment Panel Standard`
 
+// PLC Panel
+export const MCC_PCC_PLC_PANEL_1 = `/document/MCC Cum PCC PLC Panel 1`
+export const MCC_PCC_PLC_PANEL_2 = `/document/MCC Cum PCC PLC Panel 2`
+export const PLC_UPS_SCOPE = `/document/PLC UPS Scope`
+export const PLC_UPS_TYPE = `/document/PLC UPS Type`
+export const PLC_UPS_BATTERY_BACKUP_TIME = `/document/PLC UPS Battery Backup Time`
+export const PLC_HARDWARE_COMMUNICATION_PROTOCOL = `/document/PLC Hardware Third Party Communication Protocol`
+export const PLC_CLIENT_SYSTEM_COMMUNICATION = `/document/PLC Hardware Client System Communication`
+export const PLC_CPU_REDUNDANCY = `/document/PLC CPU Redundancy`
+export const PLC_PANEL_MEMORY = `/document/PLC Panel Memory`
+export const MARSHALLING_CABINET = `/document/Marshalling Cabinet for PLC and UPS`
+export const PLC_CONTROL_VOLTAGE = `/document/PLC Control Voltage`
+export const PUSH_BUTTON_COLOR_ACKNOWLEDGE = `/document/Push Button Color Acknowledge`
+export const PUSH_BUTTON_COLOR_RESET = `/document/Push Button Color Reset`
+export const NON_UPS_INDICATING_LAMP_COLOR = `/document/Indicating Lamp Color for Non-UPS Power Supply`
+export const UPS_INDICATING_LAMP_COLOR = `/document/Indicating Lamp Color for UPS Power Supply`
+export const DI_MODULE_DENSITY = `/document/DI Modules Density`
+export const DI_MODULE_INPUT_TYPE = `/document/DI Modules Type Of Input`
+export const DI_MODULE_INTERROGATION_VOLTAGE = `/document/DI Modules Interrogation Voltage`
+export const DO_MODULE_DENSITY = `/document/DO Modules Density`
+export const DO_MODULE_OUTPUT_TYPE = `/document/DO Modules Type Of Output`
+export const DO_CONTACT_NO = `/document/DO No Of Contacts`
+export const AI_MODULE_DENSITY = `/document/AI Module Density`
+export const RTD_DENSITY = `/document/RTD Density`
+export const RTD_INPUT_TYPE = `/document/RTD Type Of Input`
+export const AO_MODULE_DENSITY = `/document/AO Modules Density`
+export const AO_MODULE_OUTPUT_TYPE = `/document/AO Modules Type of Output`
+export const PLC_IO_COUNT = `/document/PLC IO Count`
+export const PLC_SPARE_MEMORY = `/document/PLC Spare Memory`
+export const PLC_HMI_SIZE = `/document/PLC HMI Size`
+export const EO_SYSTEM_HARDWARE = `/document/EO System Hardware`
+export const EO_MONITOR_SIZE = `/document/EO Monitor Size`
+export const EO_PC_CABLE = `/document/EO Printer and Communication Cable`
+export const EO_SCADA_FURNITURE = `/document/EO Furniture`
+
+// Cable Tray Layout
+export const CABLE_TRAY_LAYOUT = `/document/Cable Tray Layout`
+export const LAYOUT_NUMBER_OF_CORES = `/document/Layout Number Of Cores`
+export const LAYOUT_SPECIFIC_REQUIREMENT = `/document/Layout Specific Requirement`
+export const LAYOUT_TYPE_OF_INSULATION = `/document/Layout Type of Insulation`
+export const LAYOUT_COLOR_SCHEME = `/document/Layout Color Scheme`
+export const LAYOUT_RUNNING_MOTOR_VOLTAGE_DROP = `/document/Layout Running Motor Voltage Drop`
+export const LAYOUT_CONDUCTOR = `/document/Layout Conductor`
+export const LAYOUT_CABLE_INSTALLATION = `/document/Layout Cable Installation`
+export const LAYOUT_STARTING_MOTOR_VOLTAGE_DROP = `/document/Layout Starting Motor Voltage Drop`
+export const LAYOUT_VOLTAGE_GRADE = `/document/Layout Voltage Grade`
+export const GLAND_MAKE = `/document/Gland Make`
+export const GLAND_MOC = `/document/Gland MOC`
+export const TYPE_OF_GLAND = `/document/Type Of Gland`
+export const FUTURE_SPACE_ON_TRAYS = `/document/Future Space on Trays`
+export const CABLE_PLACEMENT = `/document/Cable Placement`
+export const CABLE_TRAY_ORIENTATION = `/document/Cable Tray Orientation`
+export const MATERIAL_CONSTRUCTION_DRY_AREA = `/document/Material Construction Dry Area`
+export const MATERIAL_CONSTRUCTION_WET_AREA = `/document/Material Construction Wet Area`
+export const CABLE_TRAY_WIDTH = `/document/Cable Tray Width`
+export const CABLE_TRAY_HEIGHT = `/document/Cable Tray Height`
+export const CABLE_TRAY_THICKNESS = `/document/Cable Tray Thickness`
+export const CONDUIT_MOC = `/document/Conduit MOC`
+export const CONDUIT_SIZE = `/document/Conduit Size`
+
 // Master Data
 export const DIVISION_API = `/document/Division`
 export const PANEL_TYPE_API = `document/Panel Type`
