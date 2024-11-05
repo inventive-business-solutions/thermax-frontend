@@ -19,7 +19,7 @@ export const CLASSIFICATION_AREA_ZONE_API = `/document/Classification Area Zone`
 export const CLASSIFICATION_AREA_GAS_GROUP_API = `/document/Classification Area Gas Group`
 export const CLASSIFICATION_AREA_TEMPERATURE_CLASS_API = `/document/Classification Area Temperature Class`
 
-export const PROJECT_MAIN_PKG_LIST_API = `/method/thermax_extended_user.get_project_main_package_list`
+export const PROJECT_MAIN_PKG_LIST_API = `/method/project_main_package.get_project_main_package_list`
 export const PROJECT_MAIN_PKG_API = `/document/Project Main Package`
 export const BATTERY_LIMIT_API = `/document/Battery Limit`
 export const DESIGN_BASIS_GENERAL_INFO_API = `/document/Design Basis General Info`
@@ -147,6 +147,7 @@ export const METERING_FOR_FEEDER = `/document/Metering for Feeder`
 // MCC Panel
 export const MCC_PANEL = `/document/MCC Panel`
 export const PCC_PANEL = `/document/PCC Panel`
+export const MCC_CUM_PCC_MCC_PANEL = `/document/MCC Cum PCC MCC Panel`
 export const INCOMER_AMPERE = `/document/SD Incomer Ampere`
 export const INCOMER_POLE = `/document/SD Incomer Pole`
 export const INCOMER_TYPE = `/document/SD Incomer Type`

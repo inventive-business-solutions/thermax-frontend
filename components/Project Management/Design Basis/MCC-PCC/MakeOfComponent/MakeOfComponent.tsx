@@ -42,12 +42,11 @@ const getDefaultValues = (data: any) => {
   }
 }
 
-const MakeOfComponent = () => {
-  const params = useParams()
+const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
   const [loading, setLoading] = useState(false)
 
   const { data: makeOfComponent } = useGetData(
-    `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
     false
   )
 
@@ -85,7 +84,7 @@ const MakeOfComponent = () => {
     setLoading(true)
     try {
       const makeOfComponentData = await getData(
-        `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
         false
       )
 
@@ -93,7 +92,7 @@ const MakeOfComponent = () => {
         await updateData(`${MAKE_OF_COMPONENT_API}/${makeOfComponentData[0].name}`, false, data)
         message.success("Make of Component updated successfully")
       } else {
-        data["project_id"] = params.project_id
+        data["revision_id"] = revision_id
         await createData(MAKE_OF_COMPONENT_API, false, data)
         message.success("Make of Component created successfully")
       }

@@ -7,7 +7,6 @@ import { createDropdownOptions } from "components/Package Management/package-man
 import {
   BATTERY_LIMIT_API,
   DESIGN_BASIS_GENERAL_INFO_API,
-  DESIGN_BASIS_REVISION_HISTORY_API,
   MAIN_PKG_API,
   MOTOR_PARAMETER_API,
   PROJECT_MAIN_PKG_API,
@@ -19,21 +18,15 @@ import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { useLoading } from "hooks/useLoading"
 import GIPkgSelectionTabs from "./GIPkgSelection"
 
-const GeneralInfo = () => {
+const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
+  console.log("revision", revision_id)
   const params = useParams()
   const [selectedPkg, setSelectedPkg] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
   const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`, false)
-  const [generalInfoData, setGeneralInfoData] = useState({})
+  const [generalInfoData, setGeneralInfoData] = useState<any>({})
   const [refresh, setRefresh] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
-
-  const { data: revisionHistory } = useGetData(
-    `${DESIGN_BASIS_REVISION_HISTORY_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"], ["is_released", "=", "0"]]`,
-    false
-  )
-
-  console.log("revisionHistory", revisionHistory)
 
   const router = useRouter()
 
@@ -45,26 +38,24 @@ const GeneralInfo = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (revisionHistory && revisionHistory.length > 0) {
-        const generalInfoDefaultData = await getData(
-          `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revisionHistory[0]?.name}"]]`,
-          false
-        )
+      const generalInfoDefaultData = await getData(
+        `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
+        false
+      )
 
-        const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?project_id=${params.project_id}`, false)
-        if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
-          setGeneralInfoData({
-            is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
-            pkgList: mainPkgData,
-            battery_limit: generalInfoDefaultData[0]?.battery_limit,
-          })
-        }
+      const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`, false)
+      if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
+        setGeneralInfoData({
+          is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
+          pkgList: mainPkgData,
+          battery_limit: generalInfoDefaultData[0]?.battery_limit,
+        })
       }
     }
     fetchData()
-  }, [params.project_id, refresh, revisionHistory])
+  }, [refresh, revision_id])
 
-  const projectMainPkgUrl = `${PROJECT_MAIN_PKG_LIST_API}?project_id=${params.project_id}`
+  const projectMainPkgUrl = `${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`
 
   const filteredOptions = dbPkgList?.filter(
     (pkg: any) =>
@@ -89,7 +80,7 @@ const GeneralInfo = () => {
       is_sub_package_selected: false,
     }))
     await createData(PROJECT_MAIN_PKG_API, false, {
-      project_id: params.project_id,
+      revision_id: revision_id,
       main_package_name: selectedPkg,
       sub_packages: subPkgCreateData,
     })
@@ -100,81 +91,78 @@ const GeneralInfo = () => {
 
   const handleSave = async () => {
     setSaveLoading(true)
-    if (revisionHistory && revisionHistory.length > 0) {
-      const existingDesignBasis = await getData(
-        `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["revision_id", "=", "${revisionHistory[0]?.name}"]]`,
+    const existingDesignBasis = await getData(
+      `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["revision_id", "=", "${revision_id}"]]`,
+      false
+    )
+    if (existingDesignBasis && existingDesignBasis.length > 0) {
+      await updateData(`${DESIGN_BASIS_GENERAL_INFO_API}/${existingDesignBasis[0].name}`, false, {
+        is_package_selection_enabled: generalInfoData?.is_package_selection_enabled,
+        battery_limit: generalInfoData?.battery_limit,
+      })
+    } else {
+      await createData(DESIGN_BASIS_GENERAL_INFO_API, false, {
+        revision_id,
+        is_package_selection_enabled: generalInfoData.is_package_selection_enabled,
+        battery_limit: generalInfoData.battery_limit,
+      })
+    }
+    const pkgList = generalInfoData?.pkgList
+    if (pkgList && pkgList.length > 0) {
+      let hasHazardousArea = false
+      for (const mainPkg of pkgList) {
+        const subPkgList = mainPkg?.sub_packages
+        const updateSubPkgList = []
+        if (subPkgList && subPkgList.length > 0) {
+          for (const subPkg of subPkgList) {
+            if (subPkg.area_of_classification === "Hazardous Area" && Boolean(subPkg.is_sub_package_selected)) {
+              hasHazardousArea = true
+            }
+            updateSubPkgList.push({
+              sub_package_name: subPkg.sub_package_name,
+              area_of_classification: subPkg.area_of_classification,
+              is_sub_package_selected: subPkg.is_sub_package_selected,
+            })
+          }
+        }
+
+        await updateData(`${PROJECT_MAIN_PKG_API}/${mainPkg.name}`, false, {
+          main_package_name: mainPkg.main_package_name,
+          sub_packages: updateSubPkgList,
+          standard: mainPkg?.standard,
+          zone: mainPkg?.zone,
+          gas_group: mainPkg?.gas_group,
+          temperature_class: mainPkg?.temperature_class,
+        })
+      }
+
+      const motorParameters = await getData(
+        `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
         false
       )
-      if (existingDesignBasis && existingDesignBasis.length > 0) {
-        // update
-        await updateData(`${DESIGN_BASIS_GENERAL_INFO_API}/${existingDesignBasis[0].name}`, false, {
-          is_package_selection_enabled: generalInfoData?.is_package_selection_enabled,
-          battery_limit: generalInfoData?.battery_limit,
+
+      const isHazardousAreaPresent = hasHazardousArea ? true : false
+
+      console.log("isHazardousAreaPresent", isHazardousAreaPresent)
+      console.log("motorParameters", motorParameters)
+
+      if (motorParameters && motorParameters.length > 0) {
+        // Update existing motor parameters
+        await updateData(`${MOTOR_PARAMETER_API}/${motorParameters[0].name}`, false, {
+          is_hazardous_area_present: isHazardousAreaPresent,
         })
       } else {
-        await createData(DESIGN_BASIS_GENERAL_INFO_API, false, {
-          project_id: params.project_id,
-          is_package_selection_enabled: generalInfoData.is_package_selection_enabled,
-          battery_limit: generalInfoData.battery_limit,
+        // Create new motor parameters if none exist
+        await createData(MOTOR_PARAMETER_API, false, {
+          revision_id,
+          is_hazardous_area_present: isHazardousAreaPresent,
         })
       }
-      const pkgList = generalInfoData?.pkgList
-      if (pkgList && pkgList.length > 0) {
-        let hasHazardousArea = false
-        for (const mainPkg of pkgList) {
-          const subPkgList = mainPkg?.sub_packages
-          const updateSubPkgList = []
-          if (subPkgList && subPkgList.length > 0) {
-            for (const subPkg of subPkgList) {
-              if (subPkg.area_of_classification === "Hazardous Area" && Boolean(subPkg.is_sub_package_selected)) {
-                hasHazardousArea = true
-              }
-              updateSubPkgList.push({
-                sub_package_name: subPkg.sub_package_name,
-                area_of_classification: subPkg.area_of_classification,
-                is_sub_package_selected: subPkg.is_sub_package_selected,
-              })
-            }
-          }
-
-          await updateData(`${PROJECT_MAIN_PKG_API}/${mainPkg.name}`, false, {
-            main_package_name: mainPkg.main_package_name,
-            sub_packages: updateSubPkgList,
-            standard: mainPkg?.standard,
-            zone: mainPkg?.zone,
-            gas_group: mainPkg?.gas_group,
-            temperature_class: mainPkg?.temperature_class,
-          })
-        }
-
-        const motorParameters = await getData(
-          `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
-          false
-        )
-
-        const isHazardousAreaPresent = hasHazardousArea ? true : false
-
-        console.log("isHazardousAreaPresent", isHazardousAreaPresent)
-        console.log("motorParameters", motorParameters)
-
-        if (motorParameters && motorParameters.length > 0) {
-          // Update existing motor parameters
-          await updateData(`${MOTOR_PARAMETER_API}/${motorParameters[0].name}`, false, {
-            is_hazardous_area_present: isHazardousAreaPresent,
-          })
-        } else {
-          // Create new motor parameters if none exist
-          await createData(MOTOR_PARAMETER_API, false, {
-            project_id: params.project_id,
-            is_hazardous_area_present: isHazardousAreaPresent,
-          })
-        }
-      }
-      setSaveLoading(false)
-      message.success("Design Basis General Info saved successfully")
-      setModalLoading(true)
-      router.push(`/project/${params.project_id}/design-basis/motor-parameters`)
     }
+    setSaveLoading(false)
+    message.success("Design Basis General Info saved successfully")
+    setModalLoading(true)
+    router.push(`/project/${params.project_id}/design-basis/motor-parameters`)
   }
 
   return (

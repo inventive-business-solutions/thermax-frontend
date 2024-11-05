@@ -1,18 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Divider, message } from "antd" // Import Select for dropdown
+import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 
+import { createData, getData, updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
+import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import useCableTrayDropdowns from "./CableTrayDropdown"
-import CustomTextNumber from "components/FormInputs/CustomInputNumber"
-import { cableTrayValidationSchema } from "./schemas"
-import { useParams } from "next/navigation"
-import { useGetData } from "hooks/useCRUD"
 import { CABLE_TRAY_LAYOUT } from "configs/api-endpoints"
-import { createData, getData, updateData } from "actions/crud-actions"
+import { useGetData } from "hooks/useCRUD"
+import useCableTrayDropdowns from "./CableTrayDropdown"
+import { cableTrayValidationSchema } from "./schemas"
 
 const getDefaultValues = (cableTrayData: any) => {
   return {
@@ -86,10 +86,9 @@ const getDefaultValues = (cableTrayData: any) => {
   }
 }
 
-const CableTray = () => {
-  const params = useParams()
+const CableTray = ({ revision_id }: { revision_id: string }) => {
   const { data: cableTrayData } = useGetData(
-    `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
     false
   )
 
@@ -144,14 +143,14 @@ const CableTray = () => {
     console.log("MCC Data", data)
     try {
       const cableTrayData = await getData(
-        `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
         false
       )
 
       if (cableTrayData && cableTrayData.length > 0) {
         await updateData(`${CABLE_TRAY_LAYOUT}/${cableTrayData[0].name}`, false, data)
       } else {
-        data["project_id"] = params.project_id
+        data["revision_id"] = revision_id
         await createData(CABLE_TRAY_LAYOUT, false, data)
       }
 

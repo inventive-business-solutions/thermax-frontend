@@ -98,10 +98,9 @@ const getDefaultValues = (commonConfigData: any) => {
   }
 }
 
-const CommonConfiguration = () => {
-  const params = useParams()
+const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
   const { data: commonConfigurationData } = useGetData(
-    `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
     false
   )
   const [loading, setLoading] = useState(false)
@@ -193,7 +192,7 @@ const CommonConfiguration = () => {
     setLoading(true)
     try {
       const commonConfigData = await getData(
-        `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
         false
       )
 
@@ -201,7 +200,7 @@ const CommonConfiguration = () => {
         await updateData(`${COMMON_CONFIGURATION}/${commonConfigData[0].name}`, false, data)
         message.success("Common configuration updated successfully")
       } else {
-        data["project_id"] = params.project_id
+        data["revision_id"] = revision_id
         await createData(COMMON_CONFIGURATION, false, data)
         message.success("Common configuration created successfully")
       }

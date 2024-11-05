@@ -12,8 +12,13 @@ import type { ColumnsType } from "antd/es/table"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
-import { deleteData, updateData } from "actions/crud-actions"
-import { PROJECT_API } from "configs/api-endpoints"
+import { deleteData, getData, updateData } from "actions/crud-actions"
+import {
+  DESIGN_BASIS_REVISION_HISTORY_API,
+  PROJECT_API,
+  PROJECT_INFO_API,
+  PROJECT_PANEL_API,
+} from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import ProjectFormModal from "./ProjectFormModal"
@@ -129,7 +134,37 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   }
 
   const handleDeleteProject = async (selectedRowID: string) => {
-    await deleteData(`${PROJECT_API}/${selectedRowID}`, false)
+    console.log("selectedRowID", selectedRowID)
+    // Delete project information via project ID
+    const projectInfoData = await getData(`${PROJECT_INFO_API}/${selectedRowID}`, false)
+    console.log("projectInfoData", projectInfoData)
+    // Delete static document list via project ID
+
+    // Get project panel data
+    const projectPanelData = await getData(
+      `${PROJECT_PANEL_API}?filters=[["project_id", "=", "${selectedRowID}"]]`,
+      false
+    )
+    console.log("projectPanelData", projectPanelData)
+
+    // Get Design Basis Revision History
+
+    const designBasisHistoryData = await getData(
+      `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${selectedRowID}"]]`,
+      false
+    )
+    console.log("designBasisHistoryData", designBasisHistoryData)
+
+    // Get various design basis related data from each revision
+    designBasisHistoryData?.forEach(async (revision: any) => {
+      // get general info data from each revision
+    })
+
+    // Delete Dynamic document list via Panel ID
+
+    // Delete project panel data by filtering via project ID
+
+    // await deleteData(`${PROJECT_API}/${selectedRowID}`, false)
     // Revalidate the cache
     mutate(getProjectUrl)
   }

@@ -10,6 +10,7 @@ import CustomTextInput from "components/FormInputs/CustomInput"
 import { DYNAMIC_DOCUMENT_API, PROJECT_PANEL_API, STATIC_DOCUMENT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { mergeLists } from "utils/helpers"
+import { useParams } from "next/navigation"
 
 const fieldObject: any = {
   electrical_load_list: "Electrical Load List",
@@ -75,17 +76,18 @@ const getDefaultValues = (staticValues: any, dynamicValues: any) => {
   return { ...staticDefaultValues, ...dynamicDefaultValues }
 }
 
-export default function DocumentListModal({ open, setOpen, projectId }: any) {
+export default function DocumentListModal({ open, setOpen, revision_id }: any) {
+  const params = useParams()
   const [loading, setLoading] = useState(false)
   const { data: staticDocumentData } = useGetData(
-    `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${projectId}"]]`,
+    `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
     false
   )
   const staticDocumentList = React.useMemo(
     () => (staticDocumentData ? staticDocumentData[0] : {}),
     [staticDocumentData]
   )
-  const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["name", "panel_name"]&filters=[["project_id", "=", "${projectId}"]]`
+  const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["name", "panel_name"]&filters=[["revision_id", "=", "${revision_id}"]]`
   const { data: projectPanelData } = useGetData(getProjectPanelDataUrl, false)
   const panel_ids = React.useMemo(() => projectPanelData?.map((item: any) => item.name), [projectPanelData])
   const quotedPanelIds = panel_ids?.map((id: string) => `"${id}"`).join(", ")
@@ -115,12 +117,12 @@ export default function DocumentListModal({ open, setOpen, projectId }: any) {
 
   const handleStaticDocumentData = async (data: any) => {
     try {
-      await updateData(`${STATIC_DOCUMENT_API}/${projectId}`, false, data)
+      await updateData(`${STATIC_DOCUMENT_API}/${params.project_id}`, false, data)
     } catch (error: any) {
       const errorObj = JSON.parse(error?.message) as any
       if (errorObj.type === "DoesNotExistError") {
         try {
-          await createData(STATIC_DOCUMENT_API, false, { ...data, project_id: projectId })
+          await createData(STATIC_DOCUMENT_API, false, { ...data, project_id: params.project_id })
         } catch (error: any) {
           throw error
         }

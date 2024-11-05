@@ -111,7 +111,7 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
   }
 }
 
-const ProjectInfo = () => {
+const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const params = useParams()
   const project_id = params.project_id
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
@@ -502,7 +502,7 @@ const ProjectInfo = () => {
           </div>
         </div>
         <div className="w-2/3">
-          <PanelDataList projectId={params?.project_id} />
+          <PanelDataList revision_id={revision_id} />
         </div>
 
         <div className="mt-4 flex items-end justify-end gap-2">
@@ -536,7 +536,7 @@ const ProjectInfo = () => {
         </div>
       </form>
 
-      <DocumentListModal open={openDocumentList} setOpen={setOpenDocumentList} projectId={project_id} />
+      <DocumentListModal open={openDocumentList} setOpen={setOpenDocumentList} revision_id={revision_id} />
     </div>
   )
 }

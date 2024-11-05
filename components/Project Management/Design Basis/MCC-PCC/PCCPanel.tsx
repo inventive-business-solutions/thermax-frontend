@@ -95,10 +95,9 @@ const getDefaultValues = (pccPanelData: any) => {
   }
 }
 
-const PCCPanel = () => {
-  const params = useParams()
+const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
   const { data: pccPanelData } = useGetData(
-    `${PCC_PANEL}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    `${PCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
     false
   )
   // console.log("MCC Panel Data", mccPanelData)
@@ -164,7 +163,7 @@ const PCCPanel = () => {
     console.log("PCC Data", data)
     try {
       const pccPanelData = await getData(
-        `${PCC_PANEL}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        `${PCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
         false
       )
 
@@ -172,7 +171,8 @@ const PCCPanel = () => {
         await updateData(`${PCC_PANEL}/${pccPanelData[0].name}`, false, data)
         message.success("Common configuration updated successfully")
       } else {
-        data["project_id"] = params.project_id
+        data["revision_id"] = revision_id
+        data["panel_id"] = panel_id
         await createData(PCC_PANEL, false, data)
         message.success("Common configuration created successfully")
       }

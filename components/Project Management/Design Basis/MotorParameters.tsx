@@ -8,7 +8,7 @@ import CustomTextInput from "components/FormInputs/CustomInputNumber"
 import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { DESIGN_BASIS_REVISION_HISTORY_API, MOTOR_PARAMETER_API } from "configs/api-endpoints"
+import { MOTOR_PARAMETER_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import useMotorParametersDropdowns from "./MotorParametersDropdown"
@@ -57,23 +57,17 @@ const getDefaultValues = (defaultData: any) => ({
   hazardous_area_starts_hour_permissible: defaultData?.hazardous_area_starts_hour_permissible || "2 Hot and 3 Cold",
 })
 
-const MotorParameters = () => {
-  const params = useParams()
+const MotorParameters = ({ revision_id }: { revision_id: string }) => {
   const [loading, setLoading] = useState(false)
   const [isHazardous, setIsHazardous] = useState(false)
   const { setLoading: setModalLoading } = useLoading()
-
-  const { data: revisionHistory } = useGetData(
-    `${DESIGN_BASIS_REVISION_HISTORY_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"], ["is_released", "=", "0"]]`,
-    false
-  )
 
   useEffect(() => {
     setModalLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const { data: motorParameters } = useGetData(
-    `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revisionHistory?.[0]?.name}"]]`,
+    `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
     false
   )
   useEffect(() => {

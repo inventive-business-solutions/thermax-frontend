@@ -1,15 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Divider, message } from "antd" // Import Select for dropdown
+import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"
+import { createData, getData, updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { useParams } from "next/navigation"
-import { useGetData } from "hooks/useCRUD"
 import { LAYOUT_EARTHING } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 import useEarthingDropdowns from "./EarthingDropdown"
-import { createData, getData, updateData } from "actions/crud-actions"
 
 const cableTrayValidationSchema = zod.object({
   earthing_system: zod.string({
@@ -33,10 +33,9 @@ const getDefaultValues = (earthingData: any) => {
   }
 }
 
-const Earthing = () => {
-  const params = useParams()
+const Earthing = ({ revision_id }: { revision_id: string }) => {
   const { data: layoutEarthingData } = useGetData(
-    `${LAYOUT_EARTHING}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    `${LAYOUT_EARTHING}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
     false
   )
   const [loading, setLoading] = useState(false)
@@ -67,14 +66,14 @@ const Earthing = () => {
     console.log("Earthing Data", data)
     try {
       const layoutEarthingData = await getData(
-        `${LAYOUT_EARTHING}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        `${LAYOUT_EARTHING}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
         false
       )
 
       if (layoutEarthingData && layoutEarthingData.length > 0) {
         await updateData(`${LAYOUT_EARTHING}/${layoutEarthingData[0].name}`, false, data)
       } else {
-        data["project_id"] = params.project_id
+        data["revision_id"] = revision_id
         await createData(LAYOUT_EARTHING, false, data)
       }
 

@@ -95,10 +95,9 @@ const getDefaultValues = (mccPanelData: any) => {
   }
 }
 
-const MCCPanel = () => {
-  const params = useParams()
+const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
   const { data: mccPanelData } = useGetData(
-    `${MCC_PANEL}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
     false
   )
   // console.log("MCC Panel Data", mccPanelData)
@@ -166,17 +165,18 @@ const MCCPanel = () => {
     console.log("MCC Data", data)
     try {
       const mccPanelData = await getData(
-        `${MCC_PANEL}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
         false
       )
 
       if (mccPanelData && mccPanelData.length > 0) {
         await updateData(`${MCC_PANEL}/${mccPanelData[0].name}`, false, data)
-        message.success("Common configuration updated successfully")
+        message.success("Panel data updated successfully")
       } else {
-        data["project_id"] = params.project_id
+        data["revision_id"] = revision_id
+        data["panel_id"] = panel_id
         await createData(MCC_PANEL, false, data)
-        message.success("Common configuration created successfully")
+        message.success("Panel data created successfully")
       }
     } catch (error) {
       console.log("error: ", error)

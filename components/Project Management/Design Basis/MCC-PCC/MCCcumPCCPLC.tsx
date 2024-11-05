@@ -119,14 +119,13 @@ const getDefaultValues = (plcData: any) => {
   }
 }
 
-const MCCcumPCCPLCPanel = () => {
-  const params = useParams()
+const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
   const { data: plcPanelData1 } = useGetData(
-    `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
     false
   )
   const { data: plcPanelData2 } = useGetData(
-    `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+    `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
     false
   )
 
@@ -194,25 +193,27 @@ const MCCcumPCCPLCPanel = () => {
     console.log("MCC Data", data)
     try {
       const mccPanelData1 = await getData(
-        `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
         false
       )
       const mccPanelData2 = await getData(
-        `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
         false
       )
 
       if (mccPanelData1 && mccPanelData1.length > 0) {
         await updateData(`${MCC_PCC_PLC_PANEL_1}/${mccPanelData1[0].name}`, false, data)
       } else {
-        data["project_id"] = params.project_id
+        data["revision_id"] = revision_id
+        data["panel_id"] = panel_id
         await createData(MCC_PCC_PLC_PANEL_1, false, data)
       }
 
       if (mccPanelData2 && mccPanelData2.length > 0) {
         await updateData(`${MCC_PCC_PLC_PANEL_2}/${mccPanelData2[0].name}`, false, data)
       } else {
-        data["project_id"] = params.project_id
+        data["revision_id"] = revision_id
+        data["panel_id"] = panel_id
         await createData(MCC_PCC_PLC_PANEL_2, false, data)
       }
 

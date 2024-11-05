@@ -5,7 +5,7 @@ import { useLoading } from "hooks/useLoading"
 import CableTray from "./CableTray"
 import Earthing from "./Earthing"
 
-const MainLayout: React.FC = () => {
+const MainLayout = ({ revision_id }: { revision_id: string }) => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -17,12 +17,12 @@ const MainLayout: React.FC = () => {
     {
       label: "Cable Tray",
       key: "1",
-      children: <CableTray />,
+      children: <CableTray revision_id={revision_id} />,
     },
     {
       label: "Earthing",
       key: "2",
-      children: <Earthing />,
+      children: <Earthing revision_id={revision_id} />,
     },
   ]
 

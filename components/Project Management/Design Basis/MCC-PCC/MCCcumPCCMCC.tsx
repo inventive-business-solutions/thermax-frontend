@@ -9,7 +9,7 @@ import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { useGetData } from "hooks/useCRUD"
 import { useParams } from "next/navigation"
-import { MCC_PANEL } from "configs/api-endpoints"
+import { MCC_CUM_PCC_MCC_PANEL } from "configs/api-endpoints"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
 import { createData, getData, updateData } from "actions/crud-actions"
 import { mccPanelValidationSchema } from "./schemas"
@@ -22,49 +22,50 @@ const getDefaultValues = (mccPanelData: any) => {
     incomer_above_ampere: mccPanelData?.incomer_above_ampere || "1001",
     incomer_above_pole: mccPanelData?.incomer_above_pole || "4",
     incomer_above_type: mccPanelData?.incomer_above_type || "SFU",
-    is_under_or_over_voltage_selected: mccPanelData?.is_under_or_over_voltage_selected,
-    is_lsig_selected: mccPanelData?.is_lsig_selected,
-    is_lsi_selected: mccPanelData?.is_lsi_selected,
-    is_neural_link_with_disconnect_facility_selected: mccPanelData?.is_neural_link_with_disconnect_facility_selected,
-    is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected,
-    is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected,
-    is_red_cb_in_service: mccPanelData?.is_red_cb_in_service,
-    is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected,
-    current_transformer_coating: mccPanelData?.current_transformer_coating,
-    current_transformer_number: mccPanelData?.current_transformer_number,
-    alarm_annunciator: mccPanelData?.alarm_annunciator,
-    mi_analog: mccPanelData?.mi_analog,
-    mi_digital: mccPanelData?.mi_digital,
-    mi_communication_protocol: mccPanelData?.mi_communication_protocol,
-    ga_moc_material: mccPanelData?.ga_moc_material,
-    ga_moc_thickness_door: mccPanelData?.ga_moc_thickness_door,
-    ga_moc_thickness_covers: mccPanelData?.ga_moc_thickness_covers,
-    ga_mcc_compartmental: mccPanelData?.ga_mcc_compartmental,
-    ga_mcc_construction_front_type: mccPanelData?.ga_mcc_construction_front_type,
-    ga_mcc_construction_drawout_type: mccPanelData?.ga_mcc_construction_drawout_type,
-    ga_mcc_construction_type: mccPanelData?.ga_mcc_construction_type,
-    busbar_material_of_construction: mccPanelData?.busbar_material_of_construction,
-    ga_current_density: mccPanelData?.ga_current_density,
-    ga_panel_mounting_frame: mccPanelData?.ga_panel_mounting_frame,
-    ga_panel_mounting_height: mccPanelData?.ga_panel_mounting_height,
-    is_marshalling_section_selected: mccPanelData?.is_marshalling_section_selected,
-    is_cable_alley_section_selected: mccPanelData?.is_cable_alley_section_selected,
-    is_power_and_bus_separation_section_selected: mccPanelData?.is_power_and_bus_separation_section_selected,
-    is_both_side_extension_section_selected: mccPanelData?.is_both_side_extension_section_selected,
-    ga_gland_plate_3mm_drill_type: mccPanelData?.ga_gland_plate_3mm_drill_type,
-    ga_gland_plate_3mm_attachment_type: mccPanelData?.ga_gland_plate_3mm_attachment_type,
-    ga_busbar_chamber_position: mccPanelData?.ga_busbar_chamber_position,
-    ga_power_and_control_busbar_separation: mccPanelData?.ga_power_and_control_busbar_separation,
-    ga_enclosure_protection_degree: mccPanelData?.ga_enclosure_protection_degree,
-    ga_cable_entry_position: mccPanelData?.ga_cable_entry_position,
-    ppc_painting_standards: mccPanelData?.ppc_painting_standards,
-    ppc_interior_and_exterior_paint_shade: mccPanelData?.ppc_interior_and_exterior_paint_shade,
-    ppc_component_mounting_plate_paint_shade: mccPanelData?.ppc_component_mounting_plate_paint_shade,
-    ppc_base_frame_paint_shade: mccPanelData?.ppc_base_frame_paint_shade,
-    ppc_minimum_coating_thickness: mccPanelData?.ppc_minimum_coating_thickness,
-    ppc_pretreatment_panel_standard: mccPanelData?.ppc_pretreatment_panel_standard,
-    vfd_auto_manual_selection: mccPanelData?.vfd_auto_manual_selection,
-    is_punching_details_for_boiler_selected: mccPanelData?.is_punching_details_for_boiler_selected || 0,
+    is_under_or_over_voltage_selected: mccPanelData?.is_under_or_over_voltage_selected || 1,
+    is_lsig_selected: mccPanelData?.is_lsig_selected || 1,
+    is_lsi_selected: mccPanelData?.is_lsi_selected || 1,
+    is_neural_link_with_disconnect_facility_selected:
+      mccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
+    is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected || 1,
+    is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected || 1,
+    is_red_cb_in_service: mccPanelData?.is_red_cb_in_service || 1,
+    is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected || 1,
+    current_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
+    current_transformer_number: mccPanelData?.current_transformer_number || "One",
+    alarm_annunciator: mccPanelData?.alarm_annunciator || "Applicable",
+    mi_analog: mccPanelData?.mi_analog || "Ammeter",
+    mi_digital: mccPanelData?.mi_digital || "Ammeter",
+    mi_communication_protocol: mccPanelData?.mi_communication_protocol || "Ethernet",
+    ga_moc_material: mccPanelData?.ga_moc_material || "Aluminium",
+    ga_moc_thickness_door: mccPanelData?.ga_moc_thickness_door || "1.6",
+    ga_moc_thickness_covers: mccPanelData?.ga_moc_thickness_covers || "1.6",
+    ga_mcc_compartmental: mccPanelData?.ga_mcc_compartmental || "Form-I A (Non Compartmental)",
+    ga_mcc_construction_front_type: mccPanelData?.ga_mcc_construction_front_type || "Single Front",
+    ga_mcc_construction_drawout_type: mccPanelData?.ga_mcc_construction_drawout_type || "Drawout Type",
+    ga_mcc_construction_type: mccPanelData?.ga_mcc_construction_type || "Intelligent",
+    busbar_material_of_construction: mccPanelData?.busbar_material_of_construction || "Aluminium",
+    ga_current_density: mccPanelData?.ga_current_density || "1 A/Sq. mm",
+    ga_panel_mounting_frame: mccPanelData?.ga_panel_mounting_frame || "Base Frame",
+    ga_panel_mounting_height: mccPanelData?.ga_panel_mounting_height || "100",
+    is_marshalling_section_selected: mccPanelData?.is_marshalling_section_selected || 1,
+    is_cable_alley_section_selected: mccPanelData?.is_cable_alley_section_selected || 1,
+    is_power_and_bus_separation_section_selected: mccPanelData?.is_power_and_bus_separation_section_selected || 1,
+    is_both_side_extension_section_selected: mccPanelData?.is_both_side_extension_section_selected || 1,
+    ga_gland_plate_3mm_drill_type: mccPanelData?.ga_gland_plate_3mm_drill_type || "Drilled",
+    ga_gland_plate_3mm_attachment_type: mccPanelData?.ga_gland_plate_3mm_attachment_type || "Detachable",
+    ga_busbar_chamber_position: mccPanelData?.ga_busbar_chamber_position || "Top",
+    ga_power_and_control_busbar_separation: mccPanelData?.ga_power_and_control_busbar_separation || "FRP",
+    ga_enclosure_protection_degree: mccPanelData?.ga_enclosure_protection_degree || "IP65",
+    ga_cable_entry_position: mccPanelData?.ga_cable_entry_position || "Bottom",
+    ppc_painting_standards: mccPanelData?.ppc_painting_standards || "OEM",
+    ppc_interior_and_exterior_paint_shade: mccPanelData?.ppc_interior_and_exterior_paint_shade || "RAL 7035",
+    ppc_component_mounting_plate_paint_shade: mccPanelData?.ppc_component_mounting_plate_paint_shade || "RAL 7035",
+    ppc_base_frame_paint_shade: mccPanelData?.ppc_base_frame_paint_shade || "Black",
+    ppc_minimum_coating_thickness: mccPanelData?.ppc_minimum_coating_thickness || "As per Client Specification",
+    ppc_pretreatment_panel_standard: mccPanelData?.ppc_pretreatment_panel_standard || "OEM Standard for pretreatment",
+    vfd_auto_manual_selection: mccPanelData?.vfd_auto_manual_selection || "Applicable",
+    is_punching_details_for_boiler_selected: mccPanelData?.is_punching_details_for_boiler_selected || 1,
     boiler_model: mccPanelData?.boiler_model || "NA",
     boiler_fuel: mccPanelData?.boiler_fuel || "NA",
     boiler_year: mccPanelData?.boiler_year || "NA",
@@ -78,7 +79,7 @@ const getDefaultValues = (mccPanelData: any) => {
     boiler_output: mccPanelData?.boiler_output || "NA",
     boiler_connected_load: mccPanelData?.boiler_connected_load || "NA",
     boiler_design_pressure: mccPanelData?.boiler_design_pressure || "NA",
-    is_punching_details_for_heater_selected: mccPanelData?.is_punching_details_for_heater_selected || 0,
+    is_punching_details_for_heater_selected: mccPanelData?.is_punching_details_for_heater_selected || 1,
     heater_motor: mccPanelData?.heater_motor || "NA",
     heater_fuel: mccPanelData?.heater_fuel || "NA",
     heater_year: mccPanelData?.heater_year || "NA",
@@ -95,10 +96,9 @@ const getDefaultValues = (mccPanelData: any) => {
   }
 }
 
-const MCCcumPCCMCCPanel = () => {
-  const params = useParams()
-  const { data: mccPanelData } = useGetData(
-    `${MCC_PANEL}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
+  const { data: mccCumPCCMCCPanelData } = useGetData(
+    `${MCC_CUM_PCC_MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
     false
   )
   // console.log("MCC Panel Data", mccPanelData)
@@ -142,15 +142,13 @@ const MCCcumPCCMCCPanel = () => {
 
   const { control, handleSubmit, reset, watch, formState } = useForm({
     resolver: zodResolver(mccPanelValidationSchema),
-    defaultValues: getDefaultValues(mccPanelData?.[0]),
+    defaultValues: getDefaultValues(mccCumPCCMCCPanelData?.[0]),
     mode: "onSubmit",
   })
 
-  console.log("Form Errors", formState.errors)
-
   useEffect(() => {
-    reset(getDefaultValues(mccPanelData?.[0]))
-  }, [mccPanelData, reset])
+    reset(getDefaultValues(mccCumPCCMCCPanelData?.[0]))
+  }, [mccCumPCCMCCPanelData, reset])
 
   const handleError = (error: any) => {
     try {
@@ -166,17 +164,18 @@ const MCCcumPCCMCCPanel = () => {
     console.log("MCC Data", data)
     try {
       const mccPanelData = await getData(
-        `${MCC_PANEL}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
+        `${MCC_CUM_PCC_MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
         false
       )
 
       if (mccPanelData && mccPanelData.length > 0) {
-        await updateData(`${MCC_PANEL}/${mccPanelData[0].name}`, false, data)
-        message.success("Common configuration updated successfully")
+        await updateData(`${MCC_CUM_PCC_MCC_PANEL}/${mccPanelData[0].name}`, false, data)
+        message.success("Panel data updated successfully")
       } else {
-        data["project_id"] = params.project_id
-        await createData(MCC_PANEL, false, data)
-        message.success("Common configuration created successfully")
+        data["revision_id"] = revision_id
+        data["panel_id"] = panel_id
+        await createData(MCC_CUM_PCC_MCC_PANEL, false, data)
+        message.success("Panel data created successfully")
       }
     } catch (error) {
       console.log("error: ", error)
