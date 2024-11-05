@@ -242,6 +242,12 @@ export const CABLE_TRAY_THICKNESS = `/document/Cable Tray Thickness`
 export const CONDUIT_MOC = `/document/Conduit MOC`
 export const CONDUIT_SIZE = `/document/Conduit Size`
 
+// Earthing
+export const LAYOUT_EARTHING = `/document/Layout Earthing`
+export const EARTHING_SYSTEM = `/document/Earthing System`
+export const EARTH_STRIP = `/document/Earth Strip`
+export const EARTH_PIT = `/document/Earth Pit`
+
 // Master Data
 export const DIVISION_API = `/document/Division`
 export const PANEL_TYPE_API = `document/Panel Type`
