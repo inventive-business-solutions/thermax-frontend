@@ -1,14 +1,16 @@
 "use client"
 import { Tabs } from "antd"
 import React, { useEffect, useState } from "react"
+import { PROJECT_PANEL_API } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
-import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
 import CommonConfiguration from "./CommonConfiguration/CommonConfiguration"
-import MCCcumPCCPanel from "./PLC/MCCcumPCC"
-import MCCPanel from "./MCC/MCCPanel"
-import PCCPanel from "./PCC/PCCPanel"
+import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
+import MCCcumPCCPanel from "./MCCcumPCC"
+import MCCPanel from "./MCCPanel"
+import PCCPanel from "./PCCPanel"
 
-const MainMCCPCC = ({params} : any) => {
+const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -16,41 +18,51 @@ const MainMCCPCC = ({params} : any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const { data: projectPanelData } = useGetData(
+    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
+    false
+  )
+
+  console.log("projectPanelData", projectPanelData)
+
   const TabMCC = [
     {
       label: "Make",
       key: "1",
-      children: <MakeOfComponent params={params} handleSwitchTab={() => handleSwitchTab("2")} />,
+      children: <MakeOfComponent revision_id={revision_id} />,
     },
     {
       label: "Common Configuration",
       key: "2",
-      children: <CommonConfiguration params={params} handleSwitchTab={() => handleSwitchTab("3")} />,
-    },
-    {
-      label: "MCC",
-      key: "3",
-      children: <MCCPanel  />,
-    },
-    {
-      label: "PCC",
-      key: "4",
-      children: <PCCPanel />,
-    },
-    {
-      label: "MCCcumPCC",
-      key: "5",
-      children: <MCCcumPCCPanel />,
+      children: <CommonConfiguration revision_id={revision_id} />,
     },
   ]
 
-  const onChange = (key: string) => {
-    console.log(key)
-    setActiveKey(key) // Update active tab
-  }
+  projectPanelData?.forEach((panel: any) => {
+    if (panel.panel_main_type === "MCC") {
+      TabMCC.push({
+        label: panel?.panel_name,
+        key: "3",
+        children: <MCCPanel revision_id={revision_id} panel_id={panel?.name} />,
+      })
+    } else if (panel.panel_main_type === "PCC") {
+      TabMCC.push({
+        label: panel?.panel_name,
+        key: "4",
+        children: <PCCPanel revision_id={revision_id} panel_id={panel?.name} />,
+      })
+    } else if (panel.panel_main_type === "MCCcumPCC") {
+      TabMCC.push({
+        label: panel?.panel_name,
+        key: "5",
+        children: <MCCcumPCCPanel revision_id={revision_id} panel_id={panel?.name} />,
+      })
+    }
+  })
+  console.log("TabMCC", TabMCC)
 
-  const handleSwitchTab = (key: string) => {
-    setActiveKey(key) // Switch to the specified tab
+  const onChange = (key: string) => {
+    setActiveKey(key) // Update active tab
   }
 
   return (

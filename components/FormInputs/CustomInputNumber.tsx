@@ -10,7 +10,7 @@ interface InputNumberFieldProps extends InputNumberProps {
   placeholder?: string
 }
 
-export default function CustomTextInput({ control, name, label, placeholder, ...props }: InputNumberFieldProps) {
+export default function CustomTextNumber({ control, name, label, placeholder, ...props }: InputNumberFieldProps) {
   return (
     <Controller
       name={name}

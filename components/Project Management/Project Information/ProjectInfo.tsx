@@ -2,6 +2,7 @@
 import { DownOutlined, PercentageOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Tooltip } from "antd"
+import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
@@ -110,7 +111,8 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
   }
 }
 
-const ProjectInfo = ({ params }: any) => {
+const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
+  const params = useParams()
   const project_id = params.project_id
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
@@ -500,7 +502,7 @@ const ProjectInfo = ({ params }: any) => {
           </div>
         </div>
         <div className="w-2/3">
-          <PanelDataList projectId={params?.project_id} />
+          <PanelDataList revision_id={revision_id} />
         </div>
 
         <div className="mt-4 flex items-end justify-end gap-2">
@@ -534,7 +536,7 @@ const ProjectInfo = ({ params }: any) => {
         </div>
       </form>
 
-      <DocumentListModal open={openDocumentList} setOpen={setOpenDocumentList} projectId={project_id} />
+      <DocumentListModal open={openDocumentList} setOpen={setOpenDocumentList} revision_id={revision_id} />
     </div>
   )
 }

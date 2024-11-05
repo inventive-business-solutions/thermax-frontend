@@ -2,12 +2,13 @@
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { FloatButton } from "antd"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import React from "react"
 import { useLoading } from "hooks/useLoading"
 
-export default function Layout({ children, params }: { children: React.ReactNode; params: { project_id: string } }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const params = useParams()
   const { setLoading: setModalLoading } = useLoading()
 
   const handleTabChange = (path: string) => {

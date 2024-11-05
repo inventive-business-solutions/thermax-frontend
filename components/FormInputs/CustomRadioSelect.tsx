@@ -7,7 +7,7 @@ interface RadioSelectProps extends RadioGroupProps {
   name: string
   label: string
   size?: "small" | "large"
-  options: { value: string; label: string; [key: string]: any }[]
+  options: { value: any; label: string; [key: string]: any }[]
   onChange?: (value: any) => void
 }
 

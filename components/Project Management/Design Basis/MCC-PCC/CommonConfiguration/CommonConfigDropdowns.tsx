@@ -5,20 +5,20 @@ import {
   AMMETER,
   AMMETER_CONFIGURATION,
   ANALOG_SIGNAL_WIRING_COLOR,
-  ANALOG_SIGNAL_WIRING_LENGTH,
+  ANALOG_SIGNAL_WIRING_LENGTH as ANALOG_SIGNAL_WIRING_SIZE,
   APFC_RELAY,
   CABLE_WIRING_PVC,
-  CB_CURRENT_DENSITY,
-  CB_HEAT_PVC_SLEEVE,
-  CB_MAIN_BUSBAR_SELECTION,
+  CONTROL_BUS_CURRENT_DENSITY,
+  CONTROL_BUS_HEAT_PVC_SLEEVE,
+  CONTROL_BUS_MAIN_BUSBAR_SELECTION,
   CONTROL_WIRING_COLOR,
-  CONTROL_WIRING_LENGTH,
+  CONTROL_WIRING_SIZE,
   CT_WIRING_COLOR,
-  CT_WIRING_LENGTH,
+  CT_WIRING_SIZE,
   DOL_STARTER,
-  EB_CURRENT_DENSITY,
-  EB_EARTH_BUSBAR_POSITION,
-  EB_MAIN_BUSBAR_SELECTION,
+  EARTH_BUS_BUSBAR_POSITION,
+  EARTH_BUS_CURRENT_DENSITY,
+  EARTH_BUS_MAIN_BUSBAR_SELECTION,
   FERRULE,
   FIELD_MOTOR_CABLE_ENTRY,
   FIELD_MOTOR_CANOPY_ON_TOP,
@@ -28,12 +28,12 @@ import {
   FIELD_MOTOR_QTY,
   FIELD_MOTOR_TYPE,
   LPBS_CANOPY_ON_TOP,
-  LPBS_COLOR,
   LPBS_COLOR_SHADE,
   LPBS_ENCLOSURE,
   LPBS_INDICATOR_OFF_COLOR,
   LPBS_INDICATOR_ON_COLOR,
   LPBS_MATERIAL,
+  LPBS_PUSH_BUTTON_START_COLOR,
   LPBS_QTY,
   LPBS_SPEED_DECREASE_BUTTON,
   LPBS_SPEED_INCREASE_BUTTON,
@@ -42,14 +42,14 @@ import {
   LR_SELECTOR_SWITCH_APPLICABLE,
   MCC_SWITCHGEAR_TYPE,
   METERING_FOR_FEEDER,
-  PB_CURRENT_DENSITY,
-  PB_HEAT_PVC_SLEEVE,
-  PB_MAIN_BUSBAR_SELECTION,
+  POWER_BUS_CURRENT_DENSITY,
+  POWER_BUS_HEAT_PVC_SLEEVE,
+  POWER_BUS_MAIN_BUSBAR_SELECTION,
   POWER_WIRING_COLOR,
-  POWER_WIRING_LENGTH,
+  POWER_WIRING_SIZE,
   PUSH_BUTTON_ESS,
-  PUSH_BUTTON_START,
-  PUSH_BUTTON_STOP,
+  PUSH_BUTTON_START_COLOR,
+  PUSH_BUTTON_STOP_COLOR,
   RUNNING_OPEN,
   SPARE_TERMINAL,
   SPEED_DECREASE_PB,
@@ -63,286 +63,298 @@ import {
   TEST_RESET,
   TRIP,
   VDC_24_WIRING_COLOR,
-  VDC_24_WIRING_LENGTH,
+  VDC_24_WIRING_SIZE,
 } from "configs/api-endpoints"
 
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
 export default function useCommonConfigDropdowns() {
-  const { dropdownOptions: dol_starterOptions } = useDropdownOptions(`${DOL_STARTER}?fields=["*"]`, "dol_starter")
-  const { dropdownOptions: star_delta_starterOptions } = useDropdownOptions(
+  const { dropdownOptions: dol_starter_options } = useDropdownOptions(`${DOL_STARTER}?fields=["*"]`, "dol_starter")
+  const { dropdownOptions: star_delta_starter_options } = useDropdownOptions(
     `${STAR_DELTA_STARTER}?fields=["*"]`,
     "star_delta_starter"
   )
-  const { dropdownOptions: ammeterOptions } = useDropdownOptions(`${AMMETER}?fields=["*"]`, "ammeter")
-  const { dropdownOptions: ammeter_configurationOptions } = useDropdownOptions(
+  const { dropdownOptions: ammeter_options } = useDropdownOptions(`${AMMETER}?fields=["*"]`, "ammeter")
+  const { dropdownOptions: ammeter_configuration_options } = useDropdownOptions(
     `${AMMETER_CONFIGURATION}?fields=["*"]`,
     "ammeter_configuration"
   )
-  const { dropdownOptions: mcc_switchgear_typeOptions } = useDropdownOptions(
+  const { dropdownOptions: mcc_switchgear_type_options } = useDropdownOptions(
     `${MCC_SWITCHGEAR_TYPE}?fields=["*"]`,
     "mcc_switchgear_type"
   )
-  const { dropdownOptions: switchgear_combinationOptions } = useDropdownOptions(
+  const { dropdownOptions: switchgear_combination_options } = useDropdownOptions(
     `${SWITCHGEAR_COMBINATION}?fields=["*"]`,
     "switchgear_combination"
   )
 
-  const { dropdownOptions: poleOptions } = useDropdownOptions(`${SUPPLY_FEEDER_POLE}?fields=["*"]`, "pole")
-  const { dropdownOptions: dm_standardOptions } = useDropdownOptions(
+  const { dropdownOptions: pole_options } = useDropdownOptions(`${SUPPLY_FEEDER_POLE}?fields=["*"]`, "pole")
+  const { dropdownOptions: dm_standard_options } = useDropdownOptions(
     `${SUPPLY_FEEDER_DM_STANDARD}?fields=["*"]`,
     "dm_standard"
   )
-  const { dropdownOptions: testing_standardOptions } = useDropdownOptions(
+  const { dropdownOptions: testing_standard_options } = useDropdownOptions(
     `${SUPPLY_FEEDER_TESTING_STANDARD}?fields=["*"]`,
     "testing_standard"
   )
-  const { dropdownOptions: power_wiring_colorOptions } = useDropdownOptions(
+  const { dropdownOptions: power_wiring_color_options } = useDropdownOptions(
     `${POWER_WIRING_COLOR}?fields=["*"]`,
     "power_wiring_color"
   )
-  const { dropdownOptions: power_wiring_lengthOptions } = useDropdownOptions(
-    `${POWER_WIRING_LENGTH}?fields=["*"]`,
-    "power_wiring_length"
+  const { dropdownOptions: power_wiring_length_options } = useDropdownOptions(
+    `${POWER_WIRING_SIZE}?fields=["*"]`,
+    "power_wiring_size"
   )
-  const { dropdownOptions: control_wiring_colorOptions } = useDropdownOptions(
+  const { dropdownOptions: control_wiring_color_options } = useDropdownOptions(
     `${CONTROL_WIRING_COLOR}?fields=["*"]`,
     "control_wiring_color"
   )
-  const { dropdownOptions: control_wiring_lengthOptions } = useDropdownOptions(
-    `${CONTROL_WIRING_LENGTH}?fields=["*"]`,
-    "control_wiring_length"
+  const { dropdownOptions: control_wiring_length_options } = useDropdownOptions(
+    `${CONTROL_WIRING_SIZE}?fields=["*"]`,
+    "control_wiring_size"
   )
-  const { dropdownOptions: vdc_24_wiring_colorOptions } = useDropdownOptions(
+  const { dropdownOptions: vdc_24_wiring_color_options } = useDropdownOptions(
     `${VDC_24_WIRING_COLOR}?fields=["*"]`,
     "vdc_24_wiring_color"
   )
-  const { dropdownOptions: vdc_24_wiring_lengthOptions } = useDropdownOptions(
-    `${VDC_24_WIRING_LENGTH}?fields=["*"]`,
-    "vdc_24_wiring_length"
+  const { dropdownOptions: vdc_24_wiring_length_options } = useDropdownOptions(
+    `${VDC_24_WIRING_SIZE}?fields=["*"]`,
+    "vdc_24_wiring_size"
   )
-  const { dropdownOptions: analog_signal_wiring_colorOptions } = useDropdownOptions(
+  const { dropdownOptions: analog_signal_wiring_color_options } = useDropdownOptions(
     `${ANALOG_SIGNAL_WIRING_COLOR}?fields=["*"]`,
     "analog_signal_wiring_color"
   )
-  const { dropdownOptions: analog_signal_wiring_lengthOptions } = useDropdownOptions(
-    `${ANALOG_SIGNAL_WIRING_LENGTH}?fields=["*"]`,
-    "analog_signal_wiring_length"
+  const { dropdownOptions: analog_signal_wiring_length_options } = useDropdownOptions(
+    `${ANALOG_SIGNAL_WIRING_SIZE}?fields=["*"]`,
+    "analog_signal_wiring_size"
   )
-  const { dropdownOptions: ct_wiring_colorOptions } = useDropdownOptions(
+  const { dropdownOptions: ct_wiring_color_options } = useDropdownOptions(
     `${CT_WIRING_COLOR}?fields=["*"]`,
     "ct_wiring_color"
   )
-  const { dropdownOptions: ct_wiring_lengthOptions } = useDropdownOptions(
-    `${CT_WIRING_LENGTH}?fields=["*"]`,
-    "ct_wiring_length"
+  const { dropdownOptions: ct_wiring_length_options } = useDropdownOptions(
+    `${CT_WIRING_SIZE}?fields=["*"]`,
+    "ct_wiring_size"
   )
-  const { dropdownOptions: cable_wiring_pvcOptions } = useDropdownOptions(
+  const { dropdownOptions: cable_wiring_pvc_options } = useDropdownOptions(
     `${CABLE_WIRING_PVC}?fields=["*"]`,
     "cable_insulation_pvc"
   )
-  const { dropdownOptions: ferruleOptions } = useDropdownOptions(`${FERRULE}?fields=["*"]`, "ferrule")
-  const { dropdownOptions: spare_terminalOptions } = useDropdownOptions(
+  const { dropdownOptions: ferrule_options } = useDropdownOptions(`${FERRULE}?fields=["*"]`, "ferrule")
+  const { dropdownOptions: spare_terminal_options } = useDropdownOptions(
     `${SPARE_TERMINAL}?fields=["*"]`,
     "spare_terminal"
   )
 
-  const { dropdownOptions: test_resetOptions } = useDropdownOptions(`${TEST_RESET}?fields=["*"]`, "test_reset")
-  const { dropdownOptions: alarm_acknowledge_and_lamp_testOptions } = useDropdownOptions(
+  const { dropdownOptions: test_reset_options } = useDropdownOptions(`${TEST_RESET}?fields=["*"]`, "test_reset")
+  const { dropdownOptions: alarm_acknowledge_and_lamp_test_options } = useDropdownOptions(
     `${ALARM_ACKNOWLEDGE_AND_LAMP_TEST}?fields=["*"]`,
     "alarm_acknowledge_and_lamp_test"
   )
-  const { dropdownOptions: speed_decrease_pbOption } = useDropdownOptions(
+  const { dropdownOptions: speed_decrease_pb_options } = useDropdownOptions(
     `${SPEED_DECREASE_PB}?fields=["*"]`,
     "speed_decrease_pb"
   )
-  const { dropdownOptions: speed_increase_pbOption } = useDropdownOptions(
+  const { dropdownOptions: speed_increase_pb_options } = useDropdownOptions(
     `${SPEED_INCREASE_PB}?fields=["*"]`,
     "speed_increase_pb"
   )
-  const { dropdownOptions: essOption } = useDropdownOptions(`${PUSH_BUTTON_ESS}?fields=["*"]`, "ess")
-  const { dropdownOptions: push_button_stopOptions } = useDropdownOptions(`${PUSH_BUTTON_STOP}?fields=["*"]`, "stop")
-  const { dropdownOptions: push_button_startOptions } = useDropdownOptions(`${PUSH_BUTTON_START}?fields=["*"]`, "start")
+  const { dropdownOptions: ess_options } = useDropdownOptions(`${PUSH_BUTTON_ESS}?fields=["*"]`, "ess")
+  const { dropdownOptions: push_button_stop_options } = useDropdownOptions(
+    `${PUSH_BUTTON_STOP_COLOR}?fields=["*"]`,
+    "push_button_stop_color"
+  )
+  const { dropdownOptions: push_button_start_options } = useDropdownOptions(
+    `${PUSH_BUTTON_START_COLOR}?fields=["*"]`,
+    "push_button_start_color"
+  )
 
-  const { dropdownOptions: lr_selector_lock_switch_applicableOptions } = useDropdownOptions(
+  const { dropdownOptions: lr_selector_lock_switch_applicable_options } = useDropdownOptions(
     `${LR_SELECTOR_SWITCH_APPLICABLE}?fields=["*"]`,
     "applicable"
   )
-  const { dropdownOptions: lr_selector_lockOptions } = useDropdownOptions(
+  const { dropdownOptions: lr_selector_lock_options } = useDropdownOptions(
     `${LR_SELECTOR_LOCK_TYPE}?fields=["*"]`,
     "lockable"
   )
 
-  const { dropdownOptions: running_openOption } = useDropdownOptions(`${RUNNING_OPEN}?fields=["*"]`, "running_open")
-  const { dropdownOptions: stopped_closedOption } = useDropdownOptions(
+  const { dropdownOptions: running_open_options } = useDropdownOptions(`${RUNNING_OPEN}?fields=["*"]`, "running_open")
+  const { dropdownOptions: stopped_closed_options } = useDropdownOptions(
     `${STOPPED_CLOSED}?fields=["*"]`,
     "stopped_closed"
   )
-  const { dropdownOptions: tripOption } = useDropdownOptions(`${TRIP}?fields=["*"]`, "trip")
+  const { dropdownOptions: trip_options } = useDropdownOptions(`${TRIP}?fields=["*"]`, "trip")
 
-  const { dropdownOptions: field_motor_typeOption } = useDropdownOptions(`${FIELD_MOTOR_TYPE}?fields=["*"]`, "type")
-  const { dropdownOptions: field_motor_enclosureOption } = useDropdownOptions(
+  const { dropdownOptions: field_motor_type_options } = useDropdownOptions(`${FIELD_MOTOR_TYPE}?fields=["*"]`, "type")
+  const { dropdownOptions: field_motor_enclosure_options } = useDropdownOptions(
     `${FIELD_MOTOR_ENCLOSURE}?fields=["*"]`,
     "enclosure"
   )
-  const { dropdownOptions: field_motor_materialOption } = useDropdownOptions(
+  const { dropdownOptions: field_motor_material_options } = useDropdownOptions(
     `${FIELD_MOTOR_MATERIAL}?fields=["*"]`,
     "material"
   )
-  const { dropdownOptions: field_motor_qtyOption } = useDropdownOptions(`${FIELD_MOTOR_QTY}?fields=["*"]`, "qty")
-  const { dropdownOptions: field_motor_colourShadeOption } = useDropdownOptions(
+  const { dropdownOptions: field_motor_qty_options } = useDropdownOptions(`${FIELD_MOTOR_QTY}?fields=["*"]`, "qty")
+  const { dropdownOptions: field_motor_color_shade_options } = useDropdownOptions(
     `${FIELD_MOTOR_COLOUR_SHADE}?fields=["*"]`,
     "isolator_color_shade"
   )
-  const { dropdownOptions: field_motor_cableEntryOption } = useDropdownOptions(
+  const { dropdownOptions: field_motor_cable_entry_options } = useDropdownOptions(
     `${FIELD_MOTOR_CABLE_ENTRY}?fields=["*"]`,
     "cable_entry"
   )
-  const { dropdownOptions: field_motor_canopyOnTopOption } = useDropdownOptions(
+  const { dropdownOptions: field_motor_canopy_on_top_options } = useDropdownOptions(
     `${FIELD_MOTOR_CANOPY_ON_TOP}?fields=["*"]`,
     "canopy_on_top"
   )
 
-  const { dropdownOptions: lpbs_typeOption } = useDropdownOptions(`${LPBS_TYPE}?fields=["*"]`, "type")
-  const { dropdownOptions: lpbs_enclosureOption } = useDropdownOptions(`${LPBS_ENCLOSURE}?fields=["*"]`, "enclosure")
-  const { dropdownOptions: lpbs_materialOption } = useDropdownOptions(`${LPBS_MATERIAL}?fields=["*"]`, "material")
-  const { dropdownOptions: lpbs_qtyOption } = useDropdownOptions(`${LPBS_QTY}?fields=["*"]`, "qty")
-  const { dropdownOptions: lpbs_colorShadeOption } = useDropdownOptions(
+  const { dropdownOptions: lpbs_type_options } = useDropdownOptions(`${LPBS_TYPE}?fields=["*"]`, "lpbs_type")
+  const { dropdownOptions: lpbs_enclosure_options } = useDropdownOptions(
+    `${LPBS_ENCLOSURE}?fields=["*"]`,
+    "lpbs_enclosure"
+  )
+  const { dropdownOptions: lpbs_material_options } = useDropdownOptions(
+    `${LPBS_MATERIAL}?fields=["*"]`,
+    "lpbs_material"
+  )
+  const { dropdownOptions: lpbs_qty_options } = useDropdownOptions(`${LPBS_QTY}?fields=["*"]`, "lpbs_qty")
+  const { dropdownOptions: lpbs_color_shade_options } = useDropdownOptions(
     `${LPBS_COLOR_SHADE}?fields=["*"]`,
     "lpbs_color_shade"
   )
-  const { dropdownOptions: lpbs_canopyOnTopOption } = useDropdownOptions(
+  const { dropdownOptions: lpbs_canopy_on_top_options } = useDropdownOptions(
     `${LPBS_CANOPY_ON_TOP}?fields=["*"]`,
-    "canopy_on_top"
+    "lpbs_canopy_on_top"
   )
-  const { dropdownOptions: lpbs_colorOption } = useDropdownOptions(
-    `${LPBS_COLOR}?fields=["*"]`,
-    "start_push_button_color"
+  const { dropdownOptions: lpbs_push_button_start_color_options } = useDropdownOptions(
+    `${LPBS_PUSH_BUTTON_START_COLOR}?fields=["*"]`,
+    "lpbs_push_button_start_color"
   )
-  const { dropdownOptions: lpbs_indicator_onOption } = useDropdownOptions(
+  const { dropdownOptions: lpbs_indicator_on_options } = useDropdownOptions(
     `${LPBS_INDICATOR_ON_COLOR}?fields=["*"]`,
-    "start_on_indication_lamp_color"
+    "lpbs_start_on_indication_lamp_color"
   )
-  const { dropdownOptions: lpbs_indiacator_offOption } = useDropdownOptions(
+  const { dropdownOptions: lpbs_indiacator_off_options } = useDropdownOptions(
     `${LPBS_INDICATOR_OFF_COLOR}?fields=["*"]`,
-    "stop_off_indication_lamp_color"
+    "lpbs_stop_off_indication_lamp_color"
   )
-  const { dropdownOptions: lpbs_speed_increaseOption } = useDropdownOptions(
+  const { dropdownOptions: lpbs_speed_increase_options } = useDropdownOptions(
     `${LPBS_SPEED_INCREASE_BUTTON}?fields=["*"]`,
     "speed_increase_push_button"
   )
-  const { dropdownOptions: lpbs_speed_decreaseOption } = useDropdownOptions(
+  const { dropdownOptions: lpbs_speed_decrease_options } = useDropdownOptions(
     `${LPBS_SPEED_DECREASE_BUTTON}?fields=["*"]`,
     "speed_decrease_push_button"
   )
 
-  const { dropdownOptions: apfc_relayOption } = useDropdownOptions(`${APFC_RELAY}?fields=["*"]`, "apfc_relay")
+  const { dropdownOptions: apfc_relay_options } = useDropdownOptions(`${APFC_RELAY}?fields=["*"]`, "apfc_relay")
 
-  const { dropdownOptions: pb_main_busbar_selectionOption } = useDropdownOptions(
-    `${PB_MAIN_BUSBAR_SELECTION}?fields=["*"]`,
+  const { dropdownOptions: pb_main_busbar_selection_options } = useDropdownOptions(
+    `${POWER_BUS_MAIN_BUSBAR_SELECTION}?fields=["*"]`,
     "main_busbar_selection"
   )
-  const { dropdownOptions: pb_heat_pvc_sleeve_Option } = useDropdownOptions(
-    `${PB_HEAT_PVC_SLEEVE}?fields=["*"]`,
+  const { dropdownOptions: pb_heat_pvc_sleeve_options } = useDropdownOptions(
+    `${POWER_BUS_HEAT_PVC_SLEEVE}?fields=["*"]`,
     "heat_shrinkable_color_pvc_sleeve"
   )
-  const { dropdownOptions: pb_current_densityOption } = useDropdownOptions(
-    `${PB_CURRENT_DENSITY}?fields=["*"]`,
+  const { dropdownOptions: pb_current_density_options } = useDropdownOptions(
+    `${POWER_BUS_CURRENT_DENSITY}?fields=["*"]`,
     "pb_current_density"
   )
-  const { dropdownOptions: cb_main_busbar_selectionOption } = useDropdownOptions(
-    `${CB_MAIN_BUSBAR_SELECTION}?fields=["*"]`,
+  const { dropdownOptions: cb_main_busbar_selection_option } = useDropdownOptions(
+    `${CONTROL_BUS_MAIN_BUSBAR_SELECTION}?fields=["*"]`,
     "main_busbar_selection"
   )
-  const { dropdownOptions: cb_heat_pvc_sleeveOption } = useDropdownOptions(
-    `${CB_HEAT_PVC_SLEEVE}?fields=["*"]`,
+  const { dropdownOptions: cb_heat_pvc_sleeve_options } = useDropdownOptions(
+    `${CONTROL_BUS_HEAT_PVC_SLEEVE}?fields=["*"]`,
     "heat_shrinkable_color_pvc_sleeve"
   )
-  const { dropdownOptions: cb_current_densityOption } = useDropdownOptions(
-    `${CB_CURRENT_DENSITY}?fields=["*"]`,
+  const { dropdownOptions: cb_current_density_options } = useDropdownOptions(
+    `${CONTROL_BUS_CURRENT_DENSITY}?fields=["*"]`,
     "current_density"
   )
-  const { dropdownOptions: eb_main_busbar_selectionOption } = useDropdownOptions(
-    `${EB_MAIN_BUSBAR_SELECTION}?fields=["*"]`,
+  const { dropdownOptions: eb_main_busbar_selection_options } = useDropdownOptions(
+    `${EARTH_BUS_MAIN_BUSBAR_SELECTION}?fields=["*"]`,
     "main_busbar_selection"
   )
-  const { dropdownOptions: eb_main_busbar_positionOption } = useDropdownOptions(
-    `${EB_EARTH_BUSBAR_POSITION}?fields=["*"]`,
+  const { dropdownOptions: eb_main_busbar_position_options } = useDropdownOptions(
+    `${EARTH_BUS_BUSBAR_POSITION}?fields=["*"]`,
     "earth_busbar_position"
   )
-  const { dropdownOptions: eb_current_densityOption } = useDropdownOptions(
-    `${EB_CURRENT_DENSITY}?fields=["*"]`,
+  const { dropdownOptions: eb_current_density_options } = useDropdownOptions(
+    `${EARTH_BUS_CURRENT_DENSITY}?fields=["*"]`,
     "current_density"
   )
 
-  const { dropdownOptions: metering_for_feederOption } = useDropdownOptions(
+  const { dropdownOptions: metering_for_feeder_options } = useDropdownOptions(
     `${METERING_FOR_FEEDER}?fields=["*"]`,
     "metering_for_feeder"
   )
 
   return {
-    metering_for_feederOption,
-    pb_main_busbar_selectionOption,
-    pb_heat_pvc_sleeve_Option,
-    pb_current_densityOption,
-    cb_main_busbar_selectionOption,
-    cb_heat_pvc_sleeveOption,
-    cb_current_densityOption,
-    eb_main_busbar_selectionOption,
-    eb_main_busbar_positionOption,
-    eb_current_densityOption,
-    apfc_relayOption,
-    field_motor_typeOption,
-    field_motor_enclosureOption,
-    field_motor_materialOption,
-    field_motor_qtyOption,
-    field_motor_colourShadeOption,
-    field_motor_cableEntryOption,
-    field_motor_canopyOnTopOption,
-    running_openOption,
-    stopped_closedOption,
-    tripOption,
-    dol_starterOptions,
-    star_delta_starterOptions,
-    ammeterOptions,
-    ammeter_configurationOptions,
-    mcc_switchgear_typeOptions,
-    switchgear_combinationOptions,
-    poleOptions,
-    dm_standardOptions,
-    testing_standardOptions,
-    power_wiring_colorOptions,
-    power_wiring_lengthOptions,
-    control_wiring_colorOptions,
-    control_wiring_lengthOptions,
-    vdc_24_wiring_colorOptions,
-    vdc_24_wiring_lengthOptions,
-    analog_signal_wiring_colorOptions,
-    analog_signal_wiring_lengthOptions,
-    ct_wiring_colorOptions,
-    ct_wiring_lengthOptions,
-    cable_wiring_pvcOptions,
-    ferruleOptions,
-    spare_terminalOptions,
-    test_resetOptions,
-    alarm_acknowledge_and_lamp_testOptions,
-    speed_decrease_pbOption,
-    speed_increase_pbOption,
-    essOption,
-    push_button_stopOptions,
-    push_button_startOptions,
-    lr_selector_lock_switch_applicableOptions,
-    lr_selector_lockOptions,
-    lpbs_typeOption,
-    lpbs_enclosureOption,
-    lpbs_materialOption,
-    lpbs_qtyOption,
-    lpbs_colorShadeOption,
-    lpbs_canopyOnTopOption,
-    lpbs_colorOption,
-    lpbs_indicator_onOption,
-    lpbs_indiacator_offOption,
-    lpbs_speed_increaseOption,
-    lpbs_speed_decreaseOption,
+    metering_for_feeder_options,
+    pb_main_busbar_selection_options,
+    pb_heat_pvc_sleeve_options,
+    pb_current_density_options,
+    cb_main_busbar_selection_option,
+    cb_heat_pvc_sleeve_options,
+    cb_current_density_options,
+    eb_main_busbar_selection_options,
+    eb_main_busbar_position_options,
+    eb_current_density_options,
+    apfc_relay_options,
+    field_motor_type_options,
+    field_motor_enclosure_options,
+    field_motor_material_options,
+    field_motor_qty_options,
+    field_motor_color_shade_options,
+    field_motor_cable_entry_options,
+    field_motor_canopy_on_top_options,
+    running_open_options,
+    stopped_closed_options,
+    trip_options,
+    dol_starter_options,
+    star_delta_starter_options,
+    ammeter_options,
+    ammeter_configuration_options,
+    mcc_switchgear_type_options,
+    switchgear_combination_options,
+    pole_options,
+    dm_standard_options,
+    testing_standard_options,
+    power_wiring_color_options,
+    power_wiring_length_options,
+    control_wiring_color_options,
+    control_wiring_length_options,
+    vdc_24_wiring_color_options,
+    vdc_24_wiring_length_options,
+    analog_signal_wiring_color_options,
+    analog_signal_wiring_length_options,
+    ct_wiring_color_options,
+    ct_wiring_length_options,
+    cable_wiring_pvc_options,
+    ferrule_options,
+    spare_terminal_options,
+    test_reset_options,
+    alarm_acknowledge_and_lamp_test_options,
+    speed_decrease_pb_options,
+    speed_increase_pb_options,
+    ess_options,
+    push_button_stop_options,
+    push_button_start_options,
+    lr_selector_lock_switch_applicable_options,
+    lr_selector_lock_options,
+    lpbs_type_options,
+    lpbs_enclosure_options,
+    lpbs_material_options,
+    lpbs_qty_options,
+    lpbs_color_shade_options,
+    lpbs_canopy_on_top_options,
+    lpbs_push_button_start_color_options,
+    lpbs_indicator_on_options,
+    lpbs_indiacator_off_options,
+    lpbs_speed_increase_options,
+    lpbs_speed_decrease_options,
   }
 }
