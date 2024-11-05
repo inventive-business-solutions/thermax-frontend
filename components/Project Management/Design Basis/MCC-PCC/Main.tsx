@@ -1,18 +1,16 @@
 "use client"
 import { Tabs } from "antd"
 import React, { useEffect, useState } from "react"
+import { PROJECT_PANEL_API } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import CommonConfiguration from "./CommonConfiguration/CommonConfiguration"
 import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
 import MCCcumPCCPanel from "./MCCcumPCC"
 import MCCPanel from "./MCCPanel"
 import PCCPanel from "./PCCPanel"
-import { useGetData } from "hooks/useCRUD"
-import { PROJECT_PANEL_API } from "configs/api-endpoints"
-import { useParams } from "next/navigation"
 
 const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
-  const params = useParams()
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {

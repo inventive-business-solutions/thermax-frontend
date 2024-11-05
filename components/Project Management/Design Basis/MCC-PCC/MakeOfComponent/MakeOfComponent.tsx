@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message } from "antd"
-import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"

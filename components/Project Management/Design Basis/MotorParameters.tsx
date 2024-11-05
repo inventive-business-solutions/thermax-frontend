@@ -1,6 +1,5 @@
 "use client"
 import { Button, message } from "antd"
-import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { updateData } from "actions/crud-actions"
@@ -102,7 +101,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
     hazardousTerminalBoxOptions,
   } = useMotorParametersDropdowns()
 
-  const { control, handleSubmit, formState, reset } = useForm({
+  const { control, handleSubmit, formState } = useForm({
     // resolver: zodResolver(fieldSchema),
     defaultValues: getDefaultValues(motorParameters?.[0]),
     mode: "onBlur",

@@ -2,17 +2,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Divider, message } from "antd" // Import Select for dropdown
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import * as zod from "zod"
+import { createData, getData, updateData } from "actions/crud-actions"
 import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { useParams } from "next/navigation"
-import { useGetData } from "hooks/useCRUD"
 import { PCC_PANEL } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
 import { pccPanelValidationSchema } from "./schemas"
-import { createData, getData, updateData } from "actions/crud-actions"
 
 const getDefaultValues = (pccPanelData: any) => {
   return {

@@ -1,37 +1,14 @@
 "use client"
 
-import { Button, Checkbox, Radio, Select } from "antd"
-import { useParams } from "next/navigation"
+import { Checkbox, Radio, Select } from "antd"
 import React, { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { createData, updateData } from "actions/crud-actions"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import {
   CLASSIFICATION_AREA_GAS_GROUP_API,
   CLASSIFICATION_AREA_STANDARD_API,
   CLASSIFICATION_AREA_TEMPERATURE_CLASS_API,
   CLASSIFICATION_AREA_ZONE_API,
-  PROJECT_MAIN_PKG_API,
-  SUB_PKG_API,
 } from "configs/api-endpoints"
-import { useGetData } from "hooks/useCRUD"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
-import GISubPkgInfo from "./GISubPkgInfo"
-
-const getDefaultValues = (mainPkgData: any) => {
-  const defaultValues: any = {
-    standard: null,
-    zone: null,
-    gas_group: null,
-    temperature_class: null,
-  }
-  mainPkgData?.sub_packages?.forEach((subPkg: any) => {
-    defaultValues[`active_sub_pkg_${subPkg.sub_package_name}`] = Boolean(subPkg.is_sub_package_selected)
-    defaultValues[`classification_area_${subPkg.sub_package_name}`] = subPkg.area_of_classification
-  })
-
-  return defaultValues
-}
 
 export default function GISubPkgList({
   main_package,
@@ -73,7 +50,7 @@ export default function GISubPkgList({
     }
   }, [generalInfoData, hasHazardousArea, main_package.main_package_name])
 
-  const getSubPkg = (main_package, subPkg, generalInfoData) => {
+  const getSubPkg = (main_package: any, subPkg: any, generalInfoData: any) => {
     const main_package_name = main_package.main_package_name
     const sub_package_name = subPkg.sub_package_name
     const defaultMainPkg = generalInfoData?.pkgList?.find((pkg: any) => pkg.main_package_name === main_package_name)
@@ -118,7 +95,7 @@ export default function GISubPkgList({
                   return subPkgValue?.area_of_classification
                 })()}
                 onChange={
-                  ((e) => {
+                  ((e: any) => {
                     const newGeneralInfoData = { ...generalInfoData }
                     const main_package_name = main_package.main_package_name
                     const sub_package_name = subPkg.sub_package_name

@@ -2,6 +2,7 @@
 import { DownOutlined, PercentageOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Tooltip } from "antd"
+import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
@@ -15,7 +16,6 @@ import { useLoading } from "hooks/useLoading"
 import DocumentListModal from "./DocumentListModal"
 import PanelDataList from "./Panel/PanelDataList"
 import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
-import { useParams } from "next/navigation"
 
 const ProjectInfoSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),

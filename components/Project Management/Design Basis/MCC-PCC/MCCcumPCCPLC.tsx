@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Divider, message } from "antd"
-import { useParams } from "next/navigation"
 import React, { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { createData, getData, updateData } from "actions/crud-actions"

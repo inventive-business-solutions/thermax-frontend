@@ -1,5 +1,4 @@
 import { getData } from "actions/crud-actions"
-import Loader from "components/Loader"
 import GeneralInfo from "components/Project Management/Design Basis/GeneralInfo"
 import { DESIGN_BASIS_REVISION_HISTORY_API } from "configs/api-endpoints"
 

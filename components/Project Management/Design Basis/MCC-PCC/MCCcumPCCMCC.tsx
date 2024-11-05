@@ -1,17 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Divider, message } from "antd" // Import Select for dropdown
+import { Button, Divider, message } from "antd"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import * as zod from "zod"
+import { createData, getData, updateData } from "actions/crud-actions"
 import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { useGetData } from "hooks/useCRUD"
-import { useParams } from "next/navigation"
 import { MCC_CUM_PCC_MCC_PANEL } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
-import { createData, getData, updateData } from "actions/crud-actions"
 import { mccPanelValidationSchema } from "./schemas"
 
 const getDefaultValues = (mccPanelData: any) => {
@@ -140,7 +138,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     ppc_pretreatment_panel_standard_options,
   } = useMCCPCCPanelDropdowns()
 
-  const { control, handleSubmit, reset, watch, formState } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     resolver: zodResolver(mccPanelValidationSchema),
     defaultValues: getDefaultValues(mccCumPCCMCCPanelData?.[0]),
     mode: "onSubmit",

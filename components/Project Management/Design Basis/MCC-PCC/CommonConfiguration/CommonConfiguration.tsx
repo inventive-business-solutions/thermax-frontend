@@ -1,9 +1,8 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Divider, message } from "antd" // Import Select for dropdown
-import { useParams } from "next/navigation"
-import React, { use, useEffect, useState } from "react"
+import { Button, Divider, message } from "antd"
+import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { createData, getData, updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
