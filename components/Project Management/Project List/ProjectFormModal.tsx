@@ -12,10 +12,19 @@ import CustomAutoComplete from "components/FormInputs/AutocompleteWithCreate"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import {
+  CABLE_TRAY_LAYOUT,
   CLIENT_NAME_API,
+  COMMON_CONFIGURATION,
   CONSULTANT_NAME_API,
+  DESIGN_BASIS_GENERAL_INFO_API,
+  DESIGN_BASIS_REVISION_HISTORY_API,
   getProjectListUrl,
+  LAYOUT_EARTHING,
+  MAKE_OF_COMPONENT_API,
+  MOTOR_PARAMETER_API,
   PROJECT_API,
+  PROJECT_INFO_API,
+  STATIC_DOCUMENT_API,
   THERMAX_USER_API,
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
@@ -75,7 +84,19 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
 
   const handleCreateProject = async (projectData: any) => {
     try {
-      await createData(PROJECT_API, false, projectData)
+      const projectCreatedata = await createData(PROJECT_API, false, projectData)
+      const project_id = projectCreatedata.name
+      await createData(PROJECT_INFO_API, false, { project_id })
+      await createData(STATIC_DOCUMENT_API, false, { project_id })
+      const revisionHistoryData = await createData(DESIGN_BASIS_REVISION_HISTORY_API, false, { project_id })
+      const revision_id = revisionHistoryData.name
+      await createData(DESIGN_BASIS_GENERAL_INFO_API, false, { revision_id })
+      await createData(MOTOR_PARAMETER_API, false, { revision_id })
+      await createData(MAKE_OF_COMPONENT_API, false, { revision_id })
+      await createData(COMMON_CONFIGURATION, false, { revision_id })
+      await createData(CABLE_TRAY_LAYOUT, false, { revision_id })
+      await createData(LAYOUT_EARTHING, false, { revision_id })
+      console.log(projectCreatedata)
       setStatus("success")
       setMessage("New project created successfully")
     } catch (error: any) {

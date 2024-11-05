@@ -8,16 +8,16 @@ import { useGetData } from "hooks/useCRUD"
 import { changeNameToKey } from "utils/helpers"
 import PanelFormModal from "./PanelFormModal"
 
-export default function PanelDataList({ projectId }: any) {
+export default function PanelDataList({ revision_id }: { revision_id: string }) {
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
-  const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["name", "project_id", "panel_name", "panel_type"]&filters=[["project_id", "=", "${projectId}"]]`
+  const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   const { data: projectPanelData } = useGetData(getProjectPanelDataUrl, false)
 
   const columns = [
     { title: "Panel Name", dataIndex: "panel_name", key: "panel_name" },
-    { title: "Panel Type", dataIndex: "panel_type", key: "panel_type" },
+    { title: "Panel Type", dataIndex: "panel_sub_type", key: "panel_type" },
     {
       title: "Action",
       dataIndex: "action",
@@ -53,7 +53,6 @@ export default function PanelDataList({ projectId }: any) {
     setOpen(true)
     setEditMode(true)
     setProjectRow(record)
-    console.log("record", record)
   }
 
   const handleDeletePanel = async (selectedRowID: string) => {
@@ -86,7 +85,7 @@ export default function PanelDataList({ projectId }: any) {
         editMode={editMode}
         values={projectRow}
         getProjectPanelUrl={getProjectPanelDataUrl}
-        projectId={projectId}
+        revisionId={revision_id}
       />
       <Table columns={columns} dataSource={changeNameToKey(projectPanelData)} bordered size="small" />
     </div>
