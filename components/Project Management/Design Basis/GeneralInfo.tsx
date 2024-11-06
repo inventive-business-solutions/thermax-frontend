@@ -19,7 +19,6 @@ import { useLoading } from "hooks/useLoading"
 import GIPkgSelectionTabs from "./GIPkgSelection"
 
 const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
-  console.log("revision", revision_id)
   const params = useParams()
   const [selectedPkg, setSelectedPkg] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
@@ -142,9 +141,6 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
       )
 
       const isHazardousAreaPresent = hasHazardousArea ? true : false
-
-      console.log("isHazardousAreaPresent", isHazardousAreaPresent)
-      console.log("motorParameters", motorParameters)
 
       if (motorParameters && motorParameters.length > 0) {
         // Update existing motor parameters

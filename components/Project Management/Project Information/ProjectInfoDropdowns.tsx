@@ -19,7 +19,7 @@ import {
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
 export default function useProjectInfoDropdowns() {
-  const { dropdownOptions: mainSupplyMVOptions } = useDropdownOptions(`${MAIN_SUPPLY_MV_API}?fields=["*"]`, "voltage")
+  const { dropdownOptions: mainSupplyMVOptions } = useDropdownOptions(`${MAIN_SUPPLY_MV_API}?fields=["*"]`, "name")
   const { dropdownOptions: voltageVariationOptions } = useDropdownOptions(
     `${VOLTAGE_VARIATION_API}?fields=["*"]`,
     "variation"
