@@ -24,7 +24,10 @@ const ProjectInfoSchema = zod.object({
     message: "Project OC number is required",
   }),
   client_name: zod.string({ required_error: "Client name is required", message: "Client name is required" }),
-  project_location: zod.string(),
+  project_location: zod.string({
+    required_error: "Project location is required",
+    message: "Project location is required",
+  }),
   main_supply_mv: zod.string({ required_error: "Main supply MV is required", message: "Main supply MV is required" }),
   main_supply_mv_variation: zod.string({
     required_error: "Main supply MV variation is required",
@@ -512,7 +515,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
             </Button>
           </div>
           <div className="">
-            <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
+            <Button type="primary" htmlType="submit" loading={loading}>
               Save
             </Button>
           </div>

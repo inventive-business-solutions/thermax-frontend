@@ -2,8 +2,16 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons"
 import { Button, Popconfirm, Table, Tooltip } from "antd"
 import { useState } from "react"
 import { mutate } from "swr"
-import { deleteData } from "actions/crud-actions"
-import { DYNAMIC_DOCUMENT_API, PROJECT_PANEL_API } from "configs/api-endpoints"
+import { deleteData, getData } from "actions/crud-actions"
+import {
+  DYNAMIC_DOCUMENT_API,
+  MCC_CUM_PCC_MCC_PANEL,
+  MCC_PANEL,
+  MCC_PCC_PLC_PANEL_1,
+  MCC_PCC_PLC_PANEL_2,
+  PCC_PANEL,
+  PROJECT_PANEL_API,
+} from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { changeNameToKey } from "utils/helpers"
 import PanelFormModal from "./PanelFormModal"
@@ -14,10 +22,12 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
   const [projectRow, setProjectRow] = useState<any>(null)
   const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   const { data: projectPanelData } = useGetData(getProjectPanelDataUrl, false)
+  console.log(projectPanelData)
 
   const columns = [
     { title: "Panel Name", dataIndex: "panel_name", key: "panel_name" },
-    { title: "Panel Type", dataIndex: "panel_sub_type", key: "panel_type" },
+    { title: "Panel Sub Type", dataIndex: "panel_sub_type", key: "panel_sub_type" },
+    { title: "Panel Main Type", dataIndex: "panel_main_type", key: "panel_main_type" },
     {
       title: "Action",
       dataIndex: "action",
@@ -57,6 +67,63 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
 
   const handleDeletePanel = async (selectedRowID: string) => {
     await deleteData(`${DYNAMIC_DOCUMENT_API}/${selectedRowID}`, false)
+    const panelData = await getData(`${PROJECT_PANEL_API}/${selectedRowID}`, false)
+    const panelType = panelData?.panel_main_type
+    const panelId = panelData?.name
+    if (panelType === "MCC") {
+      const mccPanelData = await getData(
+        `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]`,
+        false
+      )
+      for (const mccPanel of mccPanelData || []) {
+        const mccPanelID = mccPanel.name
+        await deleteData(`${MCC_PANEL}/${mccPanelID}`, false)
+      }
+    }
+    if (panelType === "PCC") {
+      const pccPanelData = await getData(
+        `${PCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]`,
+        false
+      )
+      for (const pccPanel of pccPanelData || []) {
+        const pccPanelID = pccPanel.name
+        await deleteData(`${PCC_PANEL}/${pccPanelID}`, false)
+      }
+    }
+
+    if (panelType === "MCC cum PCC") {
+      // Delete all MCC Cum PCC MCC Panel Data
+      const mccCumPccMccPanelData = await getData(
+        `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`,
+        false
+      )
+      for (const mccCumPccMccPanel of mccCumPccMccPanelData || []) {
+        const mccCumPccMccPanelID = mccCumPccMccPanel.name
+        await deleteData(`${MCC_CUM_PCC_MCC_PANEL}/${mccCumPccMccPanelID}`, false)
+      }
+
+      // Delete all MCC_PCC_PLC_PANEL_1 Data
+      const mccPccPlcPanel1Data = await getData(
+        `${MCC_PCC_PLC_PANEL_1}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`,
+        false
+      )
+
+      for (const mccPccPlcPanel1 of mccPccPlcPanel1Data || []) {
+        const mccPccPlcPanel1ID = mccPccPlcPanel1.name
+        await deleteData(`${MCC_PCC_PLC_PANEL_1}/${mccPccPlcPanel1ID}`, false)
+      }
+
+      // Delete all MCC_PCC_PLC_PANEL_2 Data
+      const mccPccPlcPanel2Data = await getData(
+        `${MCC_PCC_PLC_PANEL_2}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`,
+        false
+      )
+
+      for (const mccPccPlcPanel2 of mccPccPlcPanel2Data) {
+        const mccPccPlcPanel2ID = mccPccPlcPanel2.name
+        await deleteData(`${MCC_PCC_PLC_PANEL_2}/${mccPccPlcPanel2ID}`, false)
+      }
+    }
     await deleteData(`${PROJECT_PANEL_API}/${selectedRowID}`, false)
     // Revalidate the cache
     mutate(getProjectPanelDataUrl)
