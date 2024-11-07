@@ -58,7 +58,7 @@ export default function PackageList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API, false)
+  const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API)
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
     await deleteData(`${MAIN_PKG_API}/${selectedRowID}`, false)

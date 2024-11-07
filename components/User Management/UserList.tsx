@@ -27,8 +27,8 @@ export const UserList = ({ userInfo }: any) => {
   const [userRow, setUserRow] = useState<any>(null)
   const [editEventTrigger, setEditEventTrigger] = useState(false)
   const thermaxUserUrl = `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`
-  const { data: thermaxUserList } = useGetData(thermaxUserUrl, false)
-  const { data: userList } = useGetData(`${USER_API}?fields=["*"]`, false)
+  const { data: thermaxUserList } = useGetData(thermaxUserUrl)
+  const { data: userList } = useGetData(`${USER_API}?fields=["*"]`)
   const mergedList = mergeLists([thermaxUserList, userList], [{ fromKey: "name", toKey: "name" }])
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {

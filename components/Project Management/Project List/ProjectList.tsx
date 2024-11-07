@@ -66,7 +66,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
   const getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
-  const { data: projectList, isLoading } = useGetData(getProjectUrl, false)
+  const { data: projectList, isLoading } = useGetData(getProjectUrl)
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
@@ -148,7 +148,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   }
 
   const handleDeleteProject = async (selectedRowID: string) => {
-    debugger
     // Delete Project Information
     await deleteData(`${PROJECT_INFO_API}/${selectedRowID}`, false)
 
@@ -156,15 +155,13 @@ export default function ProjectList({ userInfo, isComplete }: any) {
     await deleteData(`${STATIC_DOCUMENT_API}/${selectedRowID}`, false)
     // Delete Design Basis Revision History
     const designBasisRevisionHistory = await getData(
-      `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${selectedRowID}"]]&fields=["*"]`,
-      false
+      `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${selectedRowID}"]]&fields=["*"]`
     )
     for (const revision of designBasisRevisionHistory || []) {
       const revisionID = revision.name
       // Delete Design Basis General Information
       const designBasisGeneralInfo = await getData(
-        `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
 
       for (const dbGeneralInfo of designBasisGeneralInfo || []) {
@@ -174,8 +171,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete Motor Parameters
       const motorParameters = await getData(
-        `${MOTOR_PARAMETER_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${MOTOR_PARAMETER_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
       for (const motorParameter of motorParameters || []) {
         const motorParameterID = motorParameter.name
@@ -184,8 +180,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete Project Main Package
       const projectMainPackage = await getData(
-        `${PROJECT_MAIN_PKG_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${PROJECT_MAIN_PKG_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
       for (const projectMainPkg of projectMainPackage || []) {
         const projectMainPkgID = projectMainPkg.name
@@ -194,8 +189,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete Make of Components
       const makeOfComponents = await getData(
-        `${MAKE_OF_COMPONENT_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${MAKE_OF_COMPONENT_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
       for (const makeOfComponent of makeOfComponents || []) {
         const makeOfComponentID = makeOfComponent.name
@@ -204,8 +198,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete Common Configuration
       const commonConfigurations = await getData(
-        `${COMMON_CONFIGURATION}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${COMMON_CONFIGURATION}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
       for (const commonConfiguration of commonConfigurations || []) {
         const commonConfigurationID = commonConfiguration.name
@@ -213,20 +206,14 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       }
 
       // Delete all MCC Panel Data
-      const mccPanelData = await getData(
-        `${MCC_PANEL}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
-      )
+      const mccPanelData = await getData(`${MCC_PANEL}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`)
       for (const mccPanel of mccPanelData || []) {
         const mccPanelID = mccPanel.name
         await deleteData(`${MCC_PANEL}/${mccPanelID}`, false)
       }
 
       // Delete all PCC Panel Data
-      const pccPanelData = await getData(
-        `${PCC_PANEL}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
-      )
+      const pccPanelData = await getData(`${PCC_PANEL}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`)
       for (const pccPanel of pccPanelData || []) {
         const pccPanelID = pccPanel.name
         await deleteData(`${PCC_PANEL}/${pccPanelID}`, false)
@@ -234,8 +221,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete all MCC Cum PCC MCC Panel Data
       const mccCumPccMccPanelData = await getData(
-        `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
       for (const mccCumPccMccPanel of mccCumPccMccPanelData || []) {
         const mccCumPccMccPanelID = mccCumPccMccPanel.name
@@ -244,8 +230,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete all MCC_PCC_PLC_PANEL_1 Data
       const mccPccPlcPanel1Data = await getData(
-        `${MCC_PCC_PLC_PANEL_1}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${MCC_PCC_PLC_PANEL_1}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
 
       for (const mccPccPlcPanel1 of mccPccPlcPanel1Data || []) {
@@ -255,8 +240,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete all MCC_PCC_PLC_PANEL_2 Data
       const mccPccPlcPanel2Data = await getData(
-        `${MCC_PCC_PLC_PANEL_2}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${MCC_PCC_PLC_PANEL_2}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
 
       for (const mccPccPlcPanel2 of mccPccPlcPanel2Data) {
@@ -266,8 +250,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete Cable Tray Layout Data
       const cableTrayLayoutData = await getData(
-        `${CABLE_TRAY_LAYOUT}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${CABLE_TRAY_LAYOUT}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
       for (const cableTrayLayout of cableTrayLayoutData || []) {
         const cableTrayLayoutID = cableTrayLayout.name
@@ -276,8 +259,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete Earthing Layout Data
       const earthingLayoutData = await getData(
-        `${LAYOUT_EARTHING}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${LAYOUT_EARTHING}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
       for (const earthingLayout of earthingLayoutData || []) {
         const earthingLayoutID = earthingLayout.name
@@ -286,8 +268,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
       // Delete Project Panel Data
       const projectPanelData = await getData(
-        `${PROJECT_PANEL_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`,
-        false
+        `${PROJECT_PANEL_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
       for (const projectPanel of projectPanelData || []) {
         const projectPanelID = projectPanel.name

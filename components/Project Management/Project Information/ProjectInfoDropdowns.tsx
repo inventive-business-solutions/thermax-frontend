@@ -45,18 +45,15 @@ export default function useProjectInfoDropdowns() {
     `${UTILITY_SUPPLY_API}?fields=["*"]`,
     "utility_supply"
   )
-  const { dropdownOptions: frequencyOptions } = useDropdownOptions(`${FREQUENCY_API}?fields=["*"]`, "frequency")
-  const { dropdownOptions: ambientTempMaxOptions } = useDropdownOptions(
-    `${AMBIENT_TEMP_MAX_API}?fields=["*"]`,
-    "temperature"
-  )
-  const { dropdownOptions: faultLevelOptions } = useDropdownOptions(`${FAULT_LEVEL_API}?fields=["*"]`, "fault_level")
-  const { dropdownOptions: secOptions } = useDropdownOptions(`${SEC_API}?fields=["*"]`, "sec")
+  const { dropdownOptions: frequencyOptions } = useDropdownOptions(`${FREQUENCY_API}?fields=["*"]`, "name")
+  const { dropdownOptions: ambientTempMaxOptions } = useDropdownOptions(`${AMBIENT_TEMP_MAX_API}?fields=["*"]`, "name")
+  const { dropdownOptions: faultLevelOptions } = useDropdownOptions(`${FAULT_LEVEL_API}?fields=["*"]`, "name")
+  const { dropdownOptions: secOptions } = useDropdownOptions(`${SEC_API}?fields=["*"]`, "name")
   const { dropdownOptions: electricalDesignTempOptions } = useDropdownOptions(
     `${ELECTRICAL_DESIGN_TEMP_API}?fields=["*"]`,
-    "temperature"
+    "name"
   )
-  const { dropdownOptions: seismicZoneOptions } = useDropdownOptions(`${SEISMIC_ZONE_API}?fields=["*"]`, "zone")
+  const { dropdownOptions: seismicZoneOptions } = useDropdownOptions(`${SEISMIC_ZONE_API}?fields=["*"]`, "name")
 
   return {
     mainSupplyMVOptions,

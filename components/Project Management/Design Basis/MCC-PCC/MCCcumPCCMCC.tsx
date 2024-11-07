@@ -95,12 +95,9 @@ const getDefaultValues = (mccPanelData: any) => {
 }
 
 const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
-  console.log("MCCcumPCCMCCPanel", revision_id, panel_id)
   const { data: mccCumPCCMCCPanelData } = useGetData(
-    `${MCC_CUM_PCC_MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-    false
+    `${MCC_CUM_PCC_MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
-  // console.log("MCC Panel Data", mccPanelData)
   const [loading, setLoading] = useState(false)
 
   const {
@@ -160,11 +157,9 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
 
   const onSubmit = async (data: any) => {
     setLoading(true)
-    console.log("MCC Data", data)
     try {
       const mccPanelData = await getData(
-        `${MCC_CUM_PCC_MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-        false
+        `${MCC_CUM_PCC_MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
 
       if (mccPanelData && mccPanelData.length > 0) {

@@ -27,7 +27,7 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 }
 
 export default function SubPackageModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
-  const { data: areaClassificationData } = useGetData(AREA_CLASSIFICATION_API, false)
+  const { data: areaClassificationData } = useGetData(AREA_CLASSIFICATION_API)
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")

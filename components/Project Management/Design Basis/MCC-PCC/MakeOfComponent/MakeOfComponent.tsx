@@ -45,8 +45,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
   const [loading, setLoading] = useState(false)
 
   const { data: makeOfComponent } = useGetData(
-    `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-    false
+    `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
   const {
@@ -83,8 +82,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
     setLoading(true)
     try {
       const makeOfComponentData = await getData(
-        `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-        false
+        `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
 
       if (makeOfComponentData && makeOfComponentData.length > 0) {

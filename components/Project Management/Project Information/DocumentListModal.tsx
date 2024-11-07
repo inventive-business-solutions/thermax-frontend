@@ -80,20 +80,19 @@ export default function DocumentListModal({ open, setOpen, revision_id }: any) {
   const params = useParams()
   const [loading, setLoading] = useState(false)
   const { data: staticDocumentData } = useGetData(
-    `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`,
-    false
+    `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`
   )
   const staticDocumentList = React.useMemo(
     () => (staticDocumentData ? staticDocumentData[0] : {}),
     [staticDocumentData]
   )
   const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["name", "panel_name"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  const { data: projectPanelData } = useGetData(getProjectPanelDataUrl, false)
+  const { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
   const panel_ids = React.useMemo(() => projectPanelData?.map((item: any) => item.name), [projectPanelData])
   const quotedPanelIds = panel_ids?.map((id: string) => `"${id}"`).join(", ")
 
   const dynamicDocUrl = `${DYNAMIC_DOCUMENT_API}?fields=["*"]&filters=[["panel_id", "in", [${quotedPanelIds}]]]`
-  const { data: dynamicDocumentList } = useGetData(dynamicDocUrl, false)
+  const { data: dynamicDocumentList } = useGetData(dynamicDocUrl)
   const dynamicPanelDoc = React.useMemo(
     () => mergeLists([projectPanelData, dynamicDocumentList], [{ fromKey: "name", toKey: "panel_id" }]),
     [projectPanelData, dynamicDocumentList]
