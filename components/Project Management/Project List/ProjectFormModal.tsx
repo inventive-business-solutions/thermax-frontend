@@ -96,7 +96,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
       await createData(COMMON_CONFIGURATION, false, { revision_id })
       await createData(CABLE_TRAY_LAYOUT, false, { revision_id })
       await createData(LAYOUT_EARTHING, false, { revision_id })
-      console.log(projectCreatedata)
+      console.log("pcdata", projectCreatedata)
       setStatus("success")
       setMessage("New project created successfully")
     } catch (error: any) {
@@ -144,6 +144,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
     } finally {
       mutate(getProjectListUrl)
       setLoading(false)
+      setOpen(false)
     }
   }
 
