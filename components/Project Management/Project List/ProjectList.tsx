@@ -148,6 +148,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   }
 
   const handleDeleteProject = async (selectedRowID: string) => {
+    debugger
     // Delete Project Information
     await deleteData(`${PROJECT_INFO_API}/${selectedRowID}`, false)
 

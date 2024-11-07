@@ -126,6 +126,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const [loading, setLoading] = useState(false)
   const [openDocumentList, setOpenDocumentList] = useState(false)
   const projectData = React.useMemo(() => ({ ...projectMetadata, ...projectInfo }), [projectMetadata, projectInfo])
+  console.log(projectData)
   const {
     mainSupplyMVOptions,
     voltageVariationOptions,
@@ -184,7 +185,10 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="font-bold underline">PROJECT INFORMATION TAB</div>
+      <div className="flex">
+        <h2 className="font-bold underline">PROJECT INFORMATION TAB</h2>
+        <h2 className="font-semibold"> : {projectData?.project_name}</h2>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex gap-4">
           <div className="flex-1">

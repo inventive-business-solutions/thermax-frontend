@@ -16,6 +16,12 @@ export default function DocumentRevision() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const { data: revisionHistory } = useGetData(
+    `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${params.project_id}"]]&fields=["*"]&order_by=creation desc`,
+    false
+  )
+  console.log(revisionHistory)
+
   // Ensure columns is defined as an array of ColumnType
   const columns: TableColumnsType = [
     {
@@ -88,10 +94,7 @@ export default function DocumentRevision() {
       ),
     },
   ]
-  const { data: revisionHistory } = useGetData(
-    `${DESIGN_BASIS_REVISION_HISTORY_API}?fields=["*"]&order_by=creation desc`,
-    false
-  )
+
   const dataSource = revisionHistory?.map((item: any, index: number) => ({
     key: item.name,
     documentName: "Design Basis",
