@@ -87,8 +87,7 @@ const getDefaultValues = (cableTrayData: any) => {
 
 const CableTray = ({ revision_id }: { revision_id: string }) => {
   const { data: cableTrayData } = useGetData(
-    `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-    false
+    `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
   const [loading, setLoading] = useState(false)
@@ -139,11 +138,9 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
 
   const onSubmit = async (data: any) => {
     setLoading(true)
-    console.log("MCC Data", data)
     try {
       const cableTrayData = await getData(
-        `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-        false
+        `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
 
       if (cableTrayData && cableTrayData.length > 0) {

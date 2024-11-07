@@ -64,25 +64,25 @@ const ProjectInfoSchema = zod.object({
     required_error: "Utility supply phase is required",
     message: "Utility supply phase is required",
   }),
-  frequency: zod.number({ required_error: "Frequency is required", message: "Frequency is required" }),
+  frequency: zod.string({ required_error: "Frequency is required", message: "Frequency is required" }),
   frequency_variation: zod.string({
     required_error: "Frequency variation is required",
     message: "Frequency variation is required",
   }),
-  fault_level: zod.number({ required_error: "Fault level is required", message: "Fault level is required" }),
-  sec: zod.number({ required_error: "Sec is required", message: "Sec is required" }),
-  ambient_temperature_max: zod.number({
+  fault_level: zod.string({ required_error: "Fault level is required", message: "Fault level is required" }),
+  sec: zod.string({ required_error: "Sec is required", message: "Sec is required" }),
+  ambient_temperature_max: zod.string({
     required_error: "Ambient temperature max is required",
     message: "Ambient temperature max is required",
   }),
   ambient_temperature_min: zod
     .string({ required_error: "Ambient temperature min is required", message: "Ambient temperature min is required" })
     .min(1, "Ambient temperature min is required"),
-  electrical_design_temperature: zod.number({
+  electrical_design_temperature: zod.string({
     required_error: "Electrical design temperature is required",
     message: "Electrical design temperature is required",
   }),
-  seismic_zone: zod.number({ required_error: "Seismic zone is required", message: "Seismic zone is required" }),
+  seismic_zone: zod.string({ required_error: "Seismic zone is required", message: "Seismic zone is required" }),
 })
 
 const getDefaultValues = (isEdit: boolean, projectData: any) => {
@@ -104,13 +104,13 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
     utility_supply_variation: projectData?.utility_supply_variation || "+/- 10.0",
     utility_supply_phase: projectData?.utility_supply_phase || "1 Phase",
     frequency_variation: projectData?.frequency_variation || "+/- 5.0",
-    frequency: projectData?.frequency || 50,
-    fault_level: projectData?.fault_level || 10,
-    sec: projectData?.sec || 1,
-    ambient_temperature_max: projectData?.ambient_temperature_max || 40,
+    frequency: projectData?.frequency || "50",
+    fault_level: projectData?.fault_level || "10",
+    sec: projectData?.sec || "1",
+    ambient_temperature_max: projectData?.ambient_temperature_max || "40",
     ambient_temperature_min: projectData?.ambient_temperature_min || "40",
-    electrical_design_temperature: projectData?.electrical_design_temperature || 50,
-    seismic_zone: projectData?.seismic_zone || 2,
+    electrical_design_temperature: projectData?.electrical_design_temperature || "50",
+    seismic_zone: projectData?.seismic_zone || "2",
   }
 }
 
@@ -120,13 +120,12 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
 
-  const { data: projectMetadata } = useGetData(getProjectMetadataUrl, false)
-  const { data: projectInfo } = useGetData(getProjectInfoUrl, false)
+  const { data: projectMetadata } = useGetData(getProjectMetadataUrl)
+  const { data: projectInfo } = useGetData(getProjectInfoUrl)
 
   const [loading, setLoading] = useState(false)
   const [openDocumentList, setOpenDocumentList] = useState(false)
   const projectData = React.useMemo(() => ({ ...projectMetadata, ...projectInfo }), [projectMetadata, projectInfo])
-  console.log(projectData)
   const {
     mainSupplyMVOptions,
     voltageVariationOptions,

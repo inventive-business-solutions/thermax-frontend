@@ -47,7 +47,7 @@ const handleAPIError = (error: any) => {
 
 export const checkUserExists = async (email: string) => {
   try {
-    await getData(`${USER_API}/${email}`, true)
+    await getData(`${USER_API}/${email}`)
     return true
   } catch (error: any) {
     throw error
@@ -56,7 +56,7 @@ export const checkUserExists = async (email: string) => {
 
 export const checkNextAuthUserExists = async (email: string): Promise<boolean> => {
   try {
-    await getData(`${NEXT_AUTH_USER_API}/${email}`, true)
+    await getData(`${NEXT_AUTH_USER_API}/${email}`)
     return true
   } catch (error: any) {
     throw error

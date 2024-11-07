@@ -22,7 +22,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   const params = useParams()
   const [selectedPkg, setSelectedPkg] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
-  const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`, false)
+  const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`)
   const [generalInfoData, setGeneralInfoData] = useState<any>({})
   const [refresh, setRefresh] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
@@ -38,11 +38,10 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   useEffect(() => {
     const fetchData = async () => {
       const generalInfoDefaultData = await getData(
-        `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-        false
+        `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
 
-      const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`, false)
+      const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`)
       if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
         setGeneralInfoData({
           is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
@@ -71,7 +70,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
       setAddPkgLoading(false)
       return
     }
-    const subPkgData = await getData(subPkgUrl, false)
+    const subPkgData = await getData(subPkgUrl)
     const subPkgCreateData = subPkgData?.map((subPkg: any) => ({
       main_package_name: selectedPkg,
       sub_package_name: subPkg?.package_name,
@@ -91,8 +90,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   const handleSave = async () => {
     setSaveLoading(true)
     const existingDesignBasis = await getData(
-      `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["revision_id", "=", "${revision_id}"]]`,
-      false
+      `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["revision_id", "=", "${revision_id}"]]`
     )
     if (existingDesignBasis && existingDesignBasis.length > 0) {
       await updateData(`${DESIGN_BASIS_GENERAL_INFO_API}/${existingDesignBasis[0].name}`, false, {
@@ -136,8 +134,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
       }
 
       const motorParameters = await getData(
-        `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-        false
+        `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
 
       const isHazardousAreaPresent = hasHazardousArea ? true : false

@@ -120,19 +120,16 @@ const getDefaultValues = (plcData: any) => {
 
 const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
   const { data: plcPanelData1 } = useGetData(
-    `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-    false
+    `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
   const { data: plcPanelData2 } = useGetData(
-    `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-    false
+    `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
 
   const plcPanelData = useMemo(
     () => [...(plcPanelData1 || []), ...(plcPanelData2 || [])],
     [plcPanelData1, plcPanelData2]
   )
-  // console.log("MCC Panel Data", mccPanelData)
   const [loading, setLoading] = useState(false)
   const {
     plc_ups_scope_options,
@@ -189,15 +186,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
 
   const onSubmit = async (data: any) => {
     setLoading(true)
-    console.log("MCC Data", data)
     try {
       const mccPanelData1 = await getData(
-        `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-        false
+        `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
       const mccPanelData2 = await getData(
-        `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-        false
+        `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
 
       if (mccPanelData1 && mccPanelData1.length > 0) {
@@ -218,7 +212,6 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
 
       message.success("PLC Data updated successfully")
     } catch (error) {
-      console.log("error: ", error)
       handleError(error)
     } finally {
       setLoading(false)

@@ -35,8 +35,7 @@ export default function GIPkgSelectionTabs({
     const item = tabItems.find((item: any) => item.key === targetKey)
     const label = item?.label
     const data = await getData(
-      `${PROJECT_MAIN_PKG_API}?fields=["name"]&filters=[["main_package_name", "=", "${label}"]]`,
-      false
+      `${PROJECT_MAIN_PKG_API}?fields=["name"]&filters=[["main_package_name", "=", "${label}"]]`
     )
     if (data && data.length > 0) {
       await deleteData(`${PROJECT_MAIN_PKG_API}/${data[0].name}`, false)
