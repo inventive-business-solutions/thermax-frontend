@@ -95,10 +95,8 @@ const getDefaultValues = (pccPanelData: any) => {
 
 const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
   const { data: pccPanelData } = useGetData(
-    `${PCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-    false
+    `${PCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
-  // console.log("MCC Panel Data", mccPanelData)
   const [loading, setLoading] = useState(false)
 
   const {
@@ -135,13 +133,11 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     ppc_pretreatment_panel_standard_options,
   } = useMCCPCCPanelDropdowns()
 
-  const { control, handleSubmit, watch, formState, reset } = useForm({
+  const { control, handleSubmit, watch, reset } = useForm({
     resolver: zodResolver(pccPanelValidationSchema),
     defaultValues: getDefaultValues(pccPanelData?.[0]),
     mode: "onSubmit",
   })
-
-  console.log("Form Errors", formState.errors)
 
   useEffect(() => {
     reset(getDefaultValues(pccPanelData?.[0]))
@@ -158,11 +154,9 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   const onSubmit = async (data: any) => {
     setLoading(true)
-    console.log("PCC Data", data)
     try {
       const pccPanelData = await getData(
-        `${PCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-        false
+        `${PCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
 
       if (pccPanelData && pccPanelData.length > 0) {

@@ -21,8 +21,8 @@ import {
   PCC_PANEL,
   PROJECT_PANEL_API,
 } from "configs/api-endpoints"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
+import { useDropdownOptions } from "hooks/useDropdownOptions"
 
 const PanelFormValidationSchema = zod.object({
   panel_name: zod
@@ -84,7 +84,6 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
   }, [panelSubType, panelTypeOptions, setValue])
 
   const handleCreatePanel = async (panelData: any) => {
-    console.log("panelData", panelData)
     const panelType = panelData?.panel_main_type
     try {
       const panelRes = await createData(PROJECT_PANEL_API, false, panelData)

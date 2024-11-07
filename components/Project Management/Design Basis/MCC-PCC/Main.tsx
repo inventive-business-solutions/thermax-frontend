@@ -2,6 +2,7 @@
 import { Tabs } from "antd"
 import React, { useEffect, useState } from "react"
 import { PROJECT_PANEL_API } from "configs/api-endpoints"
+import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import CommonConfiguration from "./CommonConfiguration/CommonConfiguration"
@@ -9,8 +10,6 @@ import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
 import MCCcumPCCPanel from "./MCCcumPCC"
 import MCCPanel from "./MCCPanel"
 import PCCPanel from "./PCCPanel"
-import { uniqueId } from "lodash"
-import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 
 const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
@@ -21,8 +20,7 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
   }, [])
 
   const { data: projectPanelData } = useGetData(
-    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-    false
+    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
   const TabMCC = [
@@ -59,7 +57,6 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
       })
     }
   })
-  console.log("TabMCC", TabMCC)
 
   const onChange = (key: string) => {
     setActiveKey(key) // Update active tab

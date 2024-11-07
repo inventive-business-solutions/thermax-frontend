@@ -17,10 +17,8 @@ export default function DocumentRevision() {
   }, [])
 
   const { data: revisionHistory } = useGetData(
-    `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${params.project_id}"]]&fields=["*"]&order_by=creation desc`,
-    false
+    `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${params.project_id}"]]&fields=["*"]&order_by=creation desc`
   )
-  console.log(revisionHistory)
 
   // Ensure columns is defined as an array of ColumnType
   const columns: TableColumnsType = [

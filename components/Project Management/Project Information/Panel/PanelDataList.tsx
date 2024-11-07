@@ -12,18 +12,17 @@ import {
   PCC_PANEL,
   PROJECT_PANEL_API,
 } from "configs/api-endpoints"
+import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
 import { changeNameToKey } from "utils/helpers"
 import PanelFormModal from "./PanelFormModal"
-import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 
 export default function PanelDataList({ revision_id }: { revision_id: string }) {
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
   const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  const { data: projectPanelData } = useGetData(getProjectPanelDataUrl, false)
-  console.log(projectPanelData)
+  const { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
 
   const columns = [
     { title: "Panel Name", dataIndex: "panel_name", key: "panel_name" },
@@ -68,13 +67,12 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
 
   const handleDeletePanel = async (selectedRowID: string) => {
     await deleteData(`${DYNAMIC_DOCUMENT_API}/${selectedRowID}`, false)
-    const panelData = await getData(`${PROJECT_PANEL_API}/${selectedRowID}`, false)
+    const panelData = await getData(`${PROJECT_PANEL_API}/${selectedRowID}`)
     const panelType = panelData?.panel_main_type
     const panelId = panelData?.name
     if (panelType === MCC_PANEL_TYPE) {
       const mccPanelData = await getData(
-        `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]`,
-        false
+        `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]`
       )
       for (const mccPanel of mccPanelData || []) {
         const mccPanelID = mccPanel.name
@@ -83,8 +81,7 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
     }
     if (panelType === PCC_PANEL_TYPE) {
       const pccPanelData = await getData(
-        `${PCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]`,
-        false
+        `${PCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]`
       )
       for (const pccPanel of pccPanelData || []) {
         const pccPanelID = pccPanel.name
@@ -95,8 +92,7 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
     if (panelType === MCCcumPCC_PANEL_TYPE) {
       // Delete all MCC Cum PCC MCC Panel Data
       const mccCumPccMccPanelData = await getData(
-        `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`,
-        false
+        `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`
       )
       for (const mccCumPccMccPanel of mccCumPccMccPanelData || []) {
         const mccCumPccMccPanelID = mccCumPccMccPanel.name
@@ -105,8 +101,7 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
 
       // Delete all MCC_PCC_PLC_PANEL_1 Data
       const mccPccPlcPanel1Data = await getData(
-        `${MCC_PCC_PLC_PANEL_1}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`,
-        false
+        `${MCC_PCC_PLC_PANEL_1}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`
       )
 
       for (const mccPccPlcPanel1 of mccPccPlcPanel1Data || []) {
@@ -116,8 +111,7 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
 
       // Delete all MCC_PCC_PLC_PANEL_2 Data
       const mccPccPlcPanel2Data = await getData(
-        `${MCC_PCC_PLC_PANEL_2}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`,
-        false
+        `${MCC_PCC_PLC_PANEL_2}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`
       )
 
       for (const mccPccPlcPanel2 of mccPccPlcPanel2Data) {

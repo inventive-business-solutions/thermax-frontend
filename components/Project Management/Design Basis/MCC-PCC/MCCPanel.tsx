@@ -96,10 +96,8 @@ const getDefaultValues = (mccPanelData: any) => {
 
 const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
   const { data: mccPanelData } = useGetData(
-    `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-    false
+    `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
-  // console.log("MCC Panel Data", mccPanelData)
   const [loading, setLoading] = useState(false)
 
   const {
@@ -138,7 +136,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     ppc_pretreatment_panel_standard_options,
   } = useMCCPCCPanelDropdowns()
 
-  const { control, handleSubmit, reset, watch, formState } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     resolver: zodResolver(mccPanelValidationSchema),
     defaultValues: getDefaultValues(mccPanelData?.[0]),
     mode: "onSubmit",
@@ -159,11 +157,9 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   const onSubmit = async (data: any) => {
     setLoading(true)
-    console.log("MCC Data", data)
     try {
       const mccPanelData = await getData(
-        `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`,
-        false
+        `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
 
       if (mccPanelData && mccPanelData.length > 0) {

@@ -4,9 +4,9 @@ import { FloatButton } from "antd"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import React from "react"
-import { useLoading } from "hooks/useLoading"
-import { useGetData } from "hooks/useCRUD"
 import { PROJECT_API } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
 
 export default function DesignBasisLayout({
   children,
@@ -17,7 +17,7 @@ export default function DesignBasisLayout({
 }) {
   const router = useRouter()
   const { setLoading: setModalLoading } = useLoading()
-  const { data: projectData }: any = useGetData(`${PROJECT_API}/${params?.project_id}`, false)
+  const { data: projectData }: any = useGetData(`${PROJECT_API}/${params?.project_id}`)
 
   const handleTabChange = (path: string) => {
     setModalLoading(true)
