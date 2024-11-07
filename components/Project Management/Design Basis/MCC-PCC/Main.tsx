@@ -9,6 +9,8 @@ import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
 import MCCcumPCCPanel from "./MCCcumPCC"
 import MCCPanel from "./MCCPanel"
 import PCCPanel from "./PCCPanel"
+import { uniqueId } from "lodash"
+import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 
 const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
@@ -22,8 +24,6 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
     `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
     false
   )
-
-  console.log("projectPanelData", projectPanelData)
 
   const TabMCC = [
     {
@@ -39,22 +39,22 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
   ]
 
   projectPanelData?.forEach((panel: any) => {
-    if (panel.panel_main_type === "MCC") {
+    if (panel.panel_main_type === MCC_PANEL_TYPE) {
       TabMCC.push({
         label: panel?.panel_name,
-        key: "3",
+        key: panel?.name,
         children: <MCCPanel revision_id={revision_id} panel_id={panel?.name} />,
       })
-    } else if (panel.panel_main_type === "PCC") {
+    } else if (panel.panel_main_type === PCC_PANEL_TYPE) {
       TabMCC.push({
         label: panel?.panel_name,
-        key: "4",
+        key: panel?.name,
         children: <PCCPanel revision_id={revision_id} panel_id={panel?.name} />,
       })
-    } else if (panel.panel_main_type === "MCCcumPCC") {
+    } else if (panel.panel_main_type === MCCcumPCC_PANEL_TYPE) {
       TabMCC.push({
         label: panel?.panel_name,
-        key: "5",
+        key: panel?.name,
         children: <MCCcumPCCPanel revision_id={revision_id} panel_id={panel?.name} />,
       })
     }

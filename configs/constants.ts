@@ -29,6 +29,11 @@ export const S3FolderMapping = {
   [WWS_SPG]: "WWS-SPG",
 }
 
+// Panel Types
+export const MCC_PANEL_TYPE = "MCC"
+export const PCC_PANEL_TYPE = "PCC"
+export const MCCcumPCC_PANEL_TYPE = "MCC cum PCC"
+
 // Role Names
 export const THERMAX_USER = "Thermax User"
 export const THERMAX_SUPERUSER = `Thermax Superuser`

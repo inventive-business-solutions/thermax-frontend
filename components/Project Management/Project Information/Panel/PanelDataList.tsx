@@ -15,6 +15,7 @@ import {
 import { useGetData } from "hooks/useCRUD"
 import { changeNameToKey } from "utils/helpers"
 import PanelFormModal from "./PanelFormModal"
+import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 
 export default function PanelDataList({ revision_id }: { revision_id: string }) {
   const [open, setOpen] = useState(false)
@@ -70,7 +71,7 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
     const panelData = await getData(`${PROJECT_PANEL_API}/${selectedRowID}`, false)
     const panelType = panelData?.panel_main_type
     const panelId = panelData?.name
-    if (panelType === "MCC") {
+    if (panelType === MCC_PANEL_TYPE) {
       const mccPanelData = await getData(
         `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]`,
         false
@@ -80,7 +81,7 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
         await deleteData(`${MCC_PANEL}/${mccPanelID}`, false)
       }
     }
-    if (panelType === "PCC") {
+    if (panelType === PCC_PANEL_TYPE) {
       const pccPanelData = await getData(
         `${PCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]`,
         false
@@ -91,7 +92,7 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
       }
     }
 
-    if (panelType === "MCC cum PCC") {
+    if (panelType === MCCcumPCC_PANEL_TYPE) {
       // Delete all MCC Cum PCC MCC Panel Data
       const mccCumPccMccPanelData = await getData(
         `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`,
