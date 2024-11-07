@@ -17,7 +17,7 @@ const PanelFormValidationSchema = zod.object({
   panel_name: zod
     .string({ required_error: "Panel name is required", message: "Panel name is required" })
     .min(1, { message: "Panel name is required" }),
-  panel_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
+  panel_sub_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
     message: "Panel type is required",
   }),
 })
@@ -25,25 +25,26 @@ const PanelFormValidationSchema = zod.object({
 const getDefaultValues = (editMode: boolean, values: any) => {
   return {
     panel_name: editMode ? values?.panel_name : null,
-    panel_type: editMode ? values?.panel_type : null,
+    panel_sub_type: editMode ? values?.panel_sub_type : null,
+    panel_main_type: editMode ? values?.panel_main_type : null,
   }
 }
 
-export default function PanelFormModal({ open, setOpen, editMode, values, getProjectPanelUrl, projectId }: any) {
+export default function PanelFormModal({ open, setOpen, editMode, values, getProjectPanelUrl, revisionId }: any) {
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
   const { dropdownOptions: panelTypeOptions } = useDropdownOptions(`${PANEL_TYPE_API}?fields=["*"]`, "panel_name")
-
   const {
     control: panelControl,
     handleSubmit: panelHandleSubmit,
     reset: panelReset,
-    formState: panelFormState,
+    setValue,
+    watch,
   } = useForm({
     resolver: zodResolver(PanelFormValidationSchema),
     defaultValues: getDefaultValues(editMode, values),
-    mode: "onBlur",
+    mode: "onSubmit",
   })
 
   useEffect(() => {
@@ -96,7 +97,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
 
   const onSubmit: SubmitHandler<zod.infer<typeof PanelFormValidationSchema>> = async (data: any) => {
     setLoading(true)
-    data = { ...data, project_id: projectId }
+    data = { ...data, revision_id: revisionId }
     try {
       if (editMode) {
         await handleUpdatePanel(data)
@@ -110,6 +111,16 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
       setLoading(false)
     }
   }
+  // Watch panel_sub_type changes
+  const panelSubType = watch("panel_sub_type")
+
+  // Effect to set panel_main_type based on panel_sub_type selection
+  useEffect(() => {
+    if (panelSubType) {
+      const selectedPanelType = panelTypeOptions.find((option: any) => option.name === panelSubType)
+      setValue("panel_main_type", selectedPanelType?.panel_type)
+    }
+  }, [panelSubType, panelTypeOptions, setValue])
 
   return (
     <Modal
@@ -125,16 +136,19 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
           </div>
           <div>
             <CustomSingleSelect
-              name="panel_type"
+              name="panel_sub_type"
               control={panelControl}
               label="Panel Type"
               options={panelTypeOptions}
             />
           </div>
+          <div>
+            <CustomTextInput name="panel_main_type" control={panelControl} label="Panel Type" disabled />
+          </div>
         </div>
         <AlertNotification message={message} status={status} />
         <div className="text-end">
-          <Button type="primary" htmlType="submit" loading={loading} disabled={!panelFormState.isValid}>
+          <Button type="primary" htmlType="submit" loading={loading}>
             Save
           </Button>
         </div>

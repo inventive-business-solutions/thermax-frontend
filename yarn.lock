@@ -3472,6 +3472,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jspreadsheet/formula@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@jspreadsheet/formula@npm:2.0.2"
+  checksum: 10c0/657dc75e7b3ec11d8e12e7e8f1821ccfdd5a9f88ec7bb2a00b76faf5f2be7eb373f3f15a4787b282218652378c60eaaa661791ab255a0ae8c51211808bd581cf
+  languageName: node
+  linkType: hard
+
 "@juggle/resize-observer@npm:^3.3.1":
   version: 3.4.0
   resolution: "@juggle/resize-observer@npm:3.4.0"
@@ -15591,6 +15598,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jexcel@npm:^4.6.1":
+  version: 4.6.1
+  resolution: "jexcel@npm:4.6.1"
+  dependencies:
+    jsuites: "npm:^4.1.0"
+  checksum: 10c0/fdcd5e52a4fab6e908a80221e1871ec7ba1cd182afe17976bcccfef8f4e6b56e0aea7d059ba89b2e92ca845d078bc3ed3571f9596374389abc34af39dd36a87a
+  languageName: node
+  linkType: hard
+
 "jiti@npm:^1.20.0, jiti@npm:^1.21.0":
   version: 1.21.0
   resolution: "jiti@npm:1.21.0"
@@ -15904,6 +15920,30 @@ __metadata:
   version: 1.3.1
   resolution: "jsonparse@npm:1.3.1"
   checksum: 10c0/89bc68080cd0a0e276d4b5ab1b79cacd68f562467008d176dc23e16e97d4efec9e21741d92ba5087a8433526a45a7e6a9d5ef25408696c402ca1cfbc01a90bf0
+  languageName: node
+  linkType: hard
+
+"jspreadsheet-ce@npm:^4.15.0":
+  version: 4.15.0
+  resolution: "jspreadsheet-ce@npm:4.15.0"
+  dependencies:
+    "@jspreadsheet/formula": "npm:^2.0.2"
+    jsuites: "npm:^5.6.5"
+  checksum: 10c0/78d246654807f8e566bb55eb2d0cab99205c37372b167fccd8e977317be2e5876dcc2d4dd0e8477c286508467cd229990d0e8ecdb629cfef91acb68a6f32730e
+  languageName: node
+  linkType: hard
+
+"jsuites@npm:^4.1.0":
+  version: 4.17.7
+  resolution: "jsuites@npm:4.17.7"
+  checksum: 10c0/4f226eb11e19d09a913013f329592c52dbc1d605a4e1c3d986331a0fb342c265b8e496d502ea16cb0f1904ea48357a7b7b2535dc1f99585a1078dfaa66068291
+  languageName: node
+  linkType: hard
+
+"jsuites@npm:^5.6.5":
+  version: 5.7.0
+  resolution: "jsuites@npm:5.7.0"
+  checksum: 10c0/fc5ffbf8d22f948c64f3a374d2ff8088103b513a2057b63552cf113c78ea08fdb52810591514c24dbe5e4ee839da3d2b4c70398cef0aa9d23106be305b471acb
   languageName: node
   linkType: hard
 
@@ -17115,6 +17155,8 @@ __metadata:
     gzip-size: "npm:6.0.0"
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
+    jexcel: "npm:^4.6.1"
+    jspreadsheet-ce: "npm:^4.15.0"
     lodash: "npm:^4.17.21"
     mkdirp: "npm:^3.0.1"
     next: "npm:^14.2.3"

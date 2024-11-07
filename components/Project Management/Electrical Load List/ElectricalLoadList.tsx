@@ -6,6 +6,7 @@ import CableSchedule from "./CableSchedule"
 import Download from "./Download"
 import MotorCanopyList from "./MotorCanopyList"
 import ExcelGrid from "./Electrical Load List/LoadListComponent"
+// import ExcelGrid from "./Electrical Load List/LoadListComponent"
 // import GeneralInfo from "./GeneralInfo"
 // import MotorParameters from "./MotorParameters"
 // import MainMCC from "./MCC-PCC/Main"
@@ -48,7 +49,7 @@ const ElectricalLoadList = () => {
 
           <div className="relative mb-6 flex w-full min-w-0 flex-col break-words rounded bg-white">
             <div className="flex-auto px-4 py-5">
-              <div className="tab-content tab-space">
+              <div className="tab-content tab-space overflow-auto">
                 {/* Tab Content */}
                 <div className={openTab === "1" ? "block" : "hidden"} id="link1">
                   <Download />

@@ -72,6 +72,9 @@ export const deleteData = async (url: string, useAdminClient: boolean) => {
   try {
     await apiClient.delete(url)
   } catch (error: any) {
+    if (error.response?.status === 404) {
+      return
+    }
     handleAPIError(error)
   }
 }

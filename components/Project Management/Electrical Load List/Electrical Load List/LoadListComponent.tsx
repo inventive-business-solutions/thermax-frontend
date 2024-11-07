@@ -1,736 +1,360 @@
-import React, { useEffect, useState } from "react"
-import  DataGrid,{ Column } from "react-data-grid"
-// import DataGrid, { SelectColumn, textEditor } from '../excel-utility';
-
-import "react-data-grid/lib/styles.css"
-import "./LoadListComponent.css"
-import SelectEditor from "../common/SelectEditor"
-interface RowData {
-  id: number
-  feederTagNo: string
-  serviceDescription: string
-  workingLoadInKW: number
-  standByLoadInKW: number
-  kva: number
-  starterType: string // dropdown
-  supplyVoltage: string
-  phase: "1 Phase" | "3 Phase" // dropdown
-  startingTime: string
-  eocrApplicable: "Yes" | "No" // dropdown
-  lpbsType: "TYPE-1" | "TYPE-2" | "TYPE-3" // dropdown
-  controlScheme: string
-  panel: string
-  busSegregation: "A" | "B" | "C" // dropdown
-  motorRpm: number
-  typeOfMotorMounting: "Foot Mounted (B3)" | "Flange Mounted (B5)" | "Foot & Flange Mounted" // dropdown
-  motorFrameSize: string
-  motorGd2: number
-  equipmentGd2: number
-  bkw: number
-  typeOfCoupling: "Direct" | "Flexible" | "Belt Driven" // dropdown
-  package: string
-  area: "Safe" | "Hazardous" // dropdown
-  standard: "IEC" | "ATEX" | "NA" // dropdown
-  zone: "Zone 1" | "Zone 2" | "NA" // dropdown
-  gasGroup: "IIA" | "IIB" | "IIC" | "NA" // dropdown
-  temperatureClass: "T1" | "T2" | "T3" | "T4" | "T5" | "T6" | "NA" // dropdown
-  remark: string
-  rev: string
-  spaceHeater: "Yes" | "No" // dropdown
-  bearingRtd: "Yes" | "No" // dropdown
-  windingRtd: "Yes" | "No" // dropdown
-  thermistor: "Yes" | "No" // dropdown
-  typeOfBearing: "Ball" | "Roller" | "Sleeve" // dropdown
-  powerFactor: number
-  motorEfficiency: "IE-1" | "IE-2" | "IE-3" | "IE-4" // dropdown
-  localIsolator: "Yes" | "No" // dropdown
-  panelAmmeter: "Y-Phase With CT" | "Digital" | "None" // dropdown
-  motorMake: "TL Std" | "ABB" | "Siemens" | "Other" // dropdown
-  motorScope: "THERMAX" | "VENDOR" // dropdown
-  motorLocation: "INDOOR" | "OUTDOOR" // dropdown
-}
-// interface Row {
-//   feederTagNo: string
-//   serviceDescription: string
-//   workingLoadKW: number
-//   standbyLoadKW: number
-//   kva: number
-//   starterType: string
-//   supplyVoltage: number
-//   phase: string
-//   startingTime: number
-//   eocrApplicable: boolean
-//   lpbsType: string
-//   controlScheme: string
-//   panel: string
-//   busSegregation: boolean
-//   motorRpm: number
-//   motorMounting: string
-//   motorFrameSize?: string
-//   motorGD2?: string
-//   drivenEquipmentGD2?: string
-//   bkw?: string
-//   typeOfCoupling?: string
-//   package?: string
-//   area?: string
-//   standard?: string
-//   zone?: string
-//   gasGroup?: string
-//   temperatureClass?: string
-//   remark?: string
-//   rev?: string
-//   spaceHeater?: string
-//   bearingRTD?: string
-//   windingRTD?: string
-//   thermistor?: string
-//   typeOfBearing?: string
-//   powerFactor?: string
-//   motorEfficiency?: string
-//   localIsolator?: string
-//   panelAmmeter?: string
-//   motorMake?: string
-//   motorScope: string
-//   motorLocation?: string
-//   motorPartCode?: string
-//   motorRatedCurrent?: string
-// }
-const columns: readonly Column<RowData>[] = [
-  { key: "id", name: "Sr. No.", width: "max-content" },
-  { key: "feederTagNo", name: "FEEDER TAG NO", width: "max-content" },
-  { key: "serviceDescription", name: "SERVICE DESCRIPTION", width: "max-content" },
-  { key: "workingLoadInKW", name: "WORKING LOAD IN KW", width: "max-content" },
-  { key: "standByLoadInKW", name: "STAND-BY LOAD IN KW", width: "max-content" },
-  { key: "kva", name: "KVA", width: "max-content" },
-  {
-    key: "starterType",
-    name: "STARTER TYPE",
-    width: "max-content",
-    renderEditCell: ({ row, onRowChange }) => (
-      <SelectEditor
-        row={row}
-        onRowChange={onRowChange}
-        value={row.starterType}
-        options={["VFD", "DOL", "Star Delta"]}
-        columnKey="starterType"
-      />
-    ),
-  },
-  { key: "supplyVoltage", name: "SUPPLY VOLTAGE", width: "max-content", },
-  {
-    key: "phase",
-    name: "PHASE",
-    width: "max-content",
-    renderEditCell: ({ row, onRowChange }) => (
-      <SelectEditor
-        row={row}
-        onRowChange={onRowChange}
-        value={row.phase}
-        options={["1 Phase", "3 Phase"]}
-        columnKey="phase"
-      />
-    ),
-  },
-  {
-    key: "startingTime",
-    name: "STARTING TIME",
-    width: "max-content",
-    renderEditCell: ({ row, onRowChange }) => (
-      <SelectEditor
-        row={row}
-        onRowChange={onRowChange}
-        value={row.startingTime}
-        options={["10 Sec", "20 Sec", "30 Sec"]}
-        columnKey="startingTime"
-      />
-    ),
-  },
-  {
-    key: "eocrApplicable",
-    name: "EOCR APPLICABLE",
-    width: "max-content",
-    renderEditCell: ({ row, onRowChange }) => (
-      <SelectEditor
-        row={row}
-        onRowChange={onRowChange}
-        value={row.eocrApplicable}
-        options={["Yes", "No"]}
-        columnKey="eocrApplicable"
-      />
-    ),
-  },
-  { key: "lpbsType", name: "LPBS TYPE", width: "max-content" },
-  { key: "controlScheme", name: "CONTROL SCHEME", width: "max-content" },
-  { key: "panel", name: "PANEL", width: "max-content" },
-  {
-    key: "busSegregation",
-    name: "BUS SEGREGATION",
-    width: "max-content",
-    renderEditCell: ({ row, onRowChange }) => (
-      <SelectEditor
-        row={row}
-        onRowChange={onRowChange}
-        value={row.busSegregation}
-        options={["A", "B", "C"]}
-        columnKey="busSegregation"
-      />
-    ),
-  },
-  { key: "motorRpm", name: "MOTOR RPM", width: "max-content" },
-  { key: "typeOfMotorMounting", name: "TYPE OF MOTOR MOUNTING", width: "max-content" },
-  { key: "motorFrameSize", name: "MOTOR FRAME SIZE", width: "max-content" },
-  { key: "motorGd2", name: "MOTOR GD 2", width: "max-content" },
-  { key: "equipmentGd2", name: "EQUIPMENT GD2", width: "max-content" },
-  { key: "bkw", name: "BKW", width: "max-content" },
-  { key: "typeOfCoupling", name: "TYPE OF COUPLING", width: "max-content" },
-  { key: "package", name: "PACKAGE", width: "max-content" },
-  { key: "area", name: "AREA", width: "max-content" },
-  { key: "standard", name: "STANDARD", width: "max-content" },
-  { key: "zone", name: "ZONE", width: "max-content" },
-  { key: "gasGroup", name: "GAS GROUP", width: "max-content" },
-  { key: "temperatureClass", name: "TEMPERATURE CLASS", width: "max-content" },
-  { key: "remark", name: "REMARK", width: "max-content" },
-  { key: "rev", name: "REV.", width: "max-content" },
-  { key: "spaceHeater", name: "SPACE HEATER", width: "max-content" },
-  { key: "bearingRtd", name: "BEARING RTD", width: "max-content" },
-  { key: "windingRtd", name: "WINDING RTD", width: "max-content" },
-  { key: "thermistor", name: "THERMISTOR", width: "max-content" },
-  { key: "typeOfBearing", name: "TYPE OF BEARING", width: "max-content" },
-  { key: "powerFactor", name: "POWER FACTOR", width: "max-content" },
-  { key: "motorEfficiency", name: "MOTOR EFFICIENCY", width: "max-content" },
-  { key: "localIsolator", name: "LOCAL ISOLATOR", width: "max-content" },
-  { key: "panelAmmeter", name: "PANEL AMMETER", width: "max-content" },
-  { key: "motorMake", name: "MOTOR MAKE", width: "max-content" },
-  { key: "motorScope", name: "MOTOR SCOPE", width: "max-content" },
-  { key: "motorLocation", name: "MOTOR LOCATION", width: "max-content" },
-  { key: "motorPartCode", name: "MOTOR PART CODE", editable: true, width: "max-content" },
-  { key: "motorRatedCurrent", name: "Motor Rated Current (AMP)", editable: true, width: "max-content" },
-]
+import React, { useRef, useEffect } from "react"
+import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
+import "jspreadsheet-ce/dist/jspreadsheet.css"
 
 const ExcelGrid: React.FC = () => {
-  const initialRows: RowData[] = [
+  const jRef = useRef<HTMLDivElement | null>(null)
+  const spreadsheetInstance = useRef<JspreadsheetInstance | null>(null) 
+  const columns = [
     {
-      id: 1,
-      feederTagNo: "FT-001",
-      serviceDescription: "Pump Motor 1",
-      workingLoadInKW: 75,
-      standByLoadInKW: 0,
-      kva: 90,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "10 sec",
-      eocrApplicable: "Yes",
-      lpbsType: "TYPE-1",
-      controlScheme: "Scheme-5",
-      panel: "MCC-1",
-      busSegregation: "A",
-      motorRpm: 1000,
-      typeOfMotorMounting: "Foot Mounted (B3)",
-      motorFrameSize: "315S",
-      motorGd2: 0.5,
-      equipmentGd2: 0.8,
-      bkw: 70,
-      typeOfCoupling: "Flexible",
-      package: "NA",
-      area: "Safe",
-      standard: "IEC",
-      zone: "NA",
-      gasGroup: "NA",
-      temperatureClass: "NA",
-      remark: "",
-      rev: "R0",
-      spaceHeater: "Yes",
-      bearingRtd: "Yes",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Ball",
-      powerFactor: 0.8,
-      motorEfficiency: "IE-2",
-      localIsolator: "Yes",
-      panelAmmeter: "Y-Phase With CT",
-      motorMake: "TL Std",
-      motorScope: "THERMAX",
-      motorLocation: "INDOOR",
+      type: "text",
+      name: "feederTag",
+      title: "FEEDER  TAG NO",
+      width: "110",
+      height: "100",
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "text",
+      name: "serviceDescription",
+      title: "SERVICE DESCRIPTION",
+      width: "225",
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "text",
+      name: "working",
+      title: "WORKING  LOAD IN KW",
+      width: "90",
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "text",
+      name: "standBy",
+      title: "STAND-BY  LOAD IN KW",
+      width: "90",
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "text",
+      name: "standBy",
+      title: "KVA",
+      width: "90",
+      readOnly: true,
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "dropdown",
+      name: "starter",
+      source: [],
+      title: "STARTER TYPE",
+      width: "130",
+    },
+    //value not provided
+    {
+      type: "dropdown",
+      name: "supplyVoltage",
+      source: ["230 VAC", "110 VAC"],
+      title: "SUPPLY  VOLTAGE",
+      width: "80",
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "dropdown",
+      name: "phase",
+      source: [],
+      title: "PHASE",
+      width: "90",
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "dropdown",
+      name: "startingTime",
+      source: ["10 sec", "30 sec", "60 sec"],
+      title: "STARTING  TIME",
+      readOnly: false,
+
+      width: "90",
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "dropdown",
+      name: "eorc",
+      source: ["Yes", "No"],
+      title: "EOCR  APPLICABLE",
+      width: "90",
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "dropdown",
+      name: "lbpsType",
+      source: [],
+      title: "LPBS  TYPE",
+      width: "70",
     },
     {
-      id: 2,
-      feederTagNo: "FT-002",
-      serviceDescription: "Compressor Motor 1",
-      workingLoadInKW: 110,
-      standByLoadInKW: 0,
-      kva: 132,
-      starterType: "DOL",
-      supplyVoltage: "415 VAC",
-      phase: "3 Phase",
-      startingTime: "5 sec",
-      eocrApplicable: "No",
-      lpbsType: "TYPE-2",
-      controlScheme: "Scheme-3",
-      panel: "MCC-2",
-      busSegregation: "B",
-      motorRpm: 1500,
-      typeOfMotorMounting: "Flange Mounted (B5)",
-      motorFrameSize: "280M",
-      motorGd2: 0.6,
-      equipmentGd2: 1.0,
-      bkw: 100,
-      typeOfCoupling: "Direct",
-      package: "NA",
-      area: "Hazardous",
-      standard: "ATEX",
-      zone: "Zone 2",
-      gasGroup: "IIA",
-      temperatureClass: "T3",
-      remark: "Ex-proof",
-      rev: "R1",
-      spaceHeater: "No",
-      bearingRtd: "No",
-      windingRtd: "Yes",
-      thermistor: "Yes",
-      typeOfBearing: "Roller",
-      powerFactor: 0.85,
-      motorEfficiency: "IE-3",
-      localIsolator: "No",
-      panelAmmeter: "Digital",
-      motorMake: "ABB",
-      motorScope: "VENDOR",
-      motorLocation: "OUTDOOR",
+      type: "dropdown",
+      name: "controlScheme",
+      source: [],
+      title: "CONTROL  SCHEME",
+      width: "130",
+    },
+    {
+      type: "dropdown",
+      name: "panelList",
+      source: [],
+      title: "PANEL",
+      width: "80",
+      height: "60",
+    },
+    {
+      type: "dropdown",
+      name: "busSegregation",
+      source: ["A", "B", "C", "NA"],
+      title: "BUS  SEGREGATION",
+      readOnly: false,
+      width: "100",
+    },
+    {
+      type: "dropdown",
+      name: "motorRpm",
+      source: ["1500", "3000", "1000", "750", "0"],
+      title: "MOTOR  RPM",
+      readOnly: false,
+      width: "70",
+    },
+    {
+      type: "dropdown",
+      name: "typeMotorMounting",
+      source: [
+        "foot mounted (B3)",
+        "flange mounted (B5)",
+        "foot & flange mounted (B35)",
+        "vertical flange mounted (V1)",
+        "NA",
+      ],
+      title: "TYPE OF  MOTOR MOUNTING",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      source: [],
+      name: "motorFrameSize",
+      title: "MOTOR  FRAME SIZE",
+      width: "150",
+    },
+    { type: "text", name: "motorGD2", title: "MOTOR GD 2", width: "150" },
+    {
+      type: "text",
+      name: "drivenEqGD2",
+      title: "DRIVEN  EQUIPMENT GD2",
+      width: "150",
+    },
+    { type: "text", name: "bkw", title: "BKW", width: "150" },
+    {
+      type: "dropdown",
+      name: "typeOfCoupling",
+      source: ["V-belt", "Direct", "NA"],
+      title: "TYPE OF  COUPLING",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      name: "pkg",
+      source: [],
+      title: "PACKAGE",
+      width: "150",
+    },
+
+    {
+      type: "dropdown",
+      name: "area",
+      source: ["", "Safe", "Hazardous"],
+      title: "AREA",
+      width: "150",
+    },
+    //applicable only if Hazardous selected
+    {
+      type: "dropdown",
+      name: "standard",
+      source: ["IEC", "IS", "NEC", "ATEX", "Other", "NA"],
+      title: "STANDARD",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      name: "zone",
+      source: [
+        "class 1, Division 1",
+        "class 1, Division 2",
+        "Zone 0",
+        "Zone 1",
+        "Zone 1 or Zone 2",
+        "Zone 2",
+        "Zone 20",
+        "Zone 21",
+        "Zone 22",
+        "NA",
+      ],
+      title: "ZONE",
+      width: "150",
+    },
+    //options not availble
+    {
+      type: "dropdown",
+      name: "gasGroup",
+      source: ["A", "B", "C", "D", "E", "F", "G", "IIA", "IIA/IIB", "IIB", "IIC", "NA"],
+      title: "GAS GROUP",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      name: "tempClass",
+      source: ["T1", "T2", "T3", "T4", "T5", "T6", "NA"],
+      title: "TEMPERATURE  CLASS",
+      width: "150",
+    },
+
+    { type: "text", name: "remark", title: "REMARK", width: "200" },
+    { type: "text", name: "rev", title: "REV.", width: "200" },
+    {
+      type: "dropdown",
+      source: ["No", "Yes"],
+      name: "spaceHeater",
+      title: "SPACE HEATER",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      source: ["No", "Yes"],
+      name: "bearingRTD",
+      title: "BEARING RTD",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      source: ["No", "Yes"],
+      name: "windingRTD",
+      title: "WINDING RTD",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      source: ["No", "Yes"],
+      name: "thermistor",
+      title: "THERMISTOR",
+      width: "150",
+    },
+
+    {
+      type: "dropdown",
+      name: "typeOfBearing",
+      source: ["roller", "insulated", "Roller and Insulated", "NA"],
+      title: "TYPE OF  BEARING",
+      width: "150",
+    },
+    {
+      type: "text",
+      name: "powerFactor",
+      title: "POWER FACTOR",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      source: ["IE-2", "IE-3", "IE-4", "IE-5", "NA"],
+      name: "motorEfficiency",
+      title: "MOTOR EFFICIENCY",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      source: ["Yes", "No"],
+      name: "localIsolator",
+      title: "LOCAL ISOLATOR",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      name: "pannelAmmeter",
+      source: ["All Phase With CT", "Y-Phase With CT", "Y-Phase-Direct", "All Phase-Direct", "NA"],
+      title: "PANEL AMMETER",
+      width: "150",
+    },
+    {
+      type: "dropdown",
+      source: ["TL Std", "Bharat Bijlee", "Crompton Greaves", "Siemens"],
+      name: "motorMake",
+      title: "MOTOR MAKE",
+      width: "150",
+    },
+
+    {
+      type: "dropdown",
+      name: "motorScope",
+      source: ["THERMAX", "CLIENT", "VENDOR", "NA"],
+      title: "MOTOR SCOPE",
+      width: "200",
+    },
+    {
+      type: "dropdown",
+      name: "motorLocation",
+      source: ["INDOOR", "OUTDOOR", "NA"],
+      title: "MOTOR LOCATION",
+      width: "200",
+    },
+    {
+      type: "text",
+      name: "partcode",
+      title: "MOTOR PART CODE",
+      width: "200",
+    },
+    {
+      type: "text",
+      name: "partcode",
+      title: "Motor Rated Current (AMP) ",
+      width: "200",
     },
   ]
 
-  const [rows, setRows] = useState<RowData[]>(initialRows)
-
-  const onRowsChange = (updatedRows: RowData[]) => {
-    setRows(updatedRows)
+  const options = {
+    data: [[]],
+    minDimensions: [6, 5] as [number, number],
+    columns: columns,
+    // Additional configuration options
+    columnSorting: true,
+    columnDrag: true,
+    columnResize: true,
+    tableOverflow: true,
+    filters: true,
+    tableWidth: "100%",
+    freezeColumns: 4,
+    rowResize: true,
+    defaultColWidth: 100,
+    // tableOverflow: true,
+    // tableWidth: "100%",
+    // tableHeight: "100%",
+    // Validation
+    // columnDragAndDrop: true,
+    onchange: (instance: JspreadsheetInstance, cell: HTMLElement, x: number, y: number, value: any) => {
+      // Example validation for email column
+      if (x === 5) {
+        // Email column index
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(value)) {
+          cell.style.backgroundColor = "#ffcccb"
+        } else {
+          cell.style.backgroundColor = ""
+        }
+      }
+    },
   }
-  useEffect(() => {
-    console.log(rows, "load list rows")
-  }, [rows])
-  // const direction = useDirection();
+  // const options = {
+  //   data: [[]],
+  //   minDimensions: [10, 10] as [number, number],
 
-  const [selectedRows, setSelectedRows] = useState((): ReadonlySet<string> => new Set());
+  // };
+
+  useEffect(() => {
+    if (jRef.current && !spreadsheetInstance.current) {
+      spreadsheetInstance.current = jspreadsheet(jRef.current, options)
+    }
+  }, [options])
 
   return (
-    <div>
-      
-      <DataGrid
-        columns={columns}
-        rows={rows}
-        // rowKeyGetter={rowKeyGetter}
-        onRowsChange={setRows}
-        // onFill={handleFill}
-        // onCopy={handleCopy}
-        // onPaste={handlePaste}
-        rowHeight={30}
-        selectedRows={selectedRows}
-        // isRowSelectionDisabled={(row) => row.id === 1}
-        onSelectedRowsChange={setSelectedRows}
-        className="fill-grid my-custom-grid"
-        // rowClass={(row, index) => (row.id.includes("7") || index === 0 ? highlightClassname : undefined)}
-        // direction={direction}
-        onCellClick={(args, event) => {
-          if (args.column.key === "name") {
-            event.preventGridDefault()
-            args.selectCell(true)
-          }
-        }}
-      />
+    <div style={{ width: "90%" }}>
+      <div ref={jRef} />
+      {/* <input type="button" onClick={addRow} value="Add new row" /> */}
     </div>
   )
 }
