@@ -92,8 +92,8 @@ const getDefaultValues = (commonConfigData: any) => {
     louvers_and_filters: commonConfigData?.louvers_and_filters || "Not Applicable",
     alarm_annunciator: commonConfigData?.alarm_annunciator || "Not Applicable",
     control_transformer: commonConfigData?.control_transformer || "Not Applicable",
-    commissioning_spare: commonConfigData?.commissioning_spare,
-    two_year_operational_spare: commonConfigData?.two_year_operational_spare,
+    commissioning_spare: commonConfigData?.commissioning_spare || "NA",
+    two_year_operational_spare: commonConfigData?.two_year_operational_spare || "NA",
   }
 }
 
