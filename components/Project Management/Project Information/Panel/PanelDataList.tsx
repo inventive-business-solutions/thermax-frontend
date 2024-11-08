@@ -27,7 +27,7 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
   const columns = [
     { title: "Panel Name", dataIndex: "panel_name", key: "panel_name" },
     { title: "Panel Sub Type", dataIndex: "panel_sub_type", key: "panel_sub_type" },
-    { title: "Panel Main Type", dataIndex: "panel_main_type", key: "panel_main_type" },
+    { title: "Panel Main Type", dataIndex: "panel_main_type", key: "panel_main_type", hidden: true },
     {
       title: "Action",
       dataIndex: "action",
