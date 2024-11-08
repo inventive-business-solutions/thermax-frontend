@@ -15,7 +15,7 @@ import { useState } from "react"
 import {
   BTG,
   COMPLETE_PROJECT_PAGE,
-  HOME_PAGE,
+  DASHBOARD_PAGE,
   PACKAGE_PAGE,
   PROJECTS_PAGE,
   TagColors,
@@ -42,7 +42,7 @@ export default function HeaderSidebar() {
   const items: MenuItem[] = [
     {
       key: "1",
-      label: <div onClick={() => handleLinkClick(HOME_PAGE)}>Dashboard</div>,
+      label: <div onClick={() => handleLinkClick(DASHBOARD_PAGE)}>Dashboard</div>,
       icon: <DashboardOutlined />,
     },
     {

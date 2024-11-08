@@ -57,13 +57,15 @@ const getFieldSchema = (panelIds: string[]) => {
 }
 
 const getDefaultValues = (staticValues: any, dynamicValues: any) => {
+  console.log("staticValues", staticValues)
   const staticDefaultValues = Object.keys(fieldObject).reduce(
     (acc, key) => {
-      acc[key] = staticValues[key] !== undefined ? staticValues[key] : "TBD"
+      acc[key] = staticValues?.[key] || "TBD"
       return acc
     },
     {} as Record<string, string>
   )
+
   const dynamicDefaultValues = dynamicValues?.reduce(
     (acc: any, panel: any) => {
       acc[`dynamic-${panel?.panel_id}-sld`] = panel?.sld || "TBD"
