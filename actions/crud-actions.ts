@@ -22,13 +22,9 @@ const handleAPIError = (error: any) => {
 }
 
 // Fetch documents
-export const getData = async (url: string, useAdminClient: boolean) => {
-  let apiClient = await getApiClient()
-  if (useAdminClient) {
-    apiClient = adminApiClient
-  }
+export const getData = async (url: string) => {
   try {
-    const response = await apiClient.get(url)
+    const response = await adminApiClient.get(url)
     return response.data.data
   } catch (error: any) {
     handleAPIError(error)

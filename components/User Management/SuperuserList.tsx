@@ -25,11 +25,8 @@ export default function SuperuserList() {
   const [editMode, setEditMode] = useState(false)
   const [userRow, setUserRow] = useState<any>(null)
   const [editEventTrigger, setEditEventTrigger] = useState(false)
-  const { data: thermaxUserList } = useGetData(
-    `${THERMAX_USER_API}?fields=["*"]&filters=[["is_superuser", "=",  "1"]]`,
-    false
-  )
-  const { data: userList } = useGetData(`${USER_API}?fields=["*"]`, false)
+  const { data: thermaxUserList } = useGetData(`${THERMAX_USER_API}?fields=["*"]&filters=[["is_superuser", "=",  "1"]]`)
+  const { data: userList } = useGetData(`${USER_API}?fields=["*"]`)
   const mergedList = mergeLists([thermaxUserList, userList], [{ fromKey: "name", toKey: "name" }])
 
   const columns: ColumnsType<DataType> = [

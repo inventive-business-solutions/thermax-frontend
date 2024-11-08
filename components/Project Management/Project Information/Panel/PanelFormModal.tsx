@@ -10,7 +10,18 @@ import { createData, updateData } from "actions/crud-actions"
 import AlertNotification from "components/AlertNotification"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { DYNAMIC_DOCUMENT_API, getProjectListUrl, PANEL_TYPE_API, PROJECT_PANEL_API } from "configs/api-endpoints"
+import {
+  DYNAMIC_DOCUMENT_API,
+  getProjectListUrl,
+  MCC_CUM_PCC_MCC_PANEL,
+  MCC_PANEL,
+  MCC_PCC_PLC_PANEL_1,
+  MCC_PCC_PLC_PANEL_2,
+  PANEL_TYPE_API,
+  PCC_PANEL,
+  PROJECT_PANEL_API,
+} from "configs/api-endpoints"
+import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
 const PanelFormValidationSchema = zod.object({
@@ -18,6 +29,9 @@ const PanelFormValidationSchema = zod.object({
     .string({ required_error: "Panel name is required", message: "Panel name is required" })
     .min(1, { message: "Panel name is required" }),
   panel_sub_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
+    message: "Panel type is required",
+  }),
+  panel_main_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
     message: "Panel type is required",
   }),
 })
@@ -58,10 +72,38 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
     setStatus("")
   }
 
+  // Watch panel_sub_type changes
+  const panelSubType = watch("panel_sub_type")
+
+  // Effect to set panel_main_type based on panel_sub_type selection
+  useEffect(() => {
+    if (panelSubType) {
+      const selectedPanelType = panelTypeOptions.find((option: any) => option.name === panelSubType)
+      setValue("panel_main_type", selectedPanelType?.panel_type)
+    }
+  }, [panelSubType, panelTypeOptions, setValue])
+
   const handleCreatePanel = async (panelData: any) => {
+    const panelType = panelData?.panel_main_type
     try {
       const panelRes = await createData(PROJECT_PANEL_API, false, panelData)
       await createData(DYNAMIC_DOCUMENT_API, false, { panel_id: panelRes.name })
+
+      const panelCreateData = {
+        panel_id: panelRes.name,
+        revision_id: revisionId,
+      }
+      if (panelType === MCC_PANEL_TYPE) {
+        await createData(MCC_PANEL, false, panelCreateData)
+      }
+      if (panelType === PCC_PANEL_TYPE) {
+        await createData(PCC_PANEL, false, panelCreateData)
+      }
+      if (panelType === MCCcumPCC_PANEL_TYPE) {
+        await createData(MCC_CUM_PCC_MCC_PANEL, false, panelCreateData)
+        await createData(MCC_PCC_PLC_PANEL_1, false, panelCreateData)
+        await createData(MCC_PCC_PLC_PANEL_2, false, panelCreateData)
+      }
       setStatus("success")
       setMessage("New panel created successfully")
     } catch (error: any) {
@@ -111,16 +153,6 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
       setLoading(false)
     }
   }
-  // Watch panel_sub_type changes
-  const panelSubType = watch("panel_sub_type")
-
-  // Effect to set panel_main_type based on panel_sub_type selection
-  useEffect(() => {
-    if (panelSubType) {
-      const selectedPanelType = panelTypeOptions.find((option: any) => option.name === panelSubType)
-      setValue("panel_main_type", selectedPanelType?.panel_type)
-    }
-  }, [panelSubType, panelTypeOptions, setValue])
 
   return (
     <Modal
@@ -142,7 +174,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
               options={panelTypeOptions}
             />
           </div>
-          <div>
+          <div className="hidden">
             <CustomTextInput name="panel_main_type" control={panelControl} label="Panel Type" disabled />
           </div>
         </div>

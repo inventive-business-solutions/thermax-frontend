@@ -66,8 +66,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const { data: motorParameters } = useGetData(
-    `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-    false
+    `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
   useEffect(() => {
     if (motorParameters?.[0]) {

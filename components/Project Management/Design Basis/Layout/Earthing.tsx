@@ -34,8 +34,7 @@ const getDefaultValues = (earthingData: any) => {
 
 const Earthing = ({ revision_id }: { revision_id: string }) => {
   const { data: layoutEarthingData } = useGetData(
-    `${LAYOUT_EARTHING}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-    false
+    `${LAYOUT_EARTHING}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
   const [loading, setLoading] = useState(false)
 
@@ -62,11 +61,9 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
 
   const onSubmit = async (data: any) => {
     setLoading(true)
-    console.log("Earthing Data", data)
     try {
       const layoutEarthingData = await getData(
-        `${LAYOUT_EARTHING}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-        false
+        `${LAYOUT_EARTHING}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
 
       if (layoutEarthingData && layoutEarthingData.length > 0) {

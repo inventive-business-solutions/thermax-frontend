@@ -48,8 +48,8 @@ const ElectricalLoadList = () => {
           </ul>
 
           <div className="relative mb-6 flex w-full min-w-0 flex-col break-words rounded bg-white">
-            <div className="flex-auto px-4 py-5">
-              <div className="tab-content tab-space overflow-auto">
+            <div className="flex-auto">
+              <div className="">
                 {/* Tab Content */}
                 <div className={openTab === "1" ? "block" : "hidden"} id="link1">
                   <Download />

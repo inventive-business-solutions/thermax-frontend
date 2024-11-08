@@ -4,6 +4,8 @@ import { FloatButton } from "antd"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import React from "react"
+import { PROJECT_API } from "configs/api-endpoints"
+import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 
 export default function DesignBasisLayout({
@@ -15,6 +17,7 @@ export default function DesignBasisLayout({
 }) {
   const router = useRouter()
   const { setLoading: setModalLoading } = useLoading()
+  const { data: projectData }: any = useGetData(`${PROJECT_API}/${params?.project_id}`)
 
   const handleTabChange = (path: string) => {
     setModalLoading(true)
@@ -22,7 +25,10 @@ export default function DesignBasisLayout({
   }
   return (
     <div className="flex flex-col gap-2 px-2 pb-2 shadow-lg">
-      <div className="font-bold underline">DESIGN BASIS TAB</div>
+      <div className="flex">
+        <h2 className="font-bold underline">DESIGN BASIS TAB</h2>
+        <h2 className="font-semibold"> : {projectData?.project_name}</h2>
+      </div>
       <nav className="flex gap-2">
         <Link
           href={`/project/${params.project_id}/design-basis/document-revision`}

@@ -92,20 +92,20 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
     client_name: projectData?.client_name,
     project_location: projectData?.project_location,
     main_supply_mv: projectData?.main_supply_mv || "11 KV",
-    main_supply_mv_variation: projectData?.main_supply_mv_variation || "+/- 10",
+    main_supply_mv_variation: projectData?.main_supply_mv_variation || "+/- 10.0",
     main_supply_mv_phase: projectData?.main_supply_mv_phase || "3 Phase / 4 Wire",
     main_supply_lv: projectData?.main_supply_lv || "415 VAC",
-    main_supply_lv_variation: projectData?.main_supply_lv_variation || "+/- 10",
+    main_supply_lv_variation: projectData?.main_supply_lv_variation || "+/- 10.0",
     main_supply_lv_phase: projectData?.main_supply_lv_phase || "3 Phase / 4 Wire",
     control_supply: projectData?.control_supply || "230 VAC",
-    control_supply_variation: projectData?.control_supply_variation || "+/- 10",
+    control_supply_variation: projectData?.control_supply_variation || "+/- 10.0",
     control_supply_phase: projectData?.control_supply_phase || "1 Phase",
     utility_supply: projectData?.utility_supply || "230 VAC",
-    utility_supply_variation: projectData?.utility_supply_variation || "+/- 10",
+    utility_supply_variation: projectData?.utility_supply_variation || "+/- 10.0",
     utility_supply_phase: projectData?.utility_supply_phase || "1 Phase",
+    frequency_variation: projectData?.frequency_variation || "+/- 5.0",
     frequency: projectData?.frequency || "50",
-    frequency_variation: projectData?.frequency_variation || "+/- 5",
-    fault_level: projectData?.fault_level || "50",
+    fault_level: projectData?.fault_level || "10",
     sec: projectData?.sec || "1",
     ambient_temperature_max: projectData?.ambient_temperature_max || "40",
     ambient_temperature_min: projectData?.ambient_temperature_min || "40",
@@ -120,8 +120,8 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
 
-  const { data: projectMetadata } = useGetData(getProjectMetadataUrl, false)
-  const { data: projectInfo } = useGetData(getProjectInfoUrl, false)
+  const { data: projectMetadata } = useGetData(getProjectMetadataUrl)
+  const { data: projectInfo } = useGetData(getProjectInfoUrl)
 
   const [loading, setLoading] = useState(false)
   const [openDocumentList, setOpenDocumentList] = useState(false)
@@ -173,7 +173,9 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
     setLoading(true)
     try {
       await updateData(getProjectInfoUrl, false, data)
-      message.success("Project information updated successfully")
+      message.success("Project information updated successfully!")
+      // setModalLoading(true)
+      // router.push(`/project/${project_id}/design-basis`)
     } catch (error: any) {
       handleError(error)
     } finally {
@@ -184,7 +186,10 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="font-bold underline">PROJECT INFORMATION TAB</div>
+      <div className="flex">
+        <h2 className="font-bold underline">PROJECT INFORMATION TAB</h2>
+        <h2 className="font-semibold"> : {projectData?.project_name}</h2>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex gap-4">
           <div className="flex-1">
@@ -515,9 +520,11 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
             </Button>
           </div>
           <div className="">
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Save
-            </Button>
+            <Tooltip title="Save and Go to Design Basis" placement="top">
+              <Button type="primary" htmlType="submit" loading={loading}>
+                Save
+              </Button>
+            </Tooltip>
           </div>
           <div className="">
             <Button type="primary" htmlType="button" onClick={() => setOpenDocumentList(true)}>

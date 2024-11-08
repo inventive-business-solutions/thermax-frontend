@@ -21,17 +21,15 @@ const config = {
       async authorize(credentials: any) {
         const { email, password } = credentials
         const nextUser = await getData(
-          `${NEXT_AUTH_USER_API}?fields=["hashed_password", "email_verified"]&filters=[["name", "=", "${email}"]]`,
-          true
+          `${NEXT_AUTH_USER_API}?fields=["hashed_password", "email_verified"]&filters=[["name", "=", "${email}"]]`
         )
 
         const passwordsMatch = await bcrypt.compare(password as string, nextUser[0]?.hashed_password as string)
 
         if (passwordsMatch) {
-          const frappeUser = await getData(`${USER_API}/${email}`, true)
+          const frappeUser = await getData(`${USER_API}/${email}`)
           const thermaxUser = await getData(
-            `${THERMAX_USER_API}?fields=["division", "is_superuser"]&filters=[["email", "=", "${email}"]]`,
-            true
+            `${THERMAX_USER_API}?fields=["division", "is_superuser"]&filters=[["email", "=", "${email}"]]`
           )
           const userInfo = { ...nextUser[0], ...frappeUser, ...thermaxUser[0] }
           const api_secret = await createFrappeApiKeys(email as string)

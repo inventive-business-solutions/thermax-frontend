@@ -99,8 +99,7 @@ const getDefaultValues = (commonConfigData: any) => {
 
 const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
   const { data: commonConfigurationData } = useGetData(
-    `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-    false
+    `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
   const [loading, setLoading] = useState(false)
 
@@ -191,8 +190,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
     setLoading(true)
     try {
       const commonConfigData = await getData(
-        `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-        false
+        `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
 
       if (commonConfigData && commonConfigData.length > 0) {

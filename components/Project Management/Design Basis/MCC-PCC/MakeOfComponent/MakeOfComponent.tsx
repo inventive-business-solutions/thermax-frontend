@@ -8,7 +8,9 @@ import * as zod from "zod"
 import { createData, getData, updateData } from "actions/crud-actions"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { MAKE_OF_COMPONENT_API } from "configs/api-endpoints"
+import { HEATING } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
+import { useCurrentUser } from "hooks/useCurrentUser"
 import { useLoading } from "hooks/useLoading"
 import useMakeOfComponentDropdowns from "./MakeDropdowns"
 
@@ -43,10 +45,10 @@ const getDefaultValues = (data: any) => {
 
 const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
   const [loading, setLoading] = useState(false)
+  const userInfo = useCurrentUser()
 
   const { data: makeOfComponent } = useGetData(
-    `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-    false
+    `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
   const {
@@ -83,8 +85,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
     setLoading(true)
     try {
       const makeOfComponentData = await getData(
-        `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`,
-        false
+        `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
 
       if (makeOfComponentData && makeOfComponentData.length > 0) {
@@ -107,7 +108,14 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
       <h2 className="font-bold text-slate-700">Make of Components</h2>
       <div className="flex justify-between gap-4">
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="motor" label="Motor" options={motorsMakeOptions} size="small" />
+          <CustomSingleSelect
+            control={control}
+            name="motor"
+            label="Motor"
+            options={motorsMakeOptions}
+            size="small"
+            disabled={userInfo?.division === HEATING}
+          />
         </div>
         <div className="flex-1">
           <CustomSingleSelect control={control} name="cable" label="Cable" options={cableMakeOptions} size="small" />

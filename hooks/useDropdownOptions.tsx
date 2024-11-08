@@ -3,7 +3,8 @@ import { createDropdownOptions } from "components/Package Management/package-man
 import { useGetData } from "./useCRUD"
 
 export const useDropdownOptions = (url: string, dropdownKey: string) => {
-  const { data, error, isLoading } = useGetData(url, false)
+  const { data, error, isLoading } = useGetData(url)
+
   const dropdownOptions = createDropdownOptions(data, dropdownKey)
   if (error) {
     console.log(`dropdownOptionsError: ${url}: ${error}`)
