@@ -1,7 +1,9 @@
 "use client"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message } from "antd"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import * as zod from "zod"
 import { updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInputNumber"
 import CustomTextNumber from "components/FormInputs/CustomInputNumber"
@@ -12,49 +14,218 @@ import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import useMotorParametersDropdowns from "./MotorParametersDropdown"
 
-const getDefaultValues = (defaultData: any) => ({
-  safe_area_efficiency_level: defaultData?.safe_area_efficiency_level || "IE-2",
-  hazardous_area_efficiency_level: defaultData?.hazardous_area_efficiency_level || "IE-2",
-  safe_area_insulation_class: defaultData?.safe_area_insulation_class || "Class-F",
-  hazardous_area_insulation_class: defaultData?.hazardous_area_insulation_class || "Class-F",
-  safe_area_temperature_rise: defaultData?.safe_area_temperature_rise || "Class-B",
-  hazardous_area_temperature_rise: defaultData?.hazardous_area_temperature_rise || "Class-B",
-  safe_area_enclosure_ip_rating: defaultData?.safe_area_enclosure_ip_rating || "IP55",
-  hazardous_area_enclosure_ip_rating: defaultData?.hazardous_area_enclosure_ip_rating || "IP55",
-  safe_area_max_temperature: defaultData?.safe_area_max_temperature || 40,
-  hazardous_area_max_temperature: defaultData?.hazardous_area_max_temperature || 40,
-  safe_area_min_temperature: defaultData?.safe_area_min_temperature || 10,
-  hazardous_area_min_temperature: defaultData?.hazardous_area_min_temperature || 10,
-  safe_area_altitude: defaultData?.safe_area_altitude || 7.5,
-  hazardous_area_altitude: defaultData?.hazardous_area_altitude || 7.5,
-  safe_area_terminal_box_ip_rating: defaultData?.safe_area_terminal_box_ip_rating || "IP55",
-  hazardous_area_terminal_box_ip_rating: defaultData?.hazardous_area_terminal_box_ip_rating || "IP55",
-  safe_area_thermister: defaultData?.safe_area_thermister || "110",
-  hazardous_area_themister: defaultData?.hazardous_area_themister || "110",
-  safe_area_space_heater: defaultData?.safe_area_space_heater || "110",
-  hazardous_area_space_heater: defaultData?.hazardous_area_space_heater || "110",
-  hazardous_area_certification: defaultData?.hazardous_area_certification || "PESO",
-  safe_area_bearing_rtd: defaultData?.safe_area_bearing_rtd || 110,
-  hazardous_area_bearing_rtd: defaultData?.hazardous_area_bearing_rtd || "110",
-  safe_area_winding_rtd: defaultData?.safe_area_winding_rtd || "110",
-  hazardous_area_winding_rtd: defaultData?.hazardous_area_winding_rtd || "110",
-  safe_area_bearing_type: defaultData?.safe_area_bearing_type || "",
-  hazardous_area_bearing_type: defaultData?.hazardous_area_bearing_type || "",
-  safe_area_duty: defaultData?.safe_area_duty || "S1",
-  hazardous_area_duty: defaultData?.hazardous_area_duty || "S1",
-  safe_area_service_factor: defaultData?.safe_area_service_factor || 1,
-  hazardous_area_service_factor: defaultData?.hazardous_area_service_factor || 1,
-  safe_area_cooling_type: defaultData?.safe_area_cooling_type || "TEFC",
-  hazardous_area_cooling_type: defaultData?.hazardous_area_cooling_type || "TEFC",
-  safe_area_body_material: defaultData?.safe_area_body_material || null,
-  hazardous_area_body_material: defaultData?.hazardous_area_body_material || null,
-  safe_area_terminal_box_material: defaultData?.safe_area_terminal_box_material || null,
-  hazardous_area_terminal_box_material: defaultData?.hazardous_area_terminal_box_material || null,
-  safe_area_paint_type_and_shade: defaultData?.safe_area_paint_type_and_shade || "User Defined",
-  hazardous_area_paint_type_and_shade: defaultData?.hazardous_area_paint_type_and_shade || "User Defined",
-  safe_area_starts_hour_permissible: defaultData?.safe_area_starts_hour_permissible || "2 Hot and 3 Cold",
-  hazardous_area_starts_hour_permissible: defaultData?.hazardous_area_starts_hour_permissible || "2 Hot and 3 Cold",
+const fieldSchema = zod.object({
+  safe_area_efficiency_level: zod.string({
+    required_error: "Safe area efficiency level is required",
+    message: "Safe area efficiency level is required",
+  }),
+  hazardous_area_efficiency_level: zod.string({
+    required_error: "Hazardous area efficiency level is required",
+    message: "Hazardous area efficiency level is required",
+  }),
+  safe_area_insulation_class: zod.string({
+    required_error: "Safe area insulation class is required",
+    message: "Safe area insulation class is required",
+  }),
+  hazardous_area_insulation_class: zod.string({
+    required_error: "Hazardous area insulation class is required",
+    message: "Hazardous area insulation class is required",
+  }),
+  safe_area_temperature_rise: zod.string({
+    required_error: "Safe area temperature rise is required",
+    message: "Safe area temperature rise is required",
+  }),
+  hazardous_area_temperature_rise: zod.string({
+    required_error: "Hazardous area temperature rise is required",
+    message: "Hazardous area temperature rise is required",
+  }),
+  safe_area_enclosure_ip_rating: zod.string({
+    required_error: "Safe area enclosure IP rating is required",
+    message: "Safe area enclosure IP rating is required",
+  }),
+  hazardous_area_enclosure_ip_rating: zod.string({
+    required_error: "Hazardous area enclosure IP rating is required",
+    message: "Hazardous area enclosure IP rating is required",
+  }),
+  safe_area_max_temperature: zod.string({
+    required_error: "Safe area maximum temperature is required",
+    message: "Safe area maximum temperature is required",
+  }),
+  hazardous_area_max_temperature: zod.string({
+    required_error: "Hazardous area maximum temperature is required",
+    message: "Hazardous area maximum temperature is required",
+  }),
+  safe_area_min_temperature: zod.string({
+    required_error: "Safe area minimum temperature is required",
+    message: "Safe area minimum temperature is required",
+  }),
+  hazardous_area_min_temperature: zod.string({
+    required_error: "Hazardous area minimum temperature is required",
+    message: "Hazardous area minimum temperature is required",
+  }),
+  safe_area_altitude: zod.string({
+    required_error: "Safe area altitude is required",
+    message: "Safe area altitude is required",
+  }),
+  hazardous_area_altitude: zod.string({
+    required_error: "Hazardous area altitude is required",
+    message: "Hazardous area altitude is required",
+  }),
+  safe_area_terminal_box_ip_rating: zod.string({
+    required_error: "Safe area terminal box IP rating is required",
+    message: "Safe area terminal box IP rating is required",
+  }),
+  hazardous_area_terminal_box_ip_rating: zod.string({
+    required_error: "Hazardous area terminal box IP rating is required",
+    message: "Hazardous area terminal box IP rating is required",
+  }),
+  safe_area_thermister: zod.string({
+    required_error: "Safe area thermister is required",
+    message: "Safe area thermister is required",
+  }),
+  hazardous_area_themister: zod.string({
+    required_error: "Hazardous area thermister is required",
+    message: "Hazardous area thermister is required",
+  }),
+  safe_area_space_heater: zod.string({
+    required_error: "Safe area space heater is required",
+    message: "Safe area space heater is required",
+  }),
+  hazardous_area_space_heater: zod.string({
+    required_error: "Hazardous area space heater is required",
+    message: "Hazardous area space heater is required",
+  }),
+  hazardous_area_certification: zod.string({
+    required_error: "Hazardous area certification is required",
+    message: "Hazardous area certification is required",
+  }),
+  safe_area_bearing_rtd: zod.string({
+    required_error: "Safe area bearing RTD is required",
+    message: "Safe area bearing RTD is required",
+  }),
+  hazardous_area_bearing_rtd: zod.string({
+    required_error: "Hazardous area bearing RTD is required",
+    message: "Hazardous area bearing RTD is required",
+  }),
+  safe_area_winding_rtd: zod.string({
+    required_error: "Safe area winding RTD is required",
+    message: "Safe area winding RTD is required",
+  }),
+  hazardous_area_winding_rtd: zod.string({
+    required_error: "Hazardous area winding RTD is required",
+    message: "Hazardous area winding RTD is required",
+  }),
+  safe_area_bearing_type: zod.string({
+    required_error: "Safe area bearing type is required",
+    message: "Safe area bearing type is required",
+  }),
+  hazardous_area_bearing_type: zod.string({
+    required_error: "Hazardous area bearing type is required",
+    message: "Hazardous area bearing type is required",
+  }),
+  safe_area_duty: zod.string({
+    required_error: "Safe area duty is required",
+    message: "Safe area duty is required",
+  }),
+  hazardous_area_duty: zod.string({
+    required_error: "Hazardous area duty is required",
+    message: "Hazardous area duty is required",
+  }),
+  safe_area_service_factor: zod.string({
+    required_error: "Safe area service factor is required",
+    message: "Safe area service factor is required",
+  }),
+  hazardous_area_service_factor: zod.string({
+    required_error: "Hazardous area service factor is required",
+    message: "Hazardous area service factor is required",
+  }),
+  safe_area_cooling_type: zod.string({
+    required_error: "Safe area cooling type is required",
+    message: "Safe area cooling type is required",
+  }),
+  hazardous_area_cooling_type: zod.string({
+    required_error: "Hazardous area cooling type is required",
+    message: "Hazardous area cooling type is required",
+  }),
+  safe_area_body_material: zod.string({
+    required_error: "Safe area body material is required",
+    message: "Safe area body material is required",
+  }),
+  hazardous_area_body_material: zod.string({
+    required_error: "Hazardous area body material is required",
+    message: "Hazardous area body material is required",
+  }),
+  safe_area_terminal_box_material: zod.string({
+    required_error: "Safe area terminal box material is required",
+    message: "Safe area terminal box material is required",
+  }),
+  hazardous_area_terminal_box_material: zod.string({
+    required_error: "Hazardous area terminal box material is required",
+    message: "Hazardous area terminal box material is required",
+  }),
+  safe_area_paint_type_and_shade: zod.string({
+    required_error: "Safe area paint type and shade is required",
+    message: "Safe area paint type and shade is required",
+  }),
+  hazardous_area_paint_type_and_shade: zod.string({
+    required_error: "Hazardous area paint type and shade is required",
+    message: "Hazardous area paint type and shade is required",
+  }),
+  safe_area_starts_hour_permissible: zod.string({
+    required_error: "Safe area starts hour permissible is required",
+    message: "Safe area starts hour permissible is required",
+  }),
+  hazardous_area_starts_hour_permissible: zod.string({
+    required_error: "Hazardous area starts hour permissible is required",
+    message: "Hazardous area starts hour permissible is required",
+  }),
 })
+
+const getDefaultValues = (defaultData: any) => {
+  return {
+    safe_area_efficiency_level: defaultData?.safe_area_efficiency_level || "IE-2",
+    hazardous_area_efficiency_level: defaultData?.hazardous_area_efficiency_level || "IE-2",
+    safe_area_insulation_class: defaultData?.safe_area_insulation_class || "Class-F",
+    hazardous_area_insulation_class: defaultData?.hazardous_area_insulation_class || "Class-F",
+    safe_area_temperature_rise: defaultData?.safe_area_temperature_rise || "Class-B",
+    hazardous_area_temperature_rise: defaultData?.hazardous_area_temperature_rise || "Class-B",
+    safe_area_enclosure_ip_rating: defaultData?.safe_area_enclosure_ip_rating || "IP55",
+    hazardous_area_enclosure_ip_rating: defaultData?.hazardous_area_enclosure_ip_rating || "IP55",
+    safe_area_max_temperature: defaultData?.safe_area_max_temperature || 40,
+    hazardous_area_max_temperature: defaultData?.hazardous_area_max_temperature || 40,
+    safe_area_min_temperature: defaultData?.safe_area_min_temperature || 10,
+    hazardous_area_min_temperature: defaultData?.hazardous_area_min_temperature || 10,
+    safe_area_altitude: defaultData?.safe_area_altitude || 7.5,
+    hazardous_area_altitude: defaultData?.hazardous_area_altitude || 7.5,
+    safe_area_terminal_box_ip_rating: defaultData?.safe_area_terminal_box_ip_rating || "IP55",
+    hazardous_area_terminal_box_ip_rating: defaultData?.hazardous_area_terminal_box_ip_rating || "IP55",
+    safe_area_thermister: defaultData?.safe_area_thermister || "110",
+    hazardous_area_themister: defaultData?.hazardous_area_themister || "110",
+    safe_area_space_heater: defaultData?.safe_area_space_heater || "110",
+    hazardous_area_space_heater: defaultData?.hazardous_area_space_heater || "110",
+    hazardous_area_certification: defaultData?.hazardous_area_certification || "PESO",
+    safe_area_bearing_rtd: defaultData?.safe_area_bearing_rtd || 110,
+    hazardous_area_bearing_rtd: defaultData?.hazardous_area_bearing_rtd || "110",
+    safe_area_winding_rtd: defaultData?.safe_area_winding_rtd || "110",
+    hazardous_area_winding_rtd: defaultData?.hazardous_area_winding_rtd || "110",
+    safe_area_bearing_type: defaultData?.safe_area_bearing_type || "",
+    hazardous_area_bearing_type: defaultData?.hazardous_area_bearing_type || "",
+    safe_area_duty: defaultData?.safe_area_duty || "S1",
+    hazardous_area_duty: defaultData?.hazardous_area_duty || "S1",
+    safe_area_service_factor: defaultData?.safe_area_service_factor || 1,
+    hazardous_area_service_factor: defaultData?.hazardous_area_service_factor || 1,
+    safe_area_cooling_type: defaultData?.safe_area_cooling_type || "TEFC",
+    hazardous_area_cooling_type: defaultData?.hazardous_area_cooling_type || "TEFC",
+    safe_area_body_material: defaultData?.safe_area_body_material || "Aluminium",
+    hazardous_area_body_material: defaultData?.hazardous_area_body_material || "Aluminium",
+    safe_area_terminal_box_material: defaultData?.safe_area_terminal_box_material || "Aluminium",
+    hazardous_area_terminal_box_material: defaultData?.hazardous_area_terminal_box_material || "Aluminium",
+    safe_area_paint_type_and_shade: defaultData?.safe_area_paint_type_and_shade || "User Defined",
+    hazardous_area_paint_type_and_shade: defaultData?.hazardous_area_paint_type_and_shade || "User Defined",
+    safe_area_starts_hour_permissible: defaultData?.safe_area_starts_hour_permissible || "2 Hot and 3 Cold",
+    hazardous_area_starts_hour_permissible: defaultData?.hazardous_area_starts_hour_permissible || "2 Hot and 3 Cold",
+  }
+}
 
 const MotorParameters = ({ revision_id }: { revision_id: string }) => {
   const [loading, setLoading] = useState(false)
@@ -100,11 +271,15 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
     hazardousTerminalBoxOptions,
   } = useMotorParametersDropdowns()
 
-  const { control, handleSubmit, formState } = useForm({
-    // resolver: zodResolver(fieldSchema),
+  const { control, handleSubmit, reset } = useForm({
+    resolver: zodResolver(fieldSchema),
     defaultValues: getDefaultValues(motorParameters?.[0]),
-    mode: "onBlur",
+    mode: "onSubmit",
   })
+
+  useEffect(() => {
+    reset(getDefaultValues(motorParameters?.[0]))
+  }, [reset, motorParameters])
 
   const onSubmit = async (data: any) => {
     setLoading(true)
@@ -624,7 +799,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <div className="mt-4 text-end">
-          <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
+          <Button type="primary" htmlType="submit" loading={loading}>
             Save
           </Button>
         </div>
