@@ -10,7 +10,7 @@ import {
 import { Button, Popconfirm, Table, TableColumnsType, Tooltip } from "antd"
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
-import { deleteData } from "actions/crud-actions"
+import { deleteData, getData } from "actions/crud-actions"
 import { GET_PKG_API, MAIN_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
@@ -61,6 +61,10 @@ export default function PackageList() {
   const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API)
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
+    const subPkgs = await getData(`${SUB_PKG_API}?filters=[["main_package_name", "=", "${selectedRowID}"]]`)
+    for (const subPkg of subPkgs || []) {
+      await deleteData(`${SUB_PKG_API}/${subPkg.name}`, false)
+    }
     await deleteData(`${MAIN_PKG_API}/${selectedRowID}`, false)
     // Revalidate the cache
     mutate(GET_PKG_API)
