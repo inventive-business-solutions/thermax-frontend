@@ -41,7 +41,7 @@ const getDefaultValues = (pccPanelData: any) => {
     ga_pcc_construction_drawout_type: pccPanelData?.ga_pcc_construction_drawout_type || "Drawout Type",
     ga_pcc_construction_type: pccPanelData?.ga_pcc_construction_type || "Intelligent",
     busbar_material_of_construction: pccPanelData?.busbar_material_of_construction || "Aluminium",
-    ga_current_density: pccPanelData?.ga_current_density || "0.8 A/Sq. mm",
+    ga_current_density: pccPanelData?.ga_current_density || "1 A/Sq. mm",
     ga_panel_mounting_frame: pccPanelData?.ga_panel_mounting_frame || "Base Frame",
     ga_panel_mounting_height: pccPanelData?.ga_panel_mounting_height || "200",
     is_marshalling_section_selected: pccPanelData?.is_marshalling_section_selected || 1,
