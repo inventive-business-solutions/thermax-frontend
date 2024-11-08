@@ -485,7 +485,7 @@ export const mccPanelValidationSchema = zod.object({
     required_error: "Punching Details For Heater is required",
     message: "Punching Details For Heater is required",
   }),
-  heater_motor: zod.string({ required_error: "Heater Motor is required", message: "Heater Motor is required" }),
+  heater_model: zod.string({ required_error: "Heater Motor is required", message: "Heater Motor is required" }),
   heater_fuel: zod.string({ required_error: "Heater Fuel is required", message: "Heater Fuel is required" }),
   heater_year: zod.string({ required_error: "Heater Year is required", message: "Heater Year is required" }),
   heater_power_supply_vac: zod.string({
@@ -706,7 +706,7 @@ export const pccPanelValidationSchema = zod.object({
     required_error: "Punching Details For Heater is required",
     message: "Punching Details For Heater is required",
   }),
-  heater_motor: zod.string({ required_error: "Heater Motor is required", message: "Heater Motor is required" }),
+  heater_model: zod.string({ required_error: "Heater Motor is required", message: "Heater Motor is required" }),
   heater_fuel: zod.string({ required_error: "Heater Fuel is required", message: "Heater Fuel is required" }),
   heater_year: zod.string({ required_error: "Heater Year is required", message: "Heater Year is required" }),
   heater_power_supply_vac: zod.string({

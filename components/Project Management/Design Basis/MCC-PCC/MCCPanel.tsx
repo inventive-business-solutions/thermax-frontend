@@ -45,7 +45,7 @@ const getDefaultValues = (mccPanelData: any) => {
     busbar_material_of_construction: mccPanelData?.busbar_material_of_construction || "Aluminium",
     ga_current_density: mccPanelData?.ga_current_density || "1 A/Sq. mm",
     ga_panel_mounting_frame: mccPanelData?.ga_panel_mounting_frame || "Base Frame",
-    ga_panel_mounting_height: mccPanelData?.ga_panel_mounting_height || "100",
+    ga_panel_mounting_height: mccPanelData?.ga_panel_mounting_height || "200",
     is_marshalling_section_selected: mccPanelData?.is_marshalling_section_selected || 1,
     is_cable_alley_section_selected: mccPanelData?.is_cable_alley_section_selected || 1,
     is_power_and_bus_separation_section_selected: mccPanelData?.is_power_and_bus_separation_section_selected || 1,
@@ -78,7 +78,7 @@ const getDefaultValues = (mccPanelData: any) => {
     boiler_connected_load: mccPanelData?.boiler_connected_load || "NA",
     boiler_design_pressure: mccPanelData?.boiler_design_pressure || "NA",
     is_punching_details_for_heater_selected: mccPanelData?.is_punching_details_for_heater_selected || 0,
-    heater_motor: mccPanelData?.heater_motor || "NA",
+    heater_model: mccPanelData?.heater_model || "NA",
     heater_fuel: mccPanelData?.heater_fuel || "NA",
     heater_year: mccPanelData?.heater_year || "NA",
     heater_power_supply_vac: mccPanelData?.heater_power_supply_vac || "NA",
@@ -785,7 +785,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           <div className="flex-1">
             <CustomTextInput
               control={control}
-              name="heater_motor"
+              name="heater_model"
               label="Motor"
               disabled={watch("is_punching_details_for_heater_selected") === 0}
             />

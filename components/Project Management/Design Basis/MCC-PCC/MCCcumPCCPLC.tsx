@@ -81,7 +81,7 @@ const getDefaultValues = (plcData: any) => {
     is_plc_spare_io_count_selected: plcData?.is_plc_spare_io_count_selected || 1,
     plc_spare_io_count: plcData?.plc_spare_io_count || "10",
     is_plc_spare_memory_selected: plcData?.is_plc_spare_memory_selected || 1,
-    plc_spare_memory: plcData?.plc_spare_memory || "20%",
+    plc_spare_memory: plcData?.plc_spare_memory || "20",
     is_no_of_hid_es_selected: plcData?.is_no_of_hid_es_selected || 1,
     no_of_hid_es: plcData?.no_of_hid_es || 1,
     is_no_of_hid_os_selected: plcData?.is_no_of_hid_os_selected || 1,
