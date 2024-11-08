@@ -212,6 +212,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
 
       message.success("PLC Data updated successfully")
     } catch (error) {
+      console.error(error)
       handleError(error)
     } finally {
       setLoading(false)
