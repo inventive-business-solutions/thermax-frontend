@@ -2,7 +2,7 @@
 import { DownOutlined, PercentageOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Tooltip } from "antd"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
@@ -16,6 +16,7 @@ import { useLoading } from "hooks/useLoading"
 import DocumentListModal from "./DocumentListModal"
 import PanelDataList from "./Panel/PanelDataList"
 import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
+import { Router } from "next/router"
 
 const ProjectInfoSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
@@ -116,6 +117,7 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
 
 const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const params = useParams()
+  const router = useRouter()
   const project_id = params.project_id
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
@@ -173,7 +175,9 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
     setLoading(true)
     try {
       await updateData(getProjectInfoUrl, false, data)
-      message.success("Project information updated successfully")
+      message.success("Project information updated successfully!")
+      // setModalLoading(true)
+      // router.push(`/project/${project_id}/design-basis`)
     } catch (error: any) {
       handleError(error)
     } finally {
@@ -518,9 +522,11 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
             </Button>
           </div>
           <div className="">
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Save
-            </Button>
+            <Tooltip title="Save and Go to Design Basis" placement="top">
+              <Button type="primary" htmlType="submit" loading={loading}>
+                Save
+              </Button>
+            </Tooltip>
           </div>
           <div className="">
             <Button type="primary" htmlType="button" onClick={() => setOpenDocumentList(true)}>

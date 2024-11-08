@@ -54,7 +54,17 @@ export default function DocumentRevision() {
       dataIndex: "documentRevision",
       render: (text) => <div className="text-center">{text}</div>,
     },
-    { title: "Created Date", dataIndex: "createdDate" }, // New column added here
+    {
+      title: "Created Date",
+      dataIndex: "createdDate",
+      render: (text) => {
+        const date = new Date(text)
+        const year = date.getFullYear()
+        const month = String(date.getMonth() + 1).padStart(2, "0")
+        const day = String(date.getDate()).padStart(2, "0")
+        return `${day}-${month}-${year}`
+      },
+    },
     {
       title: () => <div className="text-center">Action</div>,
       dataIndex: "action",

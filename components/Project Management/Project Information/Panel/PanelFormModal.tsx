@@ -174,7 +174,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
               options={panelTypeOptions}
             />
           </div>
-          <div>
+          <div className="hidden">
             <CustomTextInput name="panel_main_type" control={panelControl} label="Panel Type" disabled />
           </div>
         </div>
