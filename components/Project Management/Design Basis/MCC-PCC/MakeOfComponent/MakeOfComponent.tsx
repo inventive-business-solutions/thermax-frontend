@@ -8,11 +8,11 @@ import * as zod from "zod"
 import { createData, getData, updateData } from "actions/crud-actions"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { MAKE_OF_COMPONENT_API } from "configs/api-endpoints"
+import { HEATING } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
+import { useCurrentUser } from "hooks/useCurrentUser"
 import { useLoading } from "hooks/useLoading"
 import useMakeOfComponentDropdowns from "./MakeDropdowns"
-import { useCurrentUser } from "hooks/useCurrentUser"
-import { HEATING } from "configs/constants"
 
 // Define Zod schema for validation
 const makeOfComponentSchema = zod.object({
