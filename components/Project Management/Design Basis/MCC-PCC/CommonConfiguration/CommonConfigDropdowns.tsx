@@ -169,10 +169,7 @@ export default function useCommonConfigDropdowns() {
     "cable_insulation_pvc"
   )
   const { dropdownOptions: ferrule_options } = useDropdownOptions(`${FERRULE}?fields=["*"]`, "ferrule")
-  const { dropdownOptions: spare_terminal_options } = useDropdownOptions(
-    `${SPARE_TERMINAL}?fields=["*"]`,
-    "spare_terminal"
-  )
+  const { dropdownOptions: spare_terminal_options } = useDropdownOptions(`${SPARE_TERMINAL}?fields=["*"]`, "name")
 
   const { dropdownOptions: test_reset_options } = useDropdownOptions(`${TEST_RESET}?fields=["*"]`, "test_reset")
   const { dropdownOptions: alarm_acknowledge_and_lamp_test_options } = useDropdownOptions(
@@ -236,35 +233,29 @@ export default function useCommonConfigDropdowns() {
     "canopy_on_top"
   )
 
-  const { dropdownOptions: lpbs_type_options } = useDropdownOptions(`${LPBS_TYPE}?fields=["*"]`, "lpbs_type")
-  const { dropdownOptions: lpbs_enclosure_options } = useDropdownOptions(
-    `${LPBS_ENCLOSURE}?fields=["*"]`,
-    "lpbs_enclosure"
-  )
-  const { dropdownOptions: lpbs_material_options } = useDropdownOptions(
-    `${LPBS_MATERIAL}?fields=["*"]`,
-    "lpbs_material"
-  )
-  const { dropdownOptions: lpbs_qty_options } = useDropdownOptions(`${LPBS_QTY}?fields=["*"]`, "lpbs_qty")
+  const { dropdownOptions: lpbs_type_options } = useDropdownOptions(`${LPBS_TYPE}?fields=["*"]`, "name")
+  const { dropdownOptions: lpbs_enclosure_options } = useDropdownOptions(`${LPBS_ENCLOSURE}?fields=["*"]`, "name")
+  const { dropdownOptions: lpbs_material_options } = useDropdownOptions(`${LPBS_MATERIAL}?fields=["*"]`, "name")
+  const { dropdownOptions: lpbs_qty_options } = useDropdownOptions(`${LPBS_QTY}?fields=["*"]`, "name")
   const { dropdownOptions: lpbs_color_shade_options } = useDropdownOptions(
     `${LPBS_COLOR_SHADE}?fields=["*"]`,
     "lpbs_color_shade"
   )
   const { dropdownOptions: lpbs_canopy_on_top_options } = useDropdownOptions(
     `${LPBS_CANOPY_ON_TOP}?fields=["*"]`,
-    "lpbs_canopy_on_top"
+    "name"
   )
   const { dropdownOptions: lpbs_push_button_start_color_options } = useDropdownOptions(
     `${LPBS_PUSH_BUTTON_START_COLOR}?fields=["*"]`,
-    "lpbs_push_button_start_color"
+    "name"
   )
   const { dropdownOptions: lpbs_indicator_on_options } = useDropdownOptions(
     `${LPBS_INDICATOR_ON_COLOR}?fields=["*"]`,
-    "lpbs_start_on_indication_lamp_color"
+    "name"
   )
   const { dropdownOptions: lpbs_indiacator_off_options } = useDropdownOptions(
     `${LPBS_INDICATOR_OFF_COLOR}?fields=["*"]`,
-    "lpbs_stop_off_indication_lamp_color"
+    "name"
   )
   const { dropdownOptions: lpbs_speed_increase_options } = useDropdownOptions(
     `${LPBS_SPEED_INCREASE_BUTTON}?fields=["*"]`,

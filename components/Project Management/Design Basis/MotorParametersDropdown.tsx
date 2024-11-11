@@ -11,7 +11,6 @@ import {
   HAZARDOUS_TEMPERATURE_RISE,
   HAZARDOUS_TERMINAL_BOX_IP_RATING,
   HAZARDOUS_TERMINAL_BOX_MATERIAL,
-  HAZARDOUS_THERMISTOR,
   HAZARDOUS_WINDING_RTD,
   SAFE_BEARING_RTD,
   SAFE_BODY_MATERIAL,
@@ -77,7 +76,7 @@ export default function useMotorParametersDropdowns() {
     }
   })
   const { dropdownOptions: hazardousThermistorOptions } = useDropdownOptions(
-    `${HAZARDOUS_THERMISTOR}?fields=["*"]`,
+    `/document/Thermister Hazardous?fields=["*"]`,
     "name"
   )
   hazardousThermistorOptions.sort((a: any, b: any) => {

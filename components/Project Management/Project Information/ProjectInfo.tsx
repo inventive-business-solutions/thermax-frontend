@@ -173,7 +173,9 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
     setLoading(true)
     try {
       await updateData(getProjectInfoUrl, false, data)
-      message.success("Project information updated successfully")
+      message.success("Project information updated successfully!")
+      // setModalLoading(true)
+      // router.push(`/project/${project_id}/design-basis`)
     } catch (error: any) {
       handleError(error)
     } finally {
@@ -518,9 +520,11 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
             </Button>
           </div>
           <div className="">
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Save
-            </Button>
+            <Tooltip title="Save and Go to Design Basis" placement="top">
+              <Button type="primary" htmlType="submit" loading={loading}>
+                Save
+              </Button>
+            </Tooltip>
           </div>
           <div className="">
             <Button type="primary" htmlType="button" onClick={() => setOpenDocumentList(true)}>

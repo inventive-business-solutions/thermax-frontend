@@ -8,7 +8,9 @@ import * as zod from "zod"
 import { createData, getData, updateData } from "actions/crud-actions"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { MAKE_OF_COMPONENT_API } from "configs/api-endpoints"
+import { HEATING } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
+import { useCurrentUser } from "hooks/useCurrentUser"
 import { useLoading } from "hooks/useLoading"
 import useMakeOfComponentDropdowns from "./MakeDropdowns"
 
@@ -43,19 +45,20 @@ const getDefaultValues = (data: any) => {
 
 const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
   const [loading, setLoading] = useState(false)
+  const userInfo = useCurrentUser()
 
   const { data: makeOfComponent } = useGetData(
     `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
   const {
-    motorsMakeOptions,
-    plcMakeOptions,
-    soft_starterOptions,
-    vfd_vsdOptions,
-    panel_enclosureOptions: panel_enclosureOptins,
-    lv_switchgearOptions,
-    cableMakeOptions,
+    motors_make_Options,
+    plc_make_Options,
+    soft_starter_Options,
+    vfd_vsd_Options,
+    panel_enclosure_Options: panel_enclosureOptins,
+    lv_switchgear_Options,
+    cable_make_Options,
   } = useMakeOfComponentDropdowns()
   const { setLoading: setModalLoading } = useLoading()
 
@@ -63,11 +66,15 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
     setModalLoading(false)
   })
 
-  const { control, handleSubmit, formState } = useForm({
+  const { control, handleSubmit, formState, reset } = useForm({
     resolver: zodResolver(makeOfComponentSchema),
     defaultValues: getDefaultValues(makeOfComponent?.[0]),
     mode: "onSubmit",
   })
+
+  useEffect(() => {
+    reset(getDefaultValues(makeOfComponent?.[0]))
+  }, [reset])
 
   const handleError = (error: any) => {
     try {
@@ -109,8 +116,9 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="motor"
             label="Motor"
-            options={motorsMakeOptions || []}
+            options={motors_make_Options || []}
             size="small"
+            disabled={userInfo?.division === HEATING}
           />
         </div>
         <div className="flex-1">
@@ -118,7 +126,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="cable"
             label="Cable"
-            options={cableMakeOptions || []}
+            options={cable_make_Options || []}
             size="small"
           />
         </div>
@@ -127,7 +135,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="lv_switchgear"
             label="LV Switchgear"
-            options={lv_switchgearOptions || []}
+            options={lv_switchgear_Options || []}
             size="small"
           />
         </div>
@@ -147,7 +155,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="variable_frequency_speed_drive_vfd_vsd"
             label="Variable frequency/Speed drive (VFD/VSD)"
-            options={vfd_vsdOptions || []}
+            options={vfd_vsd_Options || []}
             size="small"
           />
         </div>
@@ -156,13 +164,13 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="soft_starter"
             label="Soft Starter"
-            options={soft_starterOptions || []}
+            options={soft_starter_Options || []}
             size="small"
           />
         </div>
       </div>
       <div className="w-1/3">
-        <CustomSingleSelect control={control} name="plc" label="PLC" options={plcMakeOptions || []} size="small" />
+        <CustomSingleSelect control={control} name="plc" label="PLC" options={plc_make_Options || []} size="small" />
       </div>
 
       <div className="flex justify-end">

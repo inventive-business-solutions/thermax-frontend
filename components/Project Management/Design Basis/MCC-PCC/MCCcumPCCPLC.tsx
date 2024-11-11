@@ -79,7 +79,7 @@ const getDefaultValues = (plcData: any) => {
     ao_module_scan_time: plcData?.ao_module_scan_time || "VTS",
     is_ao_module_hart_protocol_support_selected: plcData?.is_ao_module_hart_protocol_support_selected || 1,
     is_plc_spare_io_count_selected: plcData?.is_plc_spare_io_count_selected || 1,
-    plc_spare_io_count: plcData?.plc_spare_io_count || "10",
+    plc_spare_io_count: plcData?.plc_spare_io_count || "10%",
     is_plc_spare_memory_selected: plcData?.is_plc_spare_memory_selected || 1,
     plc_spare_memory: plcData?.plc_spare_memory || "20%",
     is_no_of_hid_es_selected: plcData?.is_no_of_hid_es_selected || 1,
@@ -165,7 +165,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     eo_scada_furniture_options,
   } = usePLCDropdowns()
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     resolver: zodResolver(plcPanelValidationSchema),
     defaultValues: getDefaultValues(plcPanelData?.[0]),
     mode: "onSubmit",
@@ -212,6 +212,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
 
       message.success("PLC Data updated successfully")
     } catch (error) {
+      console.error(error)
       handleError(error)
     } finally {
       setLoading(false)
@@ -327,6 +328,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 label=""
                 options={plc_hardware_communication_protocol_options}
                 size="small"
+                disabled={watch("is_third_party_communication_protocol_selected") === 0}
               />
             </div>
           </div>
@@ -349,6 +351,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 label=""
                 options={plc_client_system_communication_options}
                 size="small"
+                disabled={watch("is_client_system_communication_selected") === 0}
               />
             </div>
           </div>
@@ -435,6 +438,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               label="CPU Redundancy"
               size="small"
               options={plc_cpu_redundancy_options}
+              disabled={watch("is_cpu_redundancy_selected") === 0}
             />
           </div>
         </div>
@@ -487,6 +491,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 label=""
                 size="small"
                 options={marshalling_cabinet_options}
+                disabled={watch("is_plc_and_ups_marshalling_cabinet_selected") === 0}
               />
             </div>
           </div>
@@ -565,6 +570,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={di_module_density_options}
+                    disabled={watch("is_di_module_density_selected") === 0}
                   />
                 </div>
               </div>
@@ -590,6 +596,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={di_module_input_type_options}
+                    disabled={watch("is_di_module_input_type_selected") === 0}
                   />
                 </div>
               </div>
@@ -617,6 +624,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={di_module_interrogation_voltage_options}
+                    disabled={watch("is_interrogation_voltage_selected") === 0}
                   />
                 </div>
               </div>
@@ -652,6 +660,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={do_module_density_options}
+                    disabled={watch("is_do_module_density_selected") === 0}
                   />
                 </div>
               </div>
@@ -677,6 +686,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={do_module_output_type_options}
+                    disabled={watch("is_do_module_output_type_selected") === 0}
                   />
                 </div>
               </div>
@@ -719,6 +729,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   label=""
                   size="small"
                   options={do_contact_no_options}
+                  disabled={watch("is_no_of_contact_selected") === 0}
                 />
               </div>
             </div>
@@ -750,6 +761,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={ai_module_density_options}
+                    disabled={watch("is_ai_module_density_selected") === 0}
                   />
                 </div>
               </div>
@@ -769,7 +781,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   </div>
                 </div>
                 <div className="flex-1">
-                  <CustomTextInput control={control} name="ai_module_output_type" label="" size="small" />
+                  <CustomTextInput
+                    control={control}
+                    name="ai_module_output_type"
+                    label=""
+                    size="small"
+                    disabled={watch("is_ai_module_output_type_selected") === 0}
+                  />
                 </div>
               </div>
             </div>
@@ -820,6 +838,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={rtd_density_options}
+                    disabled={watch("is_rtd_tc_module_density_selected") === 0}
                   />
                 </div>
               </div>
@@ -845,6 +864,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={rtd_input_type_options}
+                    disabled={watch("is_rtd_tc_module_input_type_selected") === 0}
                   />
                 </div>
               </div>
@@ -896,6 +916,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={ao_module_density_options}
+                    disabled={watch("is_ao_module_density_selected") === 0}
                   />
                 </div>
               </div>
@@ -921,6 +942,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={ao_module_output_type_options}
+                    disabled={watch("is_ao_module_output_type_selected") === 0}
                   />
                 </div>
               </div>
@@ -972,6 +994,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 label=""
                 size="small"
                 options={plc_io_count_options}
+                disabled={watch("is_plc_spare_io_count_selected") === 0}
               />
             </div>
           </div>
@@ -997,6 +1020,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 label=""
                 size="small"
                 options={plc_spare_memory_options}
+                disabled={watch("is_plc_spare_memory_selected") === 0}
               />
             </div>
           </div>
@@ -1022,7 +1046,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 </div>
               </div>
               <div className="flex-1">
-                <CustomTextNumber control={control} name="no_of_hid_es" label="" size="small" />
+                <CustomTextNumber
+                  control={control}
+                  name="no_of_hid_es"
+                  label=""
+                  size="small"
+                  disabled={watch("is_no_of_hid_es_selected") === 0}
+                />
               </div>
             </div>
             <div className="flex flex-1 items-center gap-2">
@@ -1041,7 +1071,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 </div>
               </div>
               <div className="flex-1">
-                <CustomTextNumber control={control} name="no_of_hid_os" label="" size="small" />
+                <CustomTextNumber
+                  control={control}
+                  name="no_of_hid_os"
+                  label=""
+                  size="small"
+                  disabled={watch("is_no_of_hid_os_selected") === 0}
+                />
               </div>
             </div>
           </div>
@@ -1062,7 +1098,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 </div>
               </div>
               <div className="flex-1">
-                <CustomTextNumber control={control} name="no_of_hid_hmi" label="" size="small" />
+                <CustomTextNumber
+                  control={control}
+                  name="no_of_hid_hmi"
+                  label=""
+                  size="small"
+                  disabled={watch("no_of_hid_hmi") === 0}
+                />
               </div>
             </div>
             <div className="flex flex-1 items-center gap-2">
@@ -1087,6 +1129,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   label=""
                   size="small"
                   options={plc_hmi_size_options}
+                  disabled={watch("is_hid_hmi_size_selected") === 0}
                 />
               </div>
             </div>
@@ -1113,7 +1156,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 </div>
               </div>
               <div className="flex-1">
-                <CustomTextNumber control={control} name="no_of_scada_development_license" label="" size="small" />
+                <CustomTextNumber
+                  control={control}
+                  name="no_of_scada_development_license"
+                  label=""
+                  size="small"
+                  disabled={watch("is_scada_development_license_selected") === 0}
+                />
               </div>
             </div>
             <div className="flex flex-1 items-center gap-2">

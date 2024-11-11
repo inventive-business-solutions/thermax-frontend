@@ -117,7 +117,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
     conduit_size_options,
   } = useCableTrayDropdowns()
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     resolver: zodResolver(cableTrayValidationSchema),
     defaultValues: getDefaultValues(cableTrayData?.[0]),
     mode: "onSubmit",
@@ -343,6 +343,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                     label=""
                     size="small"
                     options={material_construction_dry_area_options}
+                    disabled={watch("is_dry_area_selected") === 0}
                   />
                 </div>
               </div>
@@ -368,6 +369,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                     label=""
                     size="small"
                     options={material_construction_wet_area_options}
+                    disabled={watch("is_wet_area_selected") === 0}
                   />
                 </div>
               </div>
@@ -400,6 +402,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Width"
                 options={cable_tray_width_options}
                 size="small"
+                disabled={watch("is_pct_perforated_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -409,6 +412,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
+                disabled={watch("is_pct_perforated_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -418,6 +422,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Thickness"
                 options={cable_tray_thickness_options}
                 size="small"
+                disabled={watch("is_pct_perforated_type_selected") === 0}
               />
             </div>
           </div>
@@ -443,6 +448,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Width"
                 options={cable_tray_width_options}
                 size="small"
+                disabled={watch("is_pct_ladder_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -452,6 +458,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
+                disabled={watch("is_pct_ladder_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -461,6 +468,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Thickness"
                 options={cable_tray_thickness_options}
                 size="small"
+                disabled={watch("is_pct_ladder_type_selected") === 0}
               />
             </div>
           </div>
@@ -486,6 +494,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Width"
                 options={cable_tray_width_options}
                 size="small"
+                disabled={watch("is_pct_mesh_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -495,6 +504,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
+                disabled={watch("is_pct_mesh_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -504,6 +514,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Thickness"
                 options={cable_tray_thickness_options}
                 size="small"
+                disabled={watch("is_pct_mesh_type_selected") === 0}
               />
             </div>
           </div>
@@ -529,6 +540,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="MOC"
                 options={conduit_moc_options}
                 size="small"
+                disabled={watch("is_pct_conduit_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -538,6 +550,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Size"
                 options={conduit_size_options}
                 size="small"
+                disabled={watch("is_pct_conduit_selected") === 0}
               />
             </div>
           </div>
@@ -568,6 +581,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Width"
                 options={cable_tray_width_options}
                 size="small"
+                disabled={watch("is_cct_perforated_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -577,6 +591,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
+                disabled={watch("is_cct_perforated_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -586,6 +601,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Thickness"
                 options={cable_tray_thickness_options}
                 size="small"
+                disabled={watch("is_cct_perforated_type_selected") === 0}
               />
             </div>
           </div>
@@ -611,6 +627,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Width"
                 options={cable_tray_width_options}
                 size="small"
+                disabled={watch("is_cct_ladder_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -620,6 +637,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
+                disabled={watch("is_cct_ladder_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -629,6 +647,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Thickness"
                 options={cable_tray_thickness_options}
                 size="small"
+                disabled={watch("is_cct_ladder_type_selected") === 0}
               />
             </div>
           </div>
@@ -654,6 +673,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Width"
                 options={cable_tray_width_options}
                 size="small"
+                disabled={watch("is_cct_mesh_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -663,6 +683,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
+                disabled={watch("is_cct_mesh_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -672,6 +693,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Thickness"
                 options={cable_tray_thickness_options}
                 size="small"
+                disabled={watch("is_cct_mesh_type_selected") === 0}
               />
             </div>
           </div>
@@ -697,6 +719,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="MOC"
                 options={conduit_moc_options}
                 size="small"
+                disabled={watch("is_cct_conduit_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -706,6 +729,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Size"
                 options={conduit_size_options}
                 size="small"
+                disabled={watch("is_cct_conduit_selected") === 0}
               />
             </div>
           </div>
@@ -736,6 +760,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Width"
                 options={cable_tray_width_options}
                 size="small"
+                disabled={watch("is_sct_perforated_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -745,6 +770,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
+                disabled={watch("is_sct_perforated_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -754,6 +780,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Thickness"
                 options={cable_tray_thickness_options}
                 size="small"
+                disabled={watch("is_sct_perforated_type_selected") === 0}
               />
             </div>
           </div>
@@ -779,6 +806,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Width"
                 options={cable_tray_width_options}
                 size="small"
+                disabled={watch("is_sct_ladder_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -788,6 +816,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
+                disabled={watch("is_sct_ladder_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -797,6 +826,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Thickness"
                 options={cable_tray_thickness_options}
                 size="small"
+                disabled={watch("is_sct_ladder_type_selected") === 0}
               />
             </div>
           </div>
@@ -822,6 +852,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Width"
                 options={cable_tray_width_options}
                 size="small"
+                disabled={watch("is_sct_mesh_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -831,6 +862,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
+                disabled={watch("is_sct_mesh_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -840,6 +872,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Thickness"
                 options={cable_tray_thickness_options}
                 size="small"
+                disabled={watch("is_sct_mesh_type_selected") === 0}
               />
             </div>
           </div>
@@ -865,6 +898,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="MOC"
                 options={conduit_moc_options}
                 size="small"
+                disabled={watch("is_sct_conduit_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -874,6 +908,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Size"
                 options={conduit_size_options}
                 size="small"
+                disabled={watch("is_sct_conduit_selected") === 0}
               />
             </div>
           </div>

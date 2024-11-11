@@ -165,6 +165,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
           <div className="font-bold text-slate-800">Package Selection</div>
           <div>
             <Radio.Group
+              defaultValue={1}
               value={generalInfoData?.is_package_selection_enabled}
               onChange={(e: RadioChangeEvent) =>
                 setGeneralInfoData({ ...generalInfoData, is_package_selection_enabled: e.target.value })
