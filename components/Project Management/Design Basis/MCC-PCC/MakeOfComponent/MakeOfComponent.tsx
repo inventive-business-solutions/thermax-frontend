@@ -105,17 +105,29 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
       <h2 className="font-bold text-slate-700">Make of Components</h2>
       <div className="flex justify-between gap-4">
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="motor" label="Motor" options={motorsMakeOptions} size="small" />
+          <CustomSingleSelect
+            control={control}
+            name="motor"
+            label="Motor"
+            options={motorsMakeOptions || []}
+            size="small"
+          />
         </div>
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="cable" label="Cable" options={cableMakeOptions} size="small" />
+          <CustomSingleSelect
+            control={control}
+            name="cable"
+            label="Cable"
+            options={cableMakeOptions || []}
+            size="small"
+          />
         </div>
         <div className="flex-1">
           <CustomSingleSelect
             control={control}
             name="lv_switchgear"
             label="LV Switchgear"
-            options={lv_switchgearOptions}
+            options={lv_switchgearOptions || []}
             size="small"
           />
         </div>
@@ -126,7 +138,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="panel_enclosure"
             label="Panel Enclosure"
-            options={panel_enclosureOptins}
+            options={panel_enclosureOptins || []}
             size="small"
           />
         </div>
@@ -135,7 +147,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="variable_frequency_speed_drive_vfd_vsd"
             label="Variable frequency/Speed drive (VFD/VSD)"
-            options={vfd_vsdOptions}
+            options={vfd_vsdOptions || []}
             size="small"
           />
         </div>
@@ -144,13 +156,13 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="soft_starter"
             label="Soft Starter"
-            options={soft_starterOptions}
+            options={soft_starterOptions || []}
             size="small"
           />
         </div>
       </div>
       <div className="w-1/3">
-        <CustomSingleSelect control={control} name="plc" label="PLC" options={plcMakeOptions} size="small" />
+        <CustomSingleSelect control={control} name="plc" label="PLC" options={plcMakeOptions || []} size="small" />
       </div>
 
       <div className="flex justify-end">

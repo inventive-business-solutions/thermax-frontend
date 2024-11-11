@@ -67,41 +67,98 @@ export default function useMotorParametersDropdowns() {
     `${HAZARDOUS_TERMINAL_BOX_IP_RATING}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeThermistorOptions } = useDropdownOptions(`${SAFE_THERMISTOR}?fields=["*"]`, "name")
+  const { dropdownOptions: safeThermistorOptions } = useDropdownOptions(
+    `${SAFE_THERMISTOR}?limit=100&fields=["*"]`,
+    "name"
+  )
+  safeThermistorOptions.sort((a: any, b: any) => {
+    if (!isNaN(a.name) && !isNaN(b.name)) {
+      return Number(a.name) - Number(b.name)
+    }
+  })
   const { dropdownOptions: hazardousThermistorOptions } = useDropdownOptions(
     `${HAZARDOUS_THERMISTOR}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeSpaceHeaterOptions } = useDropdownOptions(`${SAFE_SPACE_HEATER}?fields=["*"]`, "name")
+  hazardousThermistorOptions.sort((a: any, b: any) => {
+    if (!isNaN(a.name) && !isNaN(b.name)) {
+      return Number(a.name) - Number(b.name)
+    }
+  })
+
+  const { dropdownOptions: safeSpaceHeaterOptions } = useDropdownOptions(
+    `${SAFE_SPACE_HEATER}?limit=100&fields=["*"]`,
+    "name"
+  )
+  safeSpaceHeaterOptions.sort((a: any, b: any) => {
+    if (!isNaN(a.name) && !isNaN(b.name)) {
+      return Number(a.name) - Number(b.name)
+    }
+  })
+
   const { dropdownOptions: hazardousSpaceHeaterOptions } = useDropdownOptions(
-    `${HAZARDOUS_SPACE_HEATER}?fields=["*"]`,
+    `${HAZARDOUS_SPACE_HEATER}?limit=100&fields=["*"]`,
     "name"
   )
+  hazardousSpaceHeaterOptions.sort((a: any, b: any) => {
+    if (!isNaN(a.name) && !isNaN(b.name)) {
+      return Number(a.name) - Number(b.name)
+    }
+  })
   const { dropdownOptions: hazardousCertificationOptions } = useDropdownOptions(
-    `${HAZARDOUS_CERTIFICATION}?fields=["*"]`,
+    `${HAZARDOUS_CERTIFICATION}?limit=100&fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeBearingRTDOptions } = useDropdownOptions(`${SAFE_BEARING_RTD}?fields=["*"]`, "name")
+  const { dropdownOptions: safeBearingRTDOptions } = useDropdownOptions(
+    `${SAFE_BEARING_RTD}?limit=100&fields=["*"]`,
+    "name"
+  )
+  safeBearingRTDOptions.sort((a: any, b: any) => {
+    if (!isNaN(a.name) && !isNaN(b.name)) {
+      return Number(a.name) - Number(b.name)
+    }
+  })
   const { dropdownOptions: hazardousBearingRTDOptions } = useDropdownOptions(
-    `${HAZARDOUS_BEARING_RTD}?fields=["*"]`,
+    `${HAZARDOUS_BEARING_RTD}?limit=100&fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeWindingRTDOptions } = useDropdownOptions(`${SAFE_WINDING_RTD}?fields=["*"]`, "name")
+  hazardousBearingRTDOptions.sort((a: any, b: any) => {
+    if (!isNaN(a.name) && !isNaN(b.name)) {
+      return Number(a.name) - Number(b.name)
+    }
+  })
+  const { dropdownOptions: safeWindingRTDOptions } = useDropdownOptions(
+    `${SAFE_WINDING_RTD}?limit=100&fields=["*"]`,
+    "name"
+  )
+  safeWindingRTDOptions.sort((a: any, b: any) => {
+    if (!isNaN(a.name) && !isNaN(b.name)) {
+      return Number(a.name) - Number(b.name)
+    }
+  })
   const { dropdownOptions: hazardousWindingRTDOptions } = useDropdownOptions(
-    `${HAZARDOUS_WINDING_RTD}?fields=["*"]`,
+    `${HAZARDOUS_WINDING_RTD}?limit=100&fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeBodyMaterialOptions } = useDropdownOptions(`${SAFE_BODY_MATERIAL}?fields=["*"]`, "name")
+  hazardousWindingRTDOptions.sort((a: any, b: any) => {
+    if (!isNaN(a.name) && !isNaN(b.name)) {
+      return Number(a.name) - Number(b.name)
+    }
+  })
+  const { dropdownOptions: safeBodyMaterialOptions } = useDropdownOptions(
+    `${SAFE_BODY_MATERIAL}?limit=100&fields=["*"]`,
+    "name"
+  )
   const { dropdownOptions: hazardousBodyMaterialOptions } = useDropdownOptions(
-    `${HAZARDOUS_BODY_MATERIAL}?fields=["*"]`,
+    `${HAZARDOUS_BODY_MATERIAL}?limit=100&fields=["*"]`,
     "name"
   )
   const { dropdownOptions: safeTerminalBoxOptions } = useDropdownOptions(
-    `${SAFE_TERMINAL_BOX_MATERIAL}?fields=["*"]`,
+    `${SAFE_TERMINAL_BOX_MATERIAL}?limit=100&fields=["*"]`,
     "name"
   )
   const { dropdownOptions: hazardousTerminalBoxOptions } = useDropdownOptions(
-    `${HAZARDOUS_TERMINAL_BOX_MATERIAL}?fields=["*"]`,
+    `${HAZARDOUS_TERMINAL_BOX_MATERIAL}?limit=100&fields=["*"]`,
     "name"
   )
 
