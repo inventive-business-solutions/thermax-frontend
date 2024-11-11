@@ -1,15 +1,13 @@
-import { SyncOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Modal } from "antd"
 import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { mutate } from "swr"
 import * as zod from "zod"
-import { createData, updateData } from "actions/crud-actions"
+import { createData, getData, updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
+import Loader from "components/Loader"
 import { DYNAMIC_DOCUMENT_API, PROJECT_PANEL_API, STATIC_DOCUMENT_API } from "configs/api-endpoints"
-import { useGetData } from "hooks/useCRUD"
 import { mergeLists } from "utils/helpers"
 
 const fieldObject: any = {
@@ -57,7 +55,6 @@ const getFieldSchema = (panelIds: string[]) => {
 }
 
 const getDefaultValues = (staticValues: any, dynamicValues: any) => {
-  console.log("staticValues", staticValues)
   const staticDefaultValues = Object.keys(fieldObject).reduce(
     (acc, key) => {
       acc[key] = staticValues?.[key] || "TBD"
@@ -81,24 +78,35 @@ const getDefaultValues = (staticValues: any, dynamicValues: any) => {
 export default function DocumentListModal({ open, setOpen, revision_id }: any) {
   const params = useParams()
   const [loading, setLoading] = useState(false)
-  const { data: staticDocumentData } = useGetData(
-    `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`
-  )
-  const staticDocumentList = React.useMemo(
-    () => (staticDocumentData ? staticDocumentData[0] : {}),
-    [staticDocumentData]
-  )
-  const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["name", "panel_name"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  const { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
-  const panel_ids = React.useMemo(() => projectPanelData?.map((item: any) => item.name), [projectPanelData])
-  const quotedPanelIds = panel_ids?.map((id: string) => `"${id}"`).join(", ")
+  const [staticDocumentData, setStaticDocumentData] = useState<any>({})
+  const [dynamicPanelDoc, setDynamicPanelDoc] = useState<any>([])
+  const [panel_ids, setPanelIds] = useState<string[]>([])
 
-  const dynamicDocUrl = `${DYNAMIC_DOCUMENT_API}?fields=["*"]&filters=[["panel_id", "in", [${quotedPanelIds}]]]`
-  const { data: dynamicDocumentList } = useGetData(dynamicDocUrl)
-  const dynamicPanelDoc = React.useMemo(
-    () => mergeLists([projectPanelData, dynamicDocumentList], [{ fromKey: "name", toKey: "panel_id" }]),
-    [projectPanelData, dynamicDocumentList]
-  )
+  useEffect(() => {
+    const fetchData = async () => {
+      const staticData = await getData(
+        `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${params.project_id}"]]`
+      )
+
+      if (staticData && staticData.length > 0) {
+        setStaticDocumentData(staticData[0])
+      }
+      const projectPanelData = await getData(
+        `${PROJECT_PANEL_API}?fields=["name", "panel_name"]&filters=[["revision_id", "=", "${revision_id}"]]`
+      )
+      const panel_ids = projectPanelData?.map((item: any) => item.name)
+      setPanelIds(panel_ids)
+      const quotedPanelIds = panel_ids?.map((id: string) => `"${id}"`).join(", ")
+
+      const dynamicDocumentList = await getData(
+        `${DYNAMIC_DOCUMENT_API}?fields=["*"]&filters=[["panel_id", "in", [${quotedPanelIds}]]]`
+      )
+      const mergedList = mergeLists([projectPanelData, dynamicDocumentList], [{ fromKey: "name", toKey: "panel_id" }])
+      setDynamicPanelDoc(mergedList)
+    }
+
+    fetchData()
+  }, [params.project_id, revision_id, open])
 
   const handleCancel = () => {
     setOpen(false)
@@ -108,13 +116,13 @@ export default function DocumentListModal({ open, setOpen, revision_id }: any) {
 
   const { control, handleSubmit, formState, reset } = useForm({
     resolver: zodResolver(fieldSchema),
-    defaultValues: getDefaultValues(staticDocumentList, dynamicPanelDoc as any),
+    defaultValues: getDefaultValues(staticDocumentData, dynamicPanelDoc as any),
     mode: "onBlur",
   })
 
   useEffect(() => {
-    reset(getDefaultValues(staticDocumentList, dynamicPanelDoc as any))
-  }, [reset, staticDocumentList, dynamicPanelDoc])
+    reset(getDefaultValues(staticDocumentData, dynamicPanelDoc as any))
+  }, [reset, staticDocumentData, dynamicPanelDoc])
 
   const handleStaticDocumentData = async (data: any) => {
     try {
@@ -217,72 +225,69 @@ export default function DocumentListModal({ open, setOpen, revision_id }: any) {
             </div>
           </div>
         ))}
-        {dynamicPanelDoc?.map((item: any, index: number) => (
-          <div key={index} className="flex flex-col">
-            <div className="flex">
-              <div className="flex flex-1 items-center border pl-2">
-                <label>
-                  <span className="font-semibold text-slate-800">{item.panel_name}</span> -{" "}
-                  <span className="text-sm font-semibold text-slate-600">SLD</span>
-                </label>
+        {dynamicPanelDoc ? (
+          dynamicPanelDoc?.map((item: any, index: number) => (
+            <div key={index} className="flex flex-col">
+              <div className="flex">
+                <div className="flex flex-1 items-center border pl-2">
+                  <label>
+                    <span className="font-semibold text-slate-800">{item.panel_name}</span> -{" "}
+                    <span className="text-sm font-semibold text-slate-600">SLD</span>
+                  </label>
+                </div>
+                <div className="flex-1 border">
+                  <CustomTextInput
+                    name={`dynamic-${item.panel_id}-sld`}
+                    control={control}
+                    label=""
+                    type="text"
+                    variant="borderless"
+                  />
+                </div>
               </div>
-              <div className="flex-1 border">
-                <CustomTextInput
-                  name={`dynamic-${item.panel_id}-sld`}
-                  control={control}
-                  label=""
-                  type="text"
-                  variant="borderless"
-                />
+              <div className="flex">
+                <div className="flex flex-1 items-center border pl-2">
+                  <label>
+                    <span className="font-semibold text-slate-800">{item.panel_name}</span> -{" "}
+                    <span className="text-sm font-semibold text-slate-600">Panel Specifications</span>
+                  </label>
+                </div>
+                <div className="flex-1 border">
+                  <CustomTextInput
+                    name={`dynamic-${item.panel_id}-panel_specification`}
+                    control={control}
+                    label=""
+                    type="text"
+                    variant="borderless"
+                  />
+                </div>
+              </div>
+              <div className="flex">
+                <div className="flex flex-1 items-center border pl-2">
+                  <label>
+                    <span className="font-semibold text-slate-800">{item.panel_name}</span> -{" "}
+                    <span className="text-sm font-semibold text-slate-600">Tentative Panel GAD</span>
+                  </label>
+                </div>
+                <div className="flex-1 border">
+                  <CustomTextInput
+                    name={`dynamic-${item.panel_id}-tentative_panel_gad`}
+                    control={control}
+                    label=""
+                    type="text"
+                    variant="borderless"
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex">
-              <div className="flex flex-1 items-center border pl-2">
-                <label>
-                  <span className="font-semibold text-slate-800">{item.panel_name}</span> -{" "}
-                  <span className="text-sm font-semibold text-slate-600">Panel Specifications</span>
-                </label>
-              </div>
-              <div className="flex-1 border">
-                <CustomTextInput
-                  name={`dynamic-${item.panel_id}-panel_specification`}
-                  control={control}
-                  label=""
-                  type="text"
-                  variant="borderless"
-                />
-              </div>
-            </div>
-            <div className="flex">
-              <div className="flex flex-1 items-center border pl-2">
-                <label>
-                  <span className="font-semibold text-slate-800">{item.panel_name}</span> -{" "}
-                  <span className="text-sm font-semibold text-slate-600">Tentative Panel GAD</span>
-                </label>
-              </div>
-              <div className="flex-1 border">
-                <CustomTextInput
-                  name={`dynamic-${item.panel_id}-tentative_panel_gad`}
-                  control={control}
-                  label=""
-                  type="text"
-                  variant="borderless"
-                />
-              </div>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <Loader />
+        )}
         <div className="mt-2 flex justify-end gap-2">
-          <div>
-            <Button type="primary" onClick={() => mutate(dynamicDocUrl)} icon={<SyncOutlined />}>
-              Refresh
-            </Button>
-          </div>
-          <div>
-            <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
-              Save
-            </Button>
-          </div>
+          <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
+            Save
+          </Button>
         </div>
       </form>
     </Modal>

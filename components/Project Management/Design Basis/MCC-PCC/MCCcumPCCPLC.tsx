@@ -79,7 +79,7 @@ const getDefaultValues = (plcData: any) => {
     ao_module_scan_time: plcData?.ao_module_scan_time || "VTS",
     is_ao_module_hart_protocol_support_selected: plcData?.is_ao_module_hart_protocol_support_selected || 1,
     is_plc_spare_io_count_selected: plcData?.is_plc_spare_io_count_selected || 1,
-    plc_spare_io_count: plcData?.plc_spare_io_count || "10",
+    plc_spare_io_count: plcData?.plc_spare_io_count || "10%",
     is_plc_spare_memory_selected: plcData?.is_plc_spare_memory_selected || 1,
     plc_spare_memory: plcData?.plc_spare_memory || "20%",
     is_no_of_hid_es_selected: plcData?.is_no_of_hid_es_selected || 1,
@@ -212,6 +212,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
 
       message.success("PLC Data updated successfully")
     } catch (error) {
+      console.error(error)
       handleError(error)
     } finally {
       setLoading(false)
