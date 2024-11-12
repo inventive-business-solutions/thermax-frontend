@@ -67,7 +67,6 @@ export default function SuperuserList() {
       dataIndex: "action",
       align: "center",
       render: (text, record) => {
-        console.log("record", record)
         return (
           <div className="flex justify-center gap-2">
             <Tooltip placement="top" title="Edit">
