@@ -13,7 +13,6 @@ import { COMMON_CONFIGURATION } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { configItemValidationSchema } from "../schemas"
-import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 
 const getDefaultValues = (commonConfigData: any) => {
   return {
@@ -109,10 +108,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
   const [testing_standard, setTestingStandards] = useState([])
   const [dm_standard, setDmStandards] = useState([])
 
-  const [pushButtonColorSpeed, setPushButtonColorSpeed] = useState<boolean>(false)
-  const [selector_switch, setSelectorSwitch] = useState<boolean>(false)
-  const [fieldMotorIsolator, setFieldMotorIsolator] = useState<boolean>(false)
-  const [localPushButtonStation, setLocalPushButtonStation] = useState<boolean>(false)
+  const [pushButtonColorSpeed, setPushButtonColorSpeed] = useState(false)
 
   let {
     dol_starter_options,
@@ -606,9 +602,6 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
-              onChange={(e) => {
-                e.target.value === "Applicable" ? setSelectorSwitch(false) : setSelectorSwitch(true)
-              }}
             />
           </div>
           <div className="flex-1">
@@ -616,7 +609,6 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="selector_switch_lockable"
               label="Lock Type"
-              disabled={selector_switch}
               options={[
                 { label: "Lockable", value: "Lockable" },
                 { label: "UnLockable", value: "UnLockable" },
@@ -652,12 +644,6 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Field Motor Isolator (General Specification)</span>
-          <CustomCheckboxInput
-            control={control}
-            name="field_motor_isolator"
-            label=""
-            onChange={(e) => alert("value : " + e.target.value)}
-          />
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -728,7 +714,6 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Local Push Button Station (General Specification)</span>
-          <CustomCheckboxInput control={control} name="local_push_button_station" label="" />
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
