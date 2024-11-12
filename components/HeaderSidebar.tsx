@@ -29,7 +29,11 @@ type MenuItem = Required<MenuProps>["items"][number]
 
 export default function HeaderSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const userInfo: { division: keyof typeof TagColors } = useCurrentUser()
+  const userInfo: {
+    last_name: string
+    first_name: string
+    division: keyof typeof TagColors
+  } = useCurrentUser()
   const router = useRouter()
   const { setLoading } = useLoading()
 
@@ -92,15 +96,19 @@ export default function HeaderSidebar() {
           >
             <MenuOutlined />
           </div>
-          <Link href={"/"} className="hidden items-center gap-3 md:flex">
-            <Image src={"/eni_max_logo.png"} alt="Thermax logo" width={35} height={35} className="rounded-full" />
-            <span className="ml-1 text-xl font-bold text-slate-800">EniMax</span>
+          <Link href={"/"} className="hidden items-center gap-5 md:flex">
+            <Image src={"/eni_max_logo.png"} alt="Thermax logo" width={49} height={49} className="rounded-full" />
             <div>
               <Tag color={TagColors[userInfo?.division]}>{userInfo?.division} Division</Tag>
             </div>
           </Link>
         </div>
-        <UserButton />
+        <div className="flex items-center gap-4">
+          <p className="text-gray-700">
+            {userInfo?.first_name} {userInfo?.last_name}
+          </p>
+          <UserButton />
+        </div>
       </header>
 
       <Drawer placement="left" title="Thermax" onClose={toggleSidebar} open={isSidebarOpen} closable={false}>

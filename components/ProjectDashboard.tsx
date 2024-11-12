@@ -46,9 +46,9 @@ const ProjectDashboard = () => {
             {ProjectArray1.map((item, index) => (
               <Link key={index} href={PROJECTS_PAGE} onClick={() => setModalLoading(true)}>
                 <Card bordered hoverable className="shadow-md">
-                  <div className="flex">
+                  <div className="flex gap-4">
                     <div>
-                      <Image src={item.image} alt="Description of the image" width={85} height={85} priority />
+                      <Image src={item.image} alt="Description of the image" width={65} height={65} priority />
                     </div>
                     <div className="flex flex-col items-center justify-center text-gray-700">
                       <div className="font-bold">{item.heading}</div>
@@ -63,9 +63,9 @@ const ProjectDashboard = () => {
             {ProjectArray2.map((item, index) => (
               <Link key={index} href={PROJECTS_PAGE} onClick={() => setModalLoading(true)}>
                 <Card className="shadow-md" bordered hoverable>
-                  <div className="flex">
+                  <div className="flex gap-4">
                     <div>
-                      <Image src={item.image} alt="Description of the image" width={85} height={85} priority />
+                      <Image src={item.image} alt="Description of the image" width={65} height={65} priority />
                     </div>
                     <div className="flex flex-col items-center justify-center text-gray-700">
                       <div className="font-bold">{item.heading}</div>
