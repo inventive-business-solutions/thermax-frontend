@@ -105,7 +105,7 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
     utility_supply_phase: projectData?.utility_supply_phase || "1 Phase",
     frequency_variation: projectData?.frequency_variation || "+/- 5.0",
     frequency: projectData?.frequency || "50",
-    fault_level: projectData?.fault_level || "10",
+    fault_level: projectData?.fault_level || "50",
     sec: projectData?.sec || "1",
     ambient_temperature_max: projectData?.ambient_temperature_max || "40",
     ambient_temperature_min: projectData?.ambient_temperature_min || "40",
@@ -520,7 +520,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
             </Button>
           </div>
           <div className="">
-            <Tooltip title="Save and Go to Design Basis" placement="top">
+            <Tooltip title="Save" placement="top">
               <Button type="primary" htmlType="submit" loading={loading}>
                 Save
               </Button>
@@ -537,7 +537,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
             </Button>
           </div>
           <div className="">
-            <Tooltip title="Save and Go to Electrical Load List" placement="top">
+            <Tooltip title="Save and Go to Design Basis" placement="top">
               <Button type="primary" htmlType="button" disabled={!formState.isValid}>
                 Electrical
               </Button>

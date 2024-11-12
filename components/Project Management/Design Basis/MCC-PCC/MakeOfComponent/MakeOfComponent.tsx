@@ -43,7 +43,15 @@ const getDefaultValues = (data: any) => {
   }
 }
 
-const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
+const MakeOfComponent = ({
+  revision_id,
+  activeKey,
+  setActiveKey,
+}: {
+  revision_id: string
+  activeKey: string
+  setActiveKey: React.Dispatch<React.SetStateAction<string>>
+}) => {
   const [loading, setLoading] = useState(false)
   const userInfo = useCurrentUser()
 
@@ -52,13 +60,13 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
   )
 
   const {
-    motors_make_Options,
-    plc_make_Options,
-    soft_starter_Options,
-    vfd_vsd_Options,
-    panel_enclosure_Options: panel_enclosureOptins,
-    lv_switchgear_Options,
-    cable_make_Options,
+    motors_make_options,
+    plc_make_options,
+    soft_starter_options,
+    vfd_vsd_options,
+    panel_enclosure_options,
+    lv_switchgear_options,
+    cable_make_options,
   } = useMakeOfComponentDropdowns()
   const { setLoading: setModalLoading } = useLoading()
 
@@ -104,6 +112,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
       handleError(error)
     } finally {
       setLoading(false)
+      setActiveKey("2")
     }
   }
 
@@ -116,7 +125,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="motor"
             label="Motor"
-            options={motors_make_Options || []}
+            options={motors_make_options || []}
             size="small"
             disabled={userInfo?.division === HEATING}
           />
@@ -126,7 +135,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="cable"
             label="Cable"
-            options={cable_make_Options || []}
+            options={cable_make_options || []}
             size="small"
           />
         </div>
@@ -135,7 +144,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="lv_switchgear"
             label="LV Switchgear"
-            options={lv_switchgear_Options || []}
+            options={lv_switchgear_options || []}
             size="small"
           />
         </div>
@@ -146,7 +155,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="panel_enclosure"
             label="Panel Enclosure"
-            options={panel_enclosureOptins || []}
+            options={panel_enclosure_options || []}
             size="small"
           />
         </div>
@@ -155,7 +164,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="variable_frequency_speed_drive_vfd_vsd"
             label="Variable frequency/Speed drive (VFD/VSD)"
-            options={vfd_vsd_Options || []}
+            options={vfd_vsd_options || []}
             size="small"
           />
         </div>
@@ -164,13 +173,13 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="soft_starter"
             label="Soft Starter"
-            options={soft_starter_Options || []}
+            options={soft_starter_options || []}
             size="small"
           />
         </div>
       </div>
       <div className="w-1/3">
-        <CustomSingleSelect control={control} name="plc" label="PLC" options={plc_make_Options || []} size="small" />
+        <CustomSingleSelect control={control} name="plc" label="PLC" options={plc_make_options || []} size="small" />
       </div>
 
       <div className="flex justify-end">

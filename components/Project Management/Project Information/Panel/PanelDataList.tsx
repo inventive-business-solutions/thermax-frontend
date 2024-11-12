@@ -24,9 +24,21 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
   const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   const { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
 
+
+
+  if (projectPanelData && projectPanelData?.length !== 0) {
+    projectPanelData.sort((a: any, b: any) => {
+      const dateA = new Date(a.creation)
+      const dateB = new Date(b.creation)
+      return dateA.getTime() - dateB.getTime() // Ascending order
+    })
+  }
+
+  console.log("projectPanelData", projectPanelData)
+
   const columns = [
     { title: "Panel Name", dataIndex: "panel_name", key: "panel_name" },
-    { title: "Panel Sub Type", dataIndex: "panel_sub_type", key: "panel_sub_type" },
+    { title: "Panel Type", dataIndex: "panel_sub_type", key: "panel_sub_type" },
     { title: "Panel Main Type", dataIndex: "panel_main_type", key: "panel_main_type", hidden: true },
     {
       title: "Action",

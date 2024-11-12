@@ -167,8 +167,6 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
     metering_for_feeder_options,
   } = useCommonConfigDropdowns()
 
-  console.log("issue", lpbs_type_options, " ", field_motor_type_options)
-
   const { control, handleSubmit, reset } = useForm({
     resolver: zodResolver(configItemValidationSchema),
     defaultValues: getDefaultValues(commonConfigurationData?.[0]),
