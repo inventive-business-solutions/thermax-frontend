@@ -67,44 +67,29 @@ import {
 } from "configs/api-endpoints"
 
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { moveNAtoEnd, sortDropdownOptions } from "utils/helpers"
 
 export default function useCommonConfigDropdowns() {
-  const { dropdownOptions: dol_starter_options } = useDropdownOptions(
+  let { dropdownOptions: dol_starter_options } = useDropdownOptions(
     `${DOL_STARTER}?limit=100&fields=["*"]`,
     "dol_starter"
   )
-  dol_starter_options.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
+  dol_starter_options = sortDropdownOptions(dol_starter_options);
 
-  const { dropdownOptions: star_delta_starter_options } = useDropdownOptions(
+  let { dropdownOptions: star_delta_starter_options } = useDropdownOptions(
     `${STAR_DELTA_STARTER}?limit=100&fields=["*"]`,
     "star_delta_starter"
   )
-  star_delta_starter_options.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
+  star_delta_starter_options = sortDropdownOptions(star_delta_starter_options);
 
-  const { dropdownOptions: ammeter_options } = useDropdownOptions(`${AMMETER}?limit=100&fields=["*"]`, "ammeter")
-  ammeter_options.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
+  let { dropdownOptions: ammeter_options } = useDropdownOptions(`${AMMETER}?limit=100&fields=["*"]`, "ammeter")
+  ammeter_options = sortDropdownOptions(ammeter_options)
 
   let { dropdownOptions: ammeter_configuration_options } = useDropdownOptions(
     `${AMMETER_CONFIGURATION}?fields=["*"]`,
     "ammeter_configuration"
   )
-  if(ammeter_configuration_options.length !== 0) {
-    let NaOptions = ammeter_configuration_options.filter((item: any) => item.name === "NA")
-    ammeter_configuration_options = ammeter_configuration_options.filter((item : any) => item.name !== "NA")
-    ammeter_configuration_options.push(NaOptions[0]);
-  }
+  ammeter_configuration_options = moveNAtoEnd(ammeter_configuration_options)
 
   const { dropdownOptions: mcc_switchgear_type_options } = useDropdownOptions(
     `${MCC_SWITCHGEAR_TYPE}?fields=["*"]`,

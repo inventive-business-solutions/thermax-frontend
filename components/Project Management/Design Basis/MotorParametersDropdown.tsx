@@ -26,6 +26,7 @@ import {
 } from "configs/api-endpoints"
 
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { sortDropdownOptions } from "utils/helpers"
 
 export default function useMotorParametersDropdowns() {
   const { dropdownOptions: safeEfficiencyLevelOptions } = useDropdownOptions(
@@ -66,84 +67,56 @@ export default function useMotorParametersDropdowns() {
     `${HAZARDOUS_TERMINAL_BOX_IP_RATING}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeThermistorOptions } = useDropdownOptions(
+  let { dropdownOptions: safeThermistorOptions } = useDropdownOptions(
     `${SAFE_THERMISTOR}?limit=100&fields=["*"]`,
     "name"
   )
-  safeThermistorOptions.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
-  const { dropdownOptions: hazardousThermistorOptions } = useDropdownOptions(
+  safeThermistorOptions = sortDropdownOptions(safeThermistorOptions)
+  let { dropdownOptions: hazardousThermistorOptions } = useDropdownOptions(
     `/document/Thermister Hazardous?fields=["*"]`,
     "name"
   )
-  hazardousThermistorOptions.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
+  hazardousThermistorOptions = sortDropdownOptions(hazardousThermistorOptions)
 
-  const { dropdownOptions: safeSpaceHeaterOptions } = useDropdownOptions(
+  let { dropdownOptions: safeSpaceHeaterOptions } = useDropdownOptions(
     `${SAFE_SPACE_HEATER}?limit=100&fields=["*"]`,
     "name"
   )
-  safeSpaceHeaterOptions.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
+  safeSpaceHeaterOptions = sortDropdownOptions(safeSpaceHeaterOptions)
+  
 
-  const { dropdownOptions: hazardousSpaceHeaterOptions } = useDropdownOptions(
+  let { dropdownOptions: hazardousSpaceHeaterOptions } = useDropdownOptions(
     `${HAZARDOUS_SPACE_HEATER}?limit=100&fields=["*"]`,
     "name"
   )
-  hazardousSpaceHeaterOptions.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
+  hazardousSpaceHeaterOptions = sortDropdownOptions(hazardousSpaceHeaterOptions)
+
   const { dropdownOptions: hazardousCertificationOptions } = useDropdownOptions(
     `${HAZARDOUS_CERTIFICATION}?limit=100&fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeBearingRTDOptions } = useDropdownOptions(
+  let { dropdownOptions: safeBearingRTDOptions } = useDropdownOptions(
     `${SAFE_BEARING_RTD}?limit=100&fields=["*"]`,
     "name"
   )
-  safeBearingRTDOptions.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
-  const { dropdownOptions: hazardousBearingRTDOptions } = useDropdownOptions(
+  safeBearingRTDOptions = sortDropdownOptions(safeBearingRTDOptions)
+  let { dropdownOptions: hazardousBearingRTDOptions } = useDropdownOptions(
     `${HAZARDOUS_BEARING_RTD}?limit=100&fields=["*"]`,
     "name"
   )
-  hazardousBearingRTDOptions.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
-  const { dropdownOptions: safeWindingRTDOptions } = useDropdownOptions(
+  hazardousBearingRTDOptions = sortDropdownOptions(hazardousBearingRTDOptions)
+  let { dropdownOptions: safeWindingRTDOptions } = useDropdownOptions(
     `${SAFE_WINDING_RTD}?limit=100&fields=["*"]`,
     "name"
   )
-  safeWindingRTDOptions.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
-  const { dropdownOptions: hazardousWindingRTDOptions } = useDropdownOptions(
+  safeWindingRTDOptions = sortDropdownOptions(safeWindingRTDOptions)
+  
+  let { dropdownOptions: hazardousWindingRTDOptions } = useDropdownOptions(
     `${HAZARDOUS_WINDING_RTD}?limit=100&fields=["*"]`,
     "name"
   )
-  hazardousWindingRTDOptions.sort((a: any, b: any) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-  })
+  hazardousWindingRTDOptions = sortDropdownOptions(hazardousWindingRTDOptions)
+  
   const { dropdownOptions: safeBodyMaterialOptions } = useDropdownOptions(
     `${SAFE_BODY_MATERIAL}?limit=100&fields=["*"]`,
     "name"
