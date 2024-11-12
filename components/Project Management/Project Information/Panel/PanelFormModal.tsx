@@ -117,7 +117,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
     try {
       await updateData(`${PROJECT_PANEL_API}/${values.name}`, false, panelData)
       setStatus("success")
-      setMessage("Panel information updated successfully")
+      // setMessage("Panel information updated successfully")
     } catch (error: any) {
       throw error
     } finally {
@@ -152,6 +152,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
       mutate(getProjectListUrl)
       setLoading(false)
     }
+    setOpen(false)
   }
 
   return (

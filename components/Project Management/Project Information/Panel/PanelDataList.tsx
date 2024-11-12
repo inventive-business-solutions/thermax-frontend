@@ -14,7 +14,7 @@ import {
 } from "configs/api-endpoints"
 import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
-import { changeNameToKey } from "utils/helpers"
+import { changeNameToKey, sortDatewise } from "utils/helpers"
 import PanelFormModal from "./PanelFormModal"
 
 export default function PanelDataList({ revision_id }: { revision_id: string }) {
@@ -22,11 +22,13 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
   const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  const { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
+  let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
+
+  projectPanelData = sortDatewise(projectPanelData)
 
   const columns = [
     { title: "Panel Name", dataIndex: "panel_name", key: "panel_name" },
-    { title: "Panel Sub Type", dataIndex: "panel_sub_type", key: "panel_sub_type" },
+    { title: "Panel Type", dataIndex: "panel_sub_type", key: "panel_sub_type" },
     { title: "Panel Main Type", dataIndex: "panel_main_type", key: "panel_main_type", hidden: true },
     {
       title: "Action",
