@@ -10,7 +10,7 @@ import * as zod from "zod"
 import { registerNewUser } from "actions/register"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomPasswordInput from "components/FormInputs/CustomPasswordInput"
-import { BTG, DASHBOARD_PAGE, THERMAX_SUPERUSER } from "configs/constants"
+import { BTG, DASHBOARD_PAGE, RESET_PASSWORD, THERMAX_SUPERUSER } from "configs/constants"
 import { useLoading } from "hooks/useLoading"
 import AlertNotification from "./AlertNotification"
 
@@ -27,11 +27,11 @@ const createBTGUserSchema = zod.object({
 
 export default function SignIn({ authSecret }: { authSecret: string }) {
   const [loading, setLoading] = useState(false)
-  const { setLoading: setModalLoading } = useLoading()
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("")
   const router = useRouter()
 
+  const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,6 +134,15 @@ export default function SignIn({ authSecret }: { authSecret: string }) {
           </div>
           <div>
             <CustomPasswordInput name="password" control={control} label="Password" />
+          </div>
+          <div
+            className="mb-2 mt-1 cursor-pointer text-right text-xs text-blue-500 hover:text-blue-600 hover:underline"
+            onClick={() => {
+              setModalLoading(true)
+              router.push(RESET_PASSWORD)
+            }}
+          >
+            Forgot password?
           </div>
           <AlertNotification status={status} message={message} />
           <Button type="primary" htmlType="submit" loading={loading}>
