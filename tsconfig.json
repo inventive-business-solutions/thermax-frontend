@@ -32,7 +32,7 @@
     "**/*.mjs",
     "jest.config.js",
     ".next/types/**/*.ts",
-    "app/auth/change-password"
+    "app/auth/reset-password"
   ],
   "exclude": ["node_modules"]
 }

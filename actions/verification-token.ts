@@ -75,7 +75,7 @@ export const verifyAccount = async (token: string) => {
     }
     const user = users[0]
     const email = user.name
-    await sendCredentialsEmail(email, "Team BTG")
+    await sendCredentialsEmail(email, "Team BTG", false)
 
     return { valid: true, email }
   } catch (error: any) {

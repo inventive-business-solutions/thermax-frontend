@@ -150,13 +150,8 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
     field_motor_color_shade_options,
     field_motor_cable_entry_options,
     field_motor_canopy_on_top_options,
-    lpbs_type_options,
-    lpbs_enclosure_options,
-    lpbs_material_options,
-    lpbs_qty_options,
     lpbs_color_shade_options,
     lpbs_canopy_on_top_options,
-    lpbs_push_button_start_color_options,
     lpbs_indicator_on_options,
     lpbs_indiacator_off_options,
     lpbs_speed_increase_options,
@@ -206,8 +201,6 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
       message?.error(error?.message || "An unknown error occured")
     }
   }
-
-  const NaOptions = lpbs_push_button_start_color_options.filter((item: any) => item.name === "NA")
 
   const onSubmit = async (data: any) => {
     setLoading(true)
