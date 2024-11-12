@@ -1,12 +1,12 @@
 "use client"
 
 import { DeleteOutlined, EditOutlined, SyncOutlined, UserAddOutlined } from "@ant-design/icons"
-import { Button, Popconfirm, Table, Tooltip } from "antd"
+import { Button, message, Popconfirm, Table, Tooltip } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
-import { deleteData } from "actions/crud-actions"
-import { getUsersUrl, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
+import { createData, deleteData, getData } from "actions/crud-actions"
+import { DELETE_USER_EMAIL_API, NEXT_AUTH_USER_API, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import { changeNameToKey, mergeLists } from "utils/helpers"
@@ -26,6 +26,9 @@ export const UserList = ({ userInfo }: any) => {
   const [editMode, setEditMode] = useState(false)
   const [userRow, setUserRow] = useState<any>(null)
   const [editEventTrigger, setEditEventTrigger] = useState(false)
+
+  console.log(userInfo)
+
   const thermaxUserUrl = `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`
   const { data: thermaxUserList } = useGetData(thermaxUserUrl)
   const { data: userList } = useGetData(`${USER_API}?fields=["*"]`)
@@ -44,9 +47,25 @@ export const UserList = ({ userInfo }: any) => {
   }
 
   const handleDelete = async (selectedRowID: string) => {
-    await deleteData(`${USER_API}/${selectedRowID}`, true)
-    // Revalidate the cache
-    mutate(getUsersUrl)
+    try {
+      const thermaxUser = await getData(`${THERMAX_USER_API}/${selectedRowID}`)
+      await deleteData(`${THERMAX_USER_API}/${selectedRowID}`, false)
+      await deleteData(`${NEXT_AUTH_USER_API}/${selectedRowID}`, false)
+      await createData(`${DELETE_USER_EMAIL_API}`, false, {
+        email: thermaxUser?.email,
+        subject: "User Removal Notification - EnIMAX",
+        division_name: thermaxUser?.division,
+        is_superuser: 0,
+        sent_by: "Team BTG",
+      })
+      await deleteData(`${USER_API}/${selectedRowID}`, false)
+      message.success("User deleted successfully")
+    } catch (error) {
+      message.error("Error deleting user")
+      console.error("Error deleting user", error)
+    } finally {
+      mutate(thermaxUserUrl)
+    }
   }
 
   const columns: ColumnsType<DataType> = [
@@ -76,7 +95,8 @@ export const UserList = ({ userInfo }: any) => {
       title: "Action",
       dataIndex: "action",
       align: "center",
-      render: (text, record) => {
+      render: (text, record: any) => {
+        console.log(record)
         return (
           <div className="flex justify-center gap-2">
             <Tooltip placement="top" title="Edit">
@@ -94,7 +114,13 @@ export const UserList = ({ userInfo }: any) => {
                 placement="topRight"
               >
                 <div className="rounded-full hover:bg-red-100">
-                  <Button type="link" shape="circle" icon={<DeleteOutlined />} danger disabled />
+                  <Button
+                    type="link"
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                    danger
+                    disabled={record.key === userInfo?.email || record.is_superuser === 1}
+                  />
                 </div>
               </Popconfirm>
             </Tooltip>

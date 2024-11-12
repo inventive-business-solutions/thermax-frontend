@@ -45,7 +45,6 @@ const getDefaultValues = (data: any) => {
 
 const MakeOfComponent = ({
   revision_id,
-  activeKey,
   setActiveKey,
 }: {
   revision_id: string
@@ -82,7 +81,7 @@ const MakeOfComponent = ({
 
   useEffect(() => {
     reset(getDefaultValues(makeOfComponent?.[0]))
-  }, [reset])
+  }, [makeOfComponent, reset])
 
   const handleError = (error: any) => {
     try {

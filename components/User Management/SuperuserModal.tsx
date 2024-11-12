@@ -1,13 +1,13 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Modal } from "antd"
+import { Button, message, Modal } from "antd"
 import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
-import { updateData } from "actions/crud-actions"
-import { CreateUser } from "actions/register"
+import { getData, updateData } from "actions/crud-actions"
+import { registerNewUser } from "actions/register"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { DIVISION_API, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
 import { BTG, THERMAX_SUPERUSER } from "configs/constants"
@@ -21,7 +21,9 @@ const UserFormValidationSchema = zod.object({
   email: zod
     .string({ required_error: "Email address is required", message: "Email address is required" })
     .email({ message: "Invalid email address" }),
-  name_initial: zod.string({ required_error: "Initials is required", message: "Initials is required" }),
+  name_initial: zod
+    .string({ required_error: "Initials is required", message: "Initials is required" })
+    .max(3, { message: "Initials should not exceed 3 characters" }),
   division: zod.string({ required_error: "Division is required", message: "Division is required" }),
 })
 
@@ -36,17 +38,17 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 }
 
 export default function SuperuserFormModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
-  const [message, setMessage] = useState("")
+  const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
 
   let { dropdownOptions: divisionNames } = useDropdownOptions(DIVISION_API, "name")
   divisionNames = divisionNames?.filter((division: any) => division.name !== BTG)
 
-  const { control, handleSubmit, reset, formState, watch } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     resolver: zodResolver(UserFormValidationSchema),
     defaultValues: getDefaultValues(editMode, values),
-    mode: "onBlur",
+    mode: "onSubmit",
   })
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export default function SuperuserFormModal({ open, setOpen, editMode, values, ed
   const handleCancel = () => {
     setOpen(false)
     reset(getDefaultValues(false, values))
-    setMessage("")
+    setInfoMessage("")
     setStatus("")
   }
 
@@ -68,7 +70,7 @@ export default function SuperuserFormModal({ open, setOpen, editMode, values, ed
       await updateData(`${USER_API}/${values.name}`, false, userData)
       await updateData(`${THERMAX_USER_API}/${values.name}`, false, userData)
       setStatus("success")
-      setMessage("User information updated successfully")
+      setInfoMessage("User information updated successfully")
     } catch (error: any) {
       throw error
     } finally {
@@ -82,10 +84,10 @@ export default function SuperuserFormModal({ open, setOpen, editMode, values, ed
     setStatus("error")
     try {
       const errorObj = JSON.parse(error?.message) as any
-      setMessage(errorObj?.message)
+      setInfoMessage(errorObj?.message)
     } catch (parseError) {
       // If parsing fails, use the raw error message
-      setMessage(error?.message || "An unknown error occurred")
+      setInfoMessage(error?.message || "An unknown error occurred")
     }
   }
 
@@ -94,13 +96,24 @@ export default function SuperuserFormModal({ open, setOpen, editMode, values, ed
     try {
       if (editMode) {
         await handleUpdateUser(data)
+        message.success("User information updated successfully")
+        setOpen(false)
       } else {
-        const registerRes = await CreateUser(data, THERMAX_SUPERUSER, data.division, true, data.name_initial)
-        if (registerRes?.status === 409) {
+        const thermaxDivisionUser = await getData(
+          `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=", "${data.division}"], ["is_superuser", "=",  "1"]]`
+        )
+        if (thermaxDivisionUser?.length > 0) {
           setStatus("error")
-          setMessage("User already exist")
+          setInfoMessage(`Superuser already exists for this division`)
         } else {
-          handleCancel()
+          const registerRes = await registerNewUser(data, THERMAX_SUPERUSER, data.division, true, data.name_initial)
+          if (registerRes?.status === 409) {
+            setStatus("error")
+            setInfoMessage("User already exist")
+          } else {
+            message.success("User created successfully")
+            handleCancel()
+          }
         }
       }
       mutate(`${THERMAX_USER_API}?fields=["*"]&filters=[["is_superuser", "=",  "1"]]`)
@@ -145,9 +158,9 @@ export default function SuperuserFormModal({ open, setOpen, editMode, values, ed
             />
           </div>
         </div>
-        <AlertNotification message={message} status={status} />
+        <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
-          <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
+          <Button type="primary" htmlType="submit" loading={loading}>
             Save
           </Button>
         </div>
