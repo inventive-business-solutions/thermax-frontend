@@ -74,13 +74,13 @@ export default function useCommonConfigDropdowns() {
     `${DOL_STARTER}?limit=100&fields=["*"]`,
     "dol_starter"
   )
-  dol_starter_options = sortDropdownOptions(dol_starter_options);
+  dol_starter_options = sortDropdownOptions(dol_starter_options)
 
   let { dropdownOptions: star_delta_starter_options } = useDropdownOptions(
     `${STAR_DELTA_STARTER}?limit=100&fields=["*"]`,
     "star_delta_starter"
   )
-  star_delta_starter_options = sortDropdownOptions(star_delta_starter_options);
+  star_delta_starter_options = sortDropdownOptions(star_delta_starter_options)
 
   let { dropdownOptions: ammeter_options } = useDropdownOptions(`${AMMETER}?limit=100&fields=["*"]`, "ammeter")
   ammeter_options = sortDropdownOptions(ammeter_options)
@@ -170,14 +170,17 @@ export default function useCommonConfigDropdowns() {
     "speed_increase_pb"
   )
   const { dropdownOptions: ess_options } = useDropdownOptions(`${PUSH_BUTTON_ESS}?fields=["*"]`, "ess")
-  const { dropdownOptions: push_button_stop_options } = useDropdownOptions(
+  let { dropdownOptions: push_button_stop_options } = useDropdownOptions(
     `${PUSH_BUTTON_STOP_COLOR}?fields=["*"]`,
     "push_button_stop_color"
   )
-  const { dropdownOptions: push_button_start_options } = useDropdownOptions(
+  push_button_stop_options = moveNAtoEnd(push_button_stop_options)
+
+  let { dropdownOptions: push_button_start_options } = useDropdownOptions(
     `${PUSH_BUTTON_START_COLOR}?fields=["*"]`,
     "push_button_start_color"
   )
+  push_button_start_options = moveNAtoEnd(push_button_start_options)
 
   const { dropdownOptions: lr_selector_lock_switch_applicable_options } = useDropdownOptions(
     `${LR_SELECTOR_SWITCH_APPLICABLE}?fields=["*"]`,

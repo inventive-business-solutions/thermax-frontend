@@ -13,6 +13,7 @@ import { COMMON_CONFIGURATION } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { configItemValidationSchema } from "../schemas"
+import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 
 const getDefaultValues = (commonConfigData: any) => {
   return {
@@ -38,7 +39,9 @@ const getDefaultValues = (commonConfigData: any) => {
     ct_wiring_size: commonConfigData?.ct_wiring_size || "2.5 Sq. mm",
     cable_insulation_pvc: commonConfigData?.cable_insulation_pvc || "FRLS",
     ferrule: commonConfigData?.ferrule || "Cross Ferrule",
-    common_requirement: commonConfigData?.common_requirement || "",
+    common_requirement:
+      commonConfigData?.common_requirement ||
+      "660/1100 V Grade PVC insulated, FR/FRLS, Multistranded, Copper, Flexible cable identified with colour code",
     spare_terminal: commonConfigData?.spare_terminal || "10",
     push_button_start: commonConfigData?.push_button_start || "Green",
     push_button_stop: commonConfigData?.push_button_stop || "Green",
@@ -102,8 +105,16 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
     `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
   const [loading, setLoading] = useState(false)
+  const [supplyFeederStandard, setSupplyFeederStandard] = useState("IEC")
+  const [testing_standard, setTestingStandards] = useState([])
+  const [dm_standard, setDmStandards] = useState([])
 
-  const {
+  const [pushButtonColorSpeed, setPushButtonColorSpeed] = useState<boolean>(false)
+  const [selector_switch, setSelectorSwitch] = useState<boolean>(false)
+  const [fieldMotorIsolator, setFieldMotorIsolator] = useState<boolean>(false)
+  const [localPushButtonStation, setLocalPushButtonStation] = useState<boolean>(false)
+
+  let {
     dol_starter_options,
     star_delta_starter_options,
     ammeter_options,
@@ -166,6 +177,20 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
     eb_current_density_options,
     metering_for_feeder_options,
   } = useCommonConfigDropdowns()
+
+  // useEffect(() => {
+  //   if (supplyFeederStandard === "IEC") {
+  //     dm_standard_options = dm_standard_options.filter((item: any) => item.name.startsWith("IEC") || item.name === "NA")
+  //     testing_standard_options = testing_standard_options.filter(
+  //       (item: any) => item.name.startsWith("IEC") || item.name === "NA"
+  //     )
+  //   } else {
+  //     dm_standard_options = dm_standard_options.filter((item: any) => item.name.startsWith("IS") || item.name === "NA")
+  //     testing_standard_options = testing_standard_options.filter(
+  //       (item: any) => item.name.startsWith("IS") || item.name === "NA"
+  //     )
+  //   }
+  // }, [supplyFeederStandard, setSupplyFeederStandard])
 
   const { control, handleSubmit, reset } = useForm({
     resolver: zodResolver(configItemValidationSchema),
@@ -302,6 +327,20 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
                 { label: "IEC", value: "IEC" },
                 { label: "IS", value: "IS" },
               ]}
+              onChange={(e) => {
+                const selectedValue = e.target.value
+                setSupplyFeederStandard(selectedValue)
+
+                const filterOptions = (options: any) => {
+                  return options.filter((item: any) => item.name.startsWith(selectedValue) || item.name === "NA")
+                }
+
+                const filteredDmStandards = filterOptions(dm_standard_options)
+                const filteredTestingStandards = filterOptions(testing_standard_options)
+
+                setDmStandards(filteredDmStandards)
+                setTestingStandards(filteredTestingStandards)
+              }}
             />
           </div>
           <div className="flex-1">
@@ -309,7 +348,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="dm_standard"
               label="Design & Manufacturer's standard"
-              options={dm_standard_options}
+              options={dm_standard}
               size="small"
             />
           </div>
@@ -318,7 +357,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="testing_standard"
               label="Testing Standard"
-              options={testing_standard_options}
+              options={testing_standard}
               size="small"
             />
           </div>
@@ -327,7 +366,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
           <span className="font-bold text-slate-700">Wiring</span>
         </Divider>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">Power Wiring (L1, L2, L3, LN)</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">Power Wiring (L1, L2, L3, N)</h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -411,7 +450,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">CT Wiring (+ / -)</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">CT Wiring</h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -508,6 +547,9 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
                 { label: "Yes", value: "1" },
                 { label: "No", value: "0" },
               ]}
+              onChange={(e) => {
+                e.target.value === "1" ? setPushButtonColorSpeed(false) : setPushButtonColorSpeed(true)
+              }}
             />
           </div>
           <div className="flex-1">
@@ -516,6 +558,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="speed_increase_pb"
               label="Speed Increase PB"
               options={speed_increase_pb_options}
+              disabled={pushButtonColorSpeed}
               size="small"
             />
           </div>
@@ -525,6 +568,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="speed_decrease_pb"
               label="Speed Decrease PB"
               options={speed_decrease_pb_options}
+              disabled={pushButtonColorSpeed}
               size="small"
             />
           </div>
@@ -534,7 +578,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
             <CustomSingleSelect
               control={control}
               name="alarm_acknowledge_and_lamp_test"
-              label="Alarm Knowledge & Lamp Test"
+              label="Alarm Acknowledge and Lamp Test"
               options={alarm_acknowledge_and_lamp_test_options}
               size="small"
             />
@@ -562,6 +606,9 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
+              onChange={(e) => {
+                e.target.value === "Applicable" ? setSelectorSwitch(false) : setSelectorSwitch(true)
+              }}
             />
           </div>
           <div className="flex-1">
@@ -569,6 +616,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="selector_switch_lockable"
               label="Lock Type"
+              disabled={selector_switch}
               options={[
                 { label: "Lockable", value: "Lockable" },
                 { label: "UnLockable", value: "UnLockable" },
@@ -604,6 +652,12 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Field Motor Isolator (General Specification)</span>
+          <CustomCheckboxInput
+            control={control}
+            name="field_motor_isolator"
+            label=""
+            onChange={(e) => alert("value : " + e.target.value)}
+          />
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -674,6 +728,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Local Push Button Station (General Specification)</span>
+          <CustomCheckboxInput control={control} name="local_push_button_station" label="" />
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">

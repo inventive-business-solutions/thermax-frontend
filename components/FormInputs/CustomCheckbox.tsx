@@ -7,6 +7,7 @@ interface CheckboxFieldProps {
   name: string
   label: string
   checked?: boolean
+  onChange?: (value: any) => void
 }
 
 export default function CustomCheckboxInput({ control, name, label }: CheckboxFieldProps) {
