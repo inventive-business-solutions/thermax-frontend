@@ -18,10 +18,10 @@ const fieldObject: any = {
   electrical_cable_schedule: "Electrical Cable Schedule",
   lt_cable_sizing: "LT Cable Sizing",
   cable_specification_and_bom: "Cable Specification and BOM",
-  cable_tray_layout_e_and_i: "Cable Tray Layout E and I",
+  cable_tray_layout_e_and_i: "Cable Tray Layout (E&I)",
   cable_tray_support_details_and_bom: "Cable Tray Support Details and BOM",
   earthing_layout: "Earthing Layout",
-  earthing_calculation_input_sheet_will_be_provided: "Earthing Calculation Input Sheet will be provided",
+  earthing_calculation_input_sheet_will_be_provided: "Earthing Calculation (Input Sheet will be provided)",
   earthing_material_bom: "Earthing Material BOM",
   motor_canopy_list_and_specifications: "Motor Canopy List and Specifications",
   motor_specification: "Motor Specification",
@@ -195,6 +195,7 @@ export default function DocumentListModal({ open, setOpen, revision_id }: any) {
     } finally {
       setLoading(false)
     }
+    setOpen(false);
   }
 
   return (
