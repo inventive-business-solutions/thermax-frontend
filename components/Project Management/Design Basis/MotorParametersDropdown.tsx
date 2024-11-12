@@ -26,6 +26,7 @@ import {
 } from "configs/api-endpoints"
 
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { sortDropdownOptions } from "utils/helpers"
 
 export default function useMotorParametersDropdowns() {
   const { dropdownOptions: safeEfficiencyLevelOptions } = useDropdownOptions(
@@ -66,42 +67,70 @@ export default function useMotorParametersDropdowns() {
     `${HAZARDOUS_TERMINAL_BOX_IP_RATING}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeThermistorOptions } = useDropdownOptions(`${SAFE_THERMISTOR}?fields=["*"]`, "name")
-  const { dropdownOptions: hazardousThermistorOptions } = useDropdownOptions(
+  let { dropdownOptions: safeThermistorOptions } = useDropdownOptions(
+    `${SAFE_THERMISTOR}?limit=100&fields=["*"]`,
+    "name"
+  )
+  safeThermistorOptions = sortDropdownOptions(safeThermistorOptions)
+  let { dropdownOptions: hazardousThermistorOptions } = useDropdownOptions(
     `/document/Thermister Hazardous?fields=["*"]`,
     "name"
   )
+  hazardousThermistorOptions = sortDropdownOptions(hazardousThermistorOptions)
 
-  const { dropdownOptions: safeSpaceHeaterOptions } = useDropdownOptions(`${SAFE_SPACE_HEATER}?fields=["*"]`, "name")
-  const { dropdownOptions: hazardousSpaceHeaterOptions } = useDropdownOptions(
-    `${HAZARDOUS_SPACE_HEATER}?fields=["*"]`,
+  let { dropdownOptions: safeSpaceHeaterOptions } = useDropdownOptions(
+    `${SAFE_SPACE_HEATER}?limit=100&fields=["*"]`,
     "name"
   )
+  safeSpaceHeaterOptions = sortDropdownOptions(safeSpaceHeaterOptions)
+  
+
+  let { dropdownOptions: hazardousSpaceHeaterOptions } = useDropdownOptions(
+    `${HAZARDOUS_SPACE_HEATER}?limit=100&fields=["*"]`,
+    "name"
+  )
+  hazardousSpaceHeaterOptions = sortDropdownOptions(hazardousSpaceHeaterOptions)
+
   const { dropdownOptions: hazardousCertificationOptions } = useDropdownOptions(
-    `${HAZARDOUS_CERTIFICATION}?fields=["*"]`,
+    `${HAZARDOUS_CERTIFICATION}?limit=100&fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeBearingRTDOptions } = useDropdownOptions(`${SAFE_BEARING_RTD}?fields=["*"]`, "name")
-  const { dropdownOptions: hazardousBearingRTDOptions } = useDropdownOptions(
-    `${HAZARDOUS_BEARING_RTD}?fields=["*"]`,
+  let { dropdownOptions: safeBearingRTDOptions } = useDropdownOptions(
+    `${SAFE_BEARING_RTD}?limit=100&fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeWindingRTDOptions } = useDropdownOptions(`${SAFE_WINDING_RTD}?fields=["*"]`, "name")
-  const { dropdownOptions: hazardousWindingRTDOptions } = useDropdownOptions(
-    `${HAZARDOUS_WINDING_RTD}?fields=["*"]`,
+  safeBearingRTDOptions = sortDropdownOptions(safeBearingRTDOptions)
+  let { dropdownOptions: hazardousBearingRTDOptions } = useDropdownOptions(
+    `${HAZARDOUS_BEARING_RTD}?limit=100&fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: safeBodyMaterialOptions } = useDropdownOptions(`${SAFE_BODY_MATERIAL}?fields=["*"]`, "name")
+  hazardousBearingRTDOptions = sortDropdownOptions(hazardousBearingRTDOptions)
+  let { dropdownOptions: safeWindingRTDOptions } = useDropdownOptions(
+    `${SAFE_WINDING_RTD}?limit=100&fields=["*"]`,
+    "name"
+  )
+  safeWindingRTDOptions = sortDropdownOptions(safeWindingRTDOptions)
+  
+  let { dropdownOptions: hazardousWindingRTDOptions } = useDropdownOptions(
+    `${HAZARDOUS_WINDING_RTD}?limit=100&fields=["*"]`,
+    "name"
+  )
+  hazardousWindingRTDOptions = sortDropdownOptions(hazardousWindingRTDOptions)
+  
+  const { dropdownOptions: safeBodyMaterialOptions } = useDropdownOptions(
+    `${SAFE_BODY_MATERIAL}?limit=100&fields=["*"]`,
+    "name"
+  )
   const { dropdownOptions: hazardousBodyMaterialOptions } = useDropdownOptions(
-    `${HAZARDOUS_BODY_MATERIAL}?fields=["*"]`,
+    `${HAZARDOUS_BODY_MATERIAL}?limit=100&fields=["*"]`,
     "name"
   )
   const { dropdownOptions: safeTerminalBoxOptions } = useDropdownOptions(
-    `${SAFE_TERMINAL_BOX_MATERIAL}?fields=["*"]`,
+    `${SAFE_TERMINAL_BOX_MATERIAL}?limit=100&fields=["*"]`,
     "name"
   )
   const { dropdownOptions: hazardousTerminalBoxOptions } = useDropdownOptions(
-    `${HAZARDOUS_TERMINAL_BOX_MATERIAL}?fields=["*"]`,
+    `${HAZARDOUS_TERMINAL_BOX_MATERIAL}?limit=100&fields=["*"]`,
     "name"
   )
 

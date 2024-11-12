@@ -27,7 +27,7 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
     {
       label: "Make",
       key: "1",
-      children: <MakeOfComponent revision_id={revision_id} />,
+      children: <MakeOfComponent revision_id={revision_id} activeKey={activeKey} setActiveKey={setActiveKey} />,
     },
     {
       label: "Common Configuration",
