@@ -60,7 +60,7 @@ export const SAFE_TERMINAL_BOX_MATERIAL = `/document/Material of Terminal Box Sa
 export const HAZARDOUS_TERMINAL_BOX_MATERIAL = `/document/Material of Terminal Box Hazardous`
 
 // Make of components Api end Points
-export const MAKE_OF_COMPONENT_API = `/document/Make Of Components`
+export const MAKE_OF_COMPONENT_API = `/document/Design Basis Make of Component`
 export const MAKE_MOTORS = `/document/Motors Make`
 export const MAKE_CABLE = `/document/Cables Make`
 export const MAKE_LV_SWITCHGEAR = `/document/LV Switchgear Make`
@@ -273,3 +273,4 @@ export const getUsersUrl = `${USER_API}?fields=["*"]&order_by=creation desc`
 export const EMAIL_VERIFICATION_API = "/method/thermax_extended_user.trigger_email_verification_mail"
 export const CREDENTIALS_EMAIL_API = "/method/thermax_extended_user.trigger_send_credentials"
 export const DELETE_USER_EMAIL_API = "/method/thermax_extended_user.trigger_delete_user"
+export const APPROVER_EMAIL_NOTIFICATION_API = "/method/project.trigger_approver_notification_mail"

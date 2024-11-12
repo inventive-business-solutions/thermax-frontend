@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Modal } from "antd"
+import { Button, message, Modal } from "antd"
 import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
@@ -12,6 +12,7 @@ import CustomAutoComplete from "components/FormInputs/AutocompleteWithCreate"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import {
+  APPROVER_EMAIL_NOTIFICATION_API,
   CABLE_TRAY_LAYOUT,
   CLIENT_NAME_API,
   COMMON_CONFIGURATION,
@@ -54,14 +55,14 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 }
 
 export default function ProjectFormModal({ open, setOpen, editMode, values, userInfo, getProjectUrl }: any) {
-  const [message, setMessage] = useState("")
+  const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
 
   const { dropdownOptions: clientNameOptions } = useDropdownOptions(CLIENT_NAME_API, "client_name")
   const { dropdownOptions: consultantNameOptions } = useDropdownOptions(CONSULTANT_NAME_API, "consultant_name")
   const { dropdownOptions: approverOptions } = useDropdownOptions(
-    `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`,
+    `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["email", "!=", "${userInfo?.email}"]]`,
     "name"
   )
 
@@ -78,7 +79,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
   const handleCancel = () => {
     setOpen(false)
     reset(getDefaultValues(false, values))
-    setMessage("")
+    setInfoMessage("")
     setStatus("")
   }
 
@@ -96,8 +97,16 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
       await createData(COMMON_CONFIGURATION, false, { revision_id })
       await createData(CABLE_TRAY_LAYOUT, false, { revision_id })
       await createData(LAYOUT_EARTHING, false, { revision_id })
-      setStatus("success")
-      setMessage("New project created successfully")
+      await createData(APPROVER_EMAIL_NOTIFICATION_API, false, {
+        email: projectData.approver,
+        project_owner: userInfo?.email,
+        project_oc_number: projectData.project_oc_number,
+        project_name: projectData.project_name,
+        sent_by: `Team ${userInfo?.division}`,
+        subject: "EnIMAX - Approver",
+      })
+      setOpen(false)
+      message.success("Project created successfully")
     } catch (error: any) {
       throw error
     } finally {
@@ -109,7 +118,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
     try {
       await updateData(`${PROJECT_API}/${values.name}`, false, projectData)
       setStatus("success")
-      setMessage("Project information updated successfully")
+      setInfoMessage("Project information updated successfully")
     } catch (error: any) {
       throw error
     } finally {
@@ -122,10 +131,10 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
     setStatus("error")
     try {
       const errorObj = JSON.parse(error?.message) as any
-      setMessage(errorObj?.message)
+      setInfoMessage(errorObj?.message)
     } catch (parseError) {
       // If parsing fails, use the raw error message
-      setMessage(error?.message || "An unknown error occurred")
+      setInfoMessage(error?.message || "An unknown error occurred")
     }
   }
 
@@ -143,7 +152,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
     } finally {
       mutate(getProjectListUrl)
       setLoading(false)
-      setOpen(false)
+      // setOpen(false)
     }
   }
 
@@ -193,7 +202,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
         <div>
           <CustomSingleSelect name="approver" control={control} label="Approver" options={approverOptions} />
         </div>
-        <AlertNotification message={message} status={status} />
+        <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
           <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
             Save
