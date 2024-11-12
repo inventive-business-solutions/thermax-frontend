@@ -1,14 +1,14 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Modal } from "antd"
+import { Button, message, Modal } from "antd"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
 import { updateData } from "actions/crud-actions"
-import { CreateUser } from "actions/register"
+import { registerNewUser } from "actions/register"
 import CustomUpload from "components/FormInputs/CustomUpload"
 import { uploadFile } from "components/FormInputs/FileUpload"
 import { getUsersUrl, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
@@ -37,14 +37,14 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 }
 
 export default function UserFormModal({ open, setOpen, editMode, values, editEventTrigger, userInfo }: any) {
-  const [message, setMessage] = useState("")
+  const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
 
   const { control, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(UserFormValidationSchema),
     defaultValues: getDefaultValues(editMode, values),
-    mode: "onBlur",
+    mode: "onSubmit",
   })
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
   const handleCancel = () => {
     setOpen(false)
     reset(getDefaultValues(false, values))
-    setMessage("")
+    setInfoMessage("")
     setStatus("")
   }
 
@@ -68,9 +68,20 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
         const { data } = await uploadFile(dg_sign_file as File)
         userData["digital_signature"] = data.file_url
       }
-      await CreateUser(userData, THERMAX_USER, userInfo?.division, false, userData?.name_initial)
-      setStatus("success")
-      setMessage("New user created successfully")
+      const registerRes = await registerNewUser(
+        userData,
+        THERMAX_USER,
+        userInfo?.division,
+        false,
+        userData?.name_initial
+      )
+      if (registerRes?.status === 409) {
+        setStatus("error")
+        setInfoMessage("User already exist")
+      } else {
+        message.success("User created successfully")
+        handleCancel()
+      }
     } catch (error: any) {
       throw error
     } finally {
@@ -98,7 +109,7 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
       await updateData(`${THERMAX_USER_API}/${values.name}`, false, userData)
 
       setStatus("success")
-      setMessage("User information updated successfully")
+      setInfoMessage("User information updated successfully")
     } catch (error: any) {
       throw error
     }
@@ -109,10 +120,10 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
     setStatus("error")
     try {
       const errorObj = JSON.parse(error?.message) as any
-      setMessage(errorObj?.message)
+      setInfoMessage(errorObj?.message)
     } catch (parseError) {
       // If parsing fails, use the raw error message
-      setMessage(error?.message || "An unknown error occurred")
+      setInfoMessage(error?.message || "An unknown error occurred")
     }
   }
 
@@ -175,7 +186,7 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
           </div>
         </div>
 
-        <AlertNotification message={message} status={status} />
+        <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
           <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
             Save

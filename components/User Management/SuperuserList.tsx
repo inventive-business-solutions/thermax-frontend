@@ -1,13 +1,14 @@
 "use client"
 import { DeleteOutlined, EditOutlined, SyncOutlined, UserAddOutlined } from "@ant-design/icons"
-import { Button, Popconfirm, Table, Tag, Tooltip } from "antd"
+import { Button, message, Popconfirm, Table, Tag, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { mutate } from "swr"
-import { deleteData } from "actions/crud-actions"
-import { DIVISION_API, getUsersUrl, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
+import { createData, deleteData, getData } from "actions/crud-actions"
+import { DELETE_USER_EMAIL_API, NEXT_AUTH_USER_API, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
 import { BTG, TagColors } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
+import { useLoading } from "hooks/useLoading"
 import { changeNameToKey, mergeLists } from "utils/helpers"
 import SuperuserFormModal from "./SuperuserModal"
 
@@ -25,9 +26,16 @@ export default function SuperuserList() {
   const [editMode, setEditMode] = useState(false)
   const [userRow, setUserRow] = useState<any>(null)
   const [editEventTrigger, setEditEventTrigger] = useState(false)
-  const { data: thermaxUserList } = useGetData(`${THERMAX_USER_API}?fields=["*"]&filters=[["is_superuser", "=",  "1"]]`)
+  const superuserUrl = `${THERMAX_USER_API}?fields=["*"]&filters=[["is_superuser", "=",  "1"]]`
+  const { data: thermaxUserList } = useGetData(superuserUrl)
   const { data: userList } = useGetData(`${USER_API}?fields=["*"]`)
   const mergedList = mergeLists([thermaxUserList, userList], [{ fromKey: "name", toKey: "name" }])
+
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const columns: ColumnsType<DataType> = [
     {
@@ -59,6 +67,7 @@ export default function SuperuserList() {
       dataIndex: "action",
       align: "center",
       render: (text, record) => {
+        console.log("record", record)
         return (
           <div className="flex justify-center gap-2">
             <Tooltip placement="top" title="Edit">
@@ -82,7 +91,13 @@ export default function SuperuserList() {
                 placement="topRight"
               >
                 <div className="rounded-full hover:bg-red-100">
-                  <Button type="link" shape="circle" icon={<DeleteOutlined />} danger disabled />
+                  <Button
+                    type="link"
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                    danger
+                    disabled={record.division === BTG}
+                  />
                 </div>
               </Popconfirm>
             </Tooltip>
@@ -94,9 +109,9 @@ export default function SuperuserList() {
 
   const handleAdd = () => {
     setEditEventTrigger(!editEventTrigger)
-    setOpen(true)
     setEditMode(false)
     setUserRow(null)
+    setOpen(true)
   }
 
   const handleEdit = (selectedRow: any) => {
@@ -107,9 +122,25 @@ export default function SuperuserList() {
   }
 
   const handleDelete = async (selectedRowID: string) => {
-    await deleteData(`${USER_API}/${selectedRowID}`, true)
-    // Revalidate the cache
-    mutate(getUsersUrl)
+    try {
+      const thermaxUser = await getData(`${THERMAX_USER_API}/${selectedRowID}`)
+      await deleteData(`${THERMAX_USER_API}/${selectedRowID}`, false)
+      await deleteData(`${NEXT_AUTH_USER_API}/${selectedRowID}`, false)
+      await createData(`${DELETE_USER_EMAIL_API}`, false, {
+        email: thermaxUser?.email,
+        subject: "User Removal Notification - EnIMAX",
+        division_name: thermaxUser?.division,
+        is_superuser: 1,
+        sent_by: "Team BTG",
+      })
+      await deleteData(`${USER_API}/${selectedRowID}`, false)
+      message.success("User deleted successfully")
+    } catch (error) {
+      message.error("Error deleting user")
+      console.error("Error deleting user", error)
+    } finally {
+      mutate(superuserUrl)
+    }
   }
 
   return (
@@ -124,7 +155,7 @@ export default function SuperuserList() {
                 type="link"
                 shape="circle"
                 icon={<SyncOutlined />}
-                onClick={() => mutate(`${DIVISION_API}?fields=["*"]`)}
+                onClick={() => mutate(`${superuserUrl}?fields=["*"]`)}
               />
             </div>
           </Tooltip>

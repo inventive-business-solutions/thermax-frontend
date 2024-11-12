@@ -144,7 +144,7 @@ export const createFrappeApiKeys = async (email: string) => {
   }
 }
 
-export const CreateUser = async (
+export const registerNewUser = async (
   values: any,
   user_role: string,
   division: string,
@@ -172,7 +172,7 @@ export const CreateUser = async (
         const hashedPassword = await bcrypt.hash("Admin", 10)
         await createNextAuthUser(email, hashedPassword, token)
         await createThermaxExtendedUser(email, division, name_initial, is_superuser)
-        // await sendUserVerificationEmail(email, division_name, `Team ${division_name}`, token)
+        await sendCredentialsEmail(email, division, is_superuser)
       } catch (error) {
         throw error
       }
@@ -186,7 +186,7 @@ export const CreateUser = async (
   }
 }
 
-export const sendCredentialsEmail = async (email: string, sent_by: string) => {
+export const sendCredentialsEmail = async (email: string, division_name: string, is_superuser: string | boolean) => {
   try {
     const system_generated_password = await generateSimplePassword()
     const hashed_password = await bcrypt.hash(system_generated_password, 10)
@@ -197,7 +197,10 @@ export const sendCredentialsEmail = async (email: string, sent_by: string) => {
     await createData(CREDENTIALS_EMAIL_API, true, {
       email,
       password: system_generated_password,
-      sent_by,
+      sent_by: `Team ${division_name}`,
+      division_name,
+      is_superuser,
+      subject: "Added New User - EnIMAX",
     })
   } catch (error) {
     throw error
