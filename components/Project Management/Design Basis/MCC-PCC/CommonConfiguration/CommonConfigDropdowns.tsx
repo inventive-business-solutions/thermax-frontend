@@ -67,18 +67,30 @@ import {
 } from "configs/api-endpoints"
 
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { moveNAtoEnd, sortDropdownOptions } from "utils/helpers"
 
 export default function useCommonConfigDropdowns() {
-  const { dropdownOptions: dol_starter_options } = useDropdownOptions(`${DOL_STARTER}?fields=["*"]`, "dol_starter")
-  const { dropdownOptions: star_delta_starter_options } = useDropdownOptions(
-    `${STAR_DELTA_STARTER}?fields=["*"]`,
+  let { dropdownOptions: dol_starter_options } = useDropdownOptions(
+    `${DOL_STARTER}?limit=100&fields=["*"]`,
+    "dol_starter"
+  )
+  dol_starter_options = sortDropdownOptions(dol_starter_options);
+
+  let { dropdownOptions: star_delta_starter_options } = useDropdownOptions(
+    `${STAR_DELTA_STARTER}?limit=100&fields=["*"]`,
     "star_delta_starter"
   )
-  const { dropdownOptions: ammeter_options } = useDropdownOptions(`${AMMETER}?fields=["*"]`, "ammeter")
-  const { dropdownOptions: ammeter_configuration_options } = useDropdownOptions(
+  star_delta_starter_options = sortDropdownOptions(star_delta_starter_options);
+
+  let { dropdownOptions: ammeter_options } = useDropdownOptions(`${AMMETER}?limit=100&fields=["*"]`, "ammeter")
+  ammeter_options = sortDropdownOptions(ammeter_options)
+
+  let { dropdownOptions: ammeter_configuration_options } = useDropdownOptions(
     `${AMMETER_CONFIGURATION}?fields=["*"]`,
     "ammeter_configuration"
   )
+  ammeter_configuration_options = moveNAtoEnd(ammeter_configuration_options)
+
   const { dropdownOptions: mcc_switchgear_type_options } = useDropdownOptions(
     `${MCC_SWITCHGEAR_TYPE}?fields=["*"]`,
     "mcc_switchgear_type"

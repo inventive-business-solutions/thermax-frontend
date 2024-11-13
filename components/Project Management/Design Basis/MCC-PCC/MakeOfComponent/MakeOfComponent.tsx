@@ -43,7 +43,14 @@ const getDefaultValues = (data: any) => {
   }
 }
 
-const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
+const MakeOfComponent = ({
+  revision_id,
+  setActiveKey,
+}: {
+  revision_id: string
+  activeKey: string
+  setActiveKey: React.Dispatch<React.SetStateAction<string>>
+}) => {
   const [loading, setLoading] = useState(false)
   const userInfo = useCurrentUser()
 
@@ -52,13 +59,13 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
   )
 
   const {
-    motorsMakeOptions,
-    plcMakeOptions,
-    soft_starterOptions,
-    vfd_vsdOptions,
-    panel_enclosureOptions: panel_enclosureOptins,
-    lv_switchgearOptions,
-    cableMakeOptions,
+    motors_make_options,
+    plc_make_options,
+    soft_starter_options,
+    vfd_vsd_options,
+    panel_enclosure_options,
+    lv_switchgear_options,
+    cable_make_options,
   } = useMakeOfComponentDropdowns()
   const { setLoading: setModalLoading } = useLoading()
 
@@ -66,11 +73,15 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
     setModalLoading(false)
   })
 
-  const { control, handleSubmit, formState } = useForm({
+  const { control, handleSubmit, formState, reset } = useForm({
     resolver: zodResolver(makeOfComponentSchema),
     defaultValues: getDefaultValues(makeOfComponent?.[0]),
     mode: "onSubmit",
   })
+
+  useEffect(() => {
+    reset(getDefaultValues(makeOfComponent?.[0]))
+  }, [makeOfComponent, reset])
 
   const handleError = (error: any) => {
     try {
@@ -100,6 +111,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
       handleError(error)
     } finally {
       setLoading(false)
+      setActiveKey("2")
     }
   }
 
@@ -112,20 +124,26 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="motor"
             label="Motor"
-            options={motorsMakeOptions}
+            options={motors_make_options || []}
             size="small"
             disabled={userInfo?.division === HEATING}
           />
         </div>
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="cable" label="Cable" options={cableMakeOptions} size="small" />
+          <CustomSingleSelect
+            control={control}
+            name="cable"
+            label="Cable"
+            options={cable_make_options || []}
+            size="small"
+          />
         </div>
         <div className="flex-1">
           <CustomSingleSelect
             control={control}
             name="lv_switchgear"
             label="LV Switchgear"
-            options={lv_switchgearOptions}
+            options={lv_switchgear_options || []}
             size="small"
           />
         </div>
@@ -136,7 +154,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="panel_enclosure"
             label="Panel Enclosure"
-            options={panel_enclosureOptins}
+            options={panel_enclosure_options || []}
             size="small"
           />
         </div>
@@ -145,7 +163,7 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="variable_frequency_speed_drive_vfd_vsd"
             label="Variable frequency/Speed drive (VFD/VSD)"
-            options={vfd_vsdOptions}
+            options={vfd_vsd_options || []}
             size="small"
           />
         </div>
@@ -154,13 +172,13 @@ const MakeOfComponent = ({ revision_id }: { revision_id: string }) => {
             control={control}
             name="soft_starter"
             label="Soft Starter"
-            options={soft_starterOptions}
+            options={soft_starter_options || []}
             size="small"
           />
         </div>
       </div>
       <div className="w-1/3">
-        <CustomSingleSelect control={control} name="plc" label="PLC" options={plcMakeOptions} size="small" />
+        <CustomSingleSelect control={control} name="plc" label="PLC" options={plc_make_options || []} size="small" />
       </div>
 
       <div className="flex justify-end">

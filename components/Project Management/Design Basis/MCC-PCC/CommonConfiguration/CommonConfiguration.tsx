@@ -143,13 +143,8 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
     field_motor_color_shade_options,
     field_motor_cable_entry_options,
     field_motor_canopy_on_top_options,
-    lpbs_type_options,
-    lpbs_enclosure_options,
-    lpbs_material_options,
-    lpbs_qty_options,
     lpbs_color_shade_options,
     lpbs_canopy_on_top_options,
-    lpbs_push_button_start_color_options,
     lpbs_indicator_on_options,
     lpbs_indiacator_off_options,
     lpbs_speed_increase_options,
@@ -679,7 +674,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="lpbs_type"
               label="Type"
-              options={lpbs_type_options}
+              options={field_motor_type_options}
               size="small"
             />
           </div>
@@ -688,7 +683,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="lpbs_enclosure"
               label="Enclosure"
-              options={lpbs_enclosure_options}
+              options={field_motor_enclosure_options}
               size="small"
             />
           </div>
@@ -697,14 +692,20 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="lpbs_material"
               label="Material"
-              options={lpbs_material_options}
+              options={field_motor_material_options}
               size="small"
             />
           </div>
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="lpbs_qty" label="Qty" options={lpbs_qty_options} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="lpbs_qty"
+              label="Qty"
+              options={field_motor_qty_options}
+              size="small"
+            />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
@@ -731,7 +732,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="lpbs_push_button_start_color"
               label="Start Push Button Color"
-              options={lpbs_push_button_start_color_options}
+              options={lpbs_indicator_on_options}
               size="small"
             />
           </div>

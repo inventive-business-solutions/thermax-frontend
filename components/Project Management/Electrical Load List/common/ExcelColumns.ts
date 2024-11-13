@@ -3,8 +3,7 @@ export const LoadListcolumns = [
       type: "text",
       name: "feederTag",
       title: "FEEDER  TAG NO",
-      width: "110",
-      height: "100",
+      width: "120",
     },
     {
       type: "text",
@@ -16,13 +15,13 @@ export const LoadListcolumns = [
       type: "text",
       name: "working",
       title: "WORKING  LOAD IN KW",
-      width: "90",
+      width: "180",
     },
     {
       type: "text",
       name: "standBy",
       title: "STAND-BY  LOAD IN KW",
-      width: "90",
+      width: "180",
     },
     {
       type: "text",
@@ -44,7 +43,7 @@ export const LoadListcolumns = [
       name: "supplyVoltage",
       source: ["230 VAC", "110 VAC"],
       title: "SUPPLY  VOLTAGE",
-      width: "80",
+      width: "140",
     },
     {
       type: "dropdown",
@@ -60,14 +59,14 @@ export const LoadListcolumns = [
       title: "STARTING  TIME",
       readOnly: false,
 
-      width: "90",
+      width: "140",
     },
     {
       type: "dropdown",
       name: "eorc",
       source: ["Yes", "No"],
       title: "EOCR  APPLICABLE",
-      width: "90",
+      width: "110",
     },
     {
       type: "dropdown",
@@ -97,7 +96,7 @@ export const LoadListcolumns = [
       source: ["A", "B", "C", "NA"],
       title: "BUS  SEGREGATION",
       readOnly: false,
-      width: "100",
+      width: "120",
     },
     {
       type: "dropdown",

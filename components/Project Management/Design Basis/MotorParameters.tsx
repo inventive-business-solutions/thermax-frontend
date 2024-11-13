@@ -1,6 +1,7 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message } from "antd"
+import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"
@@ -228,6 +229,8 @@ const getDefaultValues = (defaultData: any) => {
 }
 
 const MotorParameters = ({ revision_id }: { revision_id: string }) => {
+  const router = useRouter()
+  const params = useParams()
   const [loading, setLoading] = useState(false)
   const [isHazardous, setIsHazardous] = useState(false)
   const { setLoading: setModalLoading } = useLoading()
@@ -293,6 +296,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
       console.error("Failed to save motor parameters", error)
     }
     setLoading(false)
+    router.push(`/project/${params.project_id}/design-basis/mcc-pcc`)
   }
 
   return (
@@ -353,7 +357,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <div className="flex-1 border p-1.5 text-sm font-semibold">Temperature rise limited to</div>
+          <div className="flex-1 border p-1.5 text-sm font-semibold">Temperature Rise Limited To</div>
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
@@ -377,7 +381,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <div className="flex-1 border p-1.5 text-sm font-semibold">IP rating for Enclosure</div>
+          <div className="flex-1 border p-1.5 text-sm font-semibold"> IP Rating for Enclosure</div>
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
@@ -445,7 +449,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <div className="flex-1 border p-1.5 text-sm font-semibold">Altitude less than (Meter)</div>
+          <div className="flex-1 border p-1.5 text-sm font-semibold">Altitude ≤ (Meter)</div>
           <div className="flex-1 border text-center">
             <CustomTextInput
               control={control}
@@ -492,7 +496,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
         </div>
         <div className="flex items-center justify-center">
           <div className="flex-1 border p-1.5 text-sm font-semibold">
-            Thermister <span className="text-xs text-[#3b82f6]">(For motor rating included and above in KW)</span>
+            Thermistor<span className="text-xs text-[#3b82f6]">(For motor rating included and above in KW)</span>
           </div>
           <div className="flex-1 border">
             <CustomSingleSelect
@@ -543,7 +547,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <div className="flex-1 border p-1.5 text-sm font-semibold">Hazardous Area Certification for motor</div>
+          <div className="flex-1 border p-1.5 text-sm font-semibold">Hazardous Area Certification for Motor</div>
           <div className="flex-1 border">
             <CustomSingleSelect
               control={control}
@@ -619,7 +623,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
             />
           </div>
         </div>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center border">
           <div className="flex-1 p-1.5 text-sm font-semibold">Type of Bearing</div>
           <div className="flex-1 border">
             <CustomTextAreaInput
@@ -777,7 +781,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <div className="flex-1 border p-1.5 text-sm font-semibold">Starts / Hour Permissibe</div>
+          <div className="flex-1 border p-1.5 text-sm font-semibold">Starts / Hour Permissible</div>
           <div className="flex-1 border">
             <CustomTextInput
               control={control}

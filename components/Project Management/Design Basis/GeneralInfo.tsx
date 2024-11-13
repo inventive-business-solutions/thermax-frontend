@@ -23,7 +23,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   const [selectedPkg, setSelectedPkg] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
   const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`)
-  const [generalInfoData, setGeneralInfoData] = useState<any>({})
+  const [generalInfoData, setGeneralInfoData] = useState<any>({battery_limit: "Incoming Supply at each MCC Panel by Client"})
   const [refresh, setRefresh] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
 

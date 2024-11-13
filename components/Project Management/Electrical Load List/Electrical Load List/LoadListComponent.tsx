@@ -1,90 +1,301 @@
-import React, { useRef, useEffect, useState } from "react";
-import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce";
-import "jspreadsheet-ce/dist/jspreadsheet.css";
-import { useGetData } from "hooks/useCRUD";
-import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints";
-import { getData } from "actions/crud-actions";
-import { LoadListcolumns } from "../common/ExcelColumns";
-import Modal from "components/Modal/Modal";
-import { mockExcel} from '../../../../app/Data'
+"use client"
+import jspreadsheet, { JspreadsheetInstance, Column } from "jspreadsheet-ce"
+import React, { useRef, useEffect, useState, useMemo } from "react"
+import "jspreadsheet-ce/dist/jspreadsheet.css"
+import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
+import Modal from "components/Modal/Modal"
+import { getData } from "actions/crud-actions"
+import { controlSchemeColumnsForHeating, mockExcel } from "../../../../app/Data"
+import { LoadListcolumns } from "../common/ExcelColumns"
+import "./LoadListComponent.css"
+import { Button } from "antd"
+import AlertNotification from "components/AlertNotification"
+
+// Types definition
+type ValidColumnType =
+  | "text"
+  | "dropdown"
+  | "checkbox"
+  | "html"
+  | "image"
+  | "numeric"
+  | "hidden"
+  | "autocomplete"
+  | "radio"
+  | "calendar"
+  | "color"
+
+interface CustomColumn extends Omit<Column, "type"> {
+  type: ValidColumnType
+  name: string
+  title: string
+  width: string
+  readOnly?: boolean
+  source?: string[]
+  height?: string
+}
+
 const ExcelGrid: React.FC = () => {
-  const jRef = useRef<HTMLDivElement | null>(null);
-  const controlSchemeSheetRef = useRef<HTMLDivElement | null>(null);
-  const spreadsheetInstance = useRef<JspreadsheetInstance | null>(null);
-  const controlSchemespreadsheetInstance = useRef<JspreadsheetInstance | null>(null);
-  const [isControlSchemeModalOpen, setIsControlSchemeModalOpen] = useState(false);
-  const [isLPBSModalOpen, setIsLPBSModalOpen] = useState(false);
-  
-  const options = {
-    data: mockExcel,
-    // minDimensions: [6, 5] as [number, number],
-    columns: LoadListcolumns,
-    // Additional configuration options
-    columnSorting: true,
-    columnDrag: true,
-    columnResize: true,
-    tableOverflow: true,
-    filters: true,
-    tableWidth: "100%",
-    freezeColumns: 4,
-    rowResize: true,
-    // defaultColWidth: ,
+  const jRef = useRef<HTMLDivElement | null>(null)
+  const controlSchemeSheetRef = useRef<HTMLDivElement | null>(null)
+  const controlSchemeSelectedSheetRef = useRef<HTMLDivElement | null>(null)
+  const [controlSchemes, setControlSchemes] = useState<any[]>([])
+  const [controlSchemesSelected, setControlSchemesSelected] = useState<any[]>([])
+  const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
+  const [controlSchemeInstance, setControlSchemeInstance] = useState<JspreadsheetInstance | null>(null)
+  const [selectedSchemeInstance, setSelectedSchemeInstance] = useState<JspreadsheetInstance | null>(null)
+  const [isControlSchemeModalOpen, setIsControlSchemeModalOpen] = useState(false)
+  const [isLPBSModalOpen, setIsLPBSModalOpen] = useState(false)
+  const [isControlSchemeEmpty, setIsControlSchemeEmpty] = useState(false)
+
+  // Memoize the column configurations
+  const typedLoadListColumns = useMemo(
+    () =>
+      LoadListcolumns.map((column) => ({
+        ...column,
+        type: column.type as ValidColumnType,
+      })),
+    []
+  )
+
+  const typedControlSchemeColumns = useMemo(
+    () =>
+      controlSchemeColumnsForHeating.map((column) => ({
+        ...column,
+        type: column.type as ValidColumnType,
+      })),
+    []
+  )
+
+  // Memoize the options
+  const options = useMemo(
+    () => ({
+      data: mockExcel,
+      columns: typedLoadListColumns,
+      columnSorting: true,
+      columnDrag: true,
+      columnResize: true,
+      tableOverflow: true,
+      lazyLoading: true,
+      loadingSpin: true,
+      filters: true,
+      tableWidth: "100%",
+      tableHeight: "550px",
+      freezeColumns: 4,
+      rowResize: true,
+    }),
+    [typedLoadListColumns]
+  )
+  useEffect(() => {
+    let instance: JspreadsheetInstance | null = null
+    let selectedItems: string[] = []
+    const storedSchemes = localStorage.getItem("selected_control_scheme")
+    console.log(storedSchemes, "storedSchemes")
+    if (storedSchemes) {
+      selectedItems = JSON.parse(storedSchemes) as string[]
+    }
+
+    typedLoadListColumns.forEach((column) => {
+      if (column.name === "controlScheme") {
+        column.source = selectedItems;
+      }
+    });
     
-    onchange: (instance: JspreadsheetInstance, cell: HTMLElement, x: number, y: number, value: any) => {},
-  };
-
-  // const { data: heating_control_schemes } = useGetData(`${HEATING_CONTROL_SCHEMES_URI}?fields=["*"]`, false);
-
-  useEffect(() => {
-    getData(`${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`, false).then((res) => console.log(res));
-    // console.log(heating_control_schemes, "heating_control_schemes ");
-  }, []);
-
-  // Initialize main spreadsheet
-  useEffect(() => {
-    if (jRef.current && !spreadsheetInstance.current) {
-      spreadsheetInstance.current = jspreadsheet(jRef.current, options);
+    // console.log(typedLoadListColumns, "storedSchemes 2")
+    // console.log(updatedColumns,);
+    
+    if (jRef.current && !spreadsheetInstance) {
+      instance = jspreadsheet(jRef.current, options)
+      setSpreadsheetInstance(instance)
     }
-  }, [options]);
 
-  // Handle control scheme modal spreadsheet
-  useEffect(() => {
-    if (isControlSchemeModalOpen) {
-      // Destroy previous instance if it exists
-      if (controlSchemespreadsheetInstance.current) {
-        controlSchemespreadsheetInstance.current.destroy();
-        controlSchemespreadsheetInstance.current = null;
-      }
-      
-      // Initialize new instance
-      if (controlSchemeSheetRef.current) {
-        setTimeout(() => {
-          controlSchemespreadsheetInstance.current = jspreadsheet(controlSchemeSheetRef.current!, options);
-        }, 0);
-      }
-    }
-  }, [isControlSchemeModalOpen, options]);
-
-  // Cleanup on unmount
-  useEffect(() => {
     return () => {
-      // if (spreadsheetInstance.current) {
-      //   spreadsheetInstance.current.destroy();
-      // }
-      if (controlSchemespreadsheetInstance.current) {
-        controlSchemespreadsheetInstance.current.destroy();
+      if (instance) {
+        instance.destroy()
       }
-    };
-  }, []);
-
-  // Handle modal close
-  const handleControlSchemeModalClose = () => {
-    if (controlSchemespreadsheetInstance.current) {
-      controlSchemespreadsheetInstance.current.destroy();
-      controlSchemespreadsheetInstance.current = null;
     }
-    setIsControlSchemeModalOpen(false);
-  };
+  }, [])
+
+  // Fetch control schemes
+  useEffect(() => {
+    getData(`${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`).then((res) => {
+      const schemes = res
+        .map((item: any) => [
+          false,
+          item.scheme,
+          item.sub_scheme,
+          item.scheme_title,
+          item.description,
+          item.breaker,
+          item.lpbs,
+          item.lpbs_inc_dec_ind,
+          item.ammeter,
+          item.thermistor_relay,
+          item.motor_space_heater,
+          item.plc_current_signal,
+          item.plc_speed_signal,
+          item.olr,
+          item.phase,
+          item.limit_switch,
+          item.motor_protection_relay,
+          item.field_isolator,
+          item.local_panel,
+          item.field_ess,
+          item.electronic_relay,
+          item.plc1_and_plc2,
+          item.mcc_start_stop,
+          item.input_choke,
+          item.output_choke,
+          item.separate_plc_start_stop,
+          item.di,
+          item.do,
+          item.ai,
+          item.ao,
+        ])
+        .sort((a: any, b: any) => {
+          const [prefixA, numA] = a[2].split("-")
+          const [prefixB, numB] = b[2].split("-")
+          return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
+        })
+
+      setControlSchemes(schemes)
+    })
+  }, [])
+
+  // Handle control scheme modal
+  useEffect(() => {
+    if (isControlSchemeModalOpen && controlSchemeSheetRef.current) {
+      // Clean up previous instance
+      if (controlSchemeInstance) {
+        controlSchemeInstance.destroy()
+      }
+
+      // Update selected schemes from localStorage
+      const storedSchemes = localStorage.getItem("selected_control_scheme")
+      let updatedSchemes = [...controlSchemes]
+
+      if (storedSchemes) {
+        try {
+          const selectedItems = JSON.parse(storedSchemes) as string[]
+          updatedSchemes = controlSchemes.map((scheme) => {
+            if (selectedItems.includes(scheme[2])) {
+              return [true, ...scheme.slice(1)]
+            }
+            return scheme
+          })
+        } catch (error) {
+          console.error("Error parsing selected_control_scheme:", error)
+        }
+      }
+
+      const instance = jspreadsheet(controlSchemeSheetRef.current, {
+        data: updatedSchemes,
+        columns: typedControlSchemeColumns,
+        columnSorting: true,
+        columnDrag: true,
+        columnResize: true,
+        tableOverflow: true,
+        lazyLoading: true,
+        loadingSpin: true,
+        onchange: () => setIsControlSchemeEmpty(false),
+        filters: true,
+        tableWidth: "100%",
+        tableHeight: "500px",
+        freezeColumns: 4,
+        rowResize: true,
+      })
+      setControlSchemeInstance(instance)
+    }
+
+    return () => {
+      if (controlSchemeInstance) {
+        controlSchemeInstance.destroy()
+        setControlSchemeInstance(null)
+      }
+    }
+  }, [isControlSchemeModalOpen, controlSchemes, typedControlSchemeColumns])
+
+  // Handle selected schemes spreadsheet
+  useEffect(() => {
+    if (controlSchemeSelectedSheetRef.current && controlSchemesSelected.length > 0) {
+      if (selectedSchemeInstance) {
+        selectedSchemeInstance.destroy()
+      }
+
+      const instance = jspreadsheet(controlSchemeSelectedSheetRef.current, {
+        data: controlSchemesSelected,
+        columns: typedControlSchemeColumns.map((column) => ({
+          ...column,
+          readOnly: true,
+        })),
+        columnSorting: true,
+        columnDrag: true,
+        columnResize: true,
+        tableOverflow: true,
+        lazyLoading: true,
+        loadingSpin: true,
+        filters: true,
+        tableWidth: "100%",
+        tableHeight: "250px",
+        freezeColumns: 4,
+        rowResize: true,
+      })
+      setSelectedSchemeInstance(instance)
+    }
+
+    return () => {
+      if (selectedSchemeInstance) {
+        selectedSchemeInstance.destroy()
+        setSelectedSchemeInstance(null)
+      }
+    }
+  }, [controlSchemesSelected, typedControlSchemeColumns])
+
+  const handleControlSchemeModalClose = () => {
+    setIsControlSchemeModalOpen(false)
+  }
+
+  const onAdd = () => {
+    const selected = controlSchemeInstance?.getData().filter((row) => row[0] === true)
+
+    if (!selected?.length) {
+      setIsControlSchemeEmpty(true)
+      return
+    }
+
+    setControlSchemesSelected(selected)
+    setIsControlSchemeEmpty(false)
+  }
+
+  const onConfirm = () => {
+    localStorage.setItem("selected_control_scheme", JSON.stringify(controlSchemesSelected.map((item) => item[2])))
+
+    // Update main spreadsheet columns
+    const updatedColumns = typedLoadListColumns.map((column) => {
+      if (column.name === "controlScheme") {
+        return {
+          ...column,
+          source: controlSchemesSelected.map((item) => item[2]),
+        }
+      }
+      return column
+    })
+
+    // Update main spreadsheet with new columns
+    if (spreadsheetInstance) {
+      spreadsheetInstance.destroy()
+    }
+
+    if (jRef.current) {
+      const instance = jspreadsheet(jRef.current, {
+        ...options,
+        columns: updatedColumns,
+      })
+      setSpreadsheetInstance(instance)
+    }
+
+    setIsControlSchemeModalOpen(false)
+  }
 
   return (
     <>
@@ -106,9 +317,25 @@ const ExcelGrid: React.FC = () => {
         <div ref={jRef} />
       </div>
       <Modal isOpen={isControlSchemeModalOpen} onClose={handleControlSchemeModalClose}>
-        <div className="flex flex-col m-2">
+        <div className="m-2 flex flex-col">
           <h2 className="mb-4 text-2xl font-bold">Control Scheme Configurator</h2>
+          {isControlSchemeEmpty && <AlertNotification message="Please select control scheme!" status="error" />}
           <div ref={controlSchemeSheetRef} />
+          <div className="flex w-full flex-row justify-end py-2">
+            <Button type="primary" onClick={onAdd}>
+              Add
+            </Button>
+          </div>
+          {controlSchemesSelected.length > 0 && (
+            <>
+              <div ref={controlSchemeSelectedSheetRef} />
+              <div className="flex w-full flex-row justify-end py-2">
+                <Button type="primary" onClick={onConfirm}>
+                  Confirm
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </Modal>
       <Modal isOpen={isLPBSModalOpen} onClose={() => setIsLPBSModalOpen(false)}>
@@ -117,7 +344,7 @@ const ExcelGrid: React.FC = () => {
         </div>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default ExcelGrid;
+export default ExcelGrid

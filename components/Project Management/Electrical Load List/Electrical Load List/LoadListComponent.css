@@ -1,10 +1,5 @@
-.my-custom-grid {
-    font-family: Arial, sans-serif;
-    background-color: #fff;
-  }
-  
-  .my-custom-grid .rdg-cell {
-    background-color: #fff;
-    color: #000;
-    border: 1px solid #ccc;
-  }
+
+td {
+  text-align: center;
+  text-wrap: auto;
+}

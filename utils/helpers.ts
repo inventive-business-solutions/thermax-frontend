@@ -49,3 +49,38 @@ export const changeNameToKey = (projectList: any[]) => {
   })
   return projectList
 }
+
+// to sort Numerically
+export function sortDropdownOptions(options: any[]): any[] {
+  return options.sort((a, b) => {
+    if (!isNaN(a.name) && !isNaN(b.name)) {
+      return Number(a.name) - Number(b.name)
+    }
+    return 0
+  })
+}
+
+// to sort DateWise
+
+export function sortDatewise(data: any[]): any[] {
+  if (data && data.length !== 0) {
+    data.sort((a: any, b: any) => {
+      const dateA = new Date(a.creation)
+      const dateB = new Date(b.creation)
+      return dateB.getTime() - dateA.getTime()
+    })
+  }
+
+  return data
+}
+
+// to place "NA" at the bottom
+export function moveNAtoEnd(options: any[]): any[] {
+  if (options?.length !== 0) {
+    let NaOptions = options.filter((item: any) => item.name === "NA")
+    options = options.filter((item: any) => item.name !== "NA")
+    options.push(NaOptions[0])
+  }
+
+  return options
+}

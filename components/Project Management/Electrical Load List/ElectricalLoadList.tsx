@@ -4,8 +4,8 @@ import { Button } from "antd"
 import React, { useState } from "react"
 import CableSchedule from "./CableSchedule"
 import Download from "./Download"
-import MotorCanopyList from "./MotorCanopyList"
 import ExcelGrid from "./Electrical Load List/LoadListComponent"
+import MotorCanopyList from "./MotorCanopyList"
 // import ExcelGrid from "./Electrical Load List/LoadListComponent"
 // import GeneralInfo from "./GeneralInfo"
 // import MotorParameters from "./MotorParameters"
@@ -20,7 +20,7 @@ const tabData = [
 ]
 
 const ElectricalLoadList = () => {
-  const [openTab, setOpenTab] = useState<string>("1")
+  const [openTab, setOpenTab] = useState<string>("2")
 
   return (
     <>
@@ -47,7 +47,7 @@ const ElectricalLoadList = () => {
             ))}
           </ul>
 
-          <div className="relative mb-6 flex w-full min-w-0 flex-col break-words rounded bg-white">
+          <div className="relative mb-2 flex w-full min-w-0 flex-col break-words rounded bg-white">
             <div className="flex-auto">
               <div className="">
                 {/* Tab Content */}
