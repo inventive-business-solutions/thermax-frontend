@@ -30,19 +30,28 @@ import {
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
-const ProjectFormValidationSchema = zod.object({
-  project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
-  project_oc_number: zod.string({
-    required_error: "Project OC number is required",
-    message: "Project OC number is required",
-  }),
-  client_name: zod.string({ required_error: "Client name is required", message: "Client name is required" }),
-  consultant_name: zod.string({
-    required_error: "Consultant name is required",
-    message: "Consultant name is required",
-  }),
-  approver: zod.string({ required_error: "Approver is required", message: "Approver is required" }),
-})
+const getProjectFormValidationSchema = (project_oc_numbers: string[]) => {
+  return zod.object({
+    project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
+    project_oc_number: zod
+      .string({
+        required_error: "Project OC number is required",
+        message: "Project OC number is required",
+      })
+      .refine(
+        (value) => {
+          return !project_oc_numbers.includes(value)
+        },
+        { message: "Project OC number already exists" }
+      ),
+    client_name: zod.string({ required_error: "Client name is required", message: "Client name is required" }),
+    consultant_name: zod.string({
+      required_error: "Consultant name is required",
+      message: "Consultant name is required",
+    }),
+    approver: zod.string({ required_error: "Approver is required", message: "Approver is required" }),
+  })
+}
 
 const getDefaultValues = (editMode: boolean, values: any) => {
   return {
@@ -54,7 +63,15 @@ const getDefaultValues = (editMode: boolean, values: any) => {
   }
 }
 
-export default function ProjectFormModal({ open, setOpen, editMode, values, userInfo, getProjectUrl }: any) {
+export default function ProjectFormModal({
+  open,
+  setOpen,
+  editMode,
+  values,
+  userInfo,
+  getProjectUrl,
+  projectOCNos,
+}: any) {
   const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
@@ -65,6 +82,8 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
     `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["email", "!=", "${userInfo?.email}"]]`,
     "name"
   )
+
+  const ProjectFormValidationSchema = getProjectFormValidationSchema(projectOCNos)
 
   const { control, handleSubmit, reset, formState, getValues } = useForm({
     resolver: zodResolver(ProjectFormValidationSchema),
@@ -204,7 +223,7 @@ export default function ProjectFormModal({ open, setOpen, editMode, values, user
         </div>
         <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
-          <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
+          <Button type="primary" htmlType="submit" loading={loading}>
             Save
           </Button>
         </div>

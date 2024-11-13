@@ -83,7 +83,7 @@ export default function SuperuserList() {
 
             <Tooltip placement="top" title="Delete">
               <Popconfirm
-                title="Are you sure to delete this project?"
+                title="Are you sure to delete this user?"
                 onConfirm={async () => await handleDelete(record.key)}
                 okText="Yes"
                 cancelText="No"

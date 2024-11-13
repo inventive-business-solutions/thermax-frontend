@@ -96,7 +96,7 @@ export default function HeaderSidebar() {
           >
             <MenuOutlined />
           </div>
-          <Link href={"/"} className="hidden items-center gap-5 md:flex">
+          <Link href={DASHBOARD_PAGE} className="hidden items-center gap-5 md:flex">
             <Image src={"/eni_max_logo.png"} alt="Thermax logo" width={49} height={49} className="rounded-full" />
             <div>
               <Tag color={TagColors[userInfo?.division]}>{userInfo?.division} Division</Tag>
