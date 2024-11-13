@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Modal } from "antd"
+import { Button, message, Modal } from "antd"
 import { useEffect, useState, useTransition } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
-import { createData, updateData } from "actions/crud-actions"
+import { createData, getData, updateData } from "actions/crud-actions"
 import AlertNotification from "components/AlertNotification"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
@@ -29,12 +29,13 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 export default function SubPackageModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
   const { data: areaClassificationData } = useGetData(AREA_CLASSIFICATION_API)
   const [isPending, startTransition] = useTransition()
-  const [message, setMessage] = useState("")
+  const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
+
   const handleCancel = () => {
     setOpen(false)
     reset(getDefaultValues(false, values))
-    setMessage("")
+    setInfoMessage("")
     setStatus("")
   }
   const { control, handleSubmit, formState, reset } = useForm<zod.infer<typeof SubPackageSchema>>({
@@ -46,33 +47,41 @@ export default function SubPackageModal({ open, setOpen, editMode, values, editE
     reset(getDefaultValues(editMode, values))
   }, [editMode, reset, values, editEventTrigger])
 
-  const onSubmit: SubmitHandler<zod.infer<typeof SubPackageSchema>> = (data: any) => {
-    startTransition(async () => {
+  const handleError = (error: any) => {
+    try {
+      const errorObj = JSON.parse(error?.message) as any
+      message?.error(errorObj?.message)
+    } catch (parseError) {
+      message?.error(error?.message || "An unknown error occured")
+    }
+  }
+
+  const onSubmit: SubmitHandler<zod.infer<typeof SubPackageSchema>> = async (data: any) => {
+    const subPkg = await getData(
+      `${SUB_PKG_API}?filters=[["main_package_name","=","${data.main_package_name}"]]&fields=["package_name"]`
+    )
+    const subPkgNames = subPkg?.map((item: any) => item.package_name)
+
+    try {
       if (editMode) {
-        try {
-          await updateData(`${SUB_PKG_API}/${values.name}`, false, data)
-          setStatus("success")
-          setMessage("Sub package updated successfully")
-        } catch (error: any) {
-          setStatus("error")
-          const errorObj = JSON.parse(error?.message) as any
-          setMessage(errorObj?.message)
-        }
+        await updateData(`${SUB_PKG_API}/${values.name}`, false, data)
+        message.success("Sub package updated successfully")
       } else {
-        data["main_package_name"] = values.name
-        try {
+        if (subPkgNames?.includes(data.package_name)) {
+          message.error("Sub package name already exists for this main package")
+        } else {
           await createData(SUB_PKG_API, false, data)
-          setStatus("success")
-          setMessage("Sub package created successfully")
-        } catch (error: any) {
-          setStatus("error")
-          const errorObj = JSON.parse(error?.message) as any
-          setMessage(errorObj?.message)
+          message.success("Sub package created successfully")
         }
       }
-    })
-    mutate(GET_PKG_API)
+    } catch (error: any) {
+      handleError(error)
+    } finally {
+      mutate(GET_PKG_API)
+      handleCancel()
+    }
   }
+
   return (
     <Modal
       open={open}
@@ -98,7 +107,7 @@ export default function SubPackageModal({ open, setOpen, editMode, values, editE
             options={createDropdownOptions(areaClassificationData, "name")}
           />
         </div>
-        <AlertNotification message={message} status={status} />
+        <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
           <Button type="primary" htmlType="submit" loading={isPending} disabled={!formState.isValid}>
             Save

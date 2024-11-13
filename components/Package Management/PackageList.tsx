@@ -7,7 +7,7 @@ import {
   PlusSquareTwoTone,
   SyncOutlined,
 } from "@ant-design/icons"
-import { Button, Popconfirm, Table, TableColumnsType, Tooltip } from "antd"
+import { Button, message, Popconfirm, Table, TableColumnsType, Tooltip } from "antd"
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
 import { deleteData, getData } from "actions/crud-actions"
@@ -60,20 +60,38 @@ export default function PackageList() {
 
   const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API)
 
+  const handleError = (error: any) => {
+    try {
+      const errorObj = JSON.parse(error?.message) as any
+      message?.error(errorObj?.message)
+    } catch (parseError) {
+      message?.error(error?.message || "An unknown error occured")
+    }
+  }
+
   const handleMainPkgDelete = async (selectedRowID: string) => {
     const subPkgs = await getData(`${SUB_PKG_API}?filters=[["main_package_name", "=", "${selectedRowID}"]]`)
-    for (const subPkg of subPkgs || []) {
-      await deleteData(`${SUB_PKG_API}/${subPkg.name}`, false)
+    try {
+      for (const subPkg of subPkgs || []) {
+        await deleteData(`${SUB_PKG_API}/${subPkg.name}`, false)
+      }
+      await deleteData(`${MAIN_PKG_API}/${selectedRowID}`, false)
+    } catch (error: any) {
+      handleError(error)
+    } finally {
+      mutate(GET_PKG_API)
     }
-    await deleteData(`${MAIN_PKG_API}/${selectedRowID}`, false)
-    // Revalidate the cache
-    mutate(GET_PKG_API)
   }
 
   const handleSubPkgDelete = async (selectedRowID: string) => {
-    await deleteData(`${SUB_PKG_API}/${selectedRowID}`, false)
-    // Revalidate the cache
-    mutate(GET_PKG_API)
+    try {
+      await deleteData(`${SUB_PKG_API}/${selectedRowID}`, false)
+      message.success("Sub Package deleted successfully")
+    } catch (error: any) {
+      handleError(error)
+    } finally {
+      mutate(GET_PKG_API)
+    }
   }
 
   const handleAddMainPkg = () => {
@@ -130,7 +148,7 @@ export default function PackageList() {
           </Tooltip>
           <Tooltip placement="top" title="Delete Main Package">
             <Popconfirm
-              title="Are you sure to delete this row?"
+              title="Are you sure to delete this package?"
               onConfirm={async () => await handleMainPkgDelete(record.key)}
               okText="Yes"
               cancelText="No"

@@ -5,6 +5,13 @@ export const getFrappeDate = (date: Date): string => {
   return `${year}-${month}-${day}`
 }
 
+export const getThermaxDateFormat = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${day}-${month}-${year}`
+}
+
 export const getFrappeTime = (date: Date): string => {
   const hours = String(date.getHours()).padStart(2, "0")
   const minutes = String(date.getMinutes()).padStart(2, "0")
@@ -52,7 +59,7 @@ export const changeNameToKey = (projectList: any[]) => {
 
 // to sort Numerically
 export function sortDropdownOptions(options: any[]): any[] {
-  return options.sort((a, b) => {
+  return options?.sort((a, b) => {
     if (!isNaN(a.name) && !isNaN(b.name)) {
       return Number(a.name) - Number(b.name)
     }
