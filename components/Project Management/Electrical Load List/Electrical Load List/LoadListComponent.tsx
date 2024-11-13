@@ -1,15 +1,18 @@
 "use client"
-import jspreadsheet, { JspreadsheetInstance, Column } from "jspreadsheet-ce"
+import jspreadsheet, { Column, JspreadsheetInstance } from "jspreadsheet-ce"
 import React, { useRef, useEffect, useState, useMemo } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
 import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
 import Modal from "components/Modal/Modal"
 import { getData } from "actions/crud-actions"
-import { controlSchemeColumnsForHeating, mockExcel } from "../../../../app/Data"
+import { controlSchemeColumnsForHeating, lpbsColumns, mockExcel } from "../../../../app/Data"
+import * as XLSX from "xlsx"
+
 import { LoadListcolumns } from "../common/ExcelColumns"
 import "./LoadListComponent.css"
-import { Button } from "antd"
-import AlertNotification from "components/AlertNotification"
+import { Button, message } from "antd"
+import ControlSchemeConfigurator from "./Control Scheme Config/ControlSchemeConfig"
+import LpbsConfigurator from "./LPBS Config/LpbsConfigurator"
 
 // Types definition
 type ValidColumnType =
@@ -25,33 +28,17 @@ type ValidColumnType =
   | "calendar"
   | "color"
 
-interface CustomColumn extends Omit<Column, "type"> {
-  type: ValidColumnType
-  name: string
-  title: string
-  width: string
-  readOnly?: boolean
-  source?: string[]
-  height?: string
-}
-
 const ExcelGrid: React.FC = () => {
   const jRef = useRef<HTMLDivElement | null>(null)
-  const controlSchemeSheetRef = useRef<HTMLDivElement | null>(null)
-  const controlSchemeSelectedSheetRef = useRef<HTMLDivElement | null>(null)
   const [controlSchemes, setControlSchemes] = useState<any[]>([])
-  const [controlSchemesSelected, setControlSchemesSelected] = useState<any[]>([])
   const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
-  const [controlSchemeInstance, setControlSchemeInstance] = useState<JspreadsheetInstance | null>(null)
-  const [selectedSchemeInstance, setSelectedSchemeInstance] = useState<JspreadsheetInstance | null>(null)
   const [isControlSchemeModalOpen, setIsControlSchemeModalOpen] = useState(false)
   const [isLPBSModalOpen, setIsLPBSModalOpen] = useState(false)
-  const [isControlSchemeEmpty, setIsControlSchemeEmpty] = useState(false)
-
+  const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([])
   // Memoize the column configurations
   const typedLoadListColumns = useMemo(
     () =>
-      LoadListcolumns.map((column) => ({
+      LoadListcolumns(7).map((column) => ({
         ...column,
         type: column.type as ValidColumnType,
       })),
@@ -66,6 +53,39 @@ const ExcelGrid: React.FC = () => {
       })),
     []
   )
+  const typedLpbsColumns = useMemo(
+    () =>
+      lpbsColumns.map((column) => ({
+        ...column,
+        type: column.type as ValidColumnType,
+      })),
+    []
+  )
+
+  const handleLpbsComplete = (selectedSchemes: string[]) => {
+    const updatedColumns = typedLoadListColumns.map((column) => {
+      if (column.name === "lbpsType") {
+        return { ...column, source: selectedSchemes }
+      }
+      return column
+    })
+
+    updateSpreadsheetColumns(updatedColumns)
+  }
+
+  const updateSpreadsheetColumns = (updatedColumns: any[]) => {
+    if (spreadsheetInstance) {
+      spreadsheetInstance.destroy()
+    }
+
+    if (jRef.current) {
+      const instance = jspreadsheet(jRef.current, {
+        ...options,
+        columns: updatedColumns,
+      })
+      setSpreadsheetInstance(instance)
+    }
+  }
 
   // Memoize the options
   const options = useMemo(
@@ -86,24 +106,23 @@ const ExcelGrid: React.FC = () => {
     }),
     [typedLoadListColumns]
   )
+
+  // Initialize main spreadsheet
   useEffect(() => {
     let instance: JspreadsheetInstance | null = null
     let selectedItems: string[] = []
     const storedSchemes = localStorage.getItem("selected_control_scheme")
-    console.log(storedSchemes, "storedSchemes")
+
     if (storedSchemes) {
       selectedItems = JSON.parse(storedSchemes) as string[]
     }
 
     typedLoadListColumns.forEach((column) => {
       if (column.name === "controlScheme") {
-        column.source = selectedItems;
+        column.source = selectedItems
       }
-    });
-    
-    // console.log(typedLoadListColumns, "storedSchemes 2")
-    // console.log(updatedColumns,);
-    
+    })
+
     if (jRef.current && !spreadsheetInstance) {
       instance = jspreadsheet(jRef.current, options)
       setSpreadsheetInstance(instance)
@@ -157,125 +176,103 @@ const ExcelGrid: React.FC = () => {
           const [prefixB, numB] = b[2].split("-")
           return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
         })
+      setLpbsSchemes(schemes)
 
       setControlSchemes(schemes)
     })
   }, [])
 
-  // Handle control scheme modal
-  useEffect(() => {
-    if (isControlSchemeModalOpen && controlSchemeSheetRef.current) {
-      // Clean up previous instance
-      if (controlSchemeInstance) {
-        controlSchemeInstance.destroy()
+  // validate kw values
+  const validateLoadValues = () => {
+    let rows = spreadsheetInstance?.getData() || []
+    let isInvalid = false
+
+    rows.forEach((row, rowIndex) => {
+      let greaterThanZeroCount = 0
+      let allZero = true
+
+      // Check last three columns (indexes 2, 3, 4 assuming 0-based indexing)
+      for (let colIndex = 2; colIndex <= 4; colIndex++) {
+        let cellValue = parseFloat((row[colIndex] as string) || "0")
+
+        if (cellValue > 0) {
+          greaterThanZeroCount++
+          allZero = false
+        }
+
+        // Reset background color
+        const cellAddress = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`
+        spreadsheetInstance?.setStyle(cellAddress, "background-color", "white")
       }
 
-      // Update selected schemes from localStorage
-      const storedSchemes = localStorage.getItem("selected_control_scheme")
-      let updatedSchemes = [...controlSchemes]
+      // If more than one column has a value greater than 0, highlight the cells
+      if (greaterThanZeroCount > 1 || allZero) {
+        isInvalid = true
+        for (let colIndex = 2; colIndex <= 4; colIndex++) {
+          let cellValue = parseFloat((row[colIndex] as string) || "0")
 
-      if (storedSchemes) {
-        try {
-          const selectedItems = JSON.parse(storedSchemes) as string[]
-          updatedSchemes = controlSchemes.map((scheme) => {
-            if (selectedItems.includes(scheme[2])) {
-              return [true, ...scheme.slice(1)]
-            }
-            return scheme
-          })
-        } catch (error) {
-          console.error("Error parsing selected_control_scheme:", error)
+          if (cellValue > 0) {
+            const cellAddress = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`
+            spreadsheetInstance?.setStyle(cellAddress, "background-color", "yellow")
+          }
         }
       }
+    })
 
-      const instance = jspreadsheet(controlSchemeSheetRef.current, {
-        data: updatedSchemes,
-        columns: typedControlSchemeColumns,
-        columnSorting: true,
-        columnDrag: true,
-        columnResize: true,
-        tableOverflow: true,
-        lazyLoading: true,
-        loadingSpin: true,
-        onchange: () => setIsControlSchemeEmpty(false),
-        filters: true,
-        tableWidth: "100%",
-        tableHeight: "500px",
-        freezeColumns: 4,
-        rowResize: true,
-      })
-      setControlSchemeInstance(instance)
-    }
-
-    return () => {
-      if (controlSchemeInstance) {
-        controlSchemeInstance.destroy()
-        setControlSchemeInstance(null)
-      }
-    }
-  }, [isControlSchemeModalOpen, controlSchemes, typedControlSchemeColumns])
-
-  // Handle selected schemes spreadsheet
-  useEffect(() => {
-    if (controlSchemeSelectedSheetRef.current && controlSchemesSelected.length > 0) {
-      if (selectedSchemeInstance) {
-        selectedSchemeInstance.destroy()
-      }
-
-      const instance = jspreadsheet(controlSchemeSelectedSheetRef.current, {
-        data: controlSchemesSelected,
-        columns: typedControlSchemeColumns.map((column) => ({
-          ...column,
-          readOnly: true,
-        })),
-        columnSorting: true,
-        columnDrag: true,
-        columnResize: true,
-        tableOverflow: true,
-        lazyLoading: true,
-        loadingSpin: true,
-        filters: true,
-        tableWidth: "100%",
-        tableHeight: "250px",
-        freezeColumns: 4,
-        rowResize: true,
-      })
-      setSelectedSchemeInstance(instance)
-    }
-
-    return () => {
-      if (selectedSchemeInstance) {
-        selectedSchemeInstance.destroy()
-        setSelectedSchemeInstance(null)
-      }
-    }
-  }, [controlSchemesSelected, typedControlSchemeColumns])
-
-  const handleControlSchemeModalClose = () => {
-    setIsControlSchemeModalOpen(false)
+    return isInvalid
   }
 
-  const onAdd = () => {
-    const selected = controlSchemeInstance?.getData().filter((row) => row[0] === true)
-
-    if (!selected?.length) {
-      setIsControlSchemeEmpty(true)
-      return
+  // validate unique feeder tag
+  const validateUniqueFeederTag = () => {
+    if (!spreadsheetInstance) {
+      console.warn("Spreadsheet instance is not available.")
+      return false
     }
 
-    setControlSchemesSelected(selected)
-    setIsControlSchemeEmpty(false)
+    const firstColumnData = spreadsheetInstance.getColumnData(0) || []
+    const duplicateValues: { [key: string]: number[] } = {}
+    let isDuplicate = false
+
+    // Reset background color for all cells in column A
+    firstColumnData.forEach((value, index) => {
+      const cellAddress = `A${index + 1}`
+      spreadsheetInstance.setStyle(cellAddress, "background-color", "white")
+    })
+
+    // Find duplicate values and store their row indices
+    firstColumnData.forEach((value, index) => {
+      if (!value) return
+
+      const cellValue = String(value)
+
+      if (cellValue in duplicateValues) {
+        duplicateValues[cellValue].push(index)
+        isDuplicate = true
+      } else {
+        duplicateValues[cellValue] = [index]
+      }
+    })
+
+    // Highlight cells containing duplicate values in red
+    Object.entries(duplicateValues).forEach(([value, indices]) => {
+      if (indices.length > 1) {
+        indices.forEach((rowIndex) => {
+          const cellAddress = `A${rowIndex + 1}`
+          spreadsheetInstance.setStyle(cellAddress, "background-color", "red")
+        })
+      }
+    })
+
+    return isDuplicate
   }
 
-  const onConfirm = () => {
-    localStorage.setItem("selected_control_scheme", JSON.stringify(controlSchemesSelected.map((item) => item[2])))
-
+  const handleControlSchemeComplete = (selectedSchemes: string[]) => {
     // Update main spreadsheet columns
     const updatedColumns = typedLoadListColumns.map((column) => {
       if (column.name === "controlScheme") {
         return {
           ...column,
-          source: controlSchemesSelected.map((item) => item[2]),
+          source: selectedSchemes,
         }
       }
       return column
@@ -293,56 +290,201 @@ const ExcelGrid: React.FC = () => {
       })
       setSpreadsheetInstance(instance)
     }
-
-    setIsControlSchemeModalOpen(false)
   }
 
+  const handleLoadListSave = () => {
+    if (validateLoadValues()) {
+      return message.error("KW should be in one column only")
+    }
+    if (validateUniqueFeederTag()) {
+      return message.error("Feeder tag no. can not be repeated")
+    }
+    console.log(spreadsheetInstance?.getData(), "all load list data")
+  }
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     console.log("File selected:", file);
+  //     // Add your file upload handling logic here
+  //   }
+  // };
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] as File;
+
+    // const file = files[0] as File;
+    const reader = new FileReader();
+
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const data = new Uint8Array(e.target?.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: "array" });
+
+      // Assuming there's only one sheet in the workbook
+      // const sheetName = workbook.SheetNames[0];
+      const sheetName = workbook.SheetNames[0];
+      if (!sheetName) {
+        console.error("No sheets found in workbook");
+        return;
+      }
+      const worksheet = workbook.Sheets[sheetName] as any;
+      // Convert the worksheet to an array of arrays
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }).slice(2) as any[][];
+      
+      // Remove the first element of each sub-array
+      const newArray = jsonData.map((subArray) => subArray.slice(1));
+
+      newArray.forEach((item) => {
+        if (!item[6]) {
+          item[6] = 210; // pass main supply lv here revisit logic
+        }
+        if (getStandByKw(item[2], item[3]) >= Number(localStorage.getItem("ammeterKw"))) {
+          if (!item[37]) {
+            item[37] = localStorage.getItem("ammeterCt");
+          }
+        }
+        if (getStandByKw(item[2], item[3]) <= Number(localStorage.getItem("dol_val"))) {
+          if (!item[5]) {
+            item[5] = "DOL STARTER";
+          }
+        }
+        if (getStandByKw(item[2], item[3]) >= Number(localStorage.getItem("starDelta_val"))) {
+          if (!item[5]) {
+            item[5] = "STAR-DELTA";
+          }
+        }
+      });
+
+      // Set the processed data to the spreadsheet instance
+      spreadsheetInstance?.setData(newArray);
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
+  // const onFileChange = (files: FileList) => {
+  //   const file = files[0] as File
+
+  //   const reader = new FileReader()
+
+  //   reader.onload = (e: any) => {
+  //     const data = new Uint8Array(e.target.result)
+  //     const workbook = XLSX.read(data, { type: "array" })
+
+  //     // Assuming there's only one sheet in the workbook
+
+  //     const sheetName = workbook.SheetNames[0]
+  //     const worksheet = workbook.Sheets[sheetName]
+  //     // Convert the worksheet to an array of arrays
+  //     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }).slice(2) as any[][]
+  //     // Remove the first element of each sub-array
+  //     const newArray = jsonData.map((subArray) => subArray.slice(1))
+  //     // console.log(newArray, 'uploaded load list');
+  //     // const main_supply_lv_val = JSON.parse(
+  //     //   this.dataService.getData("main_supply_lv_val")
+  //     // );
+  //     // console.log(main_supply_lv_val, "system supply dat");
+
+  //     newArray.forEach((item) => {
+  //       if (!item[6]) {
+  //         item[6] = main_supply_lv_val;
+  //       }
+  //       if (getStandByKw(item[2], item[3]) >= localStorage.getItem("ammeterKw")) {
+  //         if (item[37] == "" || item[37] == undefined) {
+  //           // console.log(localStorage.getItem('ammeterCt'), 'uploaded load list');
+  //           item[37] = localStorage.getItem("ammeterCt")
+  //         }
+  //       }
+  //       if (getStandByKw(item[2], item[3]) <= localStorage.getItem("dol_val")) {
+  //         if (item[5] == "" || item[5] == undefined) {
+  //           item[5] = "DOL STARTER"
+  //         }
+  //       }
+  //       if (getStandByKw(item[2], item[3]) >= localStorage.getItem("starDelta_val")) {
+  //         if (item[5] == "" || item[5] == undefined) {
+  //           item[5] = "STAR-DELTA"
+  //         }
+  //       }
+  //     })
+
+  //     // console.log(newArray, 'uploaded load list');
+
+  //     // this.dataService.setData("load_list_data", JSON.stringify(newArray))
+  //     spreadsheetInstance?.setData(newArray)
+  //   }
+
+  //   reader.readAsArrayBuffer(file)
+  // }
+  const getStandByKw = (item2: any, item3: any) => {
+    if (item2 != "" || item2 != "0") {
+      return item2
+    } else {
+      return item3
+    }
+  }
   return (
     <>
       <div className="mb-4 flex justify-end gap-4">
-        <button
-          className="rounded-full bg-blue-500 px-6 py-3 text-white hover:bg-blue-600"
-          onClick={() => setIsControlSchemeModalOpen(true)}
-        >
+        <Button type="primary" onClick={() => setIsControlSchemeModalOpen(true)} className="hover:bg-blue-600">
           Control Scheme Configurator
-        </button>
-        <button
+        </Button>
+        <Button type="primary" onClick={() => setIsLPBSModalOpen(true)} className="hover:bg-blue-600">
+          LPBS configurator
+        </Button>
+
+        {/* <button className="rounded-full bg-blue-500 px-6 py-3 text-white hover:bg-blue-600"></button> */}
+        {/* <button
           className="rounded-full bg-blue-500 px-6 py-3 text-white hover:bg-blue-600"
           onClick={() => setIsLPBSModalOpen(true)}
         >
           LPBS configurator
-        </button>
+        </button> */}
       </div>
       <div className="overflow-auto">
         <div ref={jRef} />
       </div>
-      <Modal isOpen={isControlSchemeModalOpen} onClose={handleControlSchemeModalClose}>
-        <div className="m-2 flex flex-col">
-          <h2 className="mb-4 text-2xl font-bold">Control Scheme Configurator</h2>
-          {isControlSchemeEmpty && <AlertNotification message="Please select control scheme!" status="error" />}
-          <div ref={controlSchemeSheetRef} />
-          <div className="flex w-full flex-row justify-end py-2">
-            <Button type="primary" onClick={onAdd}>
-              Add
-            </Button>
-          </div>
-          {controlSchemesSelected.length > 0 && (
-            <>
-              <div ref={controlSchemeSelectedSheetRef} />
-              <div className="flex w-full flex-row justify-end py-2">
-                <Button type="primary" onClick={onConfirm}>
-                  Confirm
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
-      </Modal>
-      <Modal isOpen={isLPBSModalOpen} onClose={() => setIsLPBSModalOpen(false)}>
-        <div className="flex flex-col">
-          <h2 className="mb-4 text-2xl font-bold">LPBS Configurator</h2>
-        </div>
-      </Modal>
+
+      <ControlSchemeConfigurator
+        isOpen={isControlSchemeModalOpen}
+        onClose={() => setIsControlSchemeModalOpen(false)}
+        controlSchemes={controlSchemes}
+        typedControlSchemeColumns={typedControlSchemeColumns}
+        onConfigurationComplete={handleControlSchemeComplete}
+      />
+
+      <LpbsConfigurator
+        isOpen={isLPBSModalOpen}
+        onClose={() => setIsLPBSModalOpen(false)}
+        lpbsSchemes={lpbsSchemes}
+        typedLpbsColumns={typedLpbsColumns}
+        onConfigurationComplete={handleLpbsComplete}
+      />
+
+      <div className="flex w-full flex-row justify-end gap-2">
+        <Button type="primary">Get Current</Button>
+        <Button type="primary">Validate Panel Load</Button>
+        <Button type="primary">
+          Upload Load List
+          <input
+            type="file"
+            style={{
+              position: "absolute",
+              opacity: 0,
+              left: 0,
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: "100%",
+              height: "100%",
+              cursor: "pointer",
+            }}
+            onChange={handleFileChange}
+          />
+        </Button>
+        <Button type="primary">Download Current Data</Button>
+        <Button type="primary">Download Load List Template</Button>
+        <Button type="primary">Next</Button>
+        <Button type="primary" onClick={handleLoadListSave}>
+          Save
+        </Button>
+      </div>
     </>
   )
 }

@@ -1,4 +1,5 @@
-export const LoadListcolumns = [
+export const LoadListcolumns  = (divisionId: Number)=> {
+  return [
     {
       type: "text",
       name: "feederTag",
@@ -28,7 +29,9 @@ export const LoadListcolumns = [
       name: "standBy",
       title: "KVA",
       width: "90",
-      readOnly: true,
+      // readOnly: true,
+      readOnly: divisionId == 11 ? false : true,
+
     },
     {
       type: "dropdown",
@@ -48,7 +51,13 @@ export const LoadListcolumns = [
     {
       type: "dropdown",
       name: "phase",
-      source: [],
+      source: [
+        "3 Phase",
+        "1 Phase",
+        ...(divisionId == 11
+          ? ["Control Transformer"]
+          : []),
+      ],
       title: "PHASE",
       width: "90",
     },
@@ -56,8 +65,8 @@ export const LoadListcolumns = [
       type: "dropdown",
       name: "startingTime",
       source: ["10 sec", "30 sec", "60 sec"],
-      title: "STARTING  TIME",
-      readOnly: false,
+      title: "STARTING TIME",
+      readOnly: divisionId == 7 ? false : true,
 
       width: "140",
     },
@@ -95,7 +104,7 @@ export const LoadListcolumns = [
       name: "busSegregation",
       source: ["A", "B", "C", "NA"],
       title: "BUS  SEGREGATION",
-      readOnly: false,
+      readOnly: divisionId == 7 ? true : false,
       width: "120",
     },
     {
@@ -103,7 +112,7 @@ export const LoadListcolumns = [
       name: "motorRpm",
       source: ["1500", "3000", "1000", "750", "0"],
       title: "MOTOR  RPM",
-      readOnly: false,
+      readOnly: divisionId == 7 ? true : false,
       width: "70",
     },
     {
@@ -298,3 +307,4 @@ export const LoadListcolumns = [
       width: "200",
     },
   ]
+}

@@ -72,9 +72,7 @@ const ElectricalLoadList = () => {
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-row justify-end">
-        <Button type="primary">Save</Button>
-      </div>
+   
     </>
   )
 }
