@@ -272,5 +272,9 @@ export const getUsersUrl = `${USER_API}?fields=["*"]&order_by=creation desc`
 
 export const EMAIL_VERIFICATION_API = "/method/thermax_extended_user.trigger_email_verification_mail"
 export const CREDENTIALS_EMAIL_API = "/method/thermax_extended_user.trigger_send_credentials"
+
+//control schemes
+
+export const HEATING_CONTROL_SCHEMES_URI= '/document/Heating Control System Index'
 export const DELETE_USER_EMAIL_API = "/method/thermax_extended_user.trigger_delete_user"
 export const APPROVER_EMAIL_NOTIFICATION_API = "/method/project.trigger_approver_notification_mail"
