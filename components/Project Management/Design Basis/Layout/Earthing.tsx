@@ -9,6 +9,7 @@ import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { LAYOUT_EARTHING } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useEarthingDropdowns from "./EarthingDropdown"
+import { useParams, useRouter } from "next/navigation"
 
 const cableTrayValidationSchema = zod.object({
   earthing_system: zod.string({
@@ -33,6 +34,8 @@ const getDefaultValues = (earthingData: any) => {
 }
 
 const Earthing = ({ revision_id }: { revision_id: string }) => {
+  const router = useRouter()
+  const params = useParams()
   const { data: layoutEarthingData } = useGetData(
     `${LAYOUT_EARTHING}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
@@ -73,12 +76,13 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
         await createData(LAYOUT_EARTHING, false, data)
       }
 
-      message.success("Cable Tray Data updated successfully")
+      message.success("Earthing Data updated successfully")
     } catch (error) {
       console.log("error: ", error)
       handleError(error)
     } finally {
       setLoading(false)
+      router.push(`/project/${params.project_id}/design-basis/document-revision`)
     }
   }
 
@@ -113,7 +117,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
             <CustomSingleSelect
               control={control}
               name="earth_pit"
-              label="Earthing Pit"
+              label="Earth Pit"
               options={earthing_pit_options}
               size="small"
             />
