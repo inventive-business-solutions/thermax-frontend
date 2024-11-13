@@ -25,6 +25,7 @@ import {
   TYPE_OF_GLAND,
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { moveNAtoEnd, sortDropdownOptions } from "utils/helpers"
 
 export default function useCableTrayDropdowns() {
   const { dropdownOptions: no_of_core_options } = useDropdownOptions(`${LAYOUT_NUMBER_OF_CORES}?fields=["*"]`, "name")
@@ -37,46 +38,55 @@ export default function useCableTrayDropdowns() {
     "name"
   )
   const { dropdownOptions: color_scheme_options } = useDropdownOptions(`${LAYOUT_COLOR_SCHEME}?fields=["*"]`, "name")
-  const { dropdownOptions: running_motor_voltage_drop_options } = useDropdownOptions(
+  let { dropdownOptions: running_motor_voltage_drop_options } = useDropdownOptions(
     `${LAYOUT_RUNNING_MOTOR_VOLTAGE_DROP}?fields=["*"]`,
     "name"
   )
+  running_motor_voltage_drop_options = sortDropdownOptions(running_motor_voltage_drop_options)
   const { dropdownOptions: conductor_options } = useDropdownOptions(`${LAYOUT_CONDUCTOR}?fields=["*"]`, "name")
   const { dropdownOptions: cable_installation_options } = useDropdownOptions(
     `${LAYOUT_CABLE_INSTALLATION}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: starting_motor_voltage_drop_options } = useDropdownOptions(
+  let { dropdownOptions: starting_motor_voltage_drop_options } = useDropdownOptions(
     `${LAYOUT_STARTING_MOTOR_VOLTAGE_DROP}?fields=["*"]`,
     "name"
   )
+  starting_motor_voltage_drop_options = sortDropdownOptions(starting_motor_voltage_drop_options)
+
   const { dropdownOptions: voltage_grade_options } = useDropdownOptions(`${LAYOUT_VOLTAGE_GRADE}?fields=["*"]`, "name")
   const { dropdownOptions: gland_make_options } = useDropdownOptions(`${GLAND_MAKE}?fields=["*"]`, "name")
   const { dropdownOptions: gland_moc_options } = useDropdownOptions(`${GLAND_MOC}?fields=["*"]`, "name")
   const { dropdownOptions: type_of_gland_options } = useDropdownOptions(`${TYPE_OF_GLAND}?fields=["*"]`, "name")
-  const { dropdownOptions: future_space_on_trays_options } = useDropdownOptions(
+  let { dropdownOptions: future_space_on_trays_options } = useDropdownOptions(
     `${FUTURE_SPACE_ON_TRAYS}?fields=["*"]`,
     "name"
   )
+  future_space_on_trays_options = sortDropdownOptions(future_space_on_trays_options)
   const { dropdownOptions: cable_placement_options } = useDropdownOptions(`${CABLE_PLACEMENT}?fields=["*"]`, "name")
   const { dropdownOptions: cable_tray_orientation_options } = useDropdownOptions(
     `${CABLE_TRAY_ORIENTATION}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: material_construction_dry_area_options } = useDropdownOptions(
+  let { dropdownOptions: material_construction_dry_area_options } = useDropdownOptions(
     `${MATERIAL_CONSTRUCTION_DRY_AREA}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: material_construction_wet_area_options } = useDropdownOptions(
+  material_construction_dry_area_options = moveNAtoEnd(material_construction_dry_area_options)
+  let { dropdownOptions: material_construction_wet_area_options } = useDropdownOptions(
     `${MATERIAL_CONSTRUCTION_WET_AREA}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: cable_tray_width_options } = useDropdownOptions(`${CABLE_TRAY_WIDTH}?fields=["*"]`, "name")
-  const { dropdownOptions: cable_tray_height_options } = useDropdownOptions(`${CABLE_TRAY_HEIGHT}?fields=["*"]`, "name")
-  const { dropdownOptions: cable_tray_thickness_options } = useDropdownOptions(
+  material_construction_wet_area_options = moveNAtoEnd(material_construction_wet_area_options)
+  let { dropdownOptions: cable_tray_width_options } = useDropdownOptions(`${CABLE_TRAY_WIDTH}?fields=["*"]`, "name")
+  cable_tray_width_options = sortDropdownOptions(cable_tray_width_options)
+  let { dropdownOptions: cable_tray_height_options } = useDropdownOptions(`${CABLE_TRAY_HEIGHT}?fields=["*"]`, "name")
+  cable_tray_height_options = sortDropdownOptions(cable_tray_height_options)
+  let { dropdownOptions: cable_tray_thickness_options } = useDropdownOptions(
     `${CABLE_TRAY_THICKNESS}?fields=["*"]`,
     "name"
   )
+  cable_tray_thickness_options = sortDropdownOptions(cable_tray_thickness_options)
   const { dropdownOptions: conduit_moc_options } = useDropdownOptions(`${CONDUIT_MOC}?fields=["*"]`, "name")
   const { dropdownOptions: conduit_size_options } = useDropdownOptions(`${CONDUIT_SIZE}?fields=["*"]`, "name")
   return {

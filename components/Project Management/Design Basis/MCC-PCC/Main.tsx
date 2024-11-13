@@ -12,7 +12,7 @@ import MCCPanel from "./MCCPanel"
 import PCCPanel from "./PCCPanel"
 
 const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
-  const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
+  const [activeKey, setActiveKey] = useState<string>("Make") // Default active tab
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
@@ -26,13 +26,13 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
   const TabMCC = [
     {
       label: "Make",
-      key: "1",
-      children: <MakeOfComponent revision_id={revision_id} activeKey={activeKey} setActiveKey={setActiveKey} />,
+      key: "Make",
+      children: <MakeOfComponent revision_id={revision_id} setActiveKey={setActiveKey} />,
     },
     {
       label: "Common Configuration",
-      key: "2",
-      children: <CommonConfiguration revision_id={revision_id} />,
+      key: "Common Configuration",
+      children: <CommonConfiguration revision_id={revision_id} setActiveKey={setActiveKey} />,
     },
   ]
 
@@ -52,7 +52,7 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
     } else if (panel.panel_main_type === MCCcumPCC_PANEL_TYPE) {
       TabMCC.push({
         label: panel?.panel_name,
-        key: panel?.name,
+        key: panel?.panel_name,
         children: <MCCcumPCCPanel revision_id={revision_id} panel_id={panel?.name} />,
       })
     }

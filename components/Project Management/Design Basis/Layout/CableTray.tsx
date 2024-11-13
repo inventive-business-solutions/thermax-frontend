@@ -85,7 +85,13 @@ const getDefaultValues = (cableTrayData: any) => {
   }
 }
 
-const CableTray = ({ revision_id }: { revision_id: string }) => {
+const CableTray = ({
+  revision_id,
+  setActiveKey,
+}: {
+  revision_id: string
+  setActiveKey: React.Dispatch<React.SetStateAction<string>>
+}) => {
   const { data: cableTrayData } = useGetData(
     `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
@@ -156,6 +162,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
       handleError(error)
     } finally {
       setLoading(false)
+      setActiveKey("2")
     }
   }
 
@@ -178,7 +185,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
               <CustomSingleSelect
                 control={control}
                 name="specific_requirement"
-                label="Specific requirement"
+                label="Specific Requirement"
                 options={specific_requirement_options}
                 size="small"
               />
@@ -187,7 +194,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
               <CustomSingleSelect
                 control={control}
                 name="type_of_insulation"
-                label="Type of insulation"
+                label="Type of Insulation"
                 options={type_of_insulation_options}
                 size="small"
               />
@@ -207,9 +214,10 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
               <CustomSingleSelect
                 control={control}
                 name="motor_voltage_drop_during_running"
-                label="Motor voltage drop during running"
+                label="Motor Voltage Drop During Running"
                 options={running_motor_voltage_drop_options}
                 size="small"
+                suffixIcon={"%"}
               />
             </div>
             <div className="flex-1">
@@ -236,16 +244,17 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
               <CustomSingleSelect
                 control={control}
                 name="motor_voltage_drop_during_starting"
-                label="Motor voltage drop during starting"
+                label="Motor Voltage Drop During Starting"
                 options={starting_motor_voltage_drop_options}
                 size="small"
+                suffixIcon={"%"}
               />
             </div>
             <div className="flex-1">
               <CustomSingleSelect
                 control={control}
                 name="voltage_grade"
-                label="Voltage grade"
+                label="Voltage Grade"
                 options={voltage_grade_options}
                 size="small"
               />
@@ -289,6 +298,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
                 label="Future Space on Trays"
                 options={future_space_on_trays_options}
                 size="small"
+                suffixIcon={"%"}
               />
             </div>
             <div className="flex-1">
@@ -312,10 +322,22 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <CustomTextNumber control={control} name="vertical_distance" label="Vertical Distance" size="small" />
+              <CustomTextNumber
+                control={control}
+                name="vertical_distance"
+                label="Vertical Distance"
+                suffix={"mm"}
+                size="small"
+              />
             </div>
             <div className="flex-1">
-              <CustomTextNumber control={control} name="horizontal_distance" label="Horizontal Distance" size="small" />
+              <CustomTextNumber
+                control={control}
+                name="horizontal_distance"
+                label="Horizontal Distance"
+                suffix={"mm"}
+                size="small"
+              />
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -735,7 +757,7 @@ const CableTray = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <Divider orientation="left" orientationMargin={0}>
-          <span className="text-sm font-bold text-blue-500">Single Cable Tray</span>
+          <span className="text-sm font-bold text-blue-500">Signal Cable Tray</span>
         </Divider>
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
