@@ -9,10 +9,11 @@ import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { COMMON_CONFIGURATION } from "configs/api-endpoints"
+import { COMMON_CONFIGURATION, PROJECT_PANEL_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { configItemValidationSchema } from "../schemas"
+import Checkbox from "antd/es/checkbox/Checkbox"
 
 const getDefaultValues = (commonConfigData: any) => {
   return {
@@ -73,14 +74,14 @@ const getDefaultValues = (commonConfigData: any) => {
     lpbs_indication_lamp_stop_color: commonConfigData?.lpbs_indication_lamp_stop_color || "Red",
     lpbs_speed_increase: commonConfigData?.lpbs_speed_increase || "Yellow",
     lpbs_speed_decrease: commonConfigData?.lpbs_speed_decrease || "Black",
-    apfc_relay: commonConfigData?.apfc_relay || "4 Stage",
+    apfc_relay: commonConfigData?.apfc_relay || "4",
     power_bus_main_busbar_selection: commonConfigData?.power_bus_main_busbar_selection || "As per IS",
     power_bus_heat_pvc_sleeve: commonConfigData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
     power_bus_material: commonConfigData?.power_bus_material || "Copper",
     power_bus_current_density: commonConfigData?.power_bus_current_density || "0.8 A/Sq. mm",
     power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "VTS",
     control_bus_main_busbar_selection: commonConfigData?.control_bus_main_busbar_selection || "As per IS",
-    control_bus_heat_pvc_sleeve: commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
+    control_bus_heat_pvc_sleeve: commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Black",
     control_bus_material: commonConfigData?.control_bus_material || "Aluminium",
     control_bus_current_density: commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
     control_bus_rating_of_busbar: commonConfigData?.control_bus_rating_of_busbar || "VTS (Min-1R X 30mm X 10mm)",
@@ -99,9 +100,19 @@ const getDefaultValues = (commonConfigData: any) => {
   }
 }
 
-const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
+const CommonConfiguration = ({
+  revision_id,
+  setActiveKey,
+}: {
+  revision_id: string
+  setActiveKey: React.Dispatch<React.SetStateAction<string>>
+}) => {
   const { data: commonConfigurationData } = useGetData(
     `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  )
+
+  const { data: projectPanelData } = useGetData(
+    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
   const [loading, setLoading] = useState(false)
   const [supplyFeederStandard, setSupplyFeederStandard] = useState("IEC")
@@ -109,6 +120,9 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
   const [dm_standard, setDmStandards] = useState([])
 
   const [pushButtonColorSpeed, setPushButtonColorSpeed] = useState(false)
+  const [selectroSwitchApplicable, setSelectorSwitchApplicable] = useState<boolean>(false)
+  const [fieldMotorIsolator, setFieldMotorIsolator] = useState<boolean>(true)
+  const [localPushButtonStation, setLocalPushButtonStation] = useState<boolean>(true)
 
   let {
     dol_starter_options,
@@ -222,6 +236,8 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
       handleError(error)
     } finally {
       setLoading(false)
+      setActiveKey(projectPanelData[0]?.panel_name)
+      console.log("key", projectPanelData[0]?.panel_name)
     }
   }
 
@@ -595,6 +611,9 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
+              onChange={(e) => {
+                e.target.value === "Applicable" ? setSelectorSwitchApplicable(false) : setSelectorSwitchApplicable(true)
+              }}
             />
           </div>
           <div className="flex-1">
@@ -602,6 +621,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="selector_switch_lockable"
               label="Lock Type"
+              disabled={selectroSwitchApplicable}
               options={[
                 { label: "Lockable", value: "Lockable" },
                 { label: "UnLockable", value: "UnLockable" },
@@ -637,6 +657,11 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Field Motor Isolator (General Specification)</span>
+          <Checkbox
+            onChange={(e) => {
+              setFieldMotorIsolator(!e.target.checked)
+            }}
+          ></Checkbox>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -646,6 +671,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Type"
               options={field_motor_type_options}
               size="small"
+              disabled={fieldMotorIsolator}
             />
           </div>
           <div className="flex-1">
@@ -655,6 +681,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Enclosure"
               options={field_motor_enclosure_options}
               size="small"
+              disabled={fieldMotorIsolator}
             />
           </div>
           <div className="flex-1">
@@ -664,6 +691,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Material"
               options={field_motor_material_options}
               size="small"
+              disabled={fieldMotorIsolator}
             />
           </div>
         </div>
@@ -675,6 +703,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Qty"
               options={field_motor_qty_options}
               size="small"
+              disabled={fieldMotorIsolator}
             />
           </div>
           <div className="flex-1">
@@ -684,6 +713,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Isolator Color Shade"
               options={field_motor_color_shade_options}
               size="small"
+              disabled={fieldMotorIsolator}
             />
           </div>
           <div className="flex-1">
@@ -693,6 +723,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Cable Entry"
               options={field_motor_cable_entry_options}
               size="small"
+              disabled={fieldMotorIsolator}
             />
           </div>
         </div>
@@ -703,10 +734,16 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
             label="Canopy on Top"
             options={field_motor_canopy_on_top_options}
             size="small"
+            disabled={fieldMotorIsolator}
           />
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Local Push Button Station (General Specification)</span>
+          <Checkbox
+            onChange={(e) => {
+              setLocalPushButtonStation(!e.target.checked)
+            }}
+          ></Checkbox>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -714,6 +751,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="lpbs_type"
               label="Type"
+              disabled={localPushButtonStation}
               options={field_motor_type_options}
               size="small"
             />
@@ -725,6 +763,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Enclosure"
               options={field_motor_enclosure_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -734,6 +773,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Material"
               options={field_motor_material_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
         </div>
@@ -745,6 +785,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Qty"
               options={field_motor_qty_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -754,6 +795,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="LPBS Color Shade"
               options={lpbs_color_shade_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -763,6 +805,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Canopy On top"
               options={lpbs_canopy_on_top_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
         </div>
@@ -774,6 +817,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Start Push Button Color"
               options={lpbs_indicator_on_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -783,6 +827,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Start / ON Indication Lamp Color"
               options={lpbs_indicator_on_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -792,6 +837,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Stop / OFF Indication Lamp Color"
               options={lpbs_indiacator_off_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
         </div>
@@ -803,6 +849,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Speed Increase Push Button"
               options={lpbs_speed_increase_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -812,6 +859,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Speed Decrease Push Button"
               options={lpbs_speed_decrease_options}
               size="small"
+              disabled={localPushButtonStation}
             />
           </div>
         </div>
@@ -824,6 +872,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
             name="apfc_relay"
             label="APFC Relay"
             options={apfc_relay_options}
+            suffixIcon={"Stage"}
             size="small"
           />
         </div>
@@ -898,7 +947,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
             <CustomSingleSelect
               control={control}
               name="control_bus_heat_pvc_sleeve"
-              label="Heat Shrinkable Color PVC sleeve (L1, L2, L3, N)"
+              label="Heat Shrinkable Color PVC sleeve (L, N)"
               options={cb_heat_pvc_sleeve_options}
               size="small"
             />

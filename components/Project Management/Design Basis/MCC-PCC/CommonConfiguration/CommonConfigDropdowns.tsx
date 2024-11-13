@@ -161,14 +161,16 @@ export default function useCommonConfigDropdowns() {
     `${ALARM_ACKNOWLEDGE_AND_LAMP_TEST}?fields=["*"]`,
     "alarm_acknowledge_and_lamp_test"
   )
-  const { dropdownOptions: speed_decrease_pb_options } = useDropdownOptions(
+  let { dropdownOptions: speed_decrease_pb_options } = useDropdownOptions(
     `${SPEED_DECREASE_PB}?fields=["*"]`,
     "speed_decrease_pb"
   )
-  const { dropdownOptions: speed_increase_pb_options } = useDropdownOptions(
+  speed_decrease_pb_options = moveNAtoEnd(speed_decrease_pb_options)
+  let { dropdownOptions: speed_increase_pb_options } = useDropdownOptions(
     `${SPEED_INCREASE_PB}?fields=["*"]`,
     "speed_increase_pb"
   )
+  speed_increase_pb_options = moveNAtoEnd(speed_increase_pb_options)
   const { dropdownOptions: ess_options } = useDropdownOptions(`${PUSH_BUTTON_ESS}?fields=["*"]`, "ess")
   let { dropdownOptions: push_button_stop_options } = useDropdownOptions(
     `${PUSH_BUTTON_STOP_COLOR}?fields=["*"]`,
@@ -237,24 +239,31 @@ export default function useCommonConfigDropdowns() {
     `${LPBS_PUSH_BUTTON_START_COLOR}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: lpbs_indicator_on_options } = useDropdownOptions(
+  let { dropdownOptions: lpbs_indicator_on_options } = useDropdownOptions(
     `${LPBS_INDICATOR_ON_COLOR}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: lpbs_indiacator_off_options } = useDropdownOptions(
+  lpbs_indicator_on_options = moveNAtoEnd(lpbs_indicator_on_options)
+
+  let { dropdownOptions: lpbs_indiacator_off_options } = useDropdownOptions(
     `${LPBS_INDICATOR_OFF_COLOR}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: lpbs_speed_increase_options } = useDropdownOptions(
+  lpbs_indiacator_off_options = moveNAtoEnd(lpbs_indiacator_off_options)
+
+  let { dropdownOptions: lpbs_speed_increase_options } = useDropdownOptions(
     `${LPBS_SPEED_INCREASE_BUTTON}?fields=["*"]`,
     "speed_increase_push_button"
   )
-  const { dropdownOptions: lpbs_speed_decrease_options } = useDropdownOptions(
+  lpbs_speed_increase_options = moveNAtoEnd(lpbs_speed_increase_options)
+  let { dropdownOptions: lpbs_speed_decrease_options } = useDropdownOptions(
     `${LPBS_SPEED_DECREASE_BUTTON}?fields=["*"]`,
     "speed_decrease_push_button"
   )
+  lpbs_speed_decrease_options = moveNAtoEnd(lpbs_speed_decrease_options)
 
-  const { dropdownOptions: apfc_relay_options } = useDropdownOptions(`${APFC_RELAY}?fields=["*"]`, "apfc_relay")
+  let { dropdownOptions: apfc_relay_options } = useDropdownOptions(`${APFC_RELAY}?fields=["*"]`, "apfc_relay")
+  apfc_relay_options = sortDropdownOptions(apfc_relay_options)
 
   const { dropdownOptions: pb_main_busbar_selection_options } = useDropdownOptions(
     `${POWER_BUS_MAIN_BUSBAR_SELECTION}?fields=["*"]`,
