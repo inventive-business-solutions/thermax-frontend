@@ -22,7 +22,9 @@ const UserFormValidationSchema = zod.object({
   email: zod
     .string({ required_error: "Email is required", message: "Email is required" })
     .email({ message: "Invalid email" }),
-  name_initial: zod.string({ required_error: "Initials is required", message: "Initials is required" }),
+  name_initial: zod
+    .string({ required_error: "Initials is required", message: "Initials is required" })
+    .max(3, { message: "Initials should not exceed 3 characters" }),
   digital_signature: zod.any().optional(),
 })
 
@@ -41,7 +43,7 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const { control, handleSubmit, reset, formState } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     resolver: zodResolver(UserFormValidationSchema),
     defaultValues: getDefaultValues(editMode, values),
     mode: "onSubmit",
@@ -188,7 +190,7 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
 
         <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
-          <Button type="primary" htmlType="submit" loading={loading} disabled={!formState.isValid}>
+          <Button type="primary" htmlType="submit" loading={loading}>
             Save
           </Button>
         </div>

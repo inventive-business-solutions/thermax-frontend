@@ -7,6 +7,7 @@ import { useEffect } from "react"
 import { DESIGN_BASIS_REVISION_HISTORY_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
+import { getThermaxDateFormat } from "utils/helpers"
 
 export default function DocumentRevision() {
   const params = useParams()
@@ -59,10 +60,8 @@ export default function DocumentRevision() {
       dataIndex: "createdDate",
       render: (text) => {
         const date = new Date(text)
-        const year = date.getFullYear()
-        const month = String(date.getMonth() + 1).padStart(2, "0")
-        const day = String(date.getDate()).padStart(2, "0")
-        return `${day}-${month}-${year}`
+        const stringDate = getThermaxDateFormat(date)
+        return stringDate
       },
     },
     {
