@@ -68,6 +68,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const [projectRow, setProjectRow] = useState<any>(null)
   const getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   const { data: projectList, isLoading } = useGetData(getProjectUrl)
+  console.log("projectList", projectList)
   const projectOCNos = projectList?.map((project: any) => project.project_oc_number)
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -108,6 +109,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
         return stringDate
       },
     },
+    { title: "Owner", dataIndex: "owner", key: "owner" },
     { title: "Approver", dataIndex: "approver", key: "approver" },
     {
       title: "Action",
