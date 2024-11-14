@@ -120,6 +120,12 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
 
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const { data: projectMetadata } = useGetData(getProjectMetadataUrl)
   const { data: projectInfo } = useGetData(getProjectInfoUrl)
 
@@ -142,11 +148,6 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
     electricalDesignTempOptions,
     seismicZoneOptions,
   } = useProjectInfoDropdowns()
-  const { setLoading: setModalLoading } = useLoading()
-  useEffect(() => {
-    setModalLoading(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const { control, handleSubmit, reset, formState, watch, setValue } = useForm({
     resolver: zodResolver(ProjectInfoSchema),
@@ -201,9 +202,9 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex">
-        <h2 className="font-bold underline">PROJECT INFORMATION TAB</h2>
-        <h2 className="font-semibold"> : {projectData?.project_name}</h2>
+      <div className="flex font-semibold">
+        <h2>{projectData?.project_oc_number}</h2>
+        <h2> : {projectData?.project_name}</h2>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex gap-4">

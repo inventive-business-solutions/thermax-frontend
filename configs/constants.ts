@@ -48,3 +48,11 @@ export const TagColors = {
   "WWS IPG": "cyan",
   "WWS SPG": "red",
 }
+
+export const DB_REVISION_STATUS = {
+  Unsubmitted: "Review Unsubmitted",
+  Submitted: "Review Submitted",
+  Resubmitted: "Review Resubmitted",
+  Approved: "Approved",
+  Released: "Released",
+}
