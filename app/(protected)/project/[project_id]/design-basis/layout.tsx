@@ -2,11 +2,12 @@
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { FloatButton } from "antd"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import React from "react"
 import { PROJECT_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
+import clsx from "clsx"
 
 export default function DesignBasisLayout({
   children,
@@ -16,8 +17,15 @@ export default function DesignBasisLayout({
   params: { project_id: string }
 }) {
   const router = useRouter()
+  const pathname = usePathname()
   const { setLoading: setModalLoading } = useLoading()
   const { data: projectData }: any = useGetData(`${PROJECT_API}/${params?.project_id}`)
+
+  const document_revision_path = `/project/${params.project_id}/design-basis/document-revision`
+  const general_info_path = `/project/${params.project_id}/design-basis/general-info`
+  const motor_parameters_path = `/project/${params.project_id}/design-basis/motor-parameters`
+  const mcc_pcc_path = `/project/${params.project_id}/design-basis/mcc-pcc`
+  const layout_path = `/project/${params.project_id}/design-basis/layout`
 
   const handleTabChange = (path: string) => {
     setModalLoading(true)
@@ -25,57 +33,57 @@ export default function DesignBasisLayout({
   }
   return (
     <div className="flex flex-col gap-2 px-2 pb-2 shadow-lg">
-      <div className="flex">
-        <h2 className="font-bold underline">DESIGN BASIS TAB</h2>
-        <h2 className="font-semibold"> : {projectData?.project_name}</h2>
+      <div className="flex font-semibold">
+        <h2>{projectData?.project_oc_number}</h2>
+        <h2> : {projectData?.project_name}</h2>
       </div>
       <nav className="flex gap-2">
-        <Link
-          href={`/project/${params.project_id}/design-basis/document-revision`}
-          className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
-          }
-          onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/document-revision`)}
+        <div
+          className={clsx(
+            "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-xs font-bold uppercase tracking-wide text-white",
+            pathname.includes(document_revision_path) ? "bg-green-500" : "bg-blue-500"
+          )}
+          onClick={() => handleTabChange(document_revision_path)}
         >
           Document Revision
-        </Link>
-        <Link
-          href={`/project/${params.project_id}/design-basis/general-info`}
-          className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
-          }
-          onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/general-info`)}
+        </div>
+        <div
+          className={clsx(
+            "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-xs font-bold uppercase tracking-wide text-white",
+            pathname.includes(general_info_path) ? "bg-green-500" : "bg-blue-500"
+          )}
+          onClick={() => handleTabChange(general_info_path)}
         >
           General Information
-        </Link>
+        </div>
 
-        <Link
-          href={`/project/${params.project_id}/design-basis/motor-parameters`}
-          className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
-          }
-          onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/motor-parameters`)}
+        <div
+          className={clsx(
+            "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-xs font-bold uppercase tracking-wide text-white",
+            pathname.includes(motor_parameters_path) ? "bg-green-500" : "bg-blue-500"
+          )}
+          onClick={() => handleTabChange(motor_parameters_path)}
         >
           Motor Parameters
-        </Link>
-        <Link
-          href={`/project/${params.project_id}/design-basis/mcc-pcc`}
-          className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
-          }
-          onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/mcc-pcc`)}
+        </div>
+        <div
+          className={clsx(
+            "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-xs font-bold uppercase tracking-wide text-white",
+            pathname.includes(mcc_pcc_path) ? "bg-green-500" : "bg-blue-500"
+          )}
+          onClick={() => handleTabChange(mcc_pcc_path)}
         >
           MCC / PCC
-        </Link>
-        <Link
-          href={`/project/${params.project_id}/design-basis/layout`}
-          className={
-            "white grid flex-auto cursor-pointer place-content-center rounded border bg-gray-500 p-1 text-xs font-bold uppercase tracking-wide text-white"
-          }
-          onClick={() => handleTabChange(`/project/${params.project_id}/design-basis/layout`)}
+        </div>
+        <div
+          className={clsx(
+            "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-xs font-bold uppercase tracking-wide text-white",
+            pathname.includes(layout_path) ? "bg-green-500" : "bg-blue-500"
+          )}
+          onClick={() => handleTabChange(layout_path)}
         >
           Layout
-        </Link>
+        </div>
       </nav>
       <main>{children}</main>
       <FloatButton icon={<QuestionCircleOutlined />} />

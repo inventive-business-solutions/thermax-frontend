@@ -46,6 +46,7 @@
     "@vercel/otel": "^1.8.3",
     "antd": "^5.20.1",
     "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
     "jexcel": "^4.6.1",
     "jspreadsheet-ce": "^4.15.0",
     "lodash": "^4.17.21",

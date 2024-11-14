@@ -13,10 +13,11 @@ import { COMMON_CONFIGURATION, PROJECT_PANEL_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { configItemValidationSchema } from "../schemas"
-import Checkbox from "antd/es/checkbox/Checkbox"
 
 const getDefaultValues = (commonConfigData: any) => {
   return {
+    field_motor_isolator_is_Selected: commonConfigData?.field_motor_isolator_is_Selected || 1,
+    local_push_button_station_is_Selected: commonConfigData?.local_push_button_station_is_Selected || 1,
     dol_starter: commonConfigData?.dol_starter || "0.37",
     star_delta_starter: commonConfigData?.star_delta_starter || "0.55",
     ammeter: commonConfigData?.ammeter || "0.37",
@@ -119,11 +120,6 @@ const CommonConfiguration = ({
   const [testing_standard, setTestingStandards] = useState([])
   const [dm_standard, setDmStandards] = useState([])
 
-  const [pushButtonColorSpeed, setPushButtonColorSpeed] = useState(false)
-  const [selectroSwitchApplicable, setSelectorSwitchApplicable] = useState<boolean>(false)
-  const [fieldMotorIsolator, setFieldMotorIsolator] = useState<boolean>(true)
-  const [localPushButtonStation, setLocalPushButtonStation] = useState<boolean>(true)
-
   let {
     dol_starter_options,
     star_delta_starter_options,
@@ -197,7 +193,7 @@ const CommonConfiguration = ({
   //   }
   // }, [supplyFeederStandard, setSupplyFeederStandard])
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     resolver: zodResolver(configItemValidationSchema),
     defaultValues: getDefaultValues(commonConfigurationData?.[0]),
     mode: "onSubmit",
@@ -237,7 +233,6 @@ const CommonConfiguration = ({
     } finally {
       setLoading(false)
       setActiveKey(projectPanelData[0]?.panel_name)
-      console.log("key", projectPanelData[0]?.panel_name)
     }
   }
 
@@ -552,9 +547,6 @@ const CommonConfiguration = ({
                 { label: "Yes", value: "1" },
                 { label: "No", value: "0" },
               ]}
-              onChange={(e) => {
-                e.target.value === "1" ? setPushButtonColorSpeed(false) : setPushButtonColorSpeed(true)
-              }}
             />
           </div>
           <div className="flex-1">
@@ -563,7 +555,6 @@ const CommonConfiguration = ({
               name="speed_increase_pb"
               label="Speed Increase PB"
               options={speed_increase_pb_options}
-              disabled={pushButtonColorSpeed}
               size="small"
             />
           </div>
@@ -573,7 +564,6 @@ const CommonConfiguration = ({
               name="speed_decrease_pb"
               label="Speed Decrease PB"
               options={speed_decrease_pb_options}
-              disabled={pushButtonColorSpeed}
               size="small"
             />
           </div>
@@ -611,9 +601,6 @@ const CommonConfiguration = ({
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
-              onChange={(e) => {
-                e.target.value === "Applicable" ? setSelectorSwitchApplicable(false) : setSelectorSwitchApplicable(true)
-              }}
             />
           </div>
           <div className="flex-1">
@@ -621,7 +608,6 @@ const CommonConfiguration = ({
               control={control}
               name="selector_switch_lockable"
               label="Lock Type"
-              disabled={selectroSwitchApplicable}
               options={[
                 { label: "Lockable", value: "Lockable" },
                 { label: "UnLockable", value: "UnLockable" },
@@ -657,11 +643,17 @@ const CommonConfiguration = ({
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Field Motor Isolator (General Specification)</span>
-          <Checkbox
-            onChange={(e) => {
-              setFieldMotorIsolator(!e.target.checked)
-            }}
-          ></Checkbox>
+          <div>
+            <CustomRadioSelect
+              control={control}
+              name="field_motor_isolator_is_Selected"
+              label=""
+              options={[
+                { label: "Yes", value: 1 },
+                { label: "No", value: 0 },
+              ]}
+            />
+          </div>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -670,8 +662,8 @@ const CommonConfiguration = ({
               name="field_motor_type"
               label="Type"
               options={field_motor_type_options}
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
               size="small"
-              disabled={fieldMotorIsolator}
             />
           </div>
           <div className="flex-1">
@@ -681,7 +673,7 @@ const CommonConfiguration = ({
               label="Enclosure"
               options={field_motor_enclosure_options}
               size="small"
-              disabled={fieldMotorIsolator}
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
           <div className="flex-1">
@@ -691,7 +683,7 @@ const CommonConfiguration = ({
               label="Material"
               options={field_motor_material_options}
               size="small"
-              disabled={fieldMotorIsolator}
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
         </div>
@@ -703,7 +695,7 @@ const CommonConfiguration = ({
               label="Qty"
               options={field_motor_qty_options}
               size="small"
-              disabled={fieldMotorIsolator}
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
           <div className="flex-1">
@@ -713,7 +705,7 @@ const CommonConfiguration = ({
               label="Isolator Color Shade"
               options={field_motor_color_shade_options}
               size="small"
-              disabled={fieldMotorIsolator}
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
           <div className="flex-1">
@@ -723,7 +715,7 @@ const CommonConfiguration = ({
               label="Cable Entry"
               options={field_motor_cable_entry_options}
               size="small"
-              disabled={fieldMotorIsolator}
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
         </div>
@@ -734,16 +726,22 @@ const CommonConfiguration = ({
             label="Canopy on Top"
             options={field_motor_canopy_on_top_options}
             size="small"
-            disabled={fieldMotorIsolator}
+            disabled={watch("field_motor_isolator_is_Selected") === 0}
           />
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Local Push Button Station (General Specification)</span>
-          <Checkbox
-            onChange={(e) => {
-              setLocalPushButtonStation(!e.target.checked)
-            }}
-          ></Checkbox>
+          <div>
+            <CustomRadioSelect
+              control={control}
+              name="local_push_button_station_is_Selected"
+              label=""
+              options={[
+                { label: "Yes", value: 1 },
+                { label: "No", value: 0 },
+              ]}
+            />
+          </div>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -751,8 +749,8 @@ const CommonConfiguration = ({
               control={control}
               name="lpbs_type"
               label="Type"
-              disabled={localPushButtonStation}
               options={field_motor_type_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -762,8 +760,8 @@ const CommonConfiguration = ({
               name="lpbs_enclosure"
               label="Enclosure"
               options={field_motor_enclosure_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -772,8 +770,8 @@ const CommonConfiguration = ({
               name="lpbs_material"
               label="Material"
               options={field_motor_material_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
         </div>
@@ -784,8 +782,8 @@ const CommonConfiguration = ({
               name="lpbs_qty"
               label="Qty"
               options={field_motor_qty_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -794,8 +792,8 @@ const CommonConfiguration = ({
               name="lpbs_color_shade"
               label="LPBS Color Shade"
               options={lpbs_color_shade_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -804,8 +802,8 @@ const CommonConfiguration = ({
               name="lpbs_canopy_on_top"
               label="Canopy On top"
               options={lpbs_canopy_on_top_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
         </div>
@@ -816,8 +814,8 @@ const CommonConfiguration = ({
               name="lpbs_push_button_start_color"
               label="Start Push Button Color"
               options={lpbs_indicator_on_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -826,8 +824,8 @@ const CommonConfiguration = ({
               name="lpbs_indication_lamp_start_color"
               label="Start / ON Indication Lamp Color"
               options={lpbs_indicator_on_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -836,8 +834,8 @@ const CommonConfiguration = ({
               name="lpbs_indication_lamp_stop_color"
               label="Stop / OFF Indication Lamp Color"
               options={lpbs_indiacator_off_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
         </div>
@@ -848,8 +846,8 @@ const CommonConfiguration = ({
               name="lpbs_speed_increase"
               label="Speed Increase Push Button"
               options={lpbs_speed_increase_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
           <div className="flex-1">
@@ -858,8 +856,8 @@ const CommonConfiguration = ({
               name="lpbs_speed_decrease"
               label="Speed Decrease Push Button"
               options={lpbs_speed_decrease_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
-              disabled={localPushButtonStation}
             />
           </div>
         </div>
