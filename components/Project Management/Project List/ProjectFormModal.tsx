@@ -30,7 +30,7 @@ import {
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
-const getProjectFormValidationSchema = (project_oc_numbers: string[]) => {
+const getProjectFormValidationSchema = (project_oc_numbers: string[], editMode: boolean) => {
   return zod.object({
     project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
     project_oc_number: zod
@@ -40,7 +40,7 @@ const getProjectFormValidationSchema = (project_oc_numbers: string[]) => {
       })
       .refine(
         (value) => {
-          return !project_oc_numbers.includes(value)
+          return editMode || !project_oc_numbers.includes(value)
         },
         { message: "Project OC number already exists" }
       ),
@@ -83,7 +83,7 @@ export default function ProjectFormModal({
     "name"
   )
 
-  const ProjectFormValidationSchema = getProjectFormValidationSchema(projectOCNos)
+  const ProjectFormValidationSchema = getProjectFormValidationSchema(projectOCNos, editMode)
 
   const { control, handleSubmit, reset, formState, getValues } = useForm({
     resolver: zodResolver(ProjectFormValidationSchema),
@@ -136,8 +136,8 @@ export default function ProjectFormModal({
   const handleUpdateProject = async (projectData: any) => {
     try {
       await updateData(`${PROJECT_API}/${values.name}`, false, projectData)
-      setStatus("success")
-      setInfoMessage("Project information updated successfully")
+      setOpen(false)
+      message.success("Project updated successfully")
     } catch (error: any) {
       throw error
     } finally {
