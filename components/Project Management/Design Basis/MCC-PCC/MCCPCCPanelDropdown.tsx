@@ -37,6 +37,7 @@ import {
 } from "configs/api-endpoints"
 
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { moveNAtoEnd, sortDropdownOptions } from "utils/helpers"
 
 export default function useMCCPCCPanelDropdowns() {
   const { dropdownOptions: incomer_ampere_options } = useDropdownOptions(`${INCOMER_AMPERE}?fields=["*"]`, "name")
@@ -54,20 +55,27 @@ export default function useMCCPCCPanelDropdowns() {
     `${INCOMER_ABOVE_TYPE}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: current_transformer_coating_options } = useDropdownOptions(
+  let { dropdownOptions: current_transformer_coating_options } = useDropdownOptions(
     `${CURRENT_TRANSFORMER_COATING}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: current_transformer_number_options } = useDropdownOptions(
+  current_transformer_coating_options = moveNAtoEnd(current_transformer_coating_options)
+
+  let { dropdownOptions: current_transformer_number_options } = useDropdownOptions(
     `${CURRENT_TRANSFORMER_NUMBER}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: mi_analog_options } = useDropdownOptions(`${MI_ANALOG}?fields=["*"]`, "name")
-  const { dropdownOptions: mi_digital_options } = useDropdownOptions(`${MI_DIGITAL}?fields=["*"]`, "name")
-  const { dropdownOptions: mi_communication_protocol_options } = useDropdownOptions(
+  current_transformer_number_options = moveNAtoEnd(current_transformer_number_options)
+
+  let { dropdownOptions: mi_analog_options } = useDropdownOptions(`${MI_ANALOG}?fields=["*"]`, "name")
+  mi_analog_options = moveNAtoEnd(mi_analog_options)
+  let { dropdownOptions: mi_digital_options } = useDropdownOptions(`${MI_DIGITAL}?fields=["*"]`, "name")
+  mi_digital_options = moveNAtoEnd(mi_digital_options)
+  let { dropdownOptions: mi_communication_protocol_options } = useDropdownOptions(
     `${MI_COMMUNICATION_PROTOCOL}?fields=["*"]`,
     "name"
   )
+  mi_communication_protocol_options = moveNAtoEnd(mi_communication_protocol_options)
   const { dropdownOptions: ga_moc_material_options } = useDropdownOptions(`${GA_MOC}?fields=["*"]`, "name")
   const { dropdownOptions: ga_moc_thickness_door_options } = useDropdownOptions(
     `${GA_MOC_THICKNESS_DOOR}?fields=["*"]`,

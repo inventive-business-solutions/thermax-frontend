@@ -11,10 +11,13 @@ import { MCC_CUM_PCC_MCC_PANEL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
 import { mccPanelValidationSchema } from "./schemas"
+import { HEATING } from "configs/constants"
+import { useCurrentUser } from "hooks/useCurrentUser"
 
 const getDefaultValues = (mccPanelData: any) => {
   return {
     incomer_ampere: mccPanelData?.incomer_ampere || "1000",
+    led_type_other_input: mccPanelData?.led_type_other_input || "NA",
     incomer_pole: mccPanelData?.incomer_pole || "3",
     incomer_type: mccPanelData?.incomer_type || "SFU",
     incomer_above_ampere: mccPanelData?.incomer_above_ampere || "1001",
@@ -25,7 +28,7 @@ const getDefaultValues = (mccPanelData: any) => {
     is_lsi_selected: mccPanelData?.is_lsi_selected || 1,
     is_neural_link_with_disconnect_facility_selected:
       mccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
-    is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected || 1,
+    is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected || "ON",
     is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected || 1,
     is_red_cb_in_service: mccPanelData?.is_red_cb_in_service || 1,
     is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected || 1,
@@ -99,6 +102,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     `${MCC_CUM_PCC_MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
   const [loading, setLoading] = useState(false)
+  const userInfo = useCurrentUser()
 
   const {
     incomer_ampere_options,
@@ -269,7 +273,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomCheckboxInput
               control={control}
               name="is_neural_link_with_disconnect_facility_selected"
-              label="Neural Link With Disconnect Facility"
+              label="Neutral Link With Disconnect Facility"
             />
           </div>
         </div>
@@ -280,11 +284,17 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               name="is_led_type_lamp_selected"
               label="Indication (LED Type Lamp)"
               options={[
-                { label: "Yes", value: 1 },
-                { label: "No", value: 0 },
+                { label: "ON", value: "ON" },
+                { label: "OFF", value: "OFF" },
+                { label: "Other", value: "Other" },
               ]}
             />
           </div>
+          {watch("is_led_type_lamp_selected") === "Other" && (
+            <div className="flex-1">
+              <CustomTextInput control={control} name="led_type_other_input" label="" />
+            </div>
+          )}
           <div className="flex-1">
             <CustomCheckboxInput
               control={control}
@@ -471,7 +481,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomSingleSelect
               control={control}
               name="ga_panel_mounting_height"
-              label="Height of base frame (mm)"
+              label="Height of Base Frame (mm)"
               options={ga_panel_mounting_height_options}
               size="small"
             />
@@ -489,7 +499,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomCheckboxInput
               control={control}
               name="is_power_and_bus_separation_section_selected"
-              label="Separation Between Power & Control Bus"
+              label="Separation Between Power & Control Busbar"
             />
           </div>
           <div className="">
@@ -584,23 +594,14 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomSingleSelect
               control={control}
               name="ppc_component_mounting_plate_paint_shade"
-              label="Paint shade for component mounting plate"
+              label="Paint Shade for Component Mounting Plate"
               options={ppc_component_mounting_plate_paint_shade_options}
               size="small"
             />
           </div>
         </div>
-        <div className="mt-2 flex items-center gap-4">
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="ppc_base_frame_paint_shade"
-              label="Paint shade for base frame"
-              options={ppc_base_frame_paint_shade_options}
-              size="small"
-            />
-          </div>
-          <div className="flex-1">
+        <div className="mt-2 grid grid-cols-3 items-center gap-4">
+          <div className="col-span-2">
             <CustomSingleSelect
               control={control}
               name="ppc_minimum_coating_thickness"
@@ -609,7 +610,17 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               size="small"
             />
           </div>
-          <div className="flex-1">
+          <div className="">
+            <CustomSingleSelect
+              control={control}
+              name="ppc_base_frame_paint_shade"
+              label="Paint Shade for Base Frame"
+              options={ppc_base_frame_paint_shade_options}
+              size="small"
+            />
+          </div>
+
+          <div className="col-span-2">
             <CustomSingleSelect
               control={control}
               name="ppc_pretreatment_panel_standard"
@@ -633,270 +644,274 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             ]}
           />
         </div>
-        <Divider>
-          <span className="font-bold text-slate-700">Punching Details</span>
-        </Divider>
-        <div className="flex items-center gap-4">
-          <h4 className="font-bold text-slate-700">Punching Details For Boiler</h4>
-          <div>
-            <CustomRadioSelect
-              control={control}
-              name="is_punching_details_for_boiler_selected"
-              label=""
-              options={[
-                { label: "Yes", value: 1 },
-                { label: "No", value: 0 },
-              ]}
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_model"
-              label="Model"
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_fuel"
-              label="Fuel"
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_year"
-              label="Year"
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_power_supply_vac"
-              label="Power Supply (VAC)"
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_power_supply_phase"
-              label="Power Supply (Phase)"
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_power_supply_frequency"
-              label="Power Supply (Hz)"
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_control_supply_vac"
-              label="Control Supply (VAC)"
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_control_supply_phase"
-              label="Control Supply (Phase)"
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_control_supply_frequency"
-              label="Control Supply (Hz)"
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_evaporation"
-              label="Evaporation"
-              addonAfter={"Kg/Hr"}
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_output"
-              label="OutPut"
-              addonAfter={"MW"}
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_connected_load"
-              label="Connected Load"
-              addonAfter={"KW"}
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="boiler_design_pressure"
-              label="Design Pressure"
-              addonAfter={"Kg/cm2(g)/Bar"}
-              disabled={watch("is_punching_details_for_boiler_selected") === 0}
-            />
-          </div>
-        </div>
-        <Divider />
-        <div className="mt-2 flex items-center gap-4">
-          <h4 className="font-bold text-slate-700">Punching Details For Heater</h4>
-          <div>
-            <CustomRadioSelect
-              control={control}
-              name="is_punching_details_for_heater_selected"
-              label=""
-              options={[
-                { label: "Yes", value: 1 },
-                { label: "No", value: 0 },
-              ]}
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_model"
-              label="Model"
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_fuel"
-              label="Fuel"
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_year"
-              label="Year"
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_power_supply_vac"
-              label="Power Supply (VAC)"
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_power_supply_phase"
-              label="Power Supply (Phase)"
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_power_supply_frequency"
-              label="Power Supply (Hz)"
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_control_supply_vac"
-              label="Control Supply (VAC)"
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_control_supply_phase"
-              label="Control Supply (Phase)"
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_control_supply_frequency"
-              label="Control Supply (Hz)"
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_evaporation"
-              label="Evaporation"
-              addonAfter={"Kcal/Hr"}
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_output"
-              label="Output"
-              addonAfter={"MW"}
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_connected_load"
-              label="Connected Load"
-              addonAfter={"KW"}
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="heater_temperature"
-              label="Temperature"
-              addonAfter={"Deg C"}
-              disabled={watch("is_punching_details_for_heater_selected") === 0}
-            />
-          </div>
-        </div>
+        {userInfo?.division === HEATING && (
+          <>
+            <Divider>
+              <span className="font-bold text-slate-700">Punching Details</span>
+            </Divider>
+            <div className="flex items-center gap-4">
+              <h4 className="font-bold text-slate-700">Punching Details For Boiler</h4>
+              <div>
+                <CustomRadioSelect
+                  control={control}
+                  name="is_punching_details_for_boiler_selected"
+                  label=""
+                  options={[
+                    { label: "Yes", value: 1 },
+                    { label: "No", value: 0 },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_model"
+                  label="Model"
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_fuel"
+                  label="Fuel"
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_year"
+                  label="Year"
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_power_supply_vac"
+                  label="Power Supply (VAC)"
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_power_supply_phase"
+                  label="Power Supply (Phase)"
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_power_supply_frequency"
+                  label="Power Supply (Hz)"
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_control_supply_vac"
+                  label="Control Supply (VAC)"
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_control_supply_phase"
+                  label="Control Supply (Phase)"
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_control_supply_frequency"
+                  label="Control Supply (Hz)"
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_evaporation"
+                  label="Evaporation"
+                  addonAfter={"Kg/Hr"}
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_output"
+                  label="Output"
+                  addonAfter={"MW"}
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_connected_load"
+                  label="Connected Load"
+                  addonAfter={"KW"}
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="boiler_design_pressure"
+                  label="Design Pressure"
+                  addonAfter={"Kg/cm2(g)/Bar"}
+                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                />
+              </div>
+            </div>
+            <Divider />
+            <div className="mt-2 flex items-center gap-4">
+              <h4 className="font-bold text-slate-700">Punching Details For Heater</h4>
+              <div>
+                <CustomRadioSelect
+                  control={control}
+                  name="is_punching_details_for_heater_selected"
+                  label=""
+                  options={[
+                    { label: "Yes", value: 1 },
+                    { label: "No", value: 0 },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_model"
+                  label="Model"
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_fuel"
+                  label="Fuel"
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_year"
+                  label="Year"
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_power_supply_vac"
+                  label="Power Supply (VAC)"
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_power_supply_phase"
+                  label="Power Supply (Phase)"
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_power_supply_frequency"
+                  label="Power Supply (Hz)"
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_control_supply_vac"
+                  label="Control Supply (VAC)"
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_control_supply_phase"
+                  label="Control Supply (Phase)"
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_control_supply_frequency"
+                  label="Control Supply (Hz)"
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_evaporation"
+                  label="Evaporation"
+                  addonAfter={"Kcal/Hr"}
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_output"
+                  label="Output"
+                  addonAfter={"MW"}
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_connected_load"
+                  label="Connected Load"
+                  addonAfter={"KW"}
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="heater_temperature"
+                  label="Temperature"
+                  addonAfter={"Deg C"}
+                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                />
+              </div>
+            </div>
+          </>
+        )}
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
             Save and Continue

@@ -122,7 +122,7 @@ const MakeOfComponent = ({
           <CustomSingleSelect
             control={control}
             name="motor"
-            label="Motor"
+            label="Model"
             options={motors_make_options || []}
             size="small"
             disabled={userInfo?.division === HEATING}
