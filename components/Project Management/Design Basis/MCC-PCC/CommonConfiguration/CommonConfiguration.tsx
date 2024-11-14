@@ -13,8 +13,6 @@ import { COMMON_CONFIGURATION, PROJECT_PANEL_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { configItemValidationSchema } from "../schemas"
-import Checkbox from "antd/es/checkbox/Checkbox"
-import { watch } from "fs"
 
 const getDefaultValues = (commonConfigData: any) => {
   return {

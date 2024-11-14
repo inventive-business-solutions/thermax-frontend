@@ -103,7 +103,7 @@ const getDefaultValues = (plcData: any) => {
     commercial_grade_pc:
       plcData?.commercial_grade_pc ||
       "Minimum Configuration = min. i5/latest Processor, min 8GB RAM, min 1TB Hard Disk, multimedia with DVD R/W drive, Keyboard mouse set 1 nos with 4USB Port",
-    monitor_size: plcData?.monitor_size || "21 inch",
+    monitor_size: plcData?.monitor_size || "21",
     windows_operating_system: plcData?.windows_operating_system || "Windows Latest Version VTS",
     is_printer_with_cable_selected: plcData?.is_printer_with_cable_selected || 1,
     printer_with_communication_cable: plcData?.printer_with_communication_cable || "A3 B/W",
