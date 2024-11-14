@@ -39,6 +39,7 @@ const config = {
             email: email,
             email_verified: userInfo?.email_verified,
             division: userInfo?.division,
+            is_superuser: userInfo?.is_superuser,
             roles: userInfo?.roles,
             api_key: userInfo?.api_key,
             api_secret: api_secret,

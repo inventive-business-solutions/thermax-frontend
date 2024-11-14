@@ -74,13 +74,13 @@ export default function useCommonConfigDropdowns() {
     `${DOL_STARTER}?limit=100&fields=["*"]`,
     "dol_starter"
   )
-  dol_starter_options = sortDropdownOptions(dol_starter_options);
+  dol_starter_options = sortDropdownOptions(dol_starter_options)
 
   let { dropdownOptions: star_delta_starter_options } = useDropdownOptions(
     `${STAR_DELTA_STARTER}?limit=100&fields=["*"]`,
     "star_delta_starter"
   )
-  star_delta_starter_options = sortDropdownOptions(star_delta_starter_options);
+  star_delta_starter_options = sortDropdownOptions(star_delta_starter_options)
 
   let { dropdownOptions: ammeter_options } = useDropdownOptions(`${AMMETER}?limit=100&fields=["*"]`, "ammeter")
   ammeter_options = sortDropdownOptions(ammeter_options)
@@ -161,23 +161,28 @@ export default function useCommonConfigDropdowns() {
     `${ALARM_ACKNOWLEDGE_AND_LAMP_TEST}?fields=["*"]`,
     "alarm_acknowledge_and_lamp_test"
   )
-  const { dropdownOptions: speed_decrease_pb_options } = useDropdownOptions(
+  let { dropdownOptions: speed_decrease_pb_options } = useDropdownOptions(
     `${SPEED_DECREASE_PB}?fields=["*"]`,
     "speed_decrease_pb"
   )
-  const { dropdownOptions: speed_increase_pb_options } = useDropdownOptions(
+  speed_decrease_pb_options = moveNAtoEnd(speed_decrease_pb_options)
+  let { dropdownOptions: speed_increase_pb_options } = useDropdownOptions(
     `${SPEED_INCREASE_PB}?fields=["*"]`,
     "speed_increase_pb"
   )
+  speed_increase_pb_options = moveNAtoEnd(speed_increase_pb_options)
   const { dropdownOptions: ess_options } = useDropdownOptions(`${PUSH_BUTTON_ESS}?fields=["*"]`, "ess")
-  const { dropdownOptions: push_button_stop_options } = useDropdownOptions(
+  let { dropdownOptions: push_button_stop_options } = useDropdownOptions(
     `${PUSH_BUTTON_STOP_COLOR}?fields=["*"]`,
     "push_button_stop_color"
   )
-  const { dropdownOptions: push_button_start_options } = useDropdownOptions(
+  push_button_stop_options = moveNAtoEnd(push_button_stop_options)
+
+  let { dropdownOptions: push_button_start_options } = useDropdownOptions(
     `${PUSH_BUTTON_START_COLOR}?fields=["*"]`,
     "push_button_start_color"
   )
+  push_button_start_options = moveNAtoEnd(push_button_start_options)
 
   const { dropdownOptions: lr_selector_lock_switch_applicable_options } = useDropdownOptions(
     `${LR_SELECTOR_SWITCH_APPLICABLE}?fields=["*"]`,
@@ -234,24 +239,31 @@ export default function useCommonConfigDropdowns() {
     `${LPBS_PUSH_BUTTON_START_COLOR}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: lpbs_indicator_on_options } = useDropdownOptions(
+  let { dropdownOptions: lpbs_indicator_on_options } = useDropdownOptions(
     `${LPBS_INDICATOR_ON_COLOR}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: lpbs_indiacator_off_options } = useDropdownOptions(
+  lpbs_indicator_on_options = moveNAtoEnd(lpbs_indicator_on_options)
+
+  let { dropdownOptions: lpbs_indiacator_off_options } = useDropdownOptions(
     `${LPBS_INDICATOR_OFF_COLOR}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: lpbs_speed_increase_options } = useDropdownOptions(
+  lpbs_indiacator_off_options = moveNAtoEnd(lpbs_indiacator_off_options)
+
+  let { dropdownOptions: lpbs_speed_increase_options } = useDropdownOptions(
     `${LPBS_SPEED_INCREASE_BUTTON}?fields=["*"]`,
     "speed_increase_push_button"
   )
-  const { dropdownOptions: lpbs_speed_decrease_options } = useDropdownOptions(
+  lpbs_speed_increase_options = moveNAtoEnd(lpbs_speed_increase_options)
+  let { dropdownOptions: lpbs_speed_decrease_options } = useDropdownOptions(
     `${LPBS_SPEED_DECREASE_BUTTON}?fields=["*"]`,
     "speed_decrease_push_button"
   )
+  lpbs_speed_decrease_options = moveNAtoEnd(lpbs_speed_decrease_options)
 
-  const { dropdownOptions: apfc_relay_options } = useDropdownOptions(`${APFC_RELAY}?fields=["*"]`, "apfc_relay")
+  let { dropdownOptions: apfc_relay_options } = useDropdownOptions(`${APFC_RELAY}?fields=["*"]`, "apfc_relay")
+  apfc_relay_options = sortDropdownOptions(apfc_relay_options)
 
   const { dropdownOptions: pb_main_busbar_selection_options } = useDropdownOptions(
     `${POWER_BUS_MAIN_BUSBAR_SELECTION}?fields=["*"]`,

@@ -4,7 +4,9 @@ import { Button } from "antd"
 import React, { useState } from "react"
 import CableSchedule from "./CableSchedule"
 import Download from "./Download"
+import ExcelGrid from "./Electrical Load List/LoadListComponent"
 import MotorCanopyList from "./MotorCanopyList"
+// import ExcelGrid from "./Electrical Load List/LoadListComponent"
 // import GeneralInfo from "./GeneralInfo"
 // import MotorParameters from "./MotorParameters"
 // import MainMCC from "./MCC-PCC/Main"
@@ -18,11 +20,10 @@ const tabData = [
 ]
 
 const ElectricalLoadList = () => {
-  const [openTab, setOpenTab] = useState<string>("1")
+  const [openTab, setOpenTab] = useState<string>("2")
 
   return (
     <>
-      <div>DESIGN BASIS TAB</div>
       <div className="m-4 flex flex-wrap">
         <div className="w-full">
           <ul className="mb-0 flex list-none flex-row flex-wrap pb-4 pt-3" role="tablist">
@@ -46,16 +47,17 @@ const ElectricalLoadList = () => {
             ))}
           </ul>
 
-          <div className="relative mb-6 flex w-full min-w-0 flex-col break-words rounded bg-white">
-            <div className="flex-auto px-4 py-5">
-              <div className="tab-content tab-space">
+          <div className="relative mb-2 flex w-full min-w-0 flex-col break-words rounded bg-white">
+            <div className="flex-auto">
+              <div className="">
                 {/* Tab Content */}
                 <div className={openTab === "1" ? "block" : "hidden"} id="link1">
                   <Download />
                 </div>
 
                 <div className={openTab === "2" ? "block" : "hidden"} id="link2">
-                  <p> Electrical Load List</p>
+                  {/* <p> Electrical Load List</p> */}
+                  <ExcelGrid/>
                 </div>
 
                 <div className={openTab === "3" ? "block" : "hidden"} id="link3">

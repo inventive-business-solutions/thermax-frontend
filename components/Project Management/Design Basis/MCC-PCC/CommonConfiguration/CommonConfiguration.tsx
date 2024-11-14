@@ -9,13 +9,15 @@ import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { COMMON_CONFIGURATION } from "configs/api-endpoints"
+import { COMMON_CONFIGURATION, PROJECT_PANEL_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { configItemValidationSchema } from "../schemas"
 
 const getDefaultValues = (commonConfigData: any) => {
   return {
+    field_motor_isolator_is_Selected: commonConfigData?.field_motor_isolator_is_Selected || 1,
+    local_push_button_station_is_Selected: commonConfigData?.local_push_button_station_is_Selected || 1,
     dol_starter: commonConfigData?.dol_starter || "0.37",
     star_delta_starter: commonConfigData?.star_delta_starter || "0.55",
     ammeter: commonConfigData?.ammeter || "0.37",
@@ -38,7 +40,9 @@ const getDefaultValues = (commonConfigData: any) => {
     ct_wiring_size: commonConfigData?.ct_wiring_size || "2.5 Sq. mm",
     cable_insulation_pvc: commonConfigData?.cable_insulation_pvc || "FRLS",
     ferrule: commonConfigData?.ferrule || "Cross Ferrule",
-    common_requirement: commonConfigData?.common_requirement || "",
+    common_requirement:
+      commonConfigData?.common_requirement ||
+      "660/1100 V Grade PVC insulated, FR/FRLS, Multistranded, Copper, Flexible cable identified with colour code",
     spare_terminal: commonConfigData?.spare_terminal || "10",
     push_button_start: commonConfigData?.push_button_start || "Green",
     push_button_stop: commonConfigData?.push_button_stop || "Green",
@@ -71,14 +75,14 @@ const getDefaultValues = (commonConfigData: any) => {
     lpbs_indication_lamp_stop_color: commonConfigData?.lpbs_indication_lamp_stop_color || "Red",
     lpbs_speed_increase: commonConfigData?.lpbs_speed_increase || "Yellow",
     lpbs_speed_decrease: commonConfigData?.lpbs_speed_decrease || "Black",
-    apfc_relay: commonConfigData?.apfc_relay || "4 Stage",
+    apfc_relay: commonConfigData?.apfc_relay || "4",
     power_bus_main_busbar_selection: commonConfigData?.power_bus_main_busbar_selection || "As per IS",
     power_bus_heat_pvc_sleeve: commonConfigData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
     power_bus_material: commonConfigData?.power_bus_material || "Copper",
     power_bus_current_density: commonConfigData?.power_bus_current_density || "0.8 A/Sq. mm",
     power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "VTS",
     control_bus_main_busbar_selection: commonConfigData?.control_bus_main_busbar_selection || "As per IS",
-    control_bus_heat_pvc_sleeve: commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
+    control_bus_heat_pvc_sleeve: commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Black",
     control_bus_material: commonConfigData?.control_bus_material || "Aluminium",
     control_bus_current_density: commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
     control_bus_rating_of_busbar: commonConfigData?.control_bus_rating_of_busbar || "VTS (Min-1R X 30mm X 10mm)",
@@ -97,13 +101,26 @@ const getDefaultValues = (commonConfigData: any) => {
   }
 }
 
-const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
+const CommonConfiguration = ({
+  revision_id,
+  setActiveKey,
+}: {
+  revision_id: string
+  setActiveKey: React.Dispatch<React.SetStateAction<string>>
+}) => {
   const { data: commonConfigurationData } = useGetData(
     `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
-  const [loading, setLoading] = useState(false)
 
-  const {
+  const { data: projectPanelData } = useGetData(
+    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  )
+  const [loading, setLoading] = useState(false)
+  const [supplyFeederStandard, setSupplyFeederStandard] = useState("IEC")
+  const [testing_standard, setTestingStandards] = useState([])
+  const [dm_standard, setDmStandards] = useState([])
+
+  let {
     dol_starter_options,
     star_delta_starter_options,
     ammeter_options,
@@ -162,7 +179,21 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
     metering_for_feeder_options,
   } = useCommonConfigDropdowns()
 
-  const { control, handleSubmit, reset } = useForm({
+  // useEffect(() => {
+  //   if (supplyFeederStandard === "IEC") {
+  //     dm_standard_options = dm_standard_options.filter((item: any) => item.name.startsWith("IEC") || item.name === "NA")
+  //     testing_standard_options = testing_standard_options.filter(
+  //       (item: any) => item.name.startsWith("IEC") || item.name === "NA"
+  //     )
+  //   } else {
+  //     dm_standard_options = dm_standard_options.filter((item: any) => item.name.startsWith("IS") || item.name === "NA")
+  //     testing_standard_options = testing_standard_options.filter(
+  //       (item: any) => item.name.startsWith("IS") || item.name === "NA"
+  //     )
+  //   }
+  // }, [supplyFeederStandard, setSupplyFeederStandard])
+
+  const { control, handleSubmit, reset, watch } = useForm({
     resolver: zodResolver(configItemValidationSchema),
     defaultValues: getDefaultValues(commonConfigurationData?.[0]),
     mode: "onSubmit",
@@ -201,6 +232,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
       handleError(error)
     } finally {
       setLoading(false)
+      setActiveKey(projectPanelData[0]?.panel_name)
     }
   }
 
@@ -295,6 +327,20 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
                 { label: "IEC", value: "IEC" },
                 { label: "IS", value: "IS" },
               ]}
+              onChange={(e) => {
+                const selectedValue = e.target.value
+                setSupplyFeederStandard(selectedValue)
+
+                const filterOptions = (options: any) => {
+                  return options.filter((item: any) => item.name.startsWith(selectedValue) || item.name === "NA")
+                }
+
+                const filteredDmStandards = filterOptions(dm_standard_options)
+                const filteredTestingStandards = filterOptions(testing_standard_options)
+
+                setDmStandards(filteredDmStandards)
+                setTestingStandards(filteredTestingStandards)
+              }}
             />
           </div>
           <div className="flex-1">
@@ -302,7 +348,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="dm_standard"
               label="Design & Manufacturer's standard"
-              options={dm_standard_options}
+              options={dm_standard}
               size="small"
             />
           </div>
@@ -311,7 +357,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="testing_standard"
               label="Testing Standard"
-              options={testing_standard_options}
+              options={testing_standard}
               size="small"
             />
           </div>
@@ -320,7 +366,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
           <span className="font-bold text-slate-700">Wiring</span>
         </Divider>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">Power Wiring (L1, L2, L3, LN)</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">Power Wiring (L1, L2, L3, N)</h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -404,7 +450,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">CT Wiring (+ / -)</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">CT Wiring</h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -527,7 +573,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
             <CustomSingleSelect
               control={control}
               name="alarm_acknowledge_and_lamp_test"
-              label="Alarm Knowledge & Lamp Test"
+              label="Alarm Acknowledge and Lamp Test"
               options={alarm_acknowledge_and_lamp_test_options}
               size="small"
             />
@@ -597,6 +643,17 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Field Motor Isolator (General Specification)</span>
+          <div>
+            <CustomRadioSelect
+              control={control}
+              name="field_motor_isolator_is_Selected"
+              label=""
+              options={[
+                { label: "Yes", value: 1 },
+                { label: "No", value: 0 },
+              ]}
+            />
+          </div>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -605,6 +662,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="field_motor_type"
               label="Type"
               options={field_motor_type_options}
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -615,6 +673,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Enclosure"
               options={field_motor_enclosure_options}
               size="small"
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
           <div className="flex-1">
@@ -624,6 +683,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Material"
               options={field_motor_material_options}
               size="small"
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
         </div>
@@ -635,6 +695,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Qty"
               options={field_motor_qty_options}
               size="small"
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
           <div className="flex-1">
@@ -644,6 +705,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Isolator Color Shade"
               options={field_motor_color_shade_options}
               size="small"
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
           <div className="flex-1">
@@ -653,6 +715,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               label="Cable Entry"
               options={field_motor_cable_entry_options}
               size="small"
+              disabled={watch("field_motor_isolator_is_Selected") === 0}
             />
           </div>
         </div>
@@ -663,10 +726,22 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
             label="Canopy on Top"
             options={field_motor_canopy_on_top_options}
             size="small"
+            disabled={watch("field_motor_isolator_is_Selected") === 0}
           />
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Local Push Button Station (General Specification)</span>
+          <div>
+            <CustomRadioSelect
+              control={control}
+              name="local_push_button_station_is_Selected"
+              label=""
+              options={[
+                { label: "Yes", value: 1 },
+                { label: "No", value: 0 },
+              ]}
+            />
+          </div>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -675,6 +750,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_type"
               label="Type"
               options={field_motor_type_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -684,6 +760,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_enclosure"
               label="Enclosure"
               options={field_motor_enclosure_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -693,6 +770,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_material"
               label="Material"
               options={field_motor_material_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -704,6 +782,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_qty"
               label="Qty"
               options={field_motor_qty_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -713,6 +792,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_color_shade"
               label="LPBS Color Shade"
               options={lpbs_color_shade_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -722,6 +802,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_canopy_on_top"
               label="Canopy On top"
               options={lpbs_canopy_on_top_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -733,6 +814,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_push_button_start_color"
               label="Start Push Button Color"
               options={lpbs_indicator_on_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -742,6 +824,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_indication_lamp_start_color"
               label="Start / ON Indication Lamp Color"
               options={lpbs_indicator_on_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -751,6 +834,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_indication_lamp_stop_color"
               label="Stop / OFF Indication Lamp Color"
               options={lpbs_indiacator_off_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -762,6 +846,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_speed_increase"
               label="Speed Increase Push Button"
               options={lpbs_speed_increase_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -771,6 +856,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
               name="lpbs_speed_decrease"
               label="Speed Decrease Push Button"
               options={lpbs_speed_decrease_options}
+              disabled={watch("local_push_button_station_is_Selected") === 0}
               size="small"
             />
           </div>
@@ -784,6 +870,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
             name="apfc_relay"
             label="APFC Relay"
             options={apfc_relay_options}
+            suffixIcon={"Stage"}
             size="small"
           />
         </div>
@@ -858,7 +945,7 @@ const CommonConfiguration = ({ revision_id }: { revision_id: string }) => {
             <CustomSingleSelect
               control={control}
               name="control_bus_heat_pvc_sleeve"
-              label="Heat Shrinkable Color PVC sleeve (L1, L2, L3, N)"
+              label="Heat Shrinkable Color PVC sleeve (L, N)"
               options={cb_heat_pvc_sleeve_options}
               size="small"
             />

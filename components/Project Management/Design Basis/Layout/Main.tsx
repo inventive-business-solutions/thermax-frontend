@@ -17,7 +17,7 @@ const MainLayout = ({ revision_id }: { revision_id: string }) => {
     {
       label: "Cable Tray",
       key: "1",
-      children: <CableTray revision_id={revision_id} />,
+      children: <CableTray revision_id={revision_id} setActiveKey={setActiveKey} />,
     },
     {
       label: "Earthing",

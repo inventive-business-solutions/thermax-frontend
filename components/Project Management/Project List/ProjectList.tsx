@@ -37,6 +37,7 @@ import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import ProjectFormModal from "./ProjectFormModal"
 import { UploadProjectFilesModal } from "./UploadProjectFilesModal"
+import { getThermaxDateFormat } from "utils/helpers"
 
 interface DataType {
   key: string
@@ -67,6 +68,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const [projectRow, setProjectRow] = useState<any>(null)
   const getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   const { data: projectList, isLoading } = useGetData(getProjectUrl)
+  const projectOCNos = projectList?.map((project: any) => project.project_oc_number)
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
@@ -86,8 +88,26 @@ export default function ProjectList({ userInfo, isComplete }: any) {
         </Link>
       ),
     },
-    { title: "Created Date", dataIndex: "creation", key: "creation", render: (text) => new Date(text).toDateString() },
-    { title: "Modified Date", dataIndex: "modified", key: "modified", render: (text) => new Date(text).toDateString() },
+    {
+      title: "Created Date",
+      dataIndex: "creation",
+      key: "creation",
+      render: (text) => {
+        const date = new Date(text)
+        const stringDate = getThermaxDateFormat(date)
+        return stringDate
+      },
+    },
+    {
+      title: "Modified Date",
+      dataIndex: "modified",
+      key: "modified",
+      render: (text) => {
+        const date = new Date(text)
+        const stringDate = getThermaxDateFormat(date)
+        return stringDate
+      },
+    },
     { title: "Approver", dataIndex: "approver", key: "approver" },
     {
       title: "Action",
@@ -109,7 +129,12 @@ export default function ProjectList({ userInfo, isComplete }: any) {
               cancelText="No"
               placement="topRight"
             >
-              <Button type="link" shape="circle" icon={<FileDoneOutlined />} />
+              <Button
+                type="link"
+                shape="circle"
+                icon={<FileDoneOutlined />}
+                disabled={!Boolean(userInfo.is_superuser)}
+              />
             </Popconfirm>
           </Tooltip>
           <Tooltip placement="top" title="Delete">
@@ -331,6 +356,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
         values={projectRow}
         userInfo={userInfo}
         getProjectUrl={getProjectUrl}
+        projectOCNos={projectOCNos}
       />
       <UploadProjectFilesModal
         open={uploadFileOpen}

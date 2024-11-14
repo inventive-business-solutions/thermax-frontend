@@ -48,7 +48,6 @@ const MakeOfComponent = ({
   setActiveKey,
 }: {
   revision_id: string
-  activeKey: string
   setActiveKey: React.Dispatch<React.SetStateAction<string>>
 }) => {
   const [loading, setLoading] = useState(false)
@@ -111,7 +110,7 @@ const MakeOfComponent = ({
       handleError(error)
     } finally {
       setLoading(false)
-      setActiveKey("2")
+      setActiveKey("Common Configuration")
     }
   }
 
@@ -123,7 +122,7 @@ const MakeOfComponent = ({
           <CustomSingleSelect
             control={control}
             name="motor"
-            label="Motor"
+            label="Model"
             options={motors_make_options || []}
             size="small"
             disabled={userInfo?.division === HEATING}
