@@ -189,7 +189,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
     <div className="flex flex-col gap-4">
       <div className="flex font-semibold">
         <h2>{projectData?.project_oc_number}</h2>
-        <h2> : {projectData?.project_name}</h2>
+        <h2> / {projectData?.project_name}</h2>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex gap-4">

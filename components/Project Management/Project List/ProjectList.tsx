@@ -109,7 +109,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
         return stringDate
       },
     },
-    { title: "Owner", dataIndex: "owner", key: "owner" },
+    { title: "Project Creator", dataIndex: "owner", key: "owner" },
     { title: "Approver", dataIndex: "approver", key: "approver" },
     {
       title: "Action",

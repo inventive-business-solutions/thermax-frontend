@@ -29,9 +29,6 @@ export const UploadProjectFilesModal = ({
     localIsolatorSpec: false,
     cableSpec: false,
   })
-  const handleCancel = () => {
-    setOpen(false)
-  }
 
   useEffect(() => {
     const checkFileExist = async () => {
@@ -67,7 +64,7 @@ export const UploadProjectFilesModal = ({
     <Modal
       open={open}
       title={<h1 className="text-center font-bold">Upload Project Files</h1>}
-      onCancel={handleCancel}
+      onCancel={() => setOpen(false)}
       footer={null}
       width={600}
     >
