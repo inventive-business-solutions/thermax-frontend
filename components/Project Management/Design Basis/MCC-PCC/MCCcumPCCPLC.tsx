@@ -16,6 +16,7 @@ import { plcPanelValidationSchema } from "./schemas"
 const getDefaultValues = (plcData: any) => {
   return {
     ups_scope: plcData?.ups_scope || "Client Scope",
+    is_rtd_tc_moduule_selected: plcData?.is_rtd_tc_moduule_selected || 1,
     ups_type: plcData?.ups_type || "Commercial",
     ups_battery_type: plcData?.ups_battery_type || "SMF Battery",
     ups_battery_backup_time: plcData?.ups_battery_backup_time || "20 min",
@@ -59,7 +60,7 @@ const getDefaultValues = (plcData: any) => {
     is_no_of_contact_selected: plcData?.is_no_of_contact_selected || 1,
     do_module_no_of_contact: plcData?.do_module_no_of_contact || "1NO + 1NC",
     output_status_on_processor_or_module_failure:
-      plcData?.output_status_on_processor_or_module_failure || "Output shall change to failsafe position",
+      plcData?.output_status_on_processor_or_module_failure || "Output shall change to fail-safe position",
     is_ai_module_density_selected: plcData?.is_ai_module_density_selected || 1,
     ai_module_density: plcData?.ai_module_density || "16",
     is_ai_module_output_type_selected: plcData?.is_ai_module_output_type_selected || 1,
@@ -102,7 +103,7 @@ const getDefaultValues = (plcData: any) => {
     commercial_grade_pc:
       plcData?.commercial_grade_pc ||
       "Minimum Configuration = min. i5/latest Processor, min 8GB RAM, min 1TB Hard Disk, multimedia with DVD R/W drive, Keyboard mouse set 1 nos with 4USB Port",
-    monitor_size: plcData?.monitor_size || "21 inch",
+    monitor_size: plcData?.monitor_size || "21",
     windows_operating_system: plcData?.windows_operating_system || "Windows Latest Version VTS",
     is_printer_with_cable_selected: plcData?.is_printer_with_cable_selected || 1,
     printer_with_communication_cable: plcData?.printer_with_communication_cable || "A3 B/W",
@@ -170,6 +171,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     defaultValues: getDefaultValues(plcPanelData?.[0]),
     mode: "onSubmit",
   })
+  const isClientOrThermaxScopeisSelected = watch("ups_scope")
+  const isRtdModuleSelected = watch("is_rtd_tc_moduule_selected")
 
   useEffect(() => {
     reset(getDefaultValues(plcPanelData?.[0]))
@@ -241,11 +244,24 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               name="ups_type"
               label="UPS Type"
               options={plc_ups_type_options}
+              disabled={
+                isClientOrThermaxScopeisSelected === "Thermax Scope" ||
+                isClientOrThermaxScopeisSelected === "Client Scope"
+              }
               size="small"
             />
           </div>
           <div className="flex-1">
-            <CustomTextInput control={control} name="ups_battery_type" label="UPS Battery Type" size="small" />
+            <CustomTextInput
+              control={control}
+              name="ups_battery_type"
+              label="UPS Battery Type"
+              disabled={
+                isClientOrThermaxScopeisSelected === "Thermax Scope" ||
+                isClientOrThermaxScopeisSelected === "Client Scope"
+              }
+              size="small"
+            />
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -260,6 +276,10 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   { label: "Yes", value: 1 },
                   { label: "No", value: 0 },
                 ]}
+                disabled={
+                  isClientOrThermaxScopeisSelected === "Thermax Scope" ||
+                  isClientOrThermaxScopeisSelected === "Client Scope"
+                }
               />
             </div>
           </div>
@@ -270,6 +290,10 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               label="UPS Battery Backup Time In Min"
               options={plc_ups_battery_backup_time_options}
               size="small"
+              disabled={
+                isClientOrThermaxScopeisSelected === "Thermax Scope" ||
+                isClientOrThermaxScopeisSelected === "Client Scope"
+              }
             />
           </div>
         </div>
@@ -303,7 +327,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomTextInput
               control={control}
               name="plc_communication_between_cpu_and_io_card"
-              label="PLC Communication between CPU and I/O card"
+              label="PLC Communication Between CPU and I/O Card"
               size="small"
             />
           </div>
@@ -314,7 +338,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <CustomRadioSelect
                 control={control}
                 name="is_third_party_communication_protocol_selected"
-                label="Third party communication protocol"
+                label="Third Party Communication Protocol"
                 options={[
                   { label: "Yes", value: 1 },
                   { label: "No", value: 0 },
@@ -337,7 +361,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <CustomRadioSelect
                 control={control}
                 name="is_client_system_communication_selected"
-                label="Client system communication"
+                label="Client System Communication"
                 options={[
                   { label: "Yes", value: 1 },
                   { label: "No", value: 0 },
@@ -397,7 +421,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomRadioSelect
               control={control}
               name="is_cpu_and_hmi_scada_card_redundancy_selected"
-              label="PLC Communication Redundancy between CPU and HMI/SCADA"
+              label="PLC Communication Redundancy Between CPU and HMI/SCADA"
               options={[
                 { label: "Yes", value: 1 },
                 { label: "No", value: 0 },
@@ -410,7 +434,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomRadioSelect
               control={control}
               name="is_cpu_and_third_party_services_redundancy_selected"
-              label="PLC Communication Redundancy between CPU and Third party devices"
+              label="PLC Communication Redundancy Between CPU and Third Party Devices"
               options={[
                 { label: "Yes", value: 1 },
                 { label: "No", value: 0 },
@@ -435,7 +459,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomSingleSelect
               control={control}
               name="cpu_redundancy"
-              label="CPU Redundancy"
+              label=""
               size="small"
               options={plc_cpu_redundancy_options}
               disabled={watch("is_cpu_redundancy_selected") === 0}
@@ -551,7 +575,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Density</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_di_module_density_selected"
@@ -561,7 +585,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -577,7 +601,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Type of Input</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_di_module_input_type_selected"
@@ -587,7 +611,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -605,7 +629,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <div className="flex flex-1 items-end gap-2">
                 <div className="flex items-end gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Interrogation Voltage</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_interrogation_voltage_selected"
@@ -615,7 +639,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -641,7 +665,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Density</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_do_module_density_selected"
@@ -651,7 +675,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -667,7 +691,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Type of Output</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_do_module_output_type_selected"
@@ -677,7 +701,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -696,7 +720,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 <CustomTextInput
                   control={control}
                   name="output_contact_rating_of_interposing_relay"
-                  label="Output Contact rating of Interposing relay"
+                  label="Output Contact Rating of Interposing Relay"
                   size="small"
                 />
               </div>
@@ -704,7 +728,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 <CustomTextInput
                   control={control}
                   name="output_status_on_processor_or_module_failure"
-                  label="Output status on processor/module failure"
+                  label="Output Status on Processor/Module Failure"
                   size="small"
                 />
               </div>
@@ -742,7 +766,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Density</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_ai_module_density_selected"
@@ -752,7 +776,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -768,7 +792,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Type of Output</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_ai_module_output_type_selected"
@@ -778,7 +802,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomTextInput
@@ -796,7 +820,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 <CustomTextInput control={control} name="ai_module_scan_time" label="Scan Time" size="small" />
               </div>
               <div className="flex flex-1 items-center gap-4">
-                <h4 className="text-sm font-semibold text-slate-700">Hart Protocol Support</h4>
+                <h4 className="text-sm font-semibold text-slate-700">HART Protocol Support</h4>
                 <div className="flex-1">
                   <CustomRadioSelect
                     control={control}
@@ -812,14 +836,27 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             </div>
           </div>
           <Divider orientation="left" orientationMargin={0}>
-            <span className="text-sm font-bold text-blue-500">RTD / TC Modules</span>
+            <div className="flex flex-row items-center justify-center gap-5">
+              <span className="text-sm font-bold text-blue-500">RTD / TC Modules</span>
+              <span>
+                <CustomRadioSelect
+                  control={control}
+                  name="is_rtd_tc_moduule_selected"
+                  label=""
+                  options={[
+                    { label: "Yes", value: 1 },
+                    { label: "No", value: 0 },
+                  ]}
+                />
+              </span>
+            </div>
           </Divider>
           <div className="flex flex-col gap-4">
             <div className="flex flex-1 gap-4">
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Density</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_rtd_tc_module_density_selected"
@@ -829,7 +866,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -838,14 +875,14 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={rtd_density_options}
-                    disabled={watch("is_rtd_tc_module_density_selected") === 0}
+                    disabled={watch("is_rtd_tc_module_density_selected") === 0 || isRtdModuleSelected === 0}
                   />
                 </div>
               </div>
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Type of Input</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_rtd_tc_module_input_type_selected"
@@ -855,7 +892,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -864,17 +901,23 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={rtd_input_type_options}
-                    disabled={watch("is_rtd_tc_module_input_type_selected") === 0}
+                    disabled={watch("is_rtd_tc_module_input_type_selected") === 0 || isRtdModuleSelected === 0}
                   />
                 </div>
               </div>
             </div>
             <div className="flex flex-1 items-center gap-4">
               <div className="flex-1">
-                <CustomTextInput control={control} name="rtd_tc_module_scan_time" label="Scan Time" size="small" />
+                <CustomTextInput
+                  control={control}
+                  name="rtd_tc_module_scan_time"
+                  label="Scan Time"
+                  size="small"
+                  disabled={isRtdModuleSelected === 0}
+                />
               </div>
               <div className="flex flex-1 items-center gap-4">
-                <h4 className="text-sm font-semibold text-slate-700">Hart Protocol Support</h4>
+                <h4 className="text-sm font-semibold text-slate-700">HART Protocol Support</h4>
                 <div className="flex-1">
                   <CustomRadioSelect
                     control={control}
@@ -884,6 +927,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                       { label: "Yes", value: 1 },
                       { label: "No", value: 0 },
                     ]}
+                    disabled={isRtdModuleSelected === 0}
                   />
                 </div>
               </div>
@@ -897,7 +941,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Density</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_ao_module_density_selected"
@@ -907,7 +951,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -923,7 +967,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
                   <h4 className="text-sm font-semibold text-slate-700">Type of Output</h4>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <CustomRadioSelect
                       control={control}
                       name="is_ao_module_output_type_selected"
@@ -933,7 +977,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                         { label: "No", value: 0 },
                       ]}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex-1">
                   <CustomSingleSelect
@@ -952,7 +996,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 <CustomTextInput control={control} name="ao_module_scan_time" label="Scan Time" size="small" />
               </div>
               <div className="flex flex-1 items-center gap-4">
-                <h4 className="text-sm font-semibold text-slate-700">Hart Protocol Support</h4>
+                <h4 className="text-sm font-semibold text-slate-700">HART Protocol Support</h4>
                 <div className="flex-1">
                   <CustomRadioSelect
                     control={control}
@@ -1129,6 +1173,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   label=""
                   size="small"
                   options={plc_hmi_size_options}
+                  suffixIcon={"inch"}
                   disabled={watch("is_hid_hmi_size_selected") === 0}
                 />
               </div>
@@ -1181,7 +1226,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 </div>
               </div>
               <div className="flex-1">
-                <CustomTextNumber control={control} name="no_of_scada_runtime_license" label="" size="small" />
+                <CustomTextNumber
+                  control={control}
+                  name="no_of_scada_runtime_license"
+                  disabled={watch("is_scada_runtime_license_selected") === 0}
+                  label=""
+                  size="small"
+                />
               </div>
             </div>
           </div>
@@ -1202,7 +1253,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 </div>
               </div>
               <div className="flex-1">
-                <CustomTextNumber control={control} name="no_of_hmi_development_license" label="" size="small" />
+                <CustomTextNumber
+                  control={control}
+                  name="no_of_hmi_development_license"
+                  label=""
+                  disabled={watch("is_hmi_development_license_selected") === 0}
+                  size="small"
+                />
               </div>
             </div>
             <div className="flex flex-1 items-center gap-2">
@@ -1226,6 +1283,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   name="no_of_plc_programming_license_software"
                   label=""
                   size="small"
+                  disabled={watch("is_plc_programming_license_software_selected") === 0}
                 />
               </div>
             </div>
@@ -1256,6 +1314,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="monitor_size"
                 label="Monitor Size"
                 size="small"
+                suffixIcon={"inch"}
                 options={eo_monitor_size_options}
               />
             </div>
@@ -1291,12 +1350,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 label=""
                 size="small"
                 options={eo_pc_cable_options}
+                disabled={watch("is_printer_with_cable_selected") === 0}
               />
             </div>
           </div>
           <div className="flex flex-1 items-center gap-2">
             <div className="flex-1">
-              <CustomTextNumber control={control} name="no_of_printer" label="Printer - Qty" size="small" />
+              <CustomTextNumber control={control} name="no_of_printer" label="Printer - Qty" disabled={watch("is_printer_with_cable_selected") === 0} size="small" />
             </div>
           </div>
         </div>
@@ -1326,6 +1386,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 label=""
                 size="small"
                 options={eo_scada_furniture_options}
+                disabled={watch("is_furniture_for_scada_station_selected") === 0}
               />
             </div>
           </div>

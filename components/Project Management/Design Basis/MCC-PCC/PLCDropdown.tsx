@@ -32,6 +32,7 @@ import {
   UPS_INDICATING_LAMP_COLOR,
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { sortDropdownOptions } from "utils/helpers"
 
 export default function usePLCDropdowns() {
   const { dropdownOptions: plc_ups_scope_options } = useDropdownOptions(`${PLC_UPS_SCOPE}?fields=["*"]`, "name")
@@ -90,7 +91,9 @@ export default function usePLCDropdowns() {
     "name"
   )
   // DI_MODULE_DENSITY
-  const { dropdownOptions: di_module_density_options } = useDropdownOptions(`${DI_MODULE_DENSITY}?fields=["*"]`, "name")
+  let { dropdownOptions: di_module_density_options } = useDropdownOptions(`${DI_MODULE_DENSITY}?fields=["*"]`, "name")
+  di_module_density_options = sortDropdownOptions(di_module_density_options)
+
   // DI_MODULE_INPUT_TYPE
   const { dropdownOptions: di_module_input_type_options } = useDropdownOptions(
     `${DI_MODULE_INPUT_TYPE}?fields=["*"]`,
@@ -102,7 +105,8 @@ export default function usePLCDropdowns() {
     "name"
   )
   // DO_MODULE_DENSITY
-  const { dropdownOptions: do_module_density_options } = useDropdownOptions(`${DO_MODULE_DENSITY}?fields=["*"]`, "name")
+  let { dropdownOptions: do_module_density_options } = useDropdownOptions(`${DO_MODULE_DENSITY}?fields=["*"]`, "name")
+  do_module_density_options = sortDropdownOptions(do_module_density_options)
   // DO_MODULE_OUTPUT_TYPE
   const { dropdownOptions: do_module_output_type_options } = useDropdownOptions(
     `${DO_MODULE_OUTPUT_TYPE}?fields=["*"]`,
@@ -111,13 +115,16 @@ export default function usePLCDropdowns() {
   // DO_CONTACT_NO
   const { dropdownOptions: do_contact_no_options } = useDropdownOptions(`${DO_CONTACT_NO}?fields=["*"]`, "name")
   // AI_MODULE_DENSITY
-  const { dropdownOptions: ai_module_density_options } = useDropdownOptions(`${AI_MODULE_DENSITY}?fields=["*"]`, "name")
+  let { dropdownOptions: ai_module_density_options } = useDropdownOptions(`${AI_MODULE_DENSITY}?fields=["*"]`, "name")
+  ai_module_density_options = sortDropdownOptions(ai_module_density_options)
   // RTD_DENSITY
-  const { dropdownOptions: rtd_density_options } = useDropdownOptions(`${RTD_DENSITY}?fields=["*"]`, "name")
+  let { dropdownOptions: rtd_density_options } = useDropdownOptions(`${RTD_DENSITY}?fields=["*"]`, "name")
+  rtd_density_options = sortDropdownOptions(rtd_density_options)
   // RTD_INPUT_TYPE
   const { dropdownOptions: rtd_input_type_options } = useDropdownOptions(`${RTD_INPUT_TYPE}?fields=["*"]`, "name")
   // AO_MODULE_DENSITY
-  const { dropdownOptions: ao_module_density_options } = useDropdownOptions(`${AO_MODULE_DENSITY}?fields=["*"]`, "name")
+  let { dropdownOptions: ao_module_density_options } = useDropdownOptions(`${AO_MODULE_DENSITY}?fields=["*"]`, "name")
+  ao_module_density_options = sortDropdownOptions(ao_module_density_options)
   // AO_MODULE_OUTPUT_TYPE
   const { dropdownOptions: ao_module_output_type_options } = useDropdownOptions(
     `${AO_MODULE_OUTPUT_TYPE}?fields=["*"]`,
@@ -128,14 +135,16 @@ export default function usePLCDropdowns() {
   // PLC_SPARE_MEMORY
   const { dropdownOptions: plc_spare_memory_options } = useDropdownOptions(`${PLC_PANEL_MEMORY}?fields=["*"]`, "name")
   // PLC_HMI_SIZE
-  const { dropdownOptions: plc_hmi_size_options } = useDropdownOptions(`${PLC_HMI_SIZE}?fields=["*"]`, "name")
+  let { dropdownOptions: plc_hmi_size_options } = useDropdownOptions(`${PLC_HMI_SIZE}?fields=["*"]`, "name")
+  plc_hmi_size_options = sortDropdownOptions(plc_hmi_size_options)
   // EO_SYSTEM_HARDWARE
   const { dropdownOptions: eo_system_hardware_options } = useDropdownOptions(
     `${EO_SYSTEM_HARDWARE}?fields=["*"]`,
     "name"
   )
   // EO_MONITOR_SIZE
-  const { dropdownOptions: eo_monitor_size_options } = useDropdownOptions(`${EO_MONITOR_SIZE}?fields=["*"]`, "name")
+  let { dropdownOptions: eo_monitor_size_options } = useDropdownOptions(`${EO_MONITOR_SIZE}?fields=["*"]`, "name")
+  eo_monitor_size_options = sortDropdownOptions(eo_monitor_size_options)
   // EO_PC_CABLE
   const { dropdownOptions: eo_pc_cable_options } = useDropdownOptions(`${EO_PC_CABLE}?fields=["*"]`, "name")
   // EO_SCADA_FURNITURE
