@@ -94,7 +94,7 @@ export const LoadListcolumns  = (divisionId: Number)=> {
     {
       type: "dropdown",
       name: "panelList",
-      source: [],
+      source: ['Panel 1', 'Panel A', 'Panel B'],
       title: "PANEL",
       width: "80",
       height: "60",

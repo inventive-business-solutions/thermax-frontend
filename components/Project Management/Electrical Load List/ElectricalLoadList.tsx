@@ -1,11 +1,12 @@
 "use client"
 
 import { Button } from "antd"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import CableSchedule from "./CableSchedule"
 import Download from "./Download"
 import ExcelGrid from "./Electrical Load List/LoadListComponent"
 import MotorCanopyList from "./MotorCanopyList"
+import { useLoading } from "hooks/useLoading"
 // import ExcelGrid from "./Electrical Load List/LoadListComponent"
 // import GeneralInfo from "./GeneralInfo"
 // import MotorParameters from "./MotorParameters"
@@ -21,6 +22,13 @@ const tabData = [
 
 const ElectricalLoadList = () => {
   const [openTab, setOpenTab] = useState<string>("2")
+  const { setLoading: setModalLoading } = useLoading()
+
+  useEffect(() => {
+    setModalLoading(false)
+
+  }, [])
+  
 
   return (
     <>

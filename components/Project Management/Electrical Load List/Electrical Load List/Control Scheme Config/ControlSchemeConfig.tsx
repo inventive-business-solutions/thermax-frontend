@@ -136,7 +136,7 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} className="w-100">
       <div className="m-2 flex flex-col">
         <h2 className="mb-4 text-2xl font-bold">Control Scheme Configurator</h2>
         {isControlSchemeEmpty && <AlertNotification message="Please select control scheme!" status="error" />}

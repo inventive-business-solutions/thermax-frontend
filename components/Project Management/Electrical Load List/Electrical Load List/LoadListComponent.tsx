@@ -2,7 +2,11 @@
 import jspreadsheet, { Column, JspreadsheetInstance } from "jspreadsheet-ce"
 import React, { useRef, useEffect, useState, useMemo } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
-import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
+import {
+  DESIGN_BASIS_REVISION_HISTORY_API,
+  HEATING_CONTROL_SCHEMES_URI,
+  PROJECT_PANEL_API,
+} from "configs/api-endpoints"
 import Modal from "components/Modal/Modal"
 import { getData } from "actions/crud-actions"
 import { controlSchemeColumnsForHeating, lpbsColumns, mockExcel } from "../../../../app/Data"
@@ -13,6 +17,8 @@ import "./LoadListComponent.css"
 import { Button, message } from "antd"
 import ControlSchemeConfigurator from "./Control Scheme Config/ControlSchemeConfig"
 import LpbsConfigurator from "./LPBS Config/LpbsConfigurator"
+import ValidatePanelLoad, { PanelData } from "./Validate Panel Load/ValidatePanelLoad"
+import { useGetData } from "hooks/useCRUD"
 
 // Types definition
 type ValidColumnType =
@@ -28,14 +34,33 @@ type ValidColumnType =
   | "calendar"
   | "color"
 
+interface PanelSumData {
+  panelName: string
+  workingLoadSum: number
+  standbyLoadSum: number
+  totalLoadKw: number
+  totalCurrent: number
+}
 const ExcelGrid: React.FC = () => {
   const jRef = useRef<HTMLDivElement | null>(null)
   const [controlSchemes, setControlSchemes] = useState<any[]>([])
+  const [panelList, setPanelList] = useState<string[]>(["Panel 1", "Panel A", "Panel B"])
   const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
   const [isControlSchemeModalOpen, setIsControlSchemeModalOpen] = useState(false)
   const [isLPBSModalOpen, setIsLPBSModalOpen] = useState(false)
   const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([])
-  // Memoize the column configurations
+  const [isValidatePanelLoadOpen, setIsValidatePanelLoadOpen] = useState(false)
+  const [panelsSumData, setPanelsSumData] = useState<PanelSumData[]>([]) // Memoize the column configurations
+  const revision_id = localStorage.getItem("revision_id") || null
+
+  const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  console.log(revision_id,'projectPanelData revision_id');
+  
+  const { data: projectPanelData } = useGetData(
+    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  )
+  console.log(projectPanelData, "projectPanelData")
+
   const typedLoadListColumns = useMemo(
     () =>
       LoadListcolumns(7).map((column) => ({
@@ -86,6 +111,11 @@ const ExcelGrid: React.FC = () => {
       setSpreadsheetInstance(instance)
     }
   }
+  const downloadCurrentData = () => {
+    // spreadsheetInstance?.options.csvFileName = "Motar Detail Data";
+    // spreadsheetInstance?.options.wordWrap = true;
+    spreadsheetInstance?.download()
+  }
 
   // Memoize the options
   const options = useMemo(
@@ -108,7 +138,14 @@ const ExcelGrid: React.FC = () => {
   )
 
   // Initialize main spreadsheet
+
   useEffect(() => {
+    // if(revision_id){
+
+    //   // let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
+    //   console.log(projectPanelData,'projectPanelData');
+    // }
+
     let instance: JspreadsheetInstance | null = null
     let selectedItems: string[] = []
     const storedSchemes = localStorage.getItem("selected_control_scheme")
@@ -246,7 +283,7 @@ const ExcelGrid: React.FC = () => {
       const cellValue = String(value)
 
       if (cellValue in duplicateValues) {
-        duplicateValues[cellValue].push(index)
+        duplicateValues[cellValue]?.push(index)
         isDuplicate = true
       } else {
         duplicateValues[cellValue] = [index]
@@ -301,64 +338,58 @@ const ExcelGrid: React.FC = () => {
     }
     console.log(spreadsheetInstance?.getData(), "all load list data")
   }
-  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (file) {
-  //     console.log("File selected:", file);
-  //     // Add your file upload handling logic here
-  //   }
-  // };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] as File;
+    const file = event.target.files?.[0] as File
 
     // const file = files[0] as File;
-    const reader = new FileReader();
+    const reader = new FileReader()
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
-      const data = new Uint8Array(e.target?.result as ArrayBuffer);
-      const workbook = XLSX.read(data, { type: "array" });
+      const data = new Uint8Array(e.target?.result as ArrayBuffer)
+      const workbook = XLSX.read(data, { type: "array" })
 
       // Assuming there's only one sheet in the workbook
       // const sheetName = workbook.SheetNames[0];
-      const sheetName = workbook.SheetNames[0];
+      const sheetName = workbook.SheetNames[0]
       if (!sheetName) {
-        console.error("No sheets found in workbook");
-        return;
+        console.error("No sheets found in workbook")
+        return
       }
-      const worksheet = workbook.Sheets[sheetName] as any;
+      const worksheet = workbook.Sheets[sheetName] as any
       // Convert the worksheet to an array of arrays
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }).slice(2) as any[][];
-      
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }).slice(2) as any[][]
+
       // Remove the first element of each sub-array
-      const newArray = jsonData.map((subArray) => subArray.slice(1));
+      const newArray = jsonData.map((subArray) => subArray.slice(1))
 
       newArray.forEach((item) => {
         if (!item[6]) {
-          item[6] = 210; // pass main supply lv here revisit logic
+          item[6] = 210 // pass main supply lv here revisit logic
         }
         if (getStandByKw(item[2], item[3]) >= Number(localStorage.getItem("ammeterKw"))) {
           if (!item[37]) {
-            item[37] = localStorage.getItem("ammeterCt");
+            item[37] = localStorage.getItem("ammeterCt")
           }
         }
         if (getStandByKw(item[2], item[3]) <= Number(localStorage.getItem("dol_val"))) {
           if (!item[5]) {
-            item[5] = "DOL STARTER";
+            item[5] = "DOL STARTER"
           }
         }
         if (getStandByKw(item[2], item[3]) >= Number(localStorage.getItem("starDelta_val"))) {
           if (!item[5]) {
-            item[5] = "STAR-DELTA";
+            item[5] = "STAR-DELTA"
           }
         }
-      });
+      })
 
       // Set the processed data to the spreadsheet instance
-      spreadsheetInstance?.setData(newArray);
-    };
+      spreadsheetInstance?.setData(newArray)
+    }
 
-    reader.readAsArrayBuffer(file);
-  };
+    reader.readAsArrayBuffer(file)
+  }
   // const onFileChange = (files: FileList) => {
   //   const file = files[0] as File
 
@@ -419,6 +450,84 @@ const ExcelGrid: React.FC = () => {
       return item3
     }
   }
+  const calculatePanelSum = (electricalLoadListData: any[]) => {
+    console.log(panelList, "panel sum")
+    console.log(electricalLoadListData, "panel sum electricalLoadListData")
+
+    // Transform panelList if needed
+    let workingPanelList = [...panelList]
+    if (workingPanelList[0] && typeof workingPanelList[0] === "object" && "name" in workingPanelList[0]) {
+      workingPanelList = workingPanelList.map((p: any) => p.name)
+    }
+
+    // Initialize panelsSumData object
+    const panelsSumData: { [key: string]: PanelSumData } = {}
+
+    workingPanelList.forEach((panelType: string) => {
+      if (panelType) {
+        panelsSumData[panelType] = {
+          panelName: panelType,
+          workingLoadSum: 0,
+          standbyLoadSum: 0,
+          totalLoadKw: 0,
+          totalCurrent: 0,
+        }
+      }
+    })
+
+    console.log(panelsSumData, "panel sum")
+
+    // Calculate sums for each panel
+    electricalLoadListData?.forEach((row: any) => {
+      const panelType = row[12]
+
+      if (
+        panelsSumData[panelType] &&
+        typeof parseFloat(row[2]) === "number" &&
+        typeof parseFloat(row[3]) === "number"
+      ) {
+        panelsSumData[panelType].workingLoadSum += parseFloat(row[2] || 0)
+        panelsSumData[panelType].standbyLoadSum += parseFloat(row[3] || 0)
+        panelsSumData[panelType].totalLoadKw = panelsSumData[panelType].workingLoadSum
+        panelsSumData[panelType].totalCurrent += row[2] !== "" || row[2] !== "0" ? parseFloat(row[42]) : 0
+      }
+    })
+
+    // Filter out panels with zero current
+    const filteredPanelData = Object.values(panelsSumData).filter((item) => item.totalCurrent !== 0)
+
+    console.log(filteredPanelData, "panel sum")
+    console.log(panelsSumData, "panel sum")
+
+    setPanelsSumData(filteredPanelData)
+    return filteredPanelData
+  }
+
+  const handleValidatePanelLoad = () => {
+    // Calculate panel load data here
+    // const calculatedPanelData = [
+    //   {
+    //     panelName: "Panel 1",
+    //     totalLoadKw: 100,
+    //     totalCurrent: 42.5,
+    //   },
+    //   {
+    //     panelName: "Panel 2",
+    //     totalLoadKw: 150,
+    //     totalCurrent: 63.8,
+    //   },
+    //   // ... more panels
+    // ];
+
+    // setPanelsSumData(calculatedPanelData);
+    if (spreadsheetInstance) {
+      const data = spreadsheetInstance.getData()
+      console.log(data, "load list data")
+
+      calculatePanelSum(data)
+      setIsValidatePanelLoadOpen(true)
+    }
+  }
   return (
     <>
       <div className="mb-4 flex justify-end gap-4">
@@ -456,10 +565,17 @@ const ExcelGrid: React.FC = () => {
         typedLpbsColumns={typedLpbsColumns}
         onConfigurationComplete={handleLpbsComplete}
       />
+      <ValidatePanelLoad
+        isOpen={isValidatePanelLoadOpen}
+        onClose={() => setIsValidatePanelLoadOpen(false)}
+        panelsSumData={panelsSumData}
+      />
 
       <div className="flex w-full flex-row justify-end gap-2">
         <Button type="primary">Get Current</Button>
-        <Button type="primary">Validate Panel Load</Button>
+        <Button type="primary" onClick={handleValidatePanelLoad}>
+          Validate Panel Load
+        </Button>
         <Button type="primary">
           Upload Load List
           <input
@@ -478,7 +594,9 @@ const ExcelGrid: React.FC = () => {
             onChange={handleFileChange}
           />
         </Button>
-        <Button type="primary">Download Current Data</Button>
+        <Button type="primary" onClick={downloadCurrentData}>
+          Download Current Data
+        </Button>
         <Button type="primary">Download Load List Template</Button>
         <Button type="primary">Next</Button>
         <Button type="primary" onClick={handleLoadListSave}>
