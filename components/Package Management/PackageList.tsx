@@ -206,20 +206,23 @@ export default function PackageList() {
 
   return (
     <div className="flex flex-col gap-2 px-20 py-4">
-      <div className="flex justify-end gap-2">
-        <Tooltip title="Refresh">
-          <div className="rounded-full hover:bg-blue-100">
-            <Button
-              type="link"
-              shape="circle"
-              icon={<SyncOutlined spin={packageLoading} />}
-              onClick={() => mutate(GET_PKG_API)}
-            />
-          </div>
-        </Tooltip>
-        <Button type="primary" onClick={handleAddMainPkg}>
-          Add Main Package
-        </Button>
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-lg font-bold tracking-wide">Package Management</div>
+        <div className="flex items-center gap-4">
+          <Tooltip title="Refresh">
+            <div className="rounded-full hover:bg-blue-100">
+              <Button
+                type="link"
+                shape="circle"
+                icon={<SyncOutlined spin={packageLoading} />}
+                onClick={() => mutate(GET_PKG_API)}
+              />
+            </div>
+          </Tooltip>
+          <Button type="primary" onClick={handleAddMainPkg}>
+            Add Main Package
+          </Button>
+        </div>
       </div>
       <Table<DataType>
         columns={parentColumns}

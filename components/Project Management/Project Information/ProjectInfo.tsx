@@ -178,6 +178,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
       // setModalLoading(true)
       // router.push(`/project/${project_id}/design-basis`)
     } catch (error: any) {
+      console.error("Error updating project information", error)
       handleError(error)
     } finally {
       setLoading(false)

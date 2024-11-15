@@ -25,6 +25,7 @@ import {
   MOTOR_PARAMETER_API,
   PCC_PANEL,
   PROJECT_API,
+  PROJECT_INFO_API,
   PROJECT_MAIN_PKG_API,
   PROJECT_PANEL_API,
   REVIEW_APPROVAL_EMAIL_API,
@@ -34,7 +35,7 @@ import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import { getThermaxDateFormat } from "utils/helpers"
 import { createData, getData, updateData } from "actions/crud-actions"
-import { DB_REVISION_STATUS } from "configs/constants"
+import { DB_REVISION_STATUS, MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { mutate } from "swr"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import clsx from "clsx"
@@ -43,8 +44,10 @@ import ResubmitModel from "./ResubmitModel"
 export default function DocumentRevision() {
   const userInfo = useCurrentUser()
   const params = useParams()
+  const project_id = params.project_id
   const [submitIconSpin, setSubmitIconSpin] = useState(false)
   const [approvalIconSpin, setApprovalIconSpin] = useState(false)
+  const [downloadIconSpin, setDownloadIconSpin] = useState(false)
   const [resubmitModalOpen, setResubmitModalOpen] = useState(false)
   const router = useRouter()
 
@@ -54,10 +57,10 @@ export default function DocumentRevision() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const dbRevisionHistoryUrl = `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${params.project_id}"]]&fields=["*"]&order_by=creation asc`
+  const dbRevisionHistoryUrl = `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
 
   const { data: revisionHistory } = useGetData(dbRevisionHistoryUrl)
-  const { data: projectData } = useGetData(`${PROJECT_API}/${params.project_id}`)
+  const { data: projectData } = useGetData(`${PROJECT_API}/${project_id}`)
 
   const handleReviewSubmission = async (revision_id: string) => {
     setSubmitIconSpin(true)
@@ -82,8 +85,114 @@ export default function DocumentRevision() {
     }
   }
 
-  const handleDownload = () => {
-    console.log("Download")
+  const handleDownload = async (revision_id: string) => {
+    setDownloadIconSpin(true)
+    const project = await getData(`${PROJECT_API}/${project_id}`)
+    const projectInfo = await getData(`${PROJECT_INFO_API}/${project_id}`)
+    const documentRevisions = await getData(
+      `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation desc`
+    )
+    const generalInfo = await getData(
+      `${DESIGN_BASIS_GENERAL_INFO_API}/?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
+    )
+    const projectMainPackage = await getData(
+      `${PROJECT_MAIN_PKG_API}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
+    )
+    const projectMainPkgData = []
+
+    for (const projectMainPkg of projectMainPackage || []) {
+      const projectMainPkgID = projectMainPkg.name
+      const mainPkgData = await getData(`${PROJECT_MAIN_PKG_API}/${projectMainPkgID}`)
+      projectMainPkgData.push(mainPkgData)
+    }
+
+    const motorParameters = await getData(
+      `${MOTOR_PARAMETER_API}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
+    )
+
+    const makeOfComponents = await getData(
+      `${MAKE_OF_COMPONENT_API}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
+    )
+
+    const commonConfigurations = await getData(
+      `${COMMON_CONFIGURATION}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
+    )
+
+    const projectPanelData = await getData(
+      `${PROJECT_PANEL_API}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
+    )
+
+    const finalProjectPanelData = []
+
+    for (const projectPanel of projectPanelData || []) {
+      const panel_id = projectPanel.name
+      const panelType = projectPanel.panel_main_type
+      if (panelType === MCC_PANEL_TYPE) {
+        const mccPanelData = await getData(
+          `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
+        )
+        finalProjectPanelData.push({
+          ...projectPanel,
+          panelData: mccPanelData[0],
+        })
+      }
+
+      if (panelType === PCC_PANEL_TYPE) {
+        const pccPanelData = await getData(
+          `${PCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
+        )
+        finalProjectPanelData.push({
+          ...projectPanel,
+          panelData: pccPanelData[0],
+        })
+      }
+
+      if (panelType === MCCcumPCC_PANEL_TYPE) {
+        const mccCumPccMccPanelData = await getData(
+          `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
+        )
+
+        const mccPccPlcPanel1Data = await getData(
+          `${MCC_PCC_PLC_PANEL_1}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
+        )
+
+        const mccPccPlcPanel2Data = await getData(
+          `${MCC_PCC_PLC_PANEL_2}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
+        )
+
+        finalProjectPanelData.push({
+          ...projectPanel,
+          mccPanelData: mccCumPccMccPanelData[0],
+          plcPanelData: {
+            ...mccPccPlcPanel1Data[0],
+            ...mccPccPlcPanel2Data[0],
+          },
+        })
+      }
+    }
+
+    const cableTrayLayoutData = await getData(
+      `${CABLE_TRAY_LAYOUT}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
+    )
+
+    const earthingLayoutData = await getData(
+      `${LAYOUT_EARTHING}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
+    )
+
+    console.log({
+      project,
+      projectInfo,
+      documentRevisions,
+      generalInfo: generalInfo[0],
+      projectMainPkgData,
+      motorParameters: motorParameters[0],
+      makeOfComponents: makeOfComponents[0],
+      commonConfigurations: commonConfigurations[0],
+      projectPanelData: finalProjectPanelData,
+      cableTrayLayoutData: cableTrayLayoutData[0],
+      earthingLayoutData: earthingLayoutData[0],
+    })
+    setDownloadIconSpin(false)
   }
 
   const handleApprove = async (revision_id: string) => {
@@ -113,7 +222,7 @@ export default function DocumentRevision() {
     setModalLoading(true)
     try {
       const createRevisionData = await createData(DESIGN_BASIS_REVISION_HISTORY_API, false, {
-        project_id: params.project_id,
+        project_id: project_id,
         status: DB_REVISION_STATUS.Unsubmitted,
       })
       const new_revision_id = createRevisionData.name
@@ -282,7 +391,7 @@ export default function DocumentRevision() {
             iconPosition="start"
             onClick={() => {
               setModalLoading(true)
-              router.push(`/project/${params.project_id}/design-basis/general-info`)
+              router.push(`/project/${project_id}/design-basis/general-info`)
             }}
             icon={<FolderOpenOutlined style={{ color: "#fef65b", fontSize: "1.2rem" }} />}
             disabled={record.status === DB_REVISION_STATUS.Released}
@@ -332,9 +441,10 @@ export default function DocumentRevision() {
                         fontSize: "1rem",
                         color: "green",
                       }}
+                      spin={downloadIconSpin}
                     />
                   }
-                  onClick={handleDownload}
+                  onClick={() => handleDownload(record?.key)}
                 />
               </Tooltip>
             </div>
@@ -384,7 +494,6 @@ export default function DocumentRevision() {
                           ? "grey"
                           : "#fcba2e",
                       }}
-                      spin={submitIconSpin}
                     />
                   }
                   onClick={() => setResubmitModalOpen(true)}

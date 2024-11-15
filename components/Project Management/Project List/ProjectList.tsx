@@ -195,15 +195,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
         await deleteData(`${DESIGN_BASIS_GENERAL_INFO_API}/${dbGeneralInfoID}`, false)
       }
 
-      // Delete Motor Parameters
-      const motorParameters = await getData(
-        `${MOTOR_PARAMETER_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
-      )
-      for (const motorParameter of motorParameters || []) {
-        const motorParameterID = motorParameter.name
-        await deleteData(`${MOTOR_PARAMETER_API}/${motorParameterID}`, false)
-      }
-
       // Delete Project Main Package
       const projectMainPackage = await getData(
         `${PROJECT_MAIN_PKG_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
@@ -211,6 +202,15 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       for (const projectMainPkg of projectMainPackage || []) {
         const projectMainPkgID = projectMainPkg.name
         await deleteData(`${PROJECT_MAIN_PKG_API}/${projectMainPkgID}`, false)
+      }
+
+      // Delete Motor Parameters
+      const motorParameters = await getData(
+        `${MOTOR_PARAMETER_API}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
+      )
+      for (const motorParameter of motorParameters || []) {
+        const motorParameterID = motorParameter.name
+        await deleteData(`${MOTOR_PARAMETER_API}/${motorParameterID}`, false)
       }
 
       // Delete Make of Components
@@ -321,7 +321,9 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-lg font-bold tracking-wide">Project Console</div>
+        <div className="text-lg font-bold tracking-wide">
+          {isComplete === 1 ? "Completed Project Console" : "Project Console"}
+        </div>
         <div className="basis-1/2">
           <Search placeholder="Search Project" enterButton onSearch={onSearch} />
         </div>
@@ -346,7 +348,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
           columns={columns}
           bordered
           dataSource={changeNameToKey(projectList)}
-          pagination={{ size: "small", pageSize: 5 }}
+          pagination={{ size: "small", pageSize: 6 }}
           size="small"
         />
       </div>
