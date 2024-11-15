@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Modal } from "antd"
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
@@ -28,7 +28,6 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 
 export default function SubPackageModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
   const { data: areaClassificationData } = useGetData(AREA_CLASSIFICATION_API)
-  const [isPending, startTransition] = useTransition()
   const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
 
@@ -109,7 +108,7 @@ export default function SubPackageModal({ open, setOpen, editMode, values, editE
         </div>
         <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
-          <Button type="primary" htmlType="submit" loading={isPending} disabled={!formState.isValid}>
+          <Button type="primary" htmlType="submit" disabled={!formState.isValid}>
             Save
           </Button>
         </div>

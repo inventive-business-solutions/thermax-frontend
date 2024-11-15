@@ -85,7 +85,7 @@ export default function ProjectFormModal({
 
   const ProjectFormValidationSchema = getProjectFormValidationSchema(projectOCNos, editMode)
 
-  const { control, handleSubmit, reset, formState, getValues } = useForm({
+  const { control, handleSubmit, reset, getValues } = useForm({
     resolver: zodResolver(ProjectFormValidationSchema),
     defaultValues: getDefaultValues(editMode, values),
     mode: "onBlur",

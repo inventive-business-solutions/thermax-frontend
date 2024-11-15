@@ -1,7 +1,6 @@
 "use client"
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { FloatButton } from "antd"
-import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import React from "react"
 import { PROJECT_API } from "configs/api-endpoints"
@@ -35,7 +34,7 @@ export default function DesignBasisLayout({
     <div className="flex flex-col gap-2 px-2 pb-2 shadow-lg">
       <div className="flex font-semibold">
         <h2>{projectData?.project_oc_number}</h2>
-        <h2> : {projectData?.project_name}</h2>
+        <h2> / {projectData?.project_name}</h2>
       </div>
       <nav className="flex gap-2">
         <div

@@ -59,12 +59,16 @@ export const changeNameToKey = (projectList: any[]) => {
 
 // to sort Numerically
 export function sortDropdownOptions(options: any[]): any[] {
-  return options?.sort((a, b) => {
-    if (!isNaN(a.name) && !isNaN(b.name)) {
-      return Number(a.name) - Number(b.name)
-    }
-    return 0
-  })
+  if (options && options.length !== 0) {
+    return options?.sort((a, b) => {
+      if (!isNaN(a.name) && !isNaN(b.name)) {
+        return Number(a.name) - Number(b.name)
+      }
+      return 0
+    })
+  } else {
+    return []
+  }
 }
 
 // to sort DateWise
@@ -83,11 +87,15 @@ export function sortDatewise(data: any[]): any[] {
 
 // to place "NA" at the bottom
 export function moveNAtoEnd(options: any[]): any[] {
-  if (options?.length !== 0) {
-    let NaOptions = options.filter((item: any) => item.name === "NA")
-    options = options.filter((item: any) => item.name !== "NA")
-    options.push(NaOptions[0])
+  // Validate that options is a non-null array
+  if (!Array.isArray(options) || options.length === 0) {
+    return []
   }
 
-  return options
+  // Separate "NA" items and other items
+  const naItems = options.filter((item: any) => item?.name === "NA")
+  const otherItems = options.filter((item: any) => item?.name !== "NA")
+
+  // Return combined array with "NA" items at the end
+  return [...otherItems, ...naItems]
 }

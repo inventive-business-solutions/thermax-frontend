@@ -10,7 +10,7 @@ import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { PCC_PANEL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
-import { pccPanelValidationSchema } from "./schemas"
+import { pccPanelValidationSchema } from "../schemas"
 import { HEATING } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 
@@ -170,7 +170,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       }
       message.success("Panel data saved successfully")
     } catch (error) {
-      console.log("error: ", error)
+      console.error("error: ", error)
       handleError(error)
     } finally {
       setLoading(false)
