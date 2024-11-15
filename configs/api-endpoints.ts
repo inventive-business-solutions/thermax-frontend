@@ -279,3 +279,5 @@ export const HEATING_CONTROL_SCHEMES_URI = "/document/Heating Control System Ind
 export const DELETE_USER_EMAIL_API = "/method/thermax_extended_user.trigger_delete_user"
 export const APPROVER_EMAIL_NOTIFICATION_API = "/method/project.trigger_approver_notification_mail"
 export const REVIEW_SUBMISSION_EMAIL_API = "/method/db_revision.trigger_review_submission_mail"
+export const REVIEW_RESUBMISSION_EMAIL_API = "/method/db_revision.trigger_review_resubmission_mail"
+export const REVIEW_APPROVAL_EMAIL_API = "/method/db_revision.trigger_review_approval_mail"
