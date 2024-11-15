@@ -76,7 +76,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
         await createData(LAYOUT_EARTHING, false, data)
       }
 
-      message.success("Earthing Data updated successfully")
+      message.success("Earthing Data Saved Successfully")
     } catch (error) {
       console.log("error: ", error)
       handleError(error)
@@ -88,8 +88,8 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
 
   return (
     <>
-      <Divider orientation="left" orientationMargin={0}>
-        Material of Construction
+      <Divider orientation="center" orientationMargin={0}>
+      <span className="font-bold text-slate-700">Material Of Construction</span>
       </Divider>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex gap-4">
@@ -134,7 +134,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
         </div>
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
-            Save and Continue
+            Save and Next
           </Button>
         </div>
       </form>

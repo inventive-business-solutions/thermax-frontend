@@ -2,7 +2,7 @@
 import { DownOutlined, PercentageOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, message, Tooltip } from "antd"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
@@ -115,6 +115,7 @@ const getDefaultValues = (isEdit: boolean, projectData: any) => {
 }
 
 const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
+  const router = useRouter()
   const params = useParams()
   const project_id = params.project_id
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
@@ -156,6 +157,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   })
 
   const isControlSupplyVDC = watch("control_supply")
+  const isUtilitySupplyVDC = watch("utility_supply")
   const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
 
@@ -163,6 +165,13 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
     if (isControlSupplyVDC?.endsWith("VDC")) {
       setValue("control_supply_phase", "NA")
       setValue("control_supply_variation", "NA")
+    }
+  }, [isControlSupplyVDC, setValue])
+
+  useEffect(() => {
+    if (isUtilitySupplyVDC?.endsWith("VDC")) {
+      setValue("utility_supply_phase", "NA")
+      setValue("utility_supply_variation", "NA")
     }
   }, [isControlSupplyVDC, setValue])
 
@@ -191,7 +200,6 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
       await updateData(getProjectInfoUrl, false, data)
       message.success("Project information updated successfully!")
       // setModalLoading(true)
-      // router.push(`/project/${project_id}/design-basis`)
     } catch (error: any) {
       handleError(error)
     } finally {
@@ -390,6 +398,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               }
               label="Utility Supply"
               options={utilitySupplyOptions}
+
               size="small"
             />
           </div>
@@ -399,6 +408,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               control={control}
               label="Variation"
               options={voltageVariationOptions}
+              disabled={watch("utility_supply").endsWith("VDC")}
               suffixIcon={
                 <>
                   <PercentageOutlined style={{ color: "#3b82f6" }} />
@@ -414,6 +424,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               control={control}
               label="Phase"
               options={controlUtilityPhaseOptions}
+              disabled={watch("utility_supply").endsWith("VDC")}
               size="small"
             />
           </div>
@@ -556,7 +567,15 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
           </div>
           <div className="">
             <Tooltip title="Save and Go to Design Basis" placement="top">
-              <Button type="primary" htmlType="button" disabled={!formState.isValid}>
+              <Button
+                type="primary"
+                htmlType="button"
+                disabled={!formState.isValid}
+                onClick={() => {
+                  handleSubmit(onSubmit)
+                  router.push(`/project/${params.project_id}/design-basis/document-revision`)
+                }}
+              >
                 Electrical
               </Button>
             </Tooltip>

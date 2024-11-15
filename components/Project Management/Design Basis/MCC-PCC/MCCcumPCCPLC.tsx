@@ -1173,7 +1173,11 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   label=""
                   size="small"
                   options={plc_hmi_size_options}
-                  suffixIcon={"inch"}
+                  suffixIcon={
+                    <>
+                    <p className="font-semibold text-blue-500">inch</p>
+                    </>
+                  }
                   disabled={watch("is_hid_hmi_size_selected") === 0}
                 />
               </div>
@@ -1314,7 +1318,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="monitor_size"
                 label="Monitor Size"
                 size="small"
-                suffixIcon={"inch"}
+                suffixIcon={<><p className="font-semibold text-blue-500">inch</p></>}
                 options={eo_monitor_size_options}
               />
             </div>

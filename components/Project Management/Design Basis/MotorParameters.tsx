@@ -6,11 +6,11 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"
 import { updateData } from "actions/crud-actions"
-import CustomTextInput from "components/FormInputs/CustomInputNumber"
+import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { MOTOR_PARAMETER_API } from "configs/api-endpoints"
+import { MOTOR_PARAMETER_API, PROJECT_INFO_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import useMotorParametersDropdowns from "./MotorParametersDropdown"
@@ -182,7 +182,7 @@ const fieldSchema = zod.object({
   }),
 })
 
-const getDefaultValues = (defaultData: any) => {
+const getDefaultValues = (defaultData: any, projectInfoData: any) => {
   return {
     safe_area_efficiency_level: defaultData?.safe_area_efficiency_level || "IE-2",
     hazardous_area_efficiency_level: defaultData?.hazardous_area_efficiency_level || "IE-2",
@@ -192,10 +192,12 @@ const getDefaultValues = (defaultData: any) => {
     hazardous_area_temperature_rise: defaultData?.hazardous_area_temperature_rise || "Class-B",
     safe_area_enclosure_ip_rating: defaultData?.safe_area_enclosure_ip_rating || "IP55",
     hazardous_area_enclosure_ip_rating: defaultData?.hazardous_area_enclosure_ip_rating || "IP55",
-    safe_area_max_temperature: defaultData?.safe_area_max_temperature || "40",
-    hazardous_area_max_temperature: defaultData?.hazardous_area_max_temperature || "40",
-    safe_area_min_temperature: defaultData?.safe_area_min_temperature || "10",
-    hazardous_area_min_temperature: defaultData?.hazardous_area_min_temperature || "10",
+    safe_area_max_temperature: defaultData?.safe_area_max_temperature || projectInfoData?.electrical_design_temperature,
+    hazardous_area_max_temperature:
+      defaultData?.hazardous_area_max_temperature || projectInfoData?.electrical_design_temperature,
+    safe_area_min_temperature: defaultData?.safe_area_min_temperature || projectInfoData?.ambient_temperature_min,
+    hazardous_area_min_temperature:
+      defaultData?.hazardous_area_min_temperature || projectInfoData?.ambient_temperature_min,
     safe_area_altitude: defaultData?.safe_area_altitude || "7.5",
     hazardous_area_altitude: defaultData?.hazardous_area_altitude || "7.5",
     safe_area_terminal_box_ip_rating: defaultData?.safe_area_terminal_box_ip_rating || "IP55",
@@ -231,9 +233,15 @@ const getDefaultValues = (defaultData: any) => {
 const MotorParameters = ({ revision_id }: { revision_id: string }) => {
   const router = useRouter()
   const params = useParams()
+  const project_id = params.project_id
+
   const [loading, setLoading] = useState(false)
   const [isHazardous, setIsHazardous] = useState(false)
   const { setLoading: setModalLoading } = useLoading()
+
+  const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
+  const { data: projectInfoData } = useGetData(getProjectInfoUrl)
+  console.log(projectInfoData, "projectInfoData")
 
   useEffect(() => {
     setModalLoading(false)
@@ -276,12 +284,12 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
 
   const { control, handleSubmit, reset } = useForm({
     resolver: zodResolver(fieldSchema),
-    defaultValues: getDefaultValues(motorParameters?.[0]),
+    defaultValues: getDefaultValues(motorParameters?.[0], projectInfoData),
     mode: "onSubmit",
   })
 
   useEffect(() => {
-    reset(getDefaultValues(motorParameters?.[0]))
+    reset(getDefaultValues(motorParameters?.[0], projectInfoData))
   }, [reset, motorParameters])
 
   const onSubmit = async (data: any) => {
@@ -413,6 +421,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
               label=""
               variant="borderless"
               placeholder="Enter safe area maximum temperature"
+              disabled={true}
             />
           </div>
           <div className="flex-1 border text-center">
@@ -422,7 +431,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
               label=""
               placeholder="Enter hazardous area maximum temperature"
               variant={isHazardous ? "borderless" : "filled"}
-              disabled={!isHazardous}
+              disabled={!isHazardous || true}
             />
           </div>
         </div>
@@ -435,6 +444,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
               label=""
               variant="borderless"
               placeholder="Enter safe area minimum temperature"
+              disabled={true}
             />
           </div>
           <div className="flex-1 border text-center">
@@ -444,7 +454,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
               label=""
               placeholder="Enter hazardous area minimum temperature"
               variant={isHazardous ? "borderless" : "filled"}
-              disabled={!isHazardous}
+              disabled={!isHazardous || true}
             />
           </div>
         </div>
@@ -496,7 +506,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
         </div>
         <div className="flex items-center justify-center">
           <div className="flex-1 border p-1.5 text-sm font-semibold">
-            Thermistor<span className="text-xs text-[#3b82f6]">(For motor rating included and above in KW)</span>
+            Thermistor <span className="text-xs text-[#3b82f6]">(For motor rating included and above in KW)</span>
           </div>
           <div className="flex-1 border">
             <CustomSingleSelect
@@ -643,24 +653,24 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
             />
           </div>
         </div>
-        <div className="flex items-center justify-center">
-          <div className="flex-1 border p-1.5 text-sm font-semibold">Duty</div>
+        <div className="flex items-center border justify-center">
+          <div className="flex-1 p-1.5 text-sm font-semibold">Duty</div>
           <div className="flex-1 border">
-            <CustomTextInput
+            <CustomTextAreaInput
               control={control}
               name="safe_area_duty"
               placeholder="Enter safe area duty"
               label=""
-              variant="borderless"
+              // variant="borderless"
             />
           </div>
           <div className="flex-1 border">
-            <CustomTextInput
+            <CustomTextAreaInput
               control={control}
               name="hazardous_area_duty"
               placeholder="Enter hazardous area duty"
               label=""
-              variant={isHazardous ? "borderless" : "filled"}
+              // variant={isHazardous ? "borderless" : "filled"}
               disabled={!isHazardous}
             />
           </div>
