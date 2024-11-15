@@ -121,7 +121,6 @@ const CommonConfiguration = ({
   const [loading, setLoading] = useState(false)
 
   const userInfo = useCurrentUser()
-
   let {
     dol_starter_options,
     star_delta_starter_options,
@@ -147,6 +146,11 @@ const CommonConfiguration = ({
     spare_terminal_options,
     push_button_stop_options,
     push_button_start_options,
+    // ess_options,
+    // speed_increase_pb_options,
+    // speed_decrease_pb_options,
+    // test_reset_options,
+    // alarm_acknowledge_and_lamp_test_options,
     ess_options,
     speed_increase_pb_options,
     speed_decrease_pb_options,
@@ -324,6 +328,7 @@ const CommonConfiguration = ({
         message.success("Common configuration created successfully")
       }
     } catch (error) {
+      console.error("error: ", error)
       console.error("error: ", error)
       handleError(error)
     } finally {
