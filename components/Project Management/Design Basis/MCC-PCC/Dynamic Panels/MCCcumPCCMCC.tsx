@@ -10,7 +10,7 @@ import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { MCC_CUM_PCC_MCC_PANEL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
-import { mccPanelValidationSchema } from "./schemas"
+import { mccPanelValidationSchema } from "../schemas"
 import { HEATING } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 
@@ -176,7 +176,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         message.success("Panel data created successfully")
       }
     } catch (error) {
-      console.log("error: ", error)
+      console.error("error: ", error)
       handleError(error)
     } finally {
       setLoading(false)

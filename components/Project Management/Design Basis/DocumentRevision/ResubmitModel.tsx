@@ -9,7 +9,6 @@ import CustomUpload from "components/FormInputs/CustomUpload"
 import { uploadFile } from "components/FormInputs/FileUpload"
 import { DESIGN_BASIS_REVISION_HISTORY_API, REVIEW_RESUBMISSION_EMAIL_API } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
-import { useParams } from "next/navigation"
 import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
@@ -28,7 +27,7 @@ export default function ResubmitModel({
 }) {
   const [loading, setLoading] = useState(false)
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit } = useForm({
     resolver: zodResolver(
       zod.object({
         feedback_description: zod.string({
@@ -47,7 +46,6 @@ export default function ResubmitModel({
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     setLoading(true)
-    console.log(data)
     try {
       const revisionData = await getData(
         `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${projectData.name}"], ["status", "=", "${DB_REVISION_STATUS.Submitted}"]]&fields=["*"]`
@@ -61,7 +59,6 @@ export default function ResubmitModel({
       if (email_attachment.length > 0) {
         const { data } = await uploadFile(email_attachment[0] as File)
         attachment_url = data.file_url
-        console.log(attachment_url)
       }
       await createData(REVIEW_RESUBMISSION_EMAIL_API, false, {
         approver_email: projectData?.approver,

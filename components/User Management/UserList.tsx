@@ -27,8 +27,6 @@ export const UserList = ({ userInfo }: any) => {
   const [userRow, setUserRow] = useState<any>(null)
   const [editEventTrigger, setEditEventTrigger] = useState(false)
 
-  console.log(userInfo)
-
   const thermaxUserUrl = `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`
   const { data: thermaxUserList } = useGetData(thermaxUserUrl)
   const { data: userList } = useGetData(`${USER_API}?fields=["*"]`)
@@ -96,7 +94,6 @@ export const UserList = ({ userInfo }: any) => {
       dataIndex: "action",
       align: "center",
       render: (text, record: any) => {
-        console.log(record)
         return (
           <div className="flex justify-center gap-2">
             <Tooltip placement="top" title="Edit">

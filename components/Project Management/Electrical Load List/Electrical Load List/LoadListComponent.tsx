@@ -1,5 +1,5 @@
 "use client"
-import jspreadsheet, { JspreadsheetInstance, Column } from "jspreadsheet-ce"
+import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
 import React, { useRef, useEffect, useState, useMemo } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
 import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
@@ -25,15 +25,15 @@ type ValidColumnType =
   | "calendar"
   | "color"
 
-interface CustomColumn extends Omit<Column, "type"> {
-  type: ValidColumnType
-  name: string
-  title: string
-  width: string
-  readOnly?: boolean
-  source?: string[]
-  height?: string
-}
+// interface CustomColumn extends Omit<Column, "type"> {
+//   type: ValidColumnType
+//   name: string
+//   title: string
+//   width: string
+//   readOnly?: boolean
+//   source?: string[]
+//   height?: string
+// }
 
 const ExcelGrid: React.FC = () => {
   const jRef = useRef<HTMLDivElement | null>(null)
@@ -97,13 +97,13 @@ const ExcelGrid: React.FC = () => {
 
     typedLoadListColumns.forEach((column) => {
       if (column.name === "controlScheme") {
-        column.source = selectedItems;
+        column.source = selectedItems
       }
-    });
-    
+    })
+
     // console.log(typedLoadListColumns, "storedSchemes 2")
     // console.log(updatedColumns,);
-    
+
     if (jRef.current && !spreadsheetInstance) {
       instance = jspreadsheet(jRef.current, options)
       setSpreadsheetInstance(instance)
@@ -114,7 +114,7 @@ const ExcelGrid: React.FC = () => {
         instance.destroy()
       }
     }
-  }, [])
+  }, [options, spreadsheetInstance, typedLoadListColumns])
 
   // Fetch control schemes
   useEffect(() => {
@@ -213,7 +213,7 @@ const ExcelGrid: React.FC = () => {
         setControlSchemeInstance(null)
       }
     }
-  }, [isControlSchemeModalOpen, controlSchemes, typedControlSchemeColumns])
+  }, [isControlSchemeModalOpen, controlSchemes, typedControlSchemeColumns, controlSchemeInstance])
 
   // Handle selected schemes spreadsheet
   useEffect(() => {
@@ -249,7 +249,7 @@ const ExcelGrid: React.FC = () => {
         setSelectedSchemeInstance(null)
       }
     }
-  }, [controlSchemesSelected, typedControlSchemeColumns])
+  }, [controlSchemesSelected, selectedSchemeInstance, typedControlSchemeColumns])
 
   const handleControlSchemeModalClose = () => {
     setIsControlSchemeModalOpen(false)

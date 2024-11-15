@@ -116,7 +116,6 @@ const CommonConfiguration = ({
     `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
   const [loading, setLoading] = useState(false)
-  const [supplyFeederStandard, setSupplyFeederStandard] = useState("IEC")
   const [testing_standard, setTestingStandards] = useState([])
   const [dm_standard, setDmStandards] = useState([])
 
@@ -214,7 +213,7 @@ const CommonConfiguration = ({
         message.success("Common configuration created successfully")
       }
     } catch (error) {
-      console.log("error: ", error)
+      console.error("error: ", error)
       handleError(error)
     } finally {
       setLoading(false)
@@ -315,7 +314,6 @@ const CommonConfiguration = ({
               ]}
               onChange={(e) => {
                 const selectedValue = e.target.value
-                setSupplyFeederStandard(selectedValue)
 
                 const filterOptions = (options: any) => {
                   return options?.filter((item: any) => item.name.startsWith(selectedValue) || item.name === "NA")
