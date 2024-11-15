@@ -547,7 +547,7 @@ export const pccPanelValidationSchema = zod.object({
   is_lsig_selected: zod.number().optional(),
   is_lsi_selected: zod.number().optional(),
   is_neural_link_with_disconnect_facility_selected: zod.number().optional(),
-  is_led_type_lamp_selected: zod.number({
+  is_led_type_lamp_selected: zod.string({
     required_error: "LED Type Lamp is required",
     message: "LED Type Lamp is required",
   }),
