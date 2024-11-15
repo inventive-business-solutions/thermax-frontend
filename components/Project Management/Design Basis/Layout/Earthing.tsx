@@ -78,7 +78,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
 
       message.success("Earthing Data Saved Successfully")
     } catch (error) {
-      console.log("error: ", error)
+      console.error("error: ", error)
       handleError(error)
     } finally {
       setLoading(false)

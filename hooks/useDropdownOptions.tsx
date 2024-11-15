@@ -7,7 +7,7 @@ export const useDropdownOptions = (url: string, dropdownKey: string) => {
 
   const dropdownOptions = createDropdownOptions(data, dropdownKey)
   if (error) {
-    console.log(`dropdownOptionsError: ${url}: ${error}`)
+    console.error(`dropdownOptionsError: ${url}: ${error}`)
   }
 
   return { dropdownOptions, error, isLoading }

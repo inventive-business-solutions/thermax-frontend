@@ -1,7 +1,6 @@
 "use client"
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { FloatButton } from "antd"
-import Link from "next/link"
 import { useParams, usePathname, useRouter } from "next/navigation"
 import React from "react"
 import { useLoading } from "hooks/useLoading"
@@ -12,7 +11,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const params = useParams()
   const { setLoading: setModalLoading } = useLoading()
   const pathname = usePathname()
-  console.log("pathname", pathname)
   const project_information_path = `/project/${params.project_id}/project-information`
   const design_basis_path = `/project/${params.project_id}/design-basis`
   const electrical_load_list_path = `/project/${params.project_id}/electrical-load-list`

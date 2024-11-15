@@ -1,10 +1,9 @@
 "use client"
 
 import { LogoutOutlined, UserOutlined } from "@ant-design/icons"
-import { Avatar, Dropdown, MenuProps, Modal, notification, Popconfirm, Space } from "antd"
-import Link from "next/link"
+import { Avatar, Dropdown, MenuProps, Modal, notification, Space } from "antd"
 import { signOut } from "next-auth/react"
-import { RESET_PASSWORD, SIGN_IN } from "configs/constants"
+import { SIGN_IN } from "configs/constants"
 import { verifyEmailandGenerateToken } from "actions/verification-token"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { useState } from "react"

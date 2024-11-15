@@ -7,9 +7,9 @@ import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import CommonConfiguration from "./CommonConfiguration/CommonConfiguration"
 import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
-import MCCcumPCCPanel from "./MCCcumPCC"
-import MCCPanel from "./MCCPanel"
-import PCCPanel from "./PCCPanel"
+import MCCcumPCCPanel from "./Dynamic Panels/MCCcumPCC"
+import MCCPanel from "./Dynamic Panels/MCCPanel"
+import PCCPanel from "./Dynamic Panels/PCCPanel"
 
 const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
   const [activeKey, setActiveKey] = useState<string>("Make") // Default active tab

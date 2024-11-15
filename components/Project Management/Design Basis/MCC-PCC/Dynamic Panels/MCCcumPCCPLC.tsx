@@ -11,7 +11,7 @@ import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 import { MCC_PCC_PLC_PANEL_1, MCC_PCC_PLC_PANEL_2 } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import usePLCDropdowns from "./PLCDropdown"
-import { plcPanelValidationSchema } from "./schemas"
+import { plcPanelValidationSchema } from "../schemas"
 
 const getDefaultValues = (plcData: any) => {
   return {
@@ -1360,7 +1360,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           </div>
           <div className="flex flex-1 items-center gap-2">
             <div className="flex-1">
-              <CustomTextNumber control={control} name="no_of_printer" label="Printer - Qty" disabled={watch("is_printer_with_cable_selected") === 0} size="small" />
+              <CustomTextNumber
+                control={control}
+                name="no_of_printer"
+                label="Printer - Qty"
+                disabled={watch("is_printer_with_cable_selected") === 0}
+                size="small"
+              />
             </div>
           </div>
         </div>

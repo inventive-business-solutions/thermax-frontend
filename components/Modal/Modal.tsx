@@ -1,50 +1,47 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef } from "react"
 
 interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: ReactNode;
+  isOpen: boolean
+  onClose: () => void
+  children: ReactNode
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
+      if (e.key === "Escape") {
+        onClose()
       }
-    };
+    }
 
     const handleClickOutside = (e: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        onClose();
+        onClose()
       }
-    };
+    }
 
     if (isOpen) {
-      document.addEventListener('keydown', handleKeydown);
-      document.addEventListener('click', handleClickOutside);
+      document.addEventListener("keydown", handleKeydown)
+      document.addEventListener("click", handleClickOutside)
     } else {
-      document.removeEventListener('keydown', handleKeydown);
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("keydown", handleKeydown)
+      document.removeEventListener("click", handleClickOutside)
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeydown);
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isOpen, onClose]);
+      document.removeEventListener("keydown", handleKeydown)
+      document.removeEventListener("click", handleClickOutside)
+    }
+  }, [isOpen, onClose])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div ref={modalRef} className="bg-white p-8 rounded-lg shadow-lg w-full relative">
-        <button
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-          onClick={onClose}
-        >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black opacity-50">
+      <div ref={modalRef} className="relative w-full rounded-lg bg-white p-8 shadow-lg">
+        <button className="absolute right-4 top-4 text-gray-500 hover:text-gray-700" onClick={onClose}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="size-6"
@@ -52,18 +49,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
         {children}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Modal;
+export default Modal

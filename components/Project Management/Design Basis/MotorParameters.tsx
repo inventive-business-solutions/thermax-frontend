@@ -6,7 +6,6 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"
 import { updateData } from "actions/crud-actions"
-import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
@@ -14,6 +13,7 @@ import { MOTOR_PARAMETER_API, PROJECT_INFO_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import useMotorParametersDropdowns from "./MotorParametersDropdown"
+import CustomTextInput from "components/FormInputs/CustomInput"
 
 const fieldSchema = zod.object({
   safe_area_efficiency_level: zod.string({

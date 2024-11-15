@@ -179,7 +179,7 @@ const CableTray = ({
 
       message.success("Cable Tray Data updated successfully")
     } catch (error) {
-      console.log("error: ", error)
+      console.error("error: ", error)
       handleError(error)
     } finally {
       setLoading(false)
