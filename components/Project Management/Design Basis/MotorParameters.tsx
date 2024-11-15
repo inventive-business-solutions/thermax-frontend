@@ -211,8 +211,12 @@ const getDefaultValues = (defaultData: any, projectInfoData: any) => {
     hazardous_area_bearing_rtd: defaultData?.hazardous_area_bearing_rtd || "110",
     safe_area_winding_rtd: defaultData?.safe_area_winding_rtd || "110",
     hazardous_area_winding_rtd: defaultData?.hazardous_area_winding_rtd || "110",
-    safe_area_bearing_type: defaultData?.safe_area_bearing_type || "",
-    hazardous_area_bearing_type: defaultData?.hazardous_area_bearing_type || "",
+    safe_area_bearing_type:
+      defaultData?.safe_area_bearing_type ||
+      "1. V-Belt drive application with DE side roller bearing. 2. NDE Side Insulated Bearing for VFD fed Motors.",
+    hazardous_area_bearing_type:
+      defaultData?.hazardous_area_bearing_type ||
+      "1. V-Belt drive application with DE side roller bearing. 2. NDE Side Insulated Bearing for VFD fed Motors.",
     safe_area_duty: defaultData?.safe_area_duty || "S1",
     hazardous_area_duty: defaultData?.hazardous_area_duty || "S1",
     safe_area_service_factor: defaultData?.safe_area_service_factor || "1",
@@ -653,7 +657,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
             />
           </div>
         </div>
-        <div className="flex items-center border justify-center">
+        <div className="flex items-center justify-center border">
           <div className="flex-1 p-1.5 text-sm font-semibold">Duty</div>
           <div className="flex-1 border">
             <CustomTextAreaInput

@@ -49,7 +49,7 @@ const getDefaultValues = (commonConfigData: any) => {
     push_button_start: commonConfigData?.push_button_start || "Green",
     push_button_stop: commonConfigData?.push_button_stop || "Green",
     push_button_ess: commonConfigData?.push_button_ess || "Stayput (RED)",
-    is_push_button_speed_selected: commonConfigData?.is_push_button_speed_selected || "Yes",
+    is_push_button_speed_selected: commonConfigData?.is_push_button_speed_selected || 1,
     speed_increase_pb: commonConfigData?.speed_increase_pb || "Yellow",
     speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
     alarm_acknowledge_and_lamp_test: commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
@@ -668,8 +668,8 @@ const CommonConfiguration = ({
               name="is_push_button_speed_selected"
               label="Speed"
               options={[
-                { label: "Yes", value: "Yes" },
-                { label: "No", value: "No" },
+                { label: "Yes", value: 1 },
+                { label: "No", value: 0 },
               ]}
             />
           </div>
@@ -679,7 +679,7 @@ const CommonConfiguration = ({
               name="speed_increase_pb"
               label="Speed Increase PB"
               options={speed_increase_pb_options || []}
-              disabled={watch("is_push_button_speed_selected") === "No"}
+              disabled={watch("is_push_button_speed_selected") === 0}
               size="small"
             />
           </div>
@@ -689,7 +689,7 @@ const CommonConfiguration = ({
               name="speed_decrease_pb"
               label="Speed Decrease PB"
               options={speed_decrease_pb_options || []}
-              disabled={watch("is_push_button_speed_selected") === "No"}
+              disabled={watch("is_push_button_speed_selected") === 0}
               size="small"
             />
           </div>

@@ -96,7 +96,7 @@ export const configItemValidationSchema = zod.object({
     required_error: "Push Button ESS is required",
     message: "Push Button ESS is required",
   }),
-  is_push_button_speed_selected: zod.string({
+  is_push_button_speed_selected: zod.number({
     required_error: "Push Button Speed is required",
     message: "Push Button Speed is required",
   }),
@@ -547,7 +547,7 @@ export const pccPanelValidationSchema = zod.object({
   is_lsig_selected: zod.number().optional(),
   is_lsi_selected: zod.number().optional(),
   is_neural_link_with_disconnect_facility_selected: zod.number().optional(),
-  is_led_type_lamp_selected: zod.string({
+  is_led_type_lamp_selected: zod.number({
     required_error: "LED Type Lamp is required",
     message: "LED Type Lamp is required",
   }),
