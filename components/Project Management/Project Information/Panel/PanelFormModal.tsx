@@ -174,7 +174,6 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
   }
 
   const onSubmit: SubmitHandler<zod.infer<typeof PanelFormValidationSchema>> = async (data: any) => {
-    console.log("data", data)
     setLoading(true)
     data = { ...data, revision_id: revisionId }
     try {
