@@ -36,7 +36,7 @@ const ProjectDashboard = () => {
   const userInfo = useCurrentUser()
 
   const getProjectUrl = `${PROJECT_API}?fields=["*"]`
-  let { data: projectList, isLoading } = useGetData(getProjectUrl)
+  let { data: projectList } = useGetData(getProjectUrl)
 
   let proj = projectList?.filter((item: any) => item?.division === userInfo?.division)
 
@@ -69,6 +69,7 @@ const ProjectDashboard = () => {
 
   useEffect(() => {
     setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
     <>

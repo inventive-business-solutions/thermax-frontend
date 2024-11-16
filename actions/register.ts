@@ -197,7 +197,7 @@ export const sendCredentialsEmail = async (email: string, division_name: string,
     await createData(CREDENTIALS_EMAIL_API, true, {
       email,
       password: system_generated_password,
-      sent_by: `Team ${division_name}`,
+      sent_by: is_superuser ? "Team BTG" : `Team ${division_name}`,
       division_name,
       is_superuser,
       subject: "Added New User - EnIMAX",

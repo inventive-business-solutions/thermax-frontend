@@ -23,7 +23,6 @@ import {
 } from "configs/api-endpoints"
 import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
-import PanelDataList from "./PanelDataList"
 import { useGetData } from "hooks/useCRUD"
 
 function getPanelFormModalValidationSchema(project_panel_data: any[]) {

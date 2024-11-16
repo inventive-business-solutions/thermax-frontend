@@ -173,7 +173,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
       setValue("utility_supply_phase", "NA")
       setValue("utility_supply_variation", "NA")
     }
-  }, [isControlSupplyVDC, setValue])
+  }, [isControlSupplyVDC, isUtilitySupplyVDC, setValue])
 
   useEffect(() => {
     reset(getDefaultValues(true, projectData))
@@ -201,6 +201,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
       message.success("Project information updated successfully!")
       // setModalLoading(true)
     } catch (error: any) {
+      console.error("Error updating project information", error)
       handleError(error)
     } finally {
       setLoading(false)
@@ -398,7 +399,6 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               }
               label="Utility Supply"
               options={utilitySupplyOptions}
-
               size="small"
             />
           </div>
