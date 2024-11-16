@@ -22,7 +22,7 @@ import { useCurrentUser } from "hooks/useCurrentUser"
 const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   const userInfo = useCurrentUser()
   const params = useParams()
-  const [selectedPkg, setSelectedPkg] = useState("")
+  const [selectedMainPkgId, setSelectedMainPkgId] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
   const { data: dbPkgList } = useGetData(
     `${MAIN_PKG_API}?fields=["*"]&filters=[["division_name", "=", "${userInfo?.division}"]]`
@@ -87,7 +87,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
 
   const filteredOptions = dbPkgList?.filter(
     (pkg: any) =>
-      pkg.package_name !== selectedPkg &&
+      pkg.name !== selectedMainPkgId &&
       !generalInfoData?.pkgList?.some((mainPkg: any) => mainPkg.main_package_name === pkg.package_name)
   )
   const { dropdownOptions: batteryLimitOptions } = useDropdownOptions(BATTERY_LIMIT_API, "name")
@@ -95,25 +95,27 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   const handleAddPkg = async () => {
     setAddPkgLoading(true)
 
-    const subPkgUrl = `${SUB_PKG_API}?fields=["*"]&filters=[["main_package_name", "=", "${selectedPkg}"]]`
-    if (!selectedPkg) {
+    const subPkgUrl = `${SUB_PKG_API}?fields=["*"]&filters=[["main_package_id", "=", "${selectedMainPkgId}"]]`
+    if (!selectedMainPkgId) {
+      message.error("Please select a main package")
       setAddPkgLoading(false)
       return
     }
     const subPkgData = await getData(subPkgUrl)
+    const mainPkgData = await getData(`${MAIN_PKG_API}/${selectedMainPkgId}`)
     const subPkgCreateData = subPkgData?.map((subPkg: any) => ({
-      main_package_name: selectedPkg,
+      main_package_name: mainPkgData?.package_name,
       sub_package_name: subPkg?.package_name,
       area_of_classification: subPkg?.classification_area,
       is_sub_package_selected: false,
     }))
     await createData(PROJECT_MAIN_PKG_API, false, {
       revision_id: revision_id,
-      main_package_name: selectedPkg,
+      main_package_name: mainPkgData?.package_name,
       sub_packages: subPkgCreateData,
     })
     setRefresh(!refresh)
-    setSelectedPkg("")
+    setSelectedMainPkgId("")
     setAddPkgLoading(false)
   }
 
@@ -210,8 +212,14 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
           <div className="flex w-1/2">
             <Select
               placeholder="Select main package"
-              onChange={setSelectedPkg}
-              options={createDropdownOptions(filteredOptions, "package_name")}
+              onChange={setSelectedMainPkgId}
+              options={filteredOptions?.map((item: any) => {
+                return {
+                  ...item,
+                  value: item["name"],
+                  label: item["package_name"],
+                }
+              })}
               style={{ width: "100%" }}
               allowClear={false}
               disabled={generalInfoData?.is_package_selection_enabled === 0}
