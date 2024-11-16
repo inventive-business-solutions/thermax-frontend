@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 
 import { createData, getData, updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
-import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { CABLE_TRAY_LAYOUT } from "configs/api-endpoints"
@@ -114,7 +113,6 @@ const CableTray = ({
     color_scheme_options,
     running_motor_voltage_drop_options,
     conductor_options,
-    cable_installation_options,
     starting_motor_voltage_drop_options,
     voltage_grade_options,
     gland_make_options,
@@ -1064,7 +1062,7 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <div className="grid grid grid-cols-2">
+              <div className="grid grid-cols-2">
                 <h4 className="col-span-2 text-sm font-semibold text-slate-700">Conduit</h4>
                 <div className="flex-1">
                   <CustomRadioSelect

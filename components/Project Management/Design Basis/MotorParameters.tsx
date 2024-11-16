@@ -245,7 +245,6 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
 
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
   const { data: projectInfoData } = useGetData(getProjectInfoUrl)
-  console.log(projectInfoData, "projectInfoData")
 
   useEffect(() => {
     setModalLoading(false)
@@ -294,7 +293,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
 
   useEffect(() => {
     reset(getDefaultValues(motorParameters?.[0], projectInfoData))
-  }, [reset, motorParameters])
+  }, [reset, motorParameters, projectInfoData])
 
   const onSubmit = async (data: any) => {
     setLoading(true)
@@ -313,7 +312,6 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="font-bold underline">MOTOR PARAMETERS</div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex justify-center bg-black text-white">
           <div className="flex-1 border border-white p-1 text-center">Motor Details</div>

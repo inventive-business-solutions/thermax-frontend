@@ -16,6 +16,7 @@ import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import MainPackageModal from "./MainPackageModal"
 import SubPackageModal from "./SubPackageModal"
+import { useCurrentUser } from "hooks/useCurrentUser"
 
 interface DataType {
   key: string
@@ -44,6 +45,8 @@ function renameNameToKey(pkgList: any[]) {
 }
 
 export default function PackageList() {
+  const userInfo = useCurrentUser()
+  const division_name = userInfo?.division
   const [editModeMainPkg, setEditModeMainPkg] = useState(false)
   const [editModeSubPkg, setEditModeSubPkg] = useState(false)
   const [mainPkgopen, setMainPkgOpen] = useState(false)
@@ -58,9 +61,12 @@ export default function PackageList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { data: packageData, isLoading: packageLoading } = useGetData(GET_PKG_API)
+  const getPkgUrl = `${GET_PKG_API}?division_name=${division_name}`
+
+  const { data: packageData, isLoading: packageLoading } = useGetData(getPkgUrl)
 
   const handleError = (error: any) => {
+    console.error(error)
     try {
       const errorObj = JSON.parse(error?.message) as any
       message?.error(errorObj?.message)
@@ -70,16 +76,12 @@ export default function PackageList() {
   }
 
   const handleMainPkgDelete = async (selectedRowID: string) => {
-    const subPkgs = await getData(`${SUB_PKG_API}?filters=[["main_package_name", "=", "${selectedRowID}"]]`)
     try {
-      for (const subPkg of subPkgs || []) {
-        await deleteData(`${SUB_PKG_API}/${subPkg.name}`, false)
-      }
       await deleteData(`${MAIN_PKG_API}/${selectedRowID}`, false)
     } catch (error: any) {
       handleError(error)
     } finally {
-      mutate(GET_PKG_API)
+      mutate(getPkgUrl)
     }
   }
 
@@ -90,7 +92,7 @@ export default function PackageList() {
     } catch (error: any) {
       handleError(error)
     } finally {
-      mutate(GET_PKG_API)
+      mutate(getPkgUrl)
     }
   }
 
@@ -103,7 +105,7 @@ export default function PackageList() {
   const handleAddSubPkg = (mainPkgRecord: any) => {
     setSubPkgOpen(true)
     setEditModeSubPkg(false)
-    mainPkgRecord["main_package_label"] = mainPkgRecord.package_name
+    mainPkgRecord["main_package_id"] = mainPkgRecord.name
     setSubPkgRowData(mainPkgRecord)
   }
 
@@ -206,20 +208,23 @@ export default function PackageList() {
 
   return (
     <div className="flex flex-col gap-2 px-20 py-4">
-      <div className="flex justify-end gap-2">
-        <Tooltip title="Refresh">
-          <div className="rounded-full hover:bg-blue-100">
-            <Button
-              type="link"
-              shape="circle"
-              icon={<SyncOutlined spin={packageLoading} />}
-              onClick={() => mutate(GET_PKG_API)}
-            />
-          </div>
-        </Tooltip>
-        <Button type="primary" onClick={handleAddMainPkg}>
-          Add Main Package
-        </Button>
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-lg font-bold tracking-wide">Package Management</div>
+        <div className="flex items-center gap-4">
+          <Tooltip title="Refresh">
+            <div className="rounded-full hover:bg-blue-100">
+              <Button
+                type="link"
+                shape="circle"
+                icon={<SyncOutlined spin={packageLoading} />}
+                onClick={() => mutate(getPkgUrl)}
+              />
+            </div>
+          </Tooltip>
+          <Button type="primary" onClick={handleAddMainPkg}>
+            Add Main Package
+          </Button>
+        </div>
       </div>
       <Table<DataType>
         columns={parentColumns}
@@ -238,6 +243,7 @@ export default function PackageList() {
         editMode={editModeMainPkg}
         values={mainPkgRowData}
         editEventTrigger={editEventTrigger}
+        getPkgUrl={getPkgUrl}
       />
       <SubPackageModal
         open={subPkgOpen}
@@ -245,6 +251,7 @@ export default function PackageList() {
         editMode={editModeSubPkg}
         values={subPkgRowData}
         editEventTrigger={editEventTrigger}
+        getPkgUrl={getPkgUrl}
       />
     </div>
   )
