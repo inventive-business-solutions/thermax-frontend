@@ -173,7 +173,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
       setValue("utility_supply_phase", "NA")
       setValue("utility_supply_variation", "NA")
     }
-  }, [isControlSupplyVDC, setValue])
+  }, [isControlSupplyVDC, isUtilitySupplyVDC, setValue])
 
   useEffect(() => {
     reset(getDefaultValues(true, projectData))
@@ -399,7 +399,6 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               }
               label="Utility Supply"
               options={utilitySupplyOptions}
-
               size="small"
             />
           </div>

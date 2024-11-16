@@ -294,7 +294,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
 
   useEffect(() => {
     reset(getDefaultValues(motorParameters?.[0], projectInfoData))
-  }, [reset, motorParameters])
+  }, [reset, motorParameters, projectInfoData])
 
   const onSubmit = async (data: any) => {
     setLoading(true)
