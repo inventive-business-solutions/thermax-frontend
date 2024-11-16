@@ -96,7 +96,7 @@ export const configItemValidationSchema = zod.object({
     required_error: "Push Button ESS is required",
     message: "Push Button ESS is required",
   }),
-  is_push_button_speed_selected: zod.string({
+  is_push_button_speed_selected: zod.number({
     required_error: "Push Button Speed is required",
     message: "Push Button Speed is required",
   }),

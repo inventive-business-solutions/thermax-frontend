@@ -16,7 +16,7 @@ import { cableTrayValidationSchema } from "./schemas"
 const getDefaultValues = (cableTrayData: any) => {
   return {
     number_of_cores: cableTrayData?.number_of_cores || "3C",
-    specific_requirement: cableTrayData?.specific_requirement || "Standard",
+    specific_requirement: cableTrayData?.specific_requirement || "FRLS",
     type_of_insulation: cableTrayData?.type_of_insulation || "PVC",
     color_scheme: cableTrayData?.color_scheme || "Red, Yellow, Blue",
     motor_voltage_drop_during_running: cableTrayData?.motor_voltage_drop_during_running || "2",
@@ -39,14 +39,17 @@ const getDefaultValues = (cableTrayData: any) => {
     wet_area: cableTrayData?.wet_area || "FRP",
     is_pct_perforated_type_selected: cableTrayData?.is_pct_perforated_type_selected || 1,
     pct_perforated_type_width: cableTrayData?.pct_perforated_type_width || "150",
+    pct_perforated_type_max_width: cableTrayData?.pct_perforated_type_max_width || "150",
     pct_perforated_type_height: cableTrayData?.pct_perforated_type_height || "75",
     pct_perforated_type_thickness: cableTrayData?.pct_perforated_type_thickness || "2",
     is_pct_ladder_type_selected: cableTrayData?.is_pct_ladder_type_selected || 1,
     pct_ladder_type_width: cableTrayData?.pct_ladder_type_width || "150",
+    pct_ladder_type_max_width: cableTrayData?.pct_ladder_type_max_width || "150",
     pct_ladder_type_height: cableTrayData?.pct_ladder_type_height || "75",
     pct_ladder_type_thickness: cableTrayData?.pct_ladder_type_thickness || "2",
     is_pct_mesh_type_selected: cableTrayData?.is_pct_mesh_type_selected || 1,
     pct_mesh_type_width: cableTrayData?.pct_mesh_type_width || "150",
+    pct_mesh_type_max_width: cableTrayData?.pct_mesh_type_max_width || "150",
     pct_mesh_type_height: cableTrayData?.pct_mesh_type_height || "75",
     pct_mesh_type_thickness: cableTrayData?.pct_mesh_type_thickness || "2",
     is_pct_conduit_selected: cableTrayData?.is_pct_conduit_selected || 1,
@@ -54,14 +57,17 @@ const getDefaultValues = (cableTrayData: any) => {
     pct_conduit_size: cableTrayData?.pct_conduit_size || "1/8",
     is_cct_perforated_type_selected: cableTrayData?.is_cct_perforated_type_selected || 1,
     cct_perforated_type_width: cableTrayData?.cct_perforated_type_width || "150",
+    cct_perforated_type_max_width: cableTrayData?.cct_perforated_type_max_width || "150",
     cct_perforated_type_height: cableTrayData?.cct_perforated_type_height || "75",
     cct_perforated_type_thickness: cableTrayData?.cct_perforated_type_thickness || "2",
     is_cct_ladder_type_selected: cableTrayData?.is_cct_ladder_type_selected || 1,
     cct_ladder_type_width: cableTrayData?.cct_ladder_type_width || "150",
+    cct_ladder_type_max_width: cableTrayData?.cct_ladder_type_max_width || "150",
     cct_ladder_type_height: cableTrayData?.cct_ladder_type_height || "75",
     cct_ladder_type_thickness: cableTrayData?.cct_ladder_type_thickness || "2",
     is_cct_mesh_type_selected: cableTrayData?.is_cct_mesh_type_selected || 1,
     cct_mesh_type_width: cableTrayData?.cct_mesh_type_width || "150",
+    cct_mesh_type_max_width: cableTrayData?.cct_mesh_type_max_width || "150",
     cct_mesh_type_height: cableTrayData?.cct_mesh_type_height || "75",
     cct_mesh_type_thickness: cableTrayData?.cct_mesh_type_thickness || "2",
     is_cct_conduit_selected: cableTrayData?.is_cct_conduit_selected || 1,
@@ -69,14 +75,17 @@ const getDefaultValues = (cableTrayData: any) => {
     cct_conduit_size: cableTrayData?.cct_conduit_size || "1/8",
     is_sct_perforated_type_selected: cableTrayData?.is_sct_perforated_type_selected || 1,
     sct_perforated_type_width: cableTrayData?.sct_perforated_type_width || "150",
+    sct_perforated_type_max_width: cableTrayData?.sct_perforated_type_max_width || "150",
     sct_perforated_type_height: cableTrayData?.sct_perforated_type_height || "75",
     sct_perforated_type_thickness: cableTrayData?.sct_perforated_type_thickness || "2",
     is_sct_ladder_type_selected: cableTrayData?.is_sct_ladder_type_selected || 1,
     sct_ladder_type_width: cableTrayData?.sct_ladder_type_width || "150",
+    sct_ladder_type_max_width: cableTrayData?.sct_ladder_type_max_width || "150",
     sct_ladder_type_height: cableTrayData?.sct_ladder_type_height || "75",
     sct_ladder_type_thickness: cableTrayData?.sct_ladder_type_thickness || "2",
     is_sct_mesh_type_selected: cableTrayData?.is_sct_mesh_type_selected || 1,
     sct_mesh_type_width: cableTrayData?.sct_mesh_type_width || "150",
+    sct_mesh_type_max_width: cableTrayData?.sct_mesh_type_max_width || "150",
     sct_mesh_type_height: cableTrayData?.sct_mesh_type_height || "75",
     sct_mesh_type_thickness: cableTrayData?.sct_mesh_type_thickness || "2",
     is_sct_conduit_selected: cableTrayData?.is_sct_conduit_selected || 1,
@@ -123,11 +132,23 @@ const CableTray = ({
     conduit_size_options,
   } = useCableTrayDropdowns()
 
-  const { control, handleSubmit, reset, watch } = useForm({
+  const { control, handleSubmit, reset, watch, setValue } = useForm({
     resolver: zodResolver(cableTrayValidationSchema),
     defaultValues: getDefaultValues(cableTrayData?.[0]),
     mode: "onSubmit",
   })
+
+  const number_of_cores_controlled = watch("number_of_cores")
+
+  useEffect(() => {
+    if (number_of_cores_controlled === "3C") {
+      setValue("color_scheme", "Red, Yellow, Blue")
+    } else if (number_of_cores_controlled === "3.5C") {
+      setValue("color_scheme", "Red, Yellow, Blue, Black")
+    } else if (number_of_cores_controlled === "4C") {
+      setValue("color_scheme", "Brown, Black, Grey, Blue")
+    }
+  }, [number_of_cores_controlled, setValue])
 
   useEffect(() => {
     reset(getDefaultValues(cableTrayData?.[0]))
@@ -169,7 +190,9 @@ const CableTray = ({
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-        <Divider>Power Cable</Divider>
+        <Divider>
+          <span className="font-bold text-slate-700">Power Cable</span>
+        </Divider>
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
             <div className="flex-1">
@@ -217,27 +240,11 @@ const CableTray = ({
                 label="Motor Voltage Drop During Running"
                 options={running_motor_voltage_drop_options}
                 size="small"
-                suffixIcon={"%"}
-              />
-            </div>
-            <div className="flex-1">
-              <CustomSingleSelect
-                control={control}
-                name="conductor"
-                label="Conductor"
-                options={conductor_options}
-                size="small"
-              />
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <CustomSingleSelect
-                control={control}
-                name="cable_installation"
-                label="Cable Installation (Provided on trays whenever possible)"
-                options={cable_installation_options}
-                size="small"
+                suffixIcon={
+                  <>
+                    <p className="text-lg font-semibold text-blue-500">%</p>
+                  </>
+                }
               />
             </div>
             <div className="flex-1">
@@ -247,9 +254,25 @@ const CableTray = ({
                 label="Motor Voltage Drop During Starting"
                 options={starting_motor_voltage_drop_options}
                 size="small"
-                suffixIcon={"%"}
+                suffixIcon={
+                  <>
+                    <p className="text-lg font-semibold  text-blue-500">%</p>
+                  </>
+                }
               />
             </div>
+          </div>
+          <div className="flex gap-4">
+            {/* <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="cable_installation"
+                label="Cable Installation (Provided on trays whenever possible)"
+                options={cable_installation_options}
+                size="small"
+              />
+            </div> */}
+
             <div className="flex-1">
               <CustomSingleSelect
                 control={control}
@@ -259,12 +282,27 @@ const CableTray = ({
                 size="small"
               />
             </div>
+
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="conductor"
+                label="Conductor"
+                options={conductor_options}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomTextInput control={control} name="derating_factor" label="Derating Factor" size="small" />
+            </div>
           </div>
-          <div className="w-1/3 flex-1">
+          {/* <div className="w-1/3 flex-1">
             <CustomTextInput control={control} name="derating_factor" label="Derating Factor" size="small" />
-          </div>
+          </div> */}
         </div>
-        <Divider>Gland Details</Divider>
+        <Divider>
+          <span className="font-bold text-slate-700">Gland Details</span>
+        </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
             <CustomSingleSelect
@@ -288,7 +326,9 @@ const CableTray = ({
             />
           </div>
         </div>
-        <Divider>Cable Trays</Divider>
+        <Divider>
+          <span className="font-bold text-slate-700">Cable Trays</span>
+        </Divider>
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
             <div className="flex-1">
@@ -298,7 +338,11 @@ const CableTray = ({
                 label="Future Space on Trays"
                 options={future_space_on_trays_options}
                 size="small"
-                suffixIcon={"%"}
+                suffixIcon={
+                  <>
+                    <p className="text-lg font-semibold text-blue-500">%</p>
+                  </>
+                }
               />
             </div>
             <div className="flex-1">
@@ -322,26 +366,34 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <CustomTextNumber
+              <CustomTextInput
                 control={control}
                 name="vertical_distance"
                 label="Vertical Distance"
-                suffix={"mm"}
+                suffix={
+                  <>
+                    <p className="font-semibold text-blue-500">mm</p>
+                  </>
+                }
                 size="small"
               />
             </div>
             <div className="flex-1">
-              <CustomTextNumber
+              <CustomTextInput
                 control={control}
                 name="horizontal_distance"
                 label="Horizontal Distance"
-                suffix={"mm"}
+                suffix={
+                  <>
+                    <p className="font-semibold text-blue-500">mm</p>
+                  </>
+                }
                 size="small"
               />
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <h4 className="text-sm font-bold text-slate-700">Material Construction</h4>
+            <h4 className="text-sm font-bold text-blue-500">Material Construction</h4>
             <div className="flex gap-4">
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-center gap-4">
@@ -404,17 +456,19 @@ const CableTray = ({
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Perforated Type (upto below)</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_pct_perforated_type_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Perforated Type (upto below)</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_pct_perforated_type_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -422,6 +476,16 @@ const CableTray = ({
                 control={control}
                 name="pct_perforated_type_width"
                 label="Width"
+                options={cable_tray_width_options}
+                size="small"
+                disabled={watch("is_pct_perforated_type_selected") === 0}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="pct_perforated_type_max_width"
+                label="Max. Width"
                 options={cable_tray_width_options}
                 size="small"
                 disabled={watch("is_pct_perforated_type_selected") === 0}
@@ -450,17 +514,19 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_pct_ladder_type_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_pct_ladder_type_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -468,6 +534,16 @@ const CableTray = ({
                 control={control}
                 name="pct_ladder_type_width"
                 label="Width"
+                options={cable_tray_width_options}
+                size="small"
+                disabled={watch("is_pct_ladder_type_selected") === 0}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="pct_ladder_type_max_width"
+                label="Max. Width"
                 options={cable_tray_width_options}
                 size="small"
                 disabled={watch("is_pct_ladder_type_selected") === 0}
@@ -496,17 +572,19 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_pct_mesh_type_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_pct_mesh_type_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -514,6 +592,16 @@ const CableTray = ({
                 control={control}
                 name="pct_mesh_type_width"
                 label="Width"
+                options={cable_tray_width_options}
+                size="small"
+                disabled={watch("is_pct_mesh_type_selected") === 0}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="pct_mesh_type_max_width"
+                label="Max. Width"
                 options={cable_tray_width_options}
                 size="small"
                 disabled={watch("is_pct_mesh_type_selected") === 0}
@@ -542,17 +630,19 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Conduit</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_pct_conduit_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Conduit</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_pct_conduit_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -583,17 +673,19 @@ const CableTray = ({
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Perforated Type (upto below)</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_cct_perforated_type_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Perforated Type (upto below)</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_cct_perforated_type_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -601,6 +693,16 @@ const CableTray = ({
                 control={control}
                 name="cct_perforated_type_width"
                 label="Width"
+                options={cable_tray_width_options}
+                size="small"
+                disabled={watch("is_cct_perforated_type_selected") === 0}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="cct_perforated_type_max_width"
+                label="Max. Width"
                 options={cable_tray_width_options}
                 size="small"
                 disabled={watch("is_cct_perforated_type_selected") === 0}
@@ -629,17 +731,19 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_cct_ladder_type_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_cct_ladder_type_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -647,6 +751,16 @@ const CableTray = ({
                 control={control}
                 name="cct_ladder_type_width"
                 label="Width"
+                options={cable_tray_width_options}
+                size="small"
+                disabled={watch("is_cct_ladder_type_selected") === 0}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="cct_ladder_type_max_width"
+                label="Max. Width"
                 options={cable_tray_width_options}
                 size="small"
                 disabled={watch("is_cct_ladder_type_selected") === 0}
@@ -675,17 +789,19 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_cct_mesh_type_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_cct_mesh_type_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -693,6 +809,16 @@ const CableTray = ({
                 control={control}
                 name="cct_mesh_type_width"
                 label="Width"
+                options={cable_tray_width_options}
+                size="small"
+                disabled={watch("is_cct_mesh_type_selected") === 0}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="cct_mesh_type_max_width"
+                label="Max. Width"
                 options={cable_tray_width_options}
                 size="small"
                 disabled={watch("is_cct_mesh_type_selected") === 0}
@@ -721,17 +847,19 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Conduit</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_cct_conduit_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Conduit</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_cct_conduit_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -762,17 +890,19 @@ const CableTray = ({
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Perforated Type (upto below)</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_sct_perforated_type_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Perforated Type (upto below)</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_sct_perforated_type_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -780,6 +910,16 @@ const CableTray = ({
                 control={control}
                 name="sct_perforated_type_width"
                 label="Width"
+                options={cable_tray_width_options}
+                size="small"
+                disabled={watch("is_sct_perforated_type_selected") === 0}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="sct_perforated_type_max_width"
+                label="Max. Width"
                 options={cable_tray_width_options}
                 size="small"
                 disabled={watch("is_sct_perforated_type_selected") === 0}
@@ -808,17 +948,19 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_sct_ladder_type_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_sct_ladder_type_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -834,11 +976,21 @@ const CableTray = ({
             <div className="flex-1">
               <CustomSingleSelect
                 control={control}
+                name="sct_ladder_type_max_width"
+                label="Max. Width"
+                options={cable_tray_width_options}
+                size="small"
+                disabled={watch("is_pct_perforated_type_selected") === 0}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
                 name="sct_ladder_type_height"
                 label="Height"
                 options={cable_tray_height_options}
                 size="small"
-                disabled={watch("is_sct_ladder_type_selected") === 0}
+                disabled={watch("is_pct_perforated_type_selected") === 0}
               />
             </div>
             <div className="flex-1">
@@ -854,17 +1006,19 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_sct_mesh_type_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_sct_mesh_type_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">
@@ -872,6 +1026,16 @@ const CableTray = ({
                 control={control}
                 name="sct_mesh_type_width"
                 label="Width"
+                options={cable_tray_width_options}
+                size="small"
+                disabled={watch("is_sct_mesh_type_selected") === 0}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="sct_mesh_type_max_width"
+                label="Max. Width"
                 options={cable_tray_width_options}
                 size="small"
                 disabled={watch("is_sct_mesh_type_selected") === 0}
@@ -900,17 +1064,19 @@ const CableTray = ({
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Conduit</h4>
-              <div className="flex-1">
-                <CustomRadioSelect
-                  control={control}
-                  name="is_sct_conduit_selected"
-                  label=""
-                  options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
-                  ]}
-                />
+              <div className="grid grid grid-cols-2">
+                <h4 className="col-span-2 text-sm font-semibold text-slate-700">Conduit</h4>
+                <div className="flex-1">
+                  <CustomRadioSelect
+                    control={control}
+                    name="is_sct_conduit_selected"
+                    label=""
+                    options={[
+                      { label: "Yes", value: 1 },
+                      { label: "No", value: 0 },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
             <div className="flex-1">

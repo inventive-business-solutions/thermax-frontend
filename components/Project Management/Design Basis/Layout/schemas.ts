@@ -269,4 +269,40 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Size is required",
     message: "Size is required",
   }),
+  pct_perforated_type_max_width: zod.string({
+    required_error: "Max. Width is required",
+    message: "Max. Width is required",
+  }),
+  pct_ladder_type_max_width: zod.string({
+    required_error: "Max. Width is required",
+    message: "Max. Width is required",
+  }),
+  pct_mesh_type_max_width: zod.string({
+    required_error: "Max. Width is required",
+    message: "Max. Width is required",
+  }),
+  cct_perforated_type_max_width: zod.string({
+    required_error: "Max. Width is required",
+    message: "Max. Width is required",
+  }),
+  cct_ladder_type_max_width: zod.string({
+    required_error: "Max. Width is required",
+    message: "Max. Width is required",
+  }),
+  cct_mesh_type_max_width: zod.string({
+    required_error: "Max. Width is required",
+    message: "Max. Width is required",
+  }),
+  sct_perforated_type_max_width: zod.string({
+    required_error: "Max. Width is required",
+    message: "Max. Width is required",
+  }),
+  sct_ladder_type_max_width: zod.string({
+    required_error: "Max. Width is required",
+    message: "Max. Width is required",
+  }),
+  sct_mesh_type_max_width: zod.string({
+    required_error: "Max. Width is required",
+    message: "Max. Width is required",
+  }),
 })
