@@ -23,7 +23,9 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   const [selectedPkg, setSelectedPkg] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
   const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`)
-  const [generalInfoData, setGeneralInfoData] = useState<any>({battery_limit: "Incoming Supply at each MCC Panel by Client"})
+  const [generalInfoData, setGeneralInfoData] = useState<any>({
+    battery_limit: "Incoming Supply at each MCC Panel by Client",
+  })
   const [refresh, setRefresh] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
 
@@ -35,18 +37,42 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const generalInfoDefaultData = await getData(
+  //       `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  //     )
+
+  //     const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`)
+  //     if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
+  //       setGeneralInfoData({
+  //         is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
+  //         pkgList: mainPkgData,
+  //         battery_limit: generalInfoDefaultData[0]?.battery_limit,
+  //       })
+  //     }
+  //   }
+  //   fetchData()
+  // }, [refresh, revision_id])
   useEffect(() => {
     const fetchData = async () => {
       const generalInfoDefaultData = await getData(
         `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
-
       const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`)
+
       if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
         setGeneralInfoData({
           is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
           pkgList: mainPkgData,
-          battery_limit: generalInfoDefaultData[0]?.battery_limit,
+          battery_limit: generalInfoDefaultData[0]?.battery_limit || "Incoming Supply at each MCC Panel by Client", // Set default value here
+        })
+      } else {
+        // If no data is fetched, set default values
+        setGeneralInfoData({
+          is_package_selection_enabled: false,
+          pkgList: mainPkgData,
+          battery_limit: "Incoming Supply at each MCC Panel by Client", // Default value when no data
         })
       }
     }
@@ -215,7 +241,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-4">
           <div className="flex w-3/4 gap-4">
-            <p className="text-sm font-semibold"> Power Supply At </p>
+            <p className="text-sm font-semibold"> Power Supply At The </p>
             <div className="flex-1">
               <Select
                 options={batteryLimitOptions}
@@ -231,7 +257,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
 
       <div className="flex w-full justify-end gap-4">
         <Button type="primary" onClick={handleSave} loading={saveLoading}>
-          Save
+          Save and Next
         </Button>
       </div>
     </div>
