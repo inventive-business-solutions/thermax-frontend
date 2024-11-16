@@ -23,18 +23,48 @@ import {
 } from "configs/api-endpoints"
 import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import PanelDataList from "./PanelDataList"
+import { useGetData } from "hooks/useCRUD"
 
-const PanelFormValidationSchema = zod.object({
-  panel_name: zod
-    .string({ required_error: "Panel name is required", message: "Panel name is required" })
-    .min(1, { message: "Panel name is required" }),
-  panel_sub_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
-    message: "Panel type is required",
-  }),
-  panel_main_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
-    message: "Panel type is required",
-  }),
-})
+function getPanelFormModalValidationSchema(project_panel_data: any[]) {
+  return zod.object({
+    panel_name: zod
+      .string({ required_error: "Panel name is required", message: "Panel name is required" })
+      .min(1, { message: "Panel name is required" })
+      .refine(
+        (value) => {
+          return !project_panel_data?.includes(value)
+        },
+        { message: "Panel Name you entered is already in use. Please enter a unique Panel Name." }
+      ),
+    panel_sub_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
+      message: "Panel type is required",
+    }),
+    panel_main_type: zod
+      .string({ required_error: "Panel type is required", message: "Panel type is required" })
+      .min(1, {
+        message: "Panel type is required",
+      }),
+  })
+}
+
+// const PanelFormValidationSchema = zod.object({
+//   panel_name: zod
+//     .string({ required_error: "Panel name is required", message: "Panel name is required" })
+//     .min(1, { message: "Panel name is required" })
+//     .refine(
+//       (value) => {
+//         return editMode || !project_oc_numbers.includes(value)
+//       },
+//       { message: "Project OC number already exists" }
+//     ),
+//   panel_sub_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
+//     message: "Panel type is required",
+//   }),
+//   panel_main_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
+//     message: "Panel type is required",
+//   }),
+// })
 
 const getDefaultValues = (editMode: boolean, values: any) => {
   return {
@@ -49,6 +79,13 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
   const { dropdownOptions: panelTypeOptions } = useDropdownOptions(`${PANEL_TYPE_API}?fields=["*"]`, "panel_name")
+
+  const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revisionId}"]]`
+  let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
+
+  const panel_data_list = projectPanelData?.map((project: any) => project.panel_name)
+
+  const PanelFormValidationSchema = getPanelFormModalValidationSchema(panel_data_list)
   const {
     control: panelControl,
     handleSubmit: panelHandleSubmit,

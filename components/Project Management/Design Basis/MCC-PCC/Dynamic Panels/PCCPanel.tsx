@@ -91,6 +91,8 @@ const getDefaultValues = (pccPanelData: any) => {
     heater_output: pccPanelData?.heater_output || "NA",
     heater_connected_load: pccPanelData?.heater_connected_load || "NA",
     heater_temperature: pccPanelData?.heater_temperature || "NA",
+    control_transformer_coating: pccPanelData?.control_transformer_coating || "NA",
+    control_transformer_configuration: pccPanelData?.control_transformer_configuration || "NA",
   }
 }
 
@@ -103,6 +105,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   const {
     incomer_ampere_options,
+    current_transformer_coating_options,
     incomer_pole_options,
     incomer_type_options,
     incomer_above_ampere_options,
@@ -135,7 +138,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     ppc_pretreatment_panel_standard_options,
   } = useMCCPCCPanelDropdowns()
 
-  const { control, handleSubmit, watch, reset } = useForm({
+  const { control, handleSubmit, watch, reset, setValue } = useForm({
     resolver: zodResolver(pccPanelValidationSchema),
     defaultValues: getDefaultValues(pccPanelData?.[0]),
     mode: "onSubmit",
@@ -144,6 +147,41 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   useEffect(() => {
     reset(getDefaultValues(pccPanelData?.[0]))
   }, [pccPanelData, reset])
+
+  const incomer_ampere_controlled = watch("incomer_ampere")
+  const incomer_type_controlled = watch("incomer_type")
+  const incomer_above_type_controlled = watch("incomer_above_type")
+
+  // to control the checkboxes
+
+  useEffect(() => {
+    if (
+      incomer_type_controlled === "EDO ACB" ||
+      incomer_type_controlled === "MDO ACB" ||
+      incomer_type_controlled === "EF ACB" ||
+      incomer_type_controlled === "MF ACB" ||
+      incomer_above_type_controlled === "EDO ACB" ||
+      incomer_above_type_controlled === "MDO ACB" ||
+      incomer_above_type_controlled === "EF ACB" ||
+      incomer_above_type_controlled === "MF ACB"
+    ) {
+      setValue("is_blue_cb_spring_charge_selected", 1)
+      setValue("is_red_cb_in_service", 1)
+      setValue("is_white_healthy_trip_circuit_selected", 1)
+    }
+  }, [incomer_type_controlled, incomer_above_type_controlled, setValue])
+
+  useEffect(() => {
+    if (incomer_ampere_controlled === "1000") {
+      setValue("incomer_above_ampere", "1001")
+    } else if (incomer_ampere_controlled === "400") {
+      setValue("incomer_above_ampere", "401")
+    } else if (incomer_ampere_controlled === "630") {
+      setValue("incomer_above_ampere", "631")
+    } else {
+      setValue("incomer_above_ampere", "801")
+    }
+  }, [incomer_ampere_controlled, setValue])
 
   const handleError = (error: any) => {
     try {
@@ -307,7 +345,38 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             />
           </div>
         </div>
-        <div className="w-1/3 flex-1">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_coating"
+              label="Control Transformer Coating"
+              options={current_transformer_coating_options}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_configuration"
+              label="Control Transformer Configuration"
+              options={current_transformer_coating_options}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomRadioSelect
+              control={control}
+              name="alarm_annunciator"
+              label="Alarm Annunciator"
+              options={[
+                { label: "Applicable", value: "Applicable" },
+                { label: "Not Applicable", value: "Not Applicable" },
+              ]}
+            />
+          </div>
+        </div>
+        {/* <div className="w-1/3 flex-1">
           <CustomRadioSelect
             control={control}
             name="alarm_annunciator"
@@ -317,7 +386,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               { label: "Not Applicable", value: "Not Applicable" },
             ]}
           />
-        </div>
+        </div> */}
         <Divider>
           <span className="font-bold text-slate-700">Metering Instruments for Incomer</span>
         </Divider>
@@ -654,7 +723,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_power_supply_vac"
-                  label="Power Supply (VAC)"
+                  label="Power Supply"
+                  addonAfter={"VAC"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -662,7 +732,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_power_supply_phase"
-                  label="Power Supply (Phase)"
+                  label="Power Supply"
+                  addonAfter={"Phase"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -670,7 +741,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_power_supply_frequency"
-                  label="Power Supply (Hz)"
+                  label="Power Supply"
+                  addonAfter={"Hz"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -680,7 +752,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_control_supply_vac"
-                  label="Control Supply (VAC)"
+                  label="Control Supply"
+                  addonAfter={"VAC"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -688,7 +761,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_control_supply_phase"
-                  label="Control Supply (Phase)"
+                  label="Control Supply"
+                  addonAfter={"Phase"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -696,7 +770,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_control_supply_frequency"
-                  label="Control Supply (Hz)"
+                  label="Control Supply"
+                  addonAfter={"Hz"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -785,7 +860,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_power_supply_vac"
-                  label="Power Supply (VAC)"
+                  label="Power Supply"
+                  addonAfter={"VAC"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -793,7 +869,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_power_supply_phase"
-                  label="Power Supply (Phase)"
+                  label="Power Supply"
+                  addonAfter={"Phase"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -801,7 +878,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_power_supply_frequency"
-                  label="Power Supply (Hz)"
+                  label="Power Supply"
+                  addonAfter={"Hz"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -811,7 +889,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_control_supply_vac"
-                  label="Control Supply (VAC)"
+                  label="Control Supply"
+                  addonAfter={"VAC"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -819,7 +898,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_control_supply_phase"
-                  label="Control Supply (Phase)"
+                  label="Control Supply"
+                  addonAfter={"Phase"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -827,7 +907,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_control_supply_frequency"
-                  label="Control Supply (Hz)"
+                  label="Control Supply"
+                  addonAfter={"Hz"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>

@@ -127,7 +127,7 @@ export default function GISubPkgList({
                 options={standardOptions}
                 size="small"
                 style={{ width: "100%" }}
-                value={main_package?.standard}
+                value={main_package?.standard || "IS"}
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
@@ -148,7 +148,7 @@ export default function GISubPkgList({
                 options={zoneOptions}
                 size="small"
                 style={{ width: "100%" }}
-                value={main_package?.zone}
+                value={main_package?.zone || "Zone 2"}
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
@@ -169,7 +169,7 @@ export default function GISubPkgList({
                 options={gasGroupOptions}
                 size="small"
                 style={{ width: "100%" }}
-                value={main_package?.gas_group}
+                value={main_package?.gas_group || "IIA/IIB"}
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
@@ -190,7 +190,7 @@ export default function GISubPkgList({
                 options={temperatureClassOptions}
                 size="small"
                 style={{ width: "100%" }}
-                value={main_package?.temperature_class}
+                value={main_package?.temperature_class || "T3"}
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {

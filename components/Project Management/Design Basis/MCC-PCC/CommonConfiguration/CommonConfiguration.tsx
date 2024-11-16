@@ -13,6 +13,8 @@ import { COMMON_CONFIGURATION, PROJECT_PANEL_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { configItemValidationSchema } from "../schemas"
+import { useCurrentUser } from "hooks/useCurrentUser"
+import { WWS_SPG } from "configs/constants"
 
 const getDefaultValues = (commonConfigData: any) => {
   return {
@@ -47,7 +49,7 @@ const getDefaultValues = (commonConfigData: any) => {
     push_button_start: commonConfigData?.push_button_start || "Green",
     push_button_stop: commonConfigData?.push_button_stop || "Green",
     push_button_ess: commonConfigData?.push_button_ess || "Stayput (RED)",
-    is_push_button_speed_selected: commonConfigData?.is_push_button_speed_selected || "Yes",
+    is_push_button_speed_selected: commonConfigData?.is_push_button_speed_selected || 1,
     speed_increase_pb: commonConfigData?.speed_increase_pb || "Yellow",
     speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
     alarm_acknowledge_and_lamp_test: commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
@@ -80,17 +82,18 @@ const getDefaultValues = (commonConfigData: any) => {
     power_bus_heat_pvc_sleeve: commonConfigData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
     power_bus_material: commonConfigData?.power_bus_material || "Copper",
     power_bus_current_density: commonConfigData?.power_bus_current_density || "0.8 A/Sq. mm",
-    power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "VTS",
+    power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "( Min -1R X 60 mm X 12 mm) for 50 KA",
     control_bus_main_busbar_selection: commonConfigData?.control_bus_main_busbar_selection || "As per IS",
     control_bus_heat_pvc_sleeve: commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Black",
     control_bus_material: commonConfigData?.control_bus_material || "Aluminium",
     control_bus_current_density: commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
-    control_bus_rating_of_busbar: commonConfigData?.control_bus_rating_of_busbar || "VTS (Min-1R X 30mm X 10mm)",
+    control_bus_rating_of_busbar:
+      commonConfigData?.control_bus_rating_of_busbar || "( Min -1R X 60 mm X 12 mm) for 50 KA",
     earth_bus_main_busbar_selection: commonConfigData?.earth_bus_main_busbar_selection || "As per IS",
     earth_bus_busbar_position: commonConfigData?.earth_bus_busbar_position || "Top",
-    earth_bus_material: commonConfigData?.earth_bus_material || "Aluminium",
+    earth_bus_material: commonConfigData?.earth_bus_material || "Copper",
     earth_bus_current_density: commonConfigData?.earth_bus_current_density || "0.8 A/Sq. mm",
-    earth_bus_rating_of_busbar: commonConfigData?.earth_bus_rating_of_busbar || "VTS (Min-1R X 30mm X 10mm)",
+    earth_bus_rating_of_busbar: commonConfigData?.earth_bus_rating_of_busbar || "( Min- 1R X 20 mm X 5 mm )",
     metering_for_feeder: commonConfigData?.metering_for_feeder || "Ammeter (Digital)",
     cooling_fans: commonConfigData?.cooling_fans || "Not Applicable",
     louvers_and_filters: commonConfigData?.louvers_and_filters || "Not Applicable",
@@ -116,9 +119,8 @@ const CommonConfiguration = ({
     `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
   const [loading, setLoading] = useState(false)
-  const [testing_standard, setTestingStandards] = useState([])
-  const [dm_standard, setDmStandards] = useState([])
 
+  const userInfo = useCurrentUser()
   let {
     dol_starter_options,
     star_delta_starter_options,
@@ -144,6 +146,11 @@ const CommonConfiguration = ({
     spare_terminal_options,
     push_button_stop_options,
     push_button_start_options,
+    // ess_options,
+    // speed_increase_pb_options,
+    // speed_decrease_pb_options,
+    // test_reset_options,
+    // alarm_acknowledge_and_lamp_test_options,
     ess_options,
     speed_increase_pb_options,
     speed_decrease_pb_options,
@@ -178,15 +185,123 @@ const CommonConfiguration = ({
     metering_for_feeder_options,
   } = useCommonConfigDropdowns()
 
-  const { control, handleSubmit, reset, watch } = useForm({
+  const [testing_standards, setTestingStandards] = useState<any[]>(
+    Array.isArray(testing_standard_options) ? [...testing_standard_options] : []
+  )
+  const [dm_standards, setDmStandards] = useState<any[]>(
+    Array.isArray(dm_standard_options) ? [...dm_standard_options] : []
+  )
+  const [pb_current_densityState, setPBCurrentDensityState] = useState<any[]>(
+    Array.isArray(pb_current_density_options) ? [...pb_current_density_options] : []
+  )
+  const [cb_current_densityState, setCBCurrentDensityState] = useState<any[]>(
+    Array.isArray(pb_current_density_options) ? [...pb_current_density_options] : []
+  )
+  const [eb_current_densityState, setEBCurrentDensityState] = useState<any[]>(
+    Array.isArray(pb_current_density_options) ? [...pb_current_density_options] : []
+  )
+
+  const { control, handleSubmit, reset, watch, setValue } = useForm({
     resolver: zodResolver(configItemValidationSchema),
     defaultValues: getDefaultValues(commonConfigurationData?.[0]),
     mode: "onSubmit",
   })
 
+  const supply_feeder_standard_controlled = watch("supply_feeder_standard")
+
   useEffect(() => {
     reset(getDefaultValues(commonConfigurationData?.[0]))
   }, [commonConfigurationData, reset])
+
+  useEffect(() => {
+    if (supply_feeder_standard_controlled === "IS") {
+      setValue("dm_standard", "IS 8623")
+      setValue("testing_standard", "IS 8623")
+    } else {
+      setValue("dm_standard", "IEC 60439")
+      setValue("testing_standard", "IEC 60439")
+    }
+  }, [setValue, supply_feeder_standard_controlled])
+
+  const is_Ammeter_NA = watch("ammeter")
+  const control_bus_material_controlled = watch("control_bus_material")
+  const power_bus_material_controlled = watch("power_bus_material")
+  const earth_bus_material_controlled = watch("earth_bus_material")
+
+  useEffect(() => {
+    if (is_Ammeter_NA === "NA") {
+      setValue("ammeter_configuration", "NA")
+    }
+  }, [is_Ammeter_NA, setValue])
+
+  // Control Bus (dependancy Logic)
+  useEffect(() => {
+    if (control_bus_material_controlled === "Aluminium") {
+      setValue("control_bus_rating_of_busbar", "( Min -1R X 60 mm X 12 mm) for 50 KA")
+      setValue("control_bus_current_density", "0.8 A/Sq. mm")
+      let cb_current_options = cb_current_density_options.filter((item: any) => item.name.startsWith("0.8"))
+      setCBCurrentDensityState(cb_current_options)
+    } else if (control_bus_material_controlled === "Copper") {
+      setValue("control_bus_rating_of_busbar", "( Min - 1R X 40 mm X 10 mm )  ")
+      setValue("control_bus_current_density", "1.0 A/Sq. mm")
+      let cb_current_options = cb_current_density_options.filter(
+        (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
+      )
+      setCBCurrentDensityState(cb_current_options)
+    } else {
+      setValue("control_bus_current_density", "1.0 A/Sq. mm")
+      let cb_current_options = cb_current_density_options.filter(
+        (item: any) => item.name.startsWith("1.0") || item.name.startsWith("1.2")
+      )
+      setCBCurrentDensityState(cb_current_options)
+    }
+  }, [control_bus_material_controlled, setValue])
+
+  // Power Bus (dependency logic)
+  useEffect(() => {
+    if (power_bus_material_controlled === "Aluminium") {
+      setValue("power_bus_rating_of_busbar", "( Min -1R X 60 mm X 12 mm) for 50 KA")
+      setValue("power_bus_current_density", "0.8 A/Sq. mm")
+      let pb_current_options = pb_current_density_options.filter((item: any) => item.name.startsWith("0.8"))
+      setPBCurrentDensityState(pb_current_options)
+    } else if (power_bus_material_controlled === "Copper") {
+      setValue("power_bus_rating_of_busbar", "( Min - 1R X 40 mm X 10 mm )  ")
+      setValue("power_bus_current_density", "1.0 A/Sq. mm")
+      let pb_current_options = pb_current_density_options.filter(
+        (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
+      )
+      setPBCurrentDensityState(pb_current_options)
+    } else {
+      let pb_current_options = pb_current_density_options.filter(
+        (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
+      )
+      setPBCurrentDensityState(pb_current_options)
+      setValue("power_bus_current_density", "1.0 A/Sq. mm")
+    }
+  }, [power_bus_material_controlled, setValue])
+
+  // earth Bus (Dependency logic)
+  useEffect(() => {
+    if (earth_bus_material_controlled === "Aluminium") {
+      setValue("earth_bus_rating_of_busbar", "( Min - 1R X 40 mm X 10 mm )")
+      setValue("earth_bus_current_density", "0.8 A/Sq. mm")
+      let eb_current_options = eb_current_density_options.filter((item: any) => item.name.startsWith("0.8"))
+      setEBCurrentDensityState(eb_current_options)
+    } else if (earth_bus_material_controlled === "Copper") {
+      setValue("earth_bus_rating_of_busbar", "( Min- 1R X 20 mm X 5 mm )")
+      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+      let eb_current_options = eb_current_density_options.filter(
+        (item: any) => item.name.startsWith("1.0") || item.name.startsWith("1.2")
+      )
+      setEBCurrentDensityState(eb_current_options)
+    } else {
+      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+      let eb_current_options = eb_current_density_options.filter(
+        (item: any) => item.name.startsWith("1.0") || item.name.startsWith("1.2")
+      )
+      setEBCurrentDensityState(eb_current_options)
+    }
+  }, [earth_bus_material_controlled, setValue])
 
   const handleError = (error: any) => {
     try {
@@ -213,6 +328,7 @@ const CommonConfiguration = ({
         message.success("Common configuration created successfully")
       }
     } catch (error) {
+      console.error("error: ", error)
       console.error("error: ", error)
       handleError(error)
     } finally {
@@ -273,11 +389,12 @@ const CommonConfiguration = ({
               label="Ammeter Configuration"
               options={ammeter_configuration_options || []}
               size="small"
+              disabled={is_Ammeter_NA === "NA"}
             />
           </div>
         </div>
-        <div className="flex gap-8">
-          <div className="flex-1">
+        <div className="grid grid-cols-2 gap-8">
+          <div className="col-1">
             <CustomSingleSelect
               control={control}
               name="mcc_switchgear_type"
@@ -295,6 +412,21 @@ const CommonConfiguration = ({
               size="small"
             />
           </div>
+          {userInfo?.division === WWS_SPG && (
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="switchgear_combination"
+                label="Switchgear Combination"
+                disabled={
+                  watch("mcc_switchgear_type") === "Type II Coordination-Fuse" ||
+                  watch("mcc_switchgear_type") === "Type II Coordination-Fuse-One Size Higher"
+                }
+                options={switchgear_combination_options || []}
+                size="small"
+              />
+            </div>
+          )}
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Supply Feeder</span>
@@ -332,7 +464,11 @@ const CommonConfiguration = ({
               control={control}
               name="dm_standard"
               label="Design & Manufacturer's standard"
-              options={dm_standard || []}
+              options={
+                dm_standards?.length === 0
+                  ? dm_standard_options.filter((item: any) => item?.name?.startsWith("IEC") || item?.name === "NA")
+                  : dm_standards
+              }
               size="small"
             />
           </div>
@@ -341,7 +477,11 @@ const CommonConfiguration = ({
               control={control}
               name="testing_standard"
               label="Testing Standard"
-              options={testing_standard || []}
+              options={
+                testing_standards?.length === 0
+                  ? testing_standard_options.filter((item: any) => item?.name?.startsWith("IEC") || item?.name === "NA")
+                  : testing_standards
+              }
               size="small"
             />
           </div>
@@ -528,8 +668,8 @@ const CommonConfiguration = ({
               name="is_push_button_speed_selected"
               label="Speed"
               options={[
-                { label: "Yes", value: "1" },
-                { label: "No", value: "0" },
+                { label: "Yes", value: 1 },
+                { label: "No", value: 0 },
               ]}
             />
           </div>
@@ -539,6 +679,7 @@ const CommonConfiguration = ({
               name="speed_increase_pb"
               label="Speed Increase PB"
               options={speed_increase_pb_options || []}
+              disabled={watch("is_push_button_speed_selected") === 0}
               size="small"
             />
           </div>
@@ -548,6 +689,7 @@ const CommonConfiguration = ({
               name="speed_decrease_pb"
               label="Speed Decrease PB"
               options={speed_decrease_pb_options || []}
+              disabled={watch("is_push_button_speed_selected") === 0}
               size="small"
             />
           </div>
@@ -596,6 +738,7 @@ const CommonConfiguration = ({
                 { label: "Lockable", value: "Lockable" },
                 { label: "UnLockable", value: "UnLockable" },
               ]}
+              disabled={watch("selector_switch_applicable") !== "Applicable"}
             />
           </div>
         </div>
@@ -854,7 +997,11 @@ const CommonConfiguration = ({
             name="apfc_relay"
             label="APFC Relay"
             options={apfc_relay_options || []}
-            suffixIcon={"Stage"}
+            suffixIcon={
+              <>
+                <p className="font-semibold text-blue-500">Stage</p>
+              </>
+            }
             size="small"
           />
         </div>
@@ -899,7 +1046,8 @@ const CommonConfiguration = ({
               control={control}
               name="power_bus_current_density"
               label="Current Density"
-              options={pb_current_density_options || []}
+              // options={pb_current_density_options || []}
+              options={pb_current_densityState}
               size="small"
             />
           </div>
@@ -953,7 +1101,7 @@ const CommonConfiguration = ({
               control={control}
               name="control_bus_current_density"
               label="Current Density"
-              options={cb_current_density_options || []}
+              options={cb_current_densityState}
               size="small"
             />
           </div>
@@ -1007,7 +1155,7 @@ const CommonConfiguration = ({
               control={control}
               name="earth_bus_current_density"
               label="Current Density"
-              options={eb_current_density_options || []}
+              options={eb_current_densityState}
               size="small"
             />
           </div>
@@ -1069,7 +1217,7 @@ const CommonConfiguration = ({
               ]}
             />
           </div>
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomRadioSelect
               control={control}
               name="control_transformer"
@@ -1079,7 +1227,7 @@ const CommonConfiguration = ({
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
             />
-          </div>
+          </div> */}
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Spares</span>
@@ -1092,14 +1240,14 @@ const CommonConfiguration = ({
             <CustomTextAreaInput
               control={control}
               name="two_year_operational_spare"
-              label="Two Year Operational spare"
+              label="Two Year Operational Spare"
             />
           </div>
         </div>
 
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
-            Save and Continue
+            Save and Next
           </Button>
         </div>
       </form>
