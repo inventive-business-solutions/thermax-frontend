@@ -25,14 +25,14 @@ import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/co
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { useGetData } from "hooks/useCRUD"
 
-function getPanelFormModalValidationSchema(project_panel_data: any[]) {
+function getPanelFormModalValidationSchema(project_panel_name: any[], editMode: boolean) {
   return zod.object({
     panel_name: zod
       .string({ required_error: "Panel name is required", message: "Panel name is required" })
       .min(1, { message: "Panel name is required" })
       .refine(
         (value) => {
-          return !project_panel_data?.includes(value)
+          return editMode || !project_panel_name.includes(value)
         },
         { message: "Panel Name you entered is already in use. Please enter a unique Panel Name." }
       ),
@@ -84,7 +84,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
 
   const panel_data_list = projectPanelData?.map((project: any) => project.panel_name)
 
-  const PanelFormValidationSchema = getPanelFormModalValidationSchema(panel_data_list)
+  const PanelFormValidationSchema = getPanelFormModalValidationSchema(panel_data_list, editMode)
   const {
     control: panelControl,
     handleSubmit: panelHandleSubmit,
@@ -198,7 +198,13 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
       onCancel={handleCancel}
       footer={null}
     >
-      <form onSubmit={panelHandleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <form
+        onSubmit={(event) => {
+          event.stopPropagation()
+          panelHandleSubmit(onSubmit)(event)
+        }}
+        className="flex flex-col gap-2"
+      >
         <div className="flex flex-col gap-2">
           <div className="flex-1">
             <CustomTextInput name="panel_name" control={panelControl} label="Panel Name" type="text" />
@@ -217,7 +223,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
         </div>
         <AlertNotification message={message} status={status} />
         <div className="text-end">
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button type="primary" loading={loading} htmlType="submit">
             Save
           </Button>
         </div>

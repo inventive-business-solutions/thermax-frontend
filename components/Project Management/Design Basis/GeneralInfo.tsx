@@ -17,12 +17,16 @@ import { useGetData } from "hooks/useCRUD"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { useLoading } from "hooks/useLoading"
 import GIPkgSelectionTabs from "./GIPkgSelection"
+import { useCurrentUser } from "hooks/useCurrentUser"
 
 const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
+  const userInfo = useCurrentUser()
   const params = useParams()
   const [selectedPkg, setSelectedPkg] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
-  const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`)
+  const { data: dbPkgList } = useGetData(
+    `${MAIN_PKG_API}?fields=["*"]&filters=[["division_name", "=", "${userInfo?.division}"]]`
+  )
   const [generalInfoData, setGeneralInfoData] = useState<any>({
     battery_limit: "Incoming Supply at each MCC Panel by Client",
   })
@@ -191,7 +195,6 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
           <div className="font-bold text-slate-800">Package Selection</div>
           <div>
             <Radio.Group
-              defaultValue={1}
               value={generalInfoData?.is_package_selection_enabled}
               onChange={(e: RadioChangeEvent) =>
                 setGeneralInfoData({ ...generalInfoData, is_package_selection_enabled: e.target.value })
