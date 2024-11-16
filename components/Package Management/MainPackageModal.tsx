@@ -4,10 +4,11 @@ import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
-import { createData, deleteData, getData } from "actions/crud-actions"
+import { createData, updateData } from "actions/crud-actions"
 import AlertNotification from "components/AlertNotification"
 import CustomTextInput from "components/FormInputs/CustomInput"
-import { GET_PKG_API, MAIN_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
+import { MAIN_PKG_API } from "configs/api-endpoints"
+import { useCurrentUser } from "hooks/useCurrentUser"
 
 const MainPackageSchema = zod.object({
   package_name: zod.string({ required_error: "Package name is required" }),
@@ -19,7 +20,8 @@ const getDefaultValues = (editMode: boolean, values: any) => {
   }
 }
 
-export default function MainPackageModal({ open, setOpen, editMode, values, editEventTrigger }: any) {
+export default function MainPackageModal({ open, setOpen, editMode, values, editEventTrigger, getPkgUrl }: any) {
+  const userInfo = useCurrentUser()
   const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
@@ -56,30 +58,19 @@ export default function MainPackageModal({ open, setOpen, editMode, values, edit
 
   const onSubmit: SubmitHandler<zod.infer<typeof MainPackageSchema>> = async (data: any) => {
     setLoading(true)
+    data["division_name"] = userInfo?.division
     try {
       if (editMode) {
-        const subPkgs = await getData(
-          `${SUB_PKG_API}?fields=["*"]&filters=[["main_package_name", "=", "${values.name}"]]`
-        )
-        for (const subPkg of subPkgs || []) {
-          await deleteData(`${SUB_PKG_API}/${subPkg.name}`, false)
-        }
-        await deleteData(`${MAIN_PKG_API}/${values.name}`, false)
-        await createData(MAIN_PKG_API, false, data)
-        for (const subPkg of values.sub_packages || []) {
-          await createData(SUB_PKG_API, false, {
-            ...subPkg,
-            main_package_name: data.package_name,
-          })
-        }
+        await updateData(`${MAIN_PKG_API}/${values.name}`, false, data)
         message.success("Main Package saved successfully")
       } else {
         await createData(MAIN_PKG_API, false, data)
+        message.success("Main Package created successfully")
       }
     } catch (error: any) {
       handleError(error)
     } finally {
-      mutate(GET_PKG_API)
+      mutate(getPkgUrl)
       handleCancel()
       setLoading(false)
     }

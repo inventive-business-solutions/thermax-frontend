@@ -245,7 +245,6 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
 
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
   const { data: projectInfoData } = useGetData(getProjectInfoUrl)
-  console.log(projectInfoData, "projectInfoData")
 
   useEffect(() => {
     setModalLoading(false)
