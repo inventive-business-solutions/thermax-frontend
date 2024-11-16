@@ -44,7 +44,7 @@ const getDefaultValues = (pccPanelData: any) => {
     ga_pcc_construction_drawout_type: pccPanelData?.ga_pcc_construction_drawout_type || "Drawout Type",
     ga_pcc_construction_type: pccPanelData?.ga_pcc_construction_type || "Intelligent",
     busbar_material_of_construction: pccPanelData?.busbar_material_of_construction || "Aluminium",
-    ga_current_density: pccPanelData?.ga_current_density || "1 A/Sq. mm",
+    ga_current_density: pccPanelData?.ga_current_density || "1.0 A/Sq. mm",
     ga_panel_mounting_frame: pccPanelData?.ga_panel_mounting_frame || "Base Frame",
     ga_panel_mounting_height: pccPanelData?.ga_panel_mounting_height || "200",
     is_marshalling_section_selected: pccPanelData?.is_marshalling_section_selected || 1,
@@ -138,6 +138,9 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     ppc_pretreatment_panel_standard_options,
   } = useMCCPCCPanelDropdowns()
 
+  const [gaCurrentDensity, setGaCurrentDensity] = useState<any[]>(ga_current_density_options)
+  const [gaPanelMountingHeighht, setGaPanelMountingHeight] = useState<any[]>(ga_panel_mounting_height_options)
+
   const { control, handleSubmit, watch, reset, setValue } = useForm({
     resolver: zodResolver(pccPanelValidationSchema),
     defaultValues: getDefaultValues(pccPanelData?.[0]),
@@ -151,6 +154,37 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const incomer_ampere_controlled = watch("incomer_ampere")
   const incomer_type_controlled = watch("incomer_type")
   const incomer_above_type_controlled = watch("incomer_above_type")
+
+  const ga_current_density_controlled = watch("busbar_material_of_construction")
+  const ga_panel_mounting_frame_controlled = watch("ga_panel_mounting_frame")
+
+  useEffect(() => {
+    if (ga_panel_mounting_frame_controlled === "Base Frame") {
+      let temp_height = ga_panel_mounting_height_options.filter((item: any) => {
+        return item.name === "200" || item.name === "300" || item.name === "500"
+      })
+      setGaPanelMountingHeight(temp_height)
+    } else {
+      let temp_height = ga_panel_mounting_height_options.filter((item: any) => {
+        return item.name === "75" || item.name === "100"
+      })
+      setGaPanelMountingHeight(temp_height)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (ga_current_density_controlled === "Aluminium") {
+      setValue("ga_current_density", "0.8 A/Sq. mm")
+      let temp_ga_current_density = ga_current_density_options.filter((item: any) => item.name.startsWith("0.8"))
+      setGaCurrentDensity(temp_ga_current_density)
+    } else {
+      setValue("ga_current_density", "1.0 A/Sq. mm")
+      let temp_ga_current_density = ga_current_density_options.filter(
+        (item: any) => item.name.startsWith("1.0") || item.name.startsWith("1.2")
+      )
+      setGaCurrentDensity(temp_ga_current_density)
+    }
+  }, [ga_current_density_controlled, setValue])
 
   // to control the checkboxes
 
@@ -198,6 +232,11 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       const pccPanelData = await getData(
         `${PCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
+
+      if (watch("mi_analog") === watch("mi_digital")) {
+        message.error("Ammeter and Digital cannot be Same")
+        return
+      }
 
       if (pccPanelData && pccPanelData.length > 0) {
         await updateData(`${PCC_PANEL}/${pccPanelData[0].name}`, false, data)
@@ -506,7 +545,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_current_density"
               label="Current Density"
-              options={ga_current_density_options}
+              options={gaCurrentDensity}
               size="small"
             />
           </div>
@@ -524,7 +563,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_panel_mounting_height"
               label="Height of Base Frame (mm)"
-              options={ga_panel_mounting_height_options}
+              options={gaPanelMountingHeighht}
               size="small"
             />
           </div>

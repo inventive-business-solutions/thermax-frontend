@@ -155,6 +155,13 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
   const incomer_ampere_controlled = watch("incomer_ampere")
   const incomer_type_controlled = watch("incomer_type")
   const incomer_above_type_controlled = watch("incomer_above_type")
+  const current_transformer_coating_Controlled = watch("current_transformer_coating")
+
+  useEffect(() => {
+    if (current_transformer_coating_Controlled === "NA") {
+      setValue("current_transformer_number", "NA")
+    }
+  }, [current_transformer_coating_Controlled, setValue])
 
   // to control the checkboxes
 

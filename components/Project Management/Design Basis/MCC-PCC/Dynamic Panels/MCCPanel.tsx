@@ -163,6 +163,13 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const incomer_ampere_controlled = watch("incomer_ampere")
   const incomer_type_controlled = watch("incomer_type")
   const incomer_above_type_controlled = watch("incomer_above_type")
+  const current_transformer_coating_Controlled = watch("current_transformer_coating")
+
+  useEffect(() => {
+    if (current_transformer_coating_Controlled === "NA") {
+      setValue("current_transformer_number", "NA")
+    }
+  }, [current_transformer_coating_Controlled, setValue])
 
   // to control the checkboxes
 
@@ -210,6 +217,11 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       const mccPanelData = await getData(
         `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
+
+      if(watch("mi_analog") === watch("mi_digital")){
+        message.error("Ammeter and Digital cannot be Same")
+        return
+      }
 
       if (mccPanelData && mccPanelData.length > 0) {
         await updateData(`${MCC_PANEL}/${mccPanelData[0].name}`, false, data)
@@ -378,7 +390,6 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               disabled={currentTransformerCoating === "NA"}
             />
           </div>
-         
         </div>
         <div className="flex items-center gap-4">
           <div className="flex-1">

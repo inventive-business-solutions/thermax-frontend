@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  CONTROL_TRANSFORMER_CONFIGURATION,
   CURRENT_TRANSFORMER_COATING,
   CURRENT_TRANSFORMER_NUMBER,
   GA_BUSBAR_CHAMBER_POSITION,
@@ -69,6 +70,11 @@ export default function useMCCPCCPanelDropdowns() {
   )
   current_transformer_number_options = moveNAtoEnd(current_transformer_number_options)
 
+  let { dropdownOptions: control_transformer_configuration_options } = useDropdownOptions(
+    `${CONTROL_TRANSFORMER_CONFIGURATION}?fields=["*"]`,
+    "control_transformer_configuration"
+  )
+  control_transformer_configuration_options = moveNAtoEnd(control_transformer_configuration_options)
   let { dropdownOptions: mi_analog_options } = useDropdownOptions(`${MI_ANALOG}?fields=["*"]`, "name")
   mi_analog_options = moveNAtoEnd(mi_analog_options)
   let { dropdownOptions: mi_digital_options } = useDropdownOptions(`${MI_DIGITAL}?fields=["*"]`, "name")
