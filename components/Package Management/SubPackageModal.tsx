@@ -8,7 +8,7 @@ import { createData, getData, updateData } from "actions/crud-actions"
 import AlertNotification from "components/AlertNotification"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { AREA_CLASSIFICATION_API, GET_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
+import { AREA_CLASSIFICATION_API, SUB_PKG_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { createDropdownOptions } from "./package-management.logic"
 

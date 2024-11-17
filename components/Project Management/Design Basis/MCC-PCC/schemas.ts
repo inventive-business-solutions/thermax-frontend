@@ -525,6 +525,30 @@ export const mccPanelValidationSchema = zod.object({
     required_error: "Heater Temperature is required",
     message: "Heater Temperature is required",
   }),
+  spg_name_plate_unit_name: zod.string({
+    required_error: "Unit Name is required",
+    message: "Unit Name is required",
+  }),
+  spg_name_plate_capacity: zod.string({
+    required_error: "Capacity is required",
+    message: "Capacity is required",
+  }),
+  spg_name_plate_manufacturing_year: zod.string({
+    required_error: "Manufacturing Year is required",
+    message: "Manufacturing Year is required",
+  }),
+  spg_name_plate_weight: zod.string({
+    required_error: "Weight is required",
+    message: "Weight is required",
+  }),
+  spg_name_plate_oc_number: zod.string({
+    required_error: "OC Number is required",
+    message: "OC Number is required",
+  }),
+  spg_name_plate_part_code: zod.string({
+    required_error: "Part Code is required",
+    message: "Part Code is required",
+  }),
 })
 
 export const pccPanelValidationSchema = zod.object({
@@ -745,6 +769,30 @@ export const pccPanelValidationSchema = zod.object({
   heater_temperature: zod.string({
     required_error: "Heater Temperature is required",
     message: "Heater Temperature is required",
+  }),
+  spg_name_plate_unit_name: zod.string({
+    required_error: "Unit Name is required",
+    message: "Unit Name is required",
+  }),
+  spg_name_plate_capacity: zod.string({
+    required_error: "Capacity is required",
+    message: "Capacity is required",
+  }),
+  spg_name_plate_manufacturing_year: zod.string({
+    required_error: "Manufacturing Year is required",
+    message: "Manufacturing Year is required",
+  }),
+  spg_name_plate_weight: zod.string({
+    required_error: "Weight is required",
+    message: "Weight is required",
+  }),
+  spg_name_plate_oc_number: zod.string({
+    required_error: "OC Number is required",
+    message: "OC Number is required",
+  }),
+  spg_name_plate_part_code: zod.string({
+    required_error: "Part Code is required",
+    message: "Part Code is required",
   }),
 })
 

@@ -11,7 +11,7 @@ import { PCC_PANEL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
 import { pccPanelValidationSchema } from "../schemas"
-import { HEATING } from "configs/constants"
+import { HEATING, WWS_SPG } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 
 const getDefaultValues = (pccPanelData: any) => {
@@ -33,6 +33,8 @@ const getDefaultValues = (pccPanelData: any) => {
     is_red_cb_in_service: pccPanelData?.is_red_cb_in_service || 1,
     is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || 1,
     alarm_annunciator: pccPanelData?.alarm_annunciator || "Applicable",
+    control_transformer_coating: pccPanelData?.control_transformer_coating || "NA",
+    control_transformer_configuration: pccPanelData?.control_transformer_configuration || "NA",
     mi_analog: pccPanelData?.mi_analog || "Ammeter",
     mi_digital: pccPanelData?.mi_digital || "Ammeter",
     mi_communication_protocol: pccPanelData?.mi_communication_protocol || "Ethernet",
@@ -91,8 +93,12 @@ const getDefaultValues = (pccPanelData: any) => {
     heater_output: pccPanelData?.heater_output || "NA",
     heater_connected_load: pccPanelData?.heater_connected_load || "NA",
     heater_temperature: pccPanelData?.heater_temperature || "NA",
-    control_transformer_coating: pccPanelData?.control_transformer_coating || "NA",
-    control_transformer_configuration: pccPanelData?.control_transformer_configuration || "NA",
+    spg_name_plate_unit_name: pccPanelData?.spg_name_plate_unit_name || "NA",
+    spg_name_plate_capacity: pccPanelData?.spg_name_plate_capacity || "NA",
+    spg_name_plate_manufacturing_year: pccPanelData?.spg_name_plate_manufacturing_year || "NA",
+    spg_name_plate_weight: pccPanelData?.spg_name_plate_weight || "NA",
+    spg_name_plate_oc_number: pccPanelData?.spg_name_plate_oc_number || "NA",
+    spg_name_plate_part_code: pccPanelData?.spg_name_plate_part_code || "NA",
   }
 }
 
@@ -949,6 +955,39 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   addonAfter={"Deg C"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
+              </div>
+            </div>
+          </>
+        )}
+        {userInfo?.division !== WWS_SPG && (
+          <>
+            <Divider>
+              <span className="font-bold text-slate-700">Name Plate Details For SPG</span>
+            </Divider>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_unit_name" label="Unit Name" />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_capacity" label="Capacity" />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_manufacturing_year"
+                  label="Year of Manufacturing"
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_weight" label="Weight" />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_oc_number" label="OC No." />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_part_code" label="Part Code" />
               </div>
             </div>
           </>

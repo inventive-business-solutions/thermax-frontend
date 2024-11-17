@@ -31,7 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(project_information_path) ? "bg-green-500" : "bg-blue-700"
+                pathname.includes(project_information_path) ? "bg-green-700" : "bg-blue-700"
               )}
               onClick={() => handleTabChange(project_information_path)}
             >
@@ -40,7 +40,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(design_basis_path) ? "bg-green-500" : "bg-blue-700"
+                pathname.includes(design_basis_path) ? "bg-green-700" : "bg-blue-700"
               )}
               onClick={() => handleTabChange(design_basis_path)}
             >
@@ -49,7 +49,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(electrical_load_list_path) ? "bg-green-500" : "bg-blue-700"
+                pathname.includes(electrical_load_list_path) ? "bg-green-700" : "bg-blue-700"
               )}
               onClick={() => handleTabChange(electrical_load_list_path)}
             >
@@ -58,7 +58,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(sld_path) ? "bg-green-500" : "bg-blue-700"
+                pathname.includes(sld_path) ? "bg-green-700" : "bg-blue-700"
               )}
               onClick={() => handleTabChange(sld_path)}
             >
@@ -67,7 +67,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(cable_tray_path) ? "bg-green-500" : "bg-blue-700"
+                pathname.includes(cable_tray_path) ? "bg-green-700" : "bg-blue-700"
               )}
               onClick={() => handleTabChange(cable_tray_path)}
             >
@@ -76,7 +76,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(earthing_path) ? "bg-green-500" : "bg-blue-700"
+                pathname.includes(earthing_path) ? "bg-green-700" : "bg-blue-700"
               )}
               onClick={() => handleTabChange(earthing_path)}
             >
@@ -85,7 +85,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(lighting_path) ? "bg-green-500" : "bg-blue-700"
+                pathname.includes(lighting_path) ? "bg-green-700" : "bg-blue-700"
               )}
               onClick={() => handleTabChange(lighting_path)}
             >

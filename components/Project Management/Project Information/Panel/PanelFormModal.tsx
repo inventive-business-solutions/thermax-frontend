@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Modal } from "antd"
+import { Button, message, Modal } from "antd"
 import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
@@ -13,7 +13,6 @@ import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import {
   DYNAMIC_DOCUMENT_API,
   getProjectListUrl,
-  MCC_CUM_PCC_MCC_PANEL,
   MCC_PANEL,
   MCC_PCC_PLC_PANEL_1,
   MCC_PCC_PLC_PANEL_2,
@@ -74,7 +73,7 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 }
 
 export default function PanelFormModal({ open, setOpen, editMode, values, getProjectPanelUrl, revisionId }: any) {
-  const [message, setMessage] = useState("")
+  const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
   const { dropdownOptions: panelTypeOptions } = useDropdownOptions(`${PANEL_TYPE_API}?fields=["*"]`, "panel_name")
@@ -104,7 +103,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
   const handleCancel = () => {
     setOpen(false)
     panelReset(getDefaultValues(false, values))
-    setMessage("")
+    setInfoMessage("")
     setStatus("")
   }
 
@@ -136,12 +135,12 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
         await createData(PCC_PANEL, false, panelCreateData)
       }
       if (panelType === MCCcumPCC_PANEL_TYPE) {
-        await createData(MCC_CUM_PCC_MCC_PANEL, false, panelCreateData)
+        await createData(MCC_PANEL, false, panelCreateData)
         await createData(MCC_PCC_PLC_PANEL_1, false, panelCreateData)
         await createData(MCC_PCC_PLC_PANEL_2, false, panelCreateData)
       }
       setStatus("success")
-      setMessage("New panel created successfully")
+      setInfoMessage("New panel created successfully")
     } catch (error: any) {
       throw error
     } finally {
@@ -152,8 +151,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
   const handleUpdatePanel = async (panelData: any) => {
     try {
       await updateData(`${PROJECT_PANEL_API}/${values.name}`, false, panelData)
-      setStatus("success")
-      // setMessage("Panel information updated successfully")
+      message.success("Panel updated successfully")
     } catch (error: any) {
       throw error
     } finally {
@@ -166,10 +164,10 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
     setStatus("error")
     try {
       const errorObj = JSON.parse(error?.message) as any
-      setMessage(errorObj?.message)
+      setInfoMessage(errorObj?.message)
     } catch (parseError) {
       // If parsing fails, use the raw error message
-      setMessage(error?.message || "An unknown error occurred")
+      setInfoMessage(error?.message || "An unknown error occurred")
     }
   }
 
@@ -187,8 +185,8 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
     } finally {
       mutate(getProjectListUrl)
       setLoading(false)
+      handleCancel()
     }
-    setOpen(false)
   }
 
   return (
@@ -221,7 +219,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
             <CustomTextInput name="panel_main_type" control={panelControl} label="Panel Type" disabled />
           </div>
         </div>
-        <AlertNotification message={message} status={status} />
+        <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
           <Button type="primary" loading={loading} htmlType="submit">
             Save
