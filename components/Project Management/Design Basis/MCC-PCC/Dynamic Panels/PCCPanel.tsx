@@ -139,7 +139,6 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   } = useMCCPCCPanelDropdowns()
 
   const [gaCurrentDensity, setGaCurrentDensity] = useState<any[]>(ga_current_density_options)
-  const [gaPanelMountingHeighht, setGaPanelMountingHeight] = useState<any[]>(ga_panel_mounting_height_options)
 
   const { control, handleSubmit, watch, reset, setValue } = useForm({
     resolver: zodResolver(pccPanelValidationSchema),
@@ -154,23 +153,26 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const incomer_ampere_controlled = watch("incomer_ampere")
   const incomer_type_controlled = watch("incomer_type")
   const incomer_above_type_controlled = watch("incomer_above_type")
-
-  const ga_current_density_controlled = watch("busbar_material_of_construction")
   const ga_panel_mounting_frame_controlled = watch("ga_panel_mounting_frame")
+  const ga_current_density_controlled = watch("busbar_material_of_construction")
+
+  const [gaPanelMoutingHeightOptions, setGaPanelMountingHeightOptions] = useState<any[]>(
+    ga_panel_mounting_height_options
+  )
 
   useEffect(() => {
-    if (ga_panel_mounting_frame_controlled === "Base Frame") {
-      let temp_height = ga_panel_mounting_height_options.filter((item: any) => {
-        return item.name === "200" || item.name === "300" || item.name === "500"
-      })
-      setGaPanelMountingHeight(temp_height)
+    if (ga_panel_mounting_frame_controlled !== "Base Frame") {
+      setValue("ga_panel_mounting_height", "200")
+      let newOptions = ga_panel_mounting_height_options.filter(
+        (item: any) => item.name === "200" || item.name === "300" || item.name === "500"
+      )
+      setGaPanelMountingHeightOptions(newOptions)
     } else {
-      let temp_height = ga_panel_mounting_height_options.filter((item: any) => {
-        return item.name === "75" || item.name === "100"
-      })
-      setGaPanelMountingHeight(temp_height)
+      setValue("ga_panel_mounting_height", "100")
+      let newOptions = ga_panel_mounting_height_options.filter((item: any) => item.name === "100" || item.name === "75")
+      setGaPanelMountingHeightOptions(newOptions)
     }
-  }, [])
+  }, [ga_panel_mounting_frame_controlled, setValue])
 
   useEffect(() => {
     if (ga_current_density_controlled === "Aluminium") {
@@ -466,7 +468,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ga_moc_material"
-              label="MOC Material"
+              label="MOC"
               options={ga_moc_material_options}
               size="small"
             />
@@ -563,7 +565,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_panel_mounting_height"
               label="Height of Base Frame (mm)"
-              options={gaPanelMountingHeighht}
+              options={gaPanelMoutingHeightOptions}
               size="small"
             />
           </div>
@@ -580,7 +582,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomCheckboxInput
               control={control}
               name="is_power_and_bus_separation_section_selected"
-              label="Separation Between Power & Control Busbar"
+              label="Separation Between Power & Control Bus"
             />
           </div>
           <div className="">
@@ -625,7 +627,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ga_power_and_control_busbar_separation"
-              label="Separation between power & control busbar"
+              label="Separation Between Power & Control Busbar"
               options={ga_power_and_control_busbar_separation_options}
               size="small"
             />

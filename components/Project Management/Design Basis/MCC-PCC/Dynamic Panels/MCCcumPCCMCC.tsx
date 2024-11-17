@@ -156,6 +156,41 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
   const incomer_type_controlled = watch("incomer_type")
   const incomer_above_type_controlled = watch("incomer_above_type")
   const current_transformer_coating_Controlled = watch("current_transformer_coating")
+  const ga_current_density_controlled = watch("busbar_material_of_construction")
+  const ga_panel_mounting_frame_controlled = watch("ga_panel_mounting_frame")
+
+  const [gaCurrentDensity, setGaCurrentDensity] = useState<any[]>(ga_current_density_options)
+  const [gaPanelMoutingHeightOptions, setGaPanelMountingHeightOptions] = useState<any[]>(
+    ga_panel_mounting_height_options
+  )
+
+  useEffect(() => {
+    if (ga_panel_mounting_frame_controlled !== "Base Frame") {
+      setValue("ga_panel_mounting_height", "200")
+      let newOptions = ga_panel_mounting_height_options.filter(
+        (item: any) => item.name === "200" || item.name === "300" || item.name === "500"
+      )
+      setGaPanelMountingHeightOptions(newOptions)
+    } else {
+      setValue("ga_panel_mounting_height", "100")
+      let newOptions = ga_panel_mounting_height_options.filter((item: any) => item.name === "100" || item.name === "75")
+      setGaPanelMountingHeightOptions(newOptions)
+    }
+  }, [ga_panel_mounting_frame_controlled, setValue])
+
+  useEffect(() => {
+    if (ga_current_density_controlled === "Aluminium") {
+      setValue("ga_current_density", "0.8 A/Sq. mm")
+      let temp_ga_current_density = ga_current_density_options.filter((item: any) => item.name.startsWith("0.8"))
+      setGaCurrentDensity(temp_ga_current_density)
+    } else {
+      setValue("ga_current_density", "1.0 A/Sq. mm")
+      let temp_ga_current_density = ga_current_density_options.filter(
+        (item: any) => item.name.startsWith("1.0") || item.name.startsWith("1.2")
+      )
+      setGaCurrentDensity(temp_ga_current_density)
+    }
+  }, [ga_current_density_controlled, setValue])
 
   useEffect(() => {
     if (current_transformer_coating_Controlled === "NA") {
@@ -209,6 +244,11 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
       const mccPanelData = await getData(
         `${MCC_CUM_PCC_MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
+
+      if (watch("mi_analog") === watch("mi_digital")) {
+        message.error("Ammeter and Digital cannot be Same")
+        return
+      }
 
       if (mccPanelData && mccPanelData.length > 0) {
         await updateData(`${MCC_CUM_PCC_MCC_PANEL}/${mccPanelData[0].name}`, false, data)
@@ -371,7 +411,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomSingleSelect
               control={control}
               name="current_transformer_number"
-              label="Current Transformer Number"
+              label="Current Transformer Quantity"
               options={current_transformer_number_options}
               size="small"
             />
@@ -459,7 +499,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomSingleSelect
               control={control}
               name="ga_moc_material"
-              label="MOC Material"
+              label="MOC"
               options={ga_moc_material_options}
               size="small"
             />
@@ -539,7 +579,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="ga_current_density"
               label="Current Density"
-              options={ga_current_density_options}
+              options={gaCurrentDensity}
               size="small"
             />
           </div>
@@ -557,7 +597,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="ga_panel_mounting_height"
               label="Height of Base Frame (mm)"
-              options={ga_panel_mounting_height_options}
+              options={gaPanelMoutingHeightOptions}
               size="small"
             />
           </div>
@@ -574,7 +614,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomCheckboxInput
               control={control}
               name="is_power_and_bus_separation_section_selected"
-              label="Separation Between Power & Control Busbar"
+              label="Separation Between Power & Control Bus"
             />
           </div>
           <div className="">
@@ -619,7 +659,7 @@ const MCCcumPCCMCCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             <CustomSingleSelect
               control={control}
               name="ga_power_and_control_busbar_separation"
-              label="Separation between power & control busbar"
+              label="Separation Between Power & Control Busbar"
               options={ga_power_and_control_busbar_separation_options}
               size="small"
             />
