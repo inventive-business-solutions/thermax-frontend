@@ -10,7 +10,7 @@ import {
 import { Button, message, Popconfirm, Table, TableColumnsType, Tooltip } from "antd"
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
-import { deleteData, getData } from "actions/crud-actions"
+import { deleteData } from "actions/crud-actions"
 import { GET_PKG_API, MAIN_PKG_API, SUB_PKG_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"

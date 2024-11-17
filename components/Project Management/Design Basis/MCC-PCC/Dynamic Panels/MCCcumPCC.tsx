@@ -2,8 +2,8 @@
 import { Tabs } from "antd"
 import React, { useEffect, useState } from "react"
 import { useLoading } from "hooks/useLoading"
-import MCCcumPCCMCCPanel from "./MCCcumPCCMCC"
 import MCCcumPCCPLCPanel from "./MCCcumPCCPLC"
+import MCCPanel from "./MCCPanel"
 
 const MCCcumPCC = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
   const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
@@ -17,7 +17,7 @@ const MCCcumPCC = ({ revision_id, panel_id }: { revision_id: string; panel_id: s
     {
       label: "MCC",
       key: "1",
-      children: <MCCcumPCCMCCPanel revision_id={revision_id} panel_id={panel_id} />,
+      children: <MCCPanel revision_id={revision_id} panel_id={panel_id} />,
     },
     {
       label: "PLC",

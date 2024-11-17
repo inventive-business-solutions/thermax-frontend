@@ -5,7 +5,6 @@ import { mutate } from "swr"
 import { deleteData, getData } from "actions/crud-actions"
 import {
   DYNAMIC_DOCUMENT_API,
-  MCC_CUM_PCC_MCC_PANEL,
   MCC_PANEL,
   MCC_PCC_PLC_PANEL_1,
   MCC_PCC_PLC_PANEL_2,
@@ -94,11 +93,11 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
     if (panelType === MCCcumPCC_PANEL_TYPE) {
       // Delete all MCC Cum PCC MCC Panel Data
       const mccCumPccMccPanelData = await getData(
-        `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`
+        `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`
       )
       for (const mccCumPccMccPanel of mccCumPccMccPanelData || []) {
         const mccCumPccMccPanelID = mccCumPccMccPanel.name
-        await deleteData(`${MCC_CUM_PCC_MCC_PANEL}/${mccCumPccMccPanelID}`, false)
+        await deleteData(`${MCC_PANEL}/${mccCumPccMccPanelID}`, false)
       }
 
       // Delete all MCC_PCC_PLC_PANEL_1 Data
