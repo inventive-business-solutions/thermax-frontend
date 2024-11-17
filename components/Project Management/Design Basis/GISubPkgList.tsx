@@ -11,14 +11,24 @@ import {
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 
 export default function GISubPkgList({
-  main_package,
+  mainPkg,
   generalInfoData,
   setGeneralInfoData,
 }: {
-  main_package: any
+  mainPkg: any
   generalInfoData: any
   setGeneralInfoData: any
 }) {
+  const [main_package, setMainPackage] = useState<any>()
+  useEffect(() => {
+    setMainPackage({
+      ...mainPkg,
+      standard: mainPkg?.standard || "IS",
+      zone: mainPkg?.zone || "Zone 2",
+      gas_group: mainPkg?.gas_group || "IIA/IIB",
+      temperature_class: mainPkg?.temperature_class || "T3",
+    })
+  }, [mainPkg])
   const { dropdownOptions: standardOptions } = useDropdownOptions(CLASSIFICATION_AREA_STANDARD_API, "name")
   const { dropdownOptions: zoneOptions } = useDropdownOptions(CLASSIFICATION_AREA_ZONE_API, "name")
   const { dropdownOptions: gasGroupOptions } = useDropdownOptions(CLASSIFICATION_AREA_GAS_GROUP_API, "name")
@@ -33,7 +43,7 @@ export default function GISubPkgList({
     if (!generalInfoData?.pkgList) return // Safeguard if data is undefined or empty
 
     const mainPkgList = generalInfoData.pkgList
-    const selectedMainPkg = mainPkgList.find((pkg: any) => pkg.main_package_name === main_package.main_package_name)
+    const selectedMainPkg = mainPkgList.find((pkg: any) => pkg?.main_package_name === main_package?.main_package_name)
 
     // Check if any main package has a hazardous sub-package selected
     const hasHazardous = selectedMainPkg?.sub_packages?.some((subPkg: any) => {
@@ -48,12 +58,12 @@ export default function GISubPkgList({
     if (hasHazardous !== hasHazardousArea) {
       setHasHazardousArea(hasHazardous)
     }
-  }, [generalInfoData, hasHazardousArea, main_package.main_package_name])
+  }, [generalInfoData, hasHazardousArea, main_package?.main_package_name])
 
   const getSubPkg = (main_package: any, subPkg: any, generalInfoData: any) => {
-    const main_package_name = main_package.main_package_name
+    const main_package_name = main_package?.main_package_name
     const sub_package_name = subPkg.sub_package_name
-    const defaultMainPkg = generalInfoData?.pkgList?.find((pkg: any) => pkg.main_package_name === main_package_name)
+    const defaultMainPkg = generalInfoData?.pkgList?.find((pkg: any) => pkg?.main_package_name === main_package_name)
     const defaultSubPkg = defaultMainPkg?.sub_packages?.find((pkg: any) => pkg.sub_package_name === sub_package_name)
     return defaultSubPkg
   }
@@ -72,10 +82,10 @@ export default function GISubPkgList({
                 })()}
                 onChange={(e) => {
                   const newGeneralInfoData = { ...generalInfoData }
-                  const main_package_name = main_package.main_package_name
+                  const main_package_name = main_package?.main_package_name
                   const sub_package_name = subPkg.sub_package_name
                   const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
-                    (pkg: any) => pkg.main_package_name === main_package_name
+                    (pkg: any) => pkg?.main_package_name === main_package_name
                   )
                   const defaultSubPkg = defaultMainPkg?.sub_packages?.find(
                     (pkg: any) => pkg.sub_package_name === sub_package_name
@@ -97,10 +107,10 @@ export default function GISubPkgList({
                 onChange={
                   ((e: any) => {
                     const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package.main_package_name
+                    const main_package_name = main_package?.main_package_name
                     const sub_package_name = subPkg.sub_package_name
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
-                      (pkg: any) => pkg.main_package_name === main_package_name
+                      (pkg: any) => pkg?.main_package_name === main_package_name
                     )
                     const defaultSubPkg = defaultMainPkg?.sub_packages?.find(
                       (pkg: any) => pkg.sub_package_name === sub_package_name
@@ -132,9 +142,9 @@ export default function GISubPkgList({
                 onChange={
                   ((value: any) => {
                     const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package.main_package_name
+                    const main_package_name = main_package?.main_package_name
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
-                      (pkg: any) => pkg.main_package_name === main_package_name
+                      (pkg: any) => pkg?.main_package_name === main_package_name
                     )
                     defaultMainPkg.standard = value
                     setGeneralInfoData(newGeneralInfoData)
@@ -153,9 +163,9 @@ export default function GISubPkgList({
                 onChange={
                   ((value: any) => {
                     const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package.main_package_name
+                    const main_package_name = main_package?.main_package_name
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
-                      (pkg: any) => pkg.main_package_name === main_package_name
+                      (pkg: any) => pkg?.main_package_name === main_package_name
                     )
                     defaultMainPkg.zone = value
                     setGeneralInfoData(newGeneralInfoData)
@@ -174,9 +184,9 @@ export default function GISubPkgList({
                 onChange={
                   ((value: any) => {
                     const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package.main_package_name
+                    const main_package_name = main_package?.main_package_name
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
-                      (pkg: any) => pkg.main_package_name === main_package_name
+                      (pkg: any) => pkg?.main_package_name === main_package_name
                     )
                     defaultMainPkg.gas_group = value
                     setGeneralInfoData(newGeneralInfoData)
@@ -195,9 +205,9 @@ export default function GISubPkgList({
                 onChange={
                   ((value: any) => {
                     const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package.main_package_name
+                    const main_package_name = main_package?.main_package_name
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
-                      (pkg: any) => pkg.main_package_name === main_package_name
+                      (pkg: any) => pkg?.main_package_name === main_package_name
                     )
                     defaultMainPkg.temperature_class = value
                     setGeneralInfoData(newGeneralInfoData)

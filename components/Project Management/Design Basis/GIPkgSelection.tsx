@@ -23,11 +23,7 @@ export default function GIPkgSelectionTabs({
     key: index.toString(),
     label: main_package?.main_package_name,
     children: (
-      <GISubPkgList
-        main_package={main_package}
-        generalInfoData={generalInfoData}
-        setGeneralInfoData={setGeneralInfoData}
-      />
+      <GISubPkgList mainPkg={main_package} generalInfoData={generalInfoData} setGeneralInfoData={setGeneralInfoData} />
     ),
     disabled: generalInfoData.is_package_selection_enabled === 0,
   }))
