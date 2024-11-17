@@ -18,6 +18,10 @@ export default auth((req) => {
   if (userInfo.division === BTG && !pathname.includes(USER_MANAGEMENT_PAGE)) {
     return NextResponse.redirect(new URL(USER_MANAGEMENT_PAGE, req.url))
   }
+
+  if (!userInfo.is_superuser && pathname.includes(USER_MANAGEMENT_PAGE)) {
+    return NextResponse.redirect(new URL(DASHBOARD_PAGE, req.url))
+  }
   // Define protected routes
   const protectedRoutes = [DASHBOARD_PAGE, PROJECTS_PAGE, PACKAGE_PAGE, COMPLETE_PROJECT_PAGE, USER_MANAGEMENT_PAGE]
 

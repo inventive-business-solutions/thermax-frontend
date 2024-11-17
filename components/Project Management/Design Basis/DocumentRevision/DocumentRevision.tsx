@@ -18,7 +18,6 @@ import {
   DYNAMIC_DOCUMENT_API,
   LAYOUT_EARTHING,
   MAKE_OF_COMPONENT_API,
-  MCC_CUM_PCC_MCC_PANEL,
   MCC_PANEL,
   MCC_PCC_PLC_PANEL_1,
   MCC_PCC_PLC_PANEL_2,
@@ -149,7 +148,7 @@ export default function DocumentRevision() {
 
       if (panelType === MCCcumPCC_PANEL_TYPE) {
         const mccCumPccMccPanelData = await getData(
-          `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
+          `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
         )
 
         const mccPccPlcPanel1Data = await getData(
@@ -313,11 +312,11 @@ export default function DocumentRevision() {
         }
 
         const mccCumPccMccPanelData = await getData(
-          `${MCC_CUM_PCC_MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${old_panel_id}"]]&fields=["*"]`
+          `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${old_panel_id}"]]&fields=["*"]`
         )
 
         for (const mccCumPccMccPanel of mccCumPccMccPanelData || []) {
-          await createData(MCC_CUM_PCC_MCC_PANEL, false, {
+          await createData(MCC_PANEL, false, {
             ...mccCumPccMccPanel,
             revision_id: new_revision_id,
             panel_id: new_panel_id,
