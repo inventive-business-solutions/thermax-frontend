@@ -5,12 +5,12 @@ import { Button, message, Popconfirm, Table, Tooltip } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
-import { createData, deleteData, getData } from "actions/crud-actions"
-import { DELETE_USER_EMAIL_API, NEXT_AUTH_USER_API, THERMAX_USER_API, USER_API } from "configs/api-endpoints"
+import { THERMAX_USER_API, USER_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import { changeNameToKey, mergeLists } from "utils/helpers"
 import UserFormModal from "./UserModal"
+import { deleteUser } from "actions/user-actions"
 
 interface DataType {
   key: string
@@ -46,17 +46,7 @@ export const UserList = ({ userInfo }: any) => {
 
   const handleDelete = async (selectedRowID: string) => {
     try {
-      const thermaxUser = await getData(`${THERMAX_USER_API}/${selectedRowID}`)
-      await deleteData(`${THERMAX_USER_API}/${selectedRowID}`, false)
-      await deleteData(`${NEXT_AUTH_USER_API}/${selectedRowID}`, false)
-      await createData(`${DELETE_USER_EMAIL_API}`, false, {
-        email: thermaxUser?.email,
-        subject: "User Removal Notification - EnIMAX",
-        division_name: thermaxUser?.division,
-        is_superuser: 0,
-        sent_by: "Team BTG",
-      })
-      await deleteData(`${USER_API}/${selectedRowID}`, false)
+      await deleteUser(selectedRowID)
       message.success("User deleted successfully")
     } catch (error) {
       message.error("Error deleting user")

@@ -117,12 +117,12 @@ export default function ProjectFormModal({
       await createData(CABLE_TRAY_LAYOUT, false, { revision_id })
       await createData(LAYOUT_EARTHING, false, { revision_id })
       await createData(APPROVER_EMAIL_NOTIFICATION_API, false, {
-        email: projectData.approver,
-        project_owner: userInfo?.email,
+        approvar_email: projectData.approver,
+        creator_email: userInfo?.email,
         project_oc_number: projectData.project_oc_number,
         project_name: projectData.project_name,
-        sent_by: `Team ${userInfo?.division}`,
-        subject: "EnIMAX - Approver",
+        sent_by: `${userInfo?.first_name} ${userInfo?.last_name}`,
+        subject: "Approver - EnIMAX",
       })
       setOpen(false)
       message.success("Project created successfully")
