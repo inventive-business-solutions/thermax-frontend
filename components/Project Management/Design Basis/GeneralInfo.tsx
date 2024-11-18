@@ -3,7 +3,6 @@ import { Button, Divider, message, Radio, RadioChangeEvent, Select } from "antd"
 import { useParams, useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { createData, getData, updateData } from "actions/crud-actions"
-import { createDropdownOptions } from "components/Package Management/package-management.logic"
 import {
   BATTERY_LIMIT_API,
   DESIGN_BASIS_GENERAL_INFO_API,

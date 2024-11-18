@@ -147,7 +147,6 @@ export const METERING_FOR_FEEDER = `/document/Metering for Feeder`
 // MCC Panel
 export const MCC_PANEL = `/document/MCC Panel`
 export const PCC_PANEL = `/document/PCC Panel`
-export const MCC_CUM_PCC_MCC_PANEL = `/document/MCC Cum PCC MCC Panel`
 export const INCOMER_AMPERE = `/document/SD Incomer Ampere`
 export const INCOMER_POLE = `/document/SD Incomer Pole`
 export const INCOMER_TYPE = `/document/SD Incomer Type`
