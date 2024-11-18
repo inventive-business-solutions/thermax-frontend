@@ -327,8 +327,8 @@ export const mccPanelValidationSchema = zod.object({
     message: "Current Transformer Coating is required",
   }),
   current_transformer_number: zod.string({
-    required_error: "Current Transformer Number is required",
-    message: "Current Transformer Number is required",
+    required_error: "Current Transformer Quantity is required",
+    message: "Current Transformer Quantity is required",
   }),
   alarm_annunciator: zod.string({
     required_error: "Alarm Annunciator is required",
@@ -340,7 +340,7 @@ export const mccPanelValidationSchema = zod.object({
     required_error: "Communication Protocol is required",
     message: "Communication Protocol is required",
   }),
-  ga_moc_material: zod.string({ required_error: "MOC Material is required", message: "MOC Material is required" }),
+  ga_moc_material: zod.string({ required_error: "MOC is required", message: "MOC is required" }),
   ga_moc_thickness_door: zod.string({
     required_error: "MOC Thickness Door is required",
     message: "MOC Thickness Door is required",
@@ -588,7 +588,7 @@ export const pccPanelValidationSchema = zod.object({
     required_error: "Communication Protocol is required",
     message: "Communication Protocol is required",
   }),
-  ga_moc_material: zod.string({ required_error: "MOC Material is required", message: "MOC Material is required" }),
+  ga_moc_material: zod.string({ required_error: "MOC is required", message: "MOC is required" }),
   ga_moc_thickness_door: zod.string({
     required_error: "MOC Thickness Door is required",
     message: "MOC Thickness Door is required",
