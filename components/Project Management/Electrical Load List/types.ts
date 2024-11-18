@@ -1,0 +1,12 @@
+export type ValidColumnType =
+  | "text"
+  | "dropdown"
+  | "checkbox"
+  | "html"
+  | "image"
+  | "numeric"
+  | "hidden"
+  | "autocomplete"
+  | "radio"
+  | "calendar"
+  | "color"

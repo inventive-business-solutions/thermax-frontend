@@ -1,13 +1,15 @@
 import React, { ReactNode, useEffect, useRef } from "react"
 
 interface ModalProps {
-  isOpen: boolean
-  onClose: () => void
-  children: ReactNode
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
+  width?: string;
+  className?: string; // Optional className prop
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
-  const modalRef = useRef<HTMLDivElement>(null)
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, width, className }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
@@ -39,9 +41,17 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black opacity-50">
-      <div ref={modalRef} className="relative w-full rounded-lg bg-white p-8 shadow-lg">
-        <button className="absolute right-4 top-4 text-gray-500 hover:text-gray-700" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div style={{width: '100%'}}>
+        
+      <div
+        ref={modalRef}
+        className={`bg-white p-8 rounded-lg shadow-lg relative ${className || ''}`} // Append additional className here
+      >
+        <button
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          onClick={onClose}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="size-6"
@@ -54,8 +64,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         </button>
         {children}
       </div>
+      </div>
+
     </div>
   )
 }
 
-export default Modal
+export default Modal;

@@ -2489,7 +2489,6 @@ export const mockExcel = [
   ],
 ]
 
-
 export const controlSchemeColumnsForHeating = [
   {
     type: "checkbox",
@@ -2539,7 +2538,7 @@ export const controlSchemeColumnsForHeating = [
     type: "dropdown",
     name: "starter",
     source: ["No", "Yes"],
-    title:  "LPBS - INC./DEC./IND.",
+    title: "LPBS - INC./DEC./IND.",
     width: "160",
   },
   {
@@ -2698,4 +2697,92 @@ export const controlSchemeColumnsForHeating = [
     title: "Control Cable",
     width: "90",
   },
-];
+]
+
+export const lpbsColumns = [
+  {
+    type: "checkbox",
+    title: "Select",
+    width: "80",
+  },
+  {
+    type: "text",
+    name: "typeOdlpbs", 
+    title: "Type of LPBS",
+    width: "110",
+    height: "100",
+  },
+  {
+    type: "text",
+    name: "startbtn",
+    title: "Start Push Button ",
+    width: "100",
+  },
+
+  {
+    type: "text",
+    name: "emergencyStopPushbtn",
+    title: "Emergency Stop Push Button ",
+    width: "225",
+  },
+  {
+    type: "text",
+    name: "startonIndicationLamp",
+    title: "Start / ON Indication Lamp",
+    width: "150",
+  },
+  {
+    type: "text",
+    name: "stopodffIndicationLamp",
+    title: "Stop / OFF Indication Lamp",
+    width: "130",
+  },
+  {
+    type: "text",
+    name: "localRemoteSelectorSwitch",
+    title: "Local/Remote Selector Switch",
+    width: "130",
+  },
+  {
+    type: "text",
+    name: "speedincreaseDecreaseBtn",
+    title: "Speed increase &  decrease Push Button",
+    width: "130",
+  },
+  {
+    type: "text",
+    name: "analogueAmmeter",
+    title: "Analogue Ammeter",
+    width: "130",
+  },
+  {
+    type: "text",
+    name: "analogueRpmMeter",
+    title: "Analogue RPM Meter",
+    width: "90",
+  },
+  {
+    type: "text",
+    name: "LCS",
+    title: "LCS",
+    width: "90",
+  },
+  {
+    type: "text",
+    name: "analogueRpmMeter",
+    title: "LCS (INC/DEC)",
+    width: "100",
+  },
+  {
+    type: "text",
+    name: "analogueRpmMeter",
+    title: "LCS (RPM)",
+    width: "90",
+  },
+  {
+    type: "text",
+    name: "analogueRpmMeter",
+    title: "LCS (AMMETER)",
+    width: "110",
+  },
+]
