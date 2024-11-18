@@ -1175,7 +1175,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   options={plc_hmi_size_options}
                   suffixIcon={
                     <>
-                    <p className="font-semibold text-blue-500">inch</p>
+                      <p className="font-semibold text-blue-500">inch</p>
                     </>
                   }
                   disabled={watch("is_hid_hmi_size_selected") === 0}
@@ -1318,7 +1318,11 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="monitor_size"
                 label="Monitor Size"
                 size="small"
-                suffixIcon={<><p className="font-semibold text-blue-500">inch</p></>}
+                suffixIcon={
+                  <>
+                    <p className="font-semibold text-blue-500">inch</p>
+                  </>
+                }
                 options={eo_monitor_size_options}
               />
             </div>
@@ -1372,7 +1376,13 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </div>
         <div className="flex items-center justify-between gap-4">
           <div className="flex flex-1 items-center gap-2">
-            <CustomTextInput control={control} label="Printer Table" size="small" name="printer_cable" />
+            <CustomTextInput
+              control={control}
+              label="Printer Table"
+              size="small"
+              disabled={watch("is_printer_with_cable_selected") === 0}
+              name="printer_cable"
+            />
           </div>
           <div className="flex flex-1 items-center gap-2">
             <h4 className="text-sm font-semibold text-slate-700">

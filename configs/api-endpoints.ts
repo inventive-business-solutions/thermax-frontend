@@ -155,6 +155,7 @@ export const INCOMER_ABOVE_POLE = `/document/SD Incomer Above Pole`
 export const INCOMER_ABOVE_TYPE = `/document/SD Incomer Above Type`
 export const CURRENT_TRANSFORMER_COATING = `/document/Current Transformer Coating`
 export const CURRENT_TRANSFORMER_NUMBER = `/document/Current Transformer Number`
+export const CONTROL_TRANSFORMER_CONFIGURATION = `/document/Control Transformer Configuration`
 export const ALARM_ANNUNCIATOR = `/document/Alarm Annunciator`
 export const MI_ANALOG = `/document/MI Analog`
 export const MI_DIGITAL = `/document/MI Digital`
