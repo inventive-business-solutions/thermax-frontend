@@ -134,7 +134,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       freezeColumns: 4,
       rowResize: true,
     }),
-    [typedLoadListColumns,loadListData]
+    [typedLoadListColumns, loadListData]
   )
 
   // Initialize main spreadsheet
@@ -496,58 +496,117 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       return item3
     }
   }
-  const calculatePanelSum = (electricalLoadListData: any[]) => {
-    console.log(panelList, "panel sum")
-    console.log(electricalLoadListData, "panel sum electricalLoadListData")
+  // const calculatePanelSum = (electricalLoadListData: any[]) => {
+  //   console.log(panelList, "panel sum")
+  //   console.log(electricalLoadListData, "panel sum electricalLoadListData")
 
-    // Transform panelList if needed
-    let workingPanelList = [...panelList]
-    if (workingPanelList[0] && typeof workingPanelList[0] === "object" && "name" in workingPanelList[0]) {
-      workingPanelList = workingPanelList.map((p: any) => p.name)
-    }
+  //   // Transform panelList if needed
+  //   let workingPanelList = [...panelList]
+  //   if (workingPanelList[0] && typeof workingPanelList[0] === "object" && "name" in workingPanelList[0]) {
+  //     workingPanelList = workingPanelList.map((p: any) => p.name)
+  //   }
+
+  //   // Initialize panelsSumData object
+  //   const panelsSumData: { [key: string]: PanelSumData } = {}
+
+  //   workingPanelList.forEach((panelType: string) => {
+  //     if (panelType) {
+  //       panelsSumData[panelType] = {
+  //         panelName: panelType,
+  //         workingLoadSum: 0,
+  //         standbyLoadSum: 0,
+  //         totalLoadKw: 0,
+  //         totalCurrent: 0,
+  //       }
+  //     }
+  //   })
+
+  //   console.log(panelsSumData, "panel sum")
+
+  //   // Calculate sums for each panel
+  //   electricalLoadListData?.forEach((row: any) => {
+  //     const panelType = row[12]
+
+  //     if (
+  //       panelType && // Ensure panelType is not null or undefined
+  //       panelsSumData[panelType] &&
+  //       !isNaN(parseFloat(row[2])) && // Check if row[2] is a valid number
+  //       !isNaN(parseFloat(row[3])) // Check if row[3] is a valid number
+  //     ) {
+  //       panelsSumData[panelType].workingLoadSum =
+  //         (panelsSumData[panelType].workingLoadSum || 0) + parseFloat(row[2] || "0")
+  //       panelsSumData[panelType].standbyLoadSum =
+  //         (panelsSumData[panelType].standbyLoadSum || 0) + parseFloat(row[3] || "0")
+  //       panelsSumData[panelType].totalLoadKw = panelsSumData[panelType].workingLoadSum
+  //       panelsSumData[panelType].totalCurrent =
+  //         (panelsSumData[panelType].totalCurrent || 0) +
+  //         (row[2] !== "" && row[2] !== "0" ? parseFloat(row[42] || "0") : 0)
+  //     }
+  //   })
+
+  //   // Filter out panels with zero current
+  //   const filteredPanelData = Object.values(panelsSumData).filter((item) => item.totalCurrent !== 0)
+
+  //   console.log(filteredPanelData, "panel sum")
+  //   console.log(panelsSumData, "panel sum")
+
+  //   setPanelsSumData(filteredPanelData)
+  //   return filteredPanelData
+  // }
+
+  const calculatePanelSum = (electricalLoadListData: any) => {
+    // Transform panelList to string array
+    const workingPanelList: string[] = panelList
+      .map((p: any) => (typeof p === "object" && p !== null && "name" in p ? p.name : String(p)))
+      .filter(Boolean)
 
     // Initialize panelsSumData object
-    const panelsSumData: { [key: string]: PanelSumData } = {}
-
-    workingPanelList.forEach((panelType: string) => {
-      if (panelType) {
-        panelsSumData[panelType] = {
+    const panelsSumData: Record<string, PanelSumData> = Object.fromEntries(
+      workingPanelList.map((panelType) => [
+        panelType,
+        {
           panelName: panelType,
           workingLoadSum: 0,
           standbyLoadSum: 0,
           totalLoadKw: 0,
           totalCurrent: 0,
-        }
-      }
-    })
-
-    console.log(panelsSumData, "panel sum")
+        },
+      ])
+    )
 
     // Calculate sums for each panel
-    electricalLoadListData?.forEach((row: any) => {
-      const panelType = row[12]
+    electricalLoadListData.forEach((row: any) => {
+      const panelType = String(row[12] || "")
+      const workingLoad = parseFloat(String(row[2] || "0"))
+      const standbyLoad = parseFloat(String(row[3] || "0"))
+      const current = parseFloat(String(row[42] || "0"))
 
-      if (
-        panelsSumData[panelType] &&
-        typeof parseFloat(row[2]) === "number" &&
-        typeof parseFloat(row[3]) === "number"
-      ) {
-        panelsSumData[panelType].workingLoadSum += parseFloat(row[2] || 0)
-        panelsSumData[panelType].standbyLoadSum += parseFloat(row[3] || 0)
-        panelsSumData[panelType].totalLoadKw = panelsSumData[panelType].workingLoadSum
-        panelsSumData[panelType].totalCurrent += row[2] !== "" || row[2] !== "0" ? parseFloat(row[42]) : 0
+      // Type guard to ensure panel exists
+      if (!panelType || !(panelType in panelsSumData)) {
+        return
+      }
+
+      if (!isNaN(workingLoad) && !isNaN(standbyLoad)) {
+        // TypeScript now knows panel must exist
+        const panel = panelsSumData[panelType] as PanelSumData
+        panel.workingLoadSum += workingLoad
+        panel.standbyLoadSum += standbyLoad
+        panel.totalLoadKw = panel.workingLoadSum
+
+        if (workingLoad !== 0) {
+          panel.totalCurrent += current
+        }
       }
     })
 
     // Filter out panels with zero current
     const filteredPanelData = Object.values(panelsSumData).filter((item) => item.totalCurrent !== 0)
 
-    console.log(filteredPanelData, "panel sum")
-    console.log(panelsSumData, "panel sum")
-
     setPanelsSumData(filteredPanelData)
-    return filteredPanelData
+    // return Object.values(panelsSumData).filter((item) => item.totalCurrent !== 0)
   }
+
+  // export default calculatePanelSum;
 
   const handleValidatePanelLoad = () => {
     if (spreadsheetInstance) {
