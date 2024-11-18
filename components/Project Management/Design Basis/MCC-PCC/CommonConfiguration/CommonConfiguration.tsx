@@ -278,7 +278,7 @@ const CommonConfiguration = ({
       setPBCurrentDensityState(pb_current_options)
       setValue("power_bus_current_density", "1.0 A/Sq. mm")
     }
-  }, [pb_current_density_options, power_bus_material_controlled, setValue])
+  }, [power_bus_material_controlled, setValue])
 
   // earth Bus (Dependency logic)
   useEffect(() => {
@@ -403,7 +403,7 @@ const CommonConfiguration = ({
               size="small"
             />
           </div>
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomSingleSelect
               control={control}
               name="switchgear_combination"
@@ -411,8 +411,8 @@ const CommonConfiguration = ({
               options={switchgear_combination_options || []}
               size="small"
             />
-          </div>
-          {userInfo?.division === WWS_SPG && (
+          </div> */}
+          {(userInfo?.division === WWS_SPG) && (
             <div className="flex-1">
               <CustomSingleSelect
                 control={control}
@@ -627,6 +627,11 @@ const CommonConfiguration = ({
             label="Spare Terminal"
             options={spare_terminal_options || []}
             size="small"
+            suffixIcon={
+              <>
+                <p className="text-base font-semibold text-blue-400">%</p>
+              </>
+            }
           />
         </div>
         <Divider>

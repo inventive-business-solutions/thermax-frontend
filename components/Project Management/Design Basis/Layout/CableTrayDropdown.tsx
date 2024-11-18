@@ -88,7 +88,8 @@ export default function useCableTrayDropdowns() {
   )
   cable_tray_thickness_options = sortDropdownOptions(cable_tray_thickness_options)
   const { dropdownOptions: conduit_moc_options } = useDropdownOptions(`${CONDUIT_MOC}?limit=100&fields=["*"]`, "name")
-  const { dropdownOptions: conduit_size_options } = useDropdownOptions(`${CONDUIT_SIZE}?limit=100&fields=["*"]`, "name")
+  let { dropdownOptions: conduit_size_options } = useDropdownOptions(`${CONDUIT_SIZE}?limit=100&fields=["*"]`, "name")
+  conduit_size_options = sortDropdownOptions(conduit_size_options)
   return {
     no_of_core_options,
     specific_requirement_options,

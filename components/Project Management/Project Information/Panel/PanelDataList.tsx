@@ -15,6 +15,14 @@ import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/co
 import { useGetData } from "hooks/useCRUD"
 import { changeNameToKey, sortDatewise } from "utils/helpers"
 import PanelFormModal from "./PanelFormModal"
+import { ColumnsType } from "antd/es/table"
+
+interface DataType {
+  key: string
+  panel_name?: string
+  panel_sub_type?: string
+  panel_main_type?: string
+}
 
 export default function PanelDataList({ revision_id }: { revision_id: string }) {
   const [open, setOpen] = useState(false)
@@ -25,14 +33,15 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
 
   projectPanelData = sortDatewise(projectPanelData)
 
-  const columns = [
-    { title: "Panel Name", dataIndex: "panel_name", key: "panel_name" },
-    { title: "Panel Type", dataIndex: "panel_sub_type", key: "panel_sub_type" },
-    { title: "Panel Main Type", dataIndex: "panel_main_type", key: "panel_main_type", hidden: true },
+  const columns: ColumnsType<DataType> = [
+    { title: "Panel Name", dataIndex: "panel_name", key: "panel_name", align: "center" },
+    { title: "Panel Type", dataIndex: "panel_sub_type", key: "panel_sub_type", align: "center" },
+    { title: "Panel Main Type", dataIndex: "panel_main_type", key: "panel_main_type", hidden: true, align: "center" },
     {
       title: "Action",
       dataIndex: "action",
       key: "action",
+      align: "center",
       render: (text: string, record: any) => (
         <div className="flex justify-center gap-2">
           <Tooltip placement="top" title="Edit">

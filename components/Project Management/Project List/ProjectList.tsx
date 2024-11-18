@@ -74,18 +74,25 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       title: () => <div className="text-center">Project OC No</div>,
       dataIndex: "project_oc_number",
       key: "project_oc_number",
+      render: (text) => {
+        return <div className="text-center">{text}</div>
+      },
     },
     {
       title: () => <div className="text-center">Client Name</div>,
       dataIndex: "client_name",
+      render: (text) => {
+        return <div className="text-center">{text}</div>
+      },
     },
     {
       title: () => <div className="text-center">Project</div>,
       dataIndex: "project_name",
+      align:"center",
       key: "project_name",
 
       render: (text, record) => (
-        <Link href={`/project/${record.name}`} className="hover:underline" onClick={() => setModalLoading(true)}>
+        <Link href={`/project/${record.name}`} className="text-center hover:underline" onClick={() => setModalLoading(true)}>
           {record.project_name}
         </Link>
       ),
@@ -116,8 +123,11 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       title: () => <div className="text-center">Project Creator</div>,
       dataIndex: "owner",
       key: "owner",
+      render: (text) => {
+        return <div className="text-center">{text}</div>
+      },
     },
-    { title: () => <div className="text-center">Approver</div>, dataIndex: "approver", key: "approver" },
+    { title: () => <div className="text-center">Approver</div>, dataIndex: "approver", key: "approver", align:"center" },
     {
       title: "Action",
       dataIndex: "action",
@@ -223,9 +233,9 @@ export default function ProjectList({ userInfo, isComplete }: any) {
               />
             </div>
           </Tooltip>
-          <Button type="primary" icon={<FolderAddOutlined />} iconPosition={"end"} onClick={handleAddProject}>
+          { !(isComplete === 1) && <Button type="primary" icon={<FolderAddOutlined />} iconPosition={"end"} onClick={handleAddProject}>
             Add Project
-          </Button>
+          </Button>}
         </div>
       </div>
       <div className="shadow-md">
@@ -233,7 +243,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
           columns={columns}
           bordered
           dataSource={changeNameToKey(projectListData)}
-          pagination={{ size: "small", pageSize: 6 }}
+          pagination={{ size: "small", pageSize: 8 }}
           size="small"
         />
       </div>
