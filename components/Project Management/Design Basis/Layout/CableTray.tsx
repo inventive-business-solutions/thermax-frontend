@@ -228,6 +228,7 @@ const CableTray = ({
                 name="color_scheme"
                 label="Color Scheme"
                 options={color_scheme_options}
+                disabled={true}
                 size="small"
               />
             </div>

@@ -132,11 +132,11 @@ const fieldSchema = zod.object({
     required_error: "Hazardous area duty is required",
     message: "Hazardous area duty is required",
   }),
-  safe_area_service_factor: zod.string({
+  safe_area_service_factor: zod.number({
     required_error: "Safe area service factor is required",
     message: "Safe area service factor is required",
   }),
-  hazardous_area_service_factor: zod.string({
+  hazardous_area_service_factor: zod.number({
     required_error: "Hazardous area service factor is required",
     message: "Hazardous area service factor is required",
   }),
@@ -213,14 +213,14 @@ const getDefaultValues = (defaultData: any, projectInfoData: any) => {
     hazardous_area_winding_rtd: defaultData?.hazardous_area_winding_rtd || "110",
     safe_area_bearing_type:
       defaultData?.safe_area_bearing_type ||
-      "1. V-Belt drive application with DE side roller bearing. 2. NDE Side Insulated Bearing for VFD fed Motors.",
+      "1. V-Belt drive application with DE side roller bearing. \n2. NDE Side Insulated Bearing for VFD fed Motors.",
     hazardous_area_bearing_type:
       defaultData?.hazardous_area_bearing_type ||
-      "1. V-Belt drive application with DE side roller bearing. 2. NDE Side Insulated Bearing for VFD fed Motors.",
+      "1. V-Belt drive application with DE side roller bearing. \n2. NDE Side Insulated Bearing for VFD fed Motors.",
     safe_area_duty: defaultData?.safe_area_duty || "S1",
     hazardous_area_duty: defaultData?.hazardous_area_duty || "S1",
-    safe_area_service_factor: defaultData?.safe_area_service_factor || "1",
-    hazardous_area_service_factor: defaultData?.hazardous_area_service_factor || "1",
+    safe_area_service_factor: Number(defaultData?.safe_area_service_factor) || 1,
+    hazardous_area_service_factor: Number(defaultData?.hazardous_area_service_factor) || "1",
     safe_area_cooling_type: defaultData?.safe_area_cooling_type || "TEFC",
     hazardous_area_cooling_type: defaultData?.hazardous_area_cooling_type || "TEFC",
     safe_area_body_material: defaultData?.safe_area_body_material || "Aluminium",
@@ -755,7 +755,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
               placeholder="Select safe area terminal box material"
               label=""
               variant="borderless"
-              disabled={!isHazardous}
+              // disabled={!isHazardous}
             />
           </div>
           <div className="flex-1 border">
@@ -816,7 +816,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
         </div>
         <div className="mt-4 text-end">
           <Button type="primary" htmlType="submit" loading={loading}>
-            Save
+            Save and Next
           </Button>
         </div>
       </form>

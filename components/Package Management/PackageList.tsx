@@ -165,11 +165,13 @@ export default function PackageList() {
 
   // Child table columns (sub-packages)
   const childColumns: TableColumnsType<ExpandedDataType> = [
-    { title: "Sub-Package", dataIndex: "package_name", key: "package_name" },
-    { title: "Area of Classification", dataIndex: "classification_area", key: "classification_area" },
+    { title: "Sub-Package", dataIndex: "package_name", key: "package_name",       align:"center",
+    },
+    { title: "Area of Classification", dataIndex: "classification_area", key: "classification_area",align:"center", },
     {
       title: "Action",
       key: "sub_action",
+      align:"center",
       render: (text, record) => (
         <div>
           <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEditSubPkg(record)} />

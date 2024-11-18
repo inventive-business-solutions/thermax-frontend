@@ -29,16 +29,16 @@ const getDefaultValues = (mccPanelData: any) => {
     is_neural_link_with_disconnect_facility_selected:
       mccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
     is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected || "ON",
-    is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected || 1,
-    is_red_cb_in_service: mccPanelData?.is_red_cb_in_service || 1,
-    is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected || 1,
+    is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected || 0,
+    is_red_cb_in_service: mccPanelData?.is_red_cb_in_service || 0,
+    is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected || 0,
     current_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
     control_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
     control_transformer_configuration: mccPanelData?.current_transformer_coating || "NA",
     current_transformer_number: mccPanelData?.current_transformer_number || "One",
     alarm_annunciator: mccPanelData?.alarm_annunciator || "Applicable",
     mi_analog: mccPanelData?.mi_analog || "Ammeter",
-    mi_digital: mccPanelData?.mi_digital || "Ammeter",
+    mi_digital: mccPanelData?.mi_digital || "Multifunction meter",
     mi_communication_protocol: mccPanelData?.mi_communication_protocol || "Ethernet",
     ga_moc_material: mccPanelData?.ga_moc_material || "Aluminium",
     ga_moc_thickness_door: mccPanelData?.ga_moc_thickness_door || "1.6",
@@ -48,9 +48,9 @@ const getDefaultValues = (mccPanelData: any) => {
     ga_mcc_construction_drawout_type: mccPanelData?.ga_mcc_construction_drawout_type || "Drawout Type",
     ga_mcc_construction_type: mccPanelData?.ga_mcc_construction_type || "Intelligent",
     busbar_material_of_construction: mccPanelData?.busbar_material_of_construction || "Aluminium",
-    ga_current_density: mccPanelData?.ga_current_density || "1 A/Sq. mm",
+    ga_current_density: mccPanelData?.ga_current_density || "0.8 A/Sq. mm",
     ga_panel_mounting_frame: mccPanelData?.ga_panel_mounting_frame || "Base Frame",
-    ga_panel_mounting_height: mccPanelData?.ga_panel_mounting_height || "200",
+    ga_panel_mounting_height: mccPanelData?.ga_panel_mounting_height || "100",
     is_marshalling_section_selected: mccPanelData?.is_marshalling_section_selected || 1,
     is_cable_alley_section_selected: mccPanelData?.is_cable_alley_section_selected || 1,
     is_power_and_bus_separation_section_selected: mccPanelData?.is_power_and_bus_separation_section_selected || 1,
@@ -172,11 +172,19 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const current_transformer_coating_Controlled = watch("current_transformer_coating")
   const ga_current_density_controlled = watch("busbar_material_of_construction")
   const ga_panel_mounting_frame_controlled = watch("ga_panel_mounting_frame")
+  const control_transformer_coating_controlled = watch("control_transformer_coating")
+
 
   const [gaCurrentDensity, setGaCurrentDensity] = useState<any[]>(ga_current_density_options)
   const [gaPanelMoutingHeightOptions, setGaPanelMountingHeightOptions] = useState<any[]>(
     ga_panel_mounting_height_options
   )
+
+  useEffect(() => {
+    if(control_transformer_coating_controlled === "NA") {
+      setValue("control_transformer_configuration", "NA")
+    }
+  }, [control_transformer_coating_controlled, setValue])
 
   useEffect(() => {
     if (ga_panel_mounting_frame_controlled !== "Base Frame") {
@@ -259,11 +267,6 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
         `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
 
-      if (watch("mi_analog") === watch("mi_digital")) {
-        message.error("Ammeter and Digital cannot be Same")
-        return
-      }
-
       if (mccPanelData && mccPanelData.length > 0) {
         await updateData(`${MCC_PANEL}/${mccPanelData[0].name}`, false, data)
         message.success("Panel data updated successfully")
@@ -331,6 +334,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="incomer_above_ampere"
               label="Ampere"
               options={incomer_above_ampere_options}
+              disabled={true}
               size="small"
             />
           </div>
@@ -448,6 +452,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="control_transformer_configuration"
               label="Control Transformer Configuration"
               options={current_transformer_coating_options}
+              disabled={control_transformer_coating_controlled === "NA"}
               size="small"
             />
           </div>

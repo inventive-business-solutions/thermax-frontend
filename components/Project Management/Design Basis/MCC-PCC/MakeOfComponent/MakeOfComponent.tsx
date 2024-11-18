@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, message } from "antd"
+import { Button, Divider, message } from "antd"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"
@@ -185,7 +185,7 @@ const MakeOfComponent = ({
       )
       if (makeOfComponentData && makeOfComponentData.length > 0) {
         await updateData(`${MAKE_OF_COMPONENT_API}/${makeOfComponentData[0].name}`, false, transformedData)
-        message.success("Make of Component updated successfully")
+        message.success("Make of Component Saved Successfully")
       } else {
         message.error("Make of Component not found for this revision")
       }
@@ -199,14 +199,16 @@ const MakeOfComponent = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
-      <h2 className="font-bold text-slate-700">Make of Components</h2>
+      <Divider className="flex items-center justify-center">
+        <h2 className="font-bold text-slate-700">Make of Components</h2>
+      </Divider>
       <div className="flex flex-col justify-between gap-4">
         <div className="flex flex-1 items-center gap-4">
           <div className="w-4/5">
             <CustomMultiSelect
               control={control}
               name="motor"
-              label="Model"
+              label="Motor"
               options={motors_make_options || []}
               size="small"
               disabled={userInfo?.division === HEATING}
@@ -216,9 +218,9 @@ const MakeOfComponent = ({
             <CustomTextInput
               control={control}
               name="preferred_motor"
-              label="Preferred Model"
+              label="Preferred Motor"
               size="small"
-              disabled={userInfo?.division !== HEATING}
+              disabled={userInfo?.division === HEATING}
             />
           </div>
         </div>
@@ -281,7 +283,7 @@ const MakeOfComponent = ({
             <CustomMultiSelect
               control={control}
               name="variable_frequency_speed_drive_vfd_vsd"
-              label="Variable frequency/Speed drive (VFD/VSD)"
+              label="Variable Frequency/Speed Drive (VFD/VSD)"
               options={vfd_vsd_options || []}
               size="small"
             />
