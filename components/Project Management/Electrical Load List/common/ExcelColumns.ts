@@ -1,4 +1,4 @@
-export const LoadListcolumns  = (divisionId: Number)=> {
+export const LoadListcolumns = (divisionId: Number) => {
   return [
     {
       type: "text",
@@ -31,7 +31,6 @@ export const LoadListcolumns  = (divisionId: Number)=> {
       width: "90",
       // readOnly: true,
       readOnly: divisionId == 11 ? false : true,
-
     },
     {
       type: "dropdown",
@@ -51,13 +50,7 @@ export const LoadListcolumns  = (divisionId: Number)=> {
     {
       type: "dropdown",
       name: "phase",
-      source: [
-        "3 Phase",
-        "1 Phase",
-        ...(divisionId == 11
-          ? ["Control Transformer"]
-          : []),
-      ],
+      source: ["3 Phase", "1 Phase", ...(divisionId == 11 ? ["Control Transformer"] : [])],
       title: "PHASE",
       width: "90",
     },
@@ -308,7 +301,7 @@ export const LoadListcolumns  = (divisionId: Number)=> {
     },
   ]
 }
-export const CableSchedulecolumns  = (divisionId: Number)=> {
+export const CableSchedulecolumns = (divisionId: Number) => {
   return [
     {
       type: "text",
@@ -484,7 +477,7 @@ export const CableSchedulecolumns  = (divisionId: Number)=> {
         "120/70",
         "150/70",
         "185/95",
-    ], //this has to be come from backend
+      ], //this has to be come from backend
       title: "FINAL CABLE SIZE",
       width: "120",
     },
@@ -504,8 +497,6 @@ export const CableSchedulecolumns  = (divisionId: Number)=> {
   ]
 }
 
-
-
 export const multicoreCableConfigColumns = [
   {
     type: "checkbox",
@@ -517,7 +508,6 @@ export const multicoreCableConfigColumns = [
     name: "tag",
     title: "Feeder Tag",
     width: "110",
-    height: "100",
   },
   {
     type: "text",
@@ -572,5 +562,58 @@ export const multicoreCableConfigColumns = [
     name: "panelName",
     title: "Panel Name",
     width: "90",
+  },
+]
+export const multicoreCableConfigGroupedColumns = [
+  {
+    type: "text",
+    name: "tag",
+    title: "Group No.",
+    width: "80",
+  },
+  {
+    type: "text",
+    name: "tag",
+    title: "Type Of Cable",
+    width: "100",
+  },
+  {
+    type: "text",
+    name: "tag",
+    title: "Total Number of cores",
+    width: "170",
+  },
+  {
+    type: "text",
+    name: "tag",
+    title: "Total Number of cores with spare",
+    width: "240",
+  },
+  {
+    type: "dropdown",
+    name: "tag",
+    title: "Multicore/Pair Cable Selected",
+    autocomplete: true,
+    source: ["2C", "3C", "4C", "6C", "8C", "12C", "16C", "24C", "30C", "37C", "1P", "2P", "6P", "12P"],
+    multiple: false,
+    width: "220",
+  },
+  {
+    type: "text",
+    name: "tag",
+    title: "No. Of cables",
+    width: "100",
+  },
+  {
+    type: "text",
+    name: "tag",
+    title: "Service Description",
+    width: "220",
+  },
+  {
+    type: "text",
+    name: "panelName",
+    title: "Panel Name",
+    width: "220",
   },
 ]

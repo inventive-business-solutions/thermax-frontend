@@ -192,7 +192,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
         isOpen={isMulticoreModalOpen}
         onClose={() => setIsMulticoreModalOpen(false)}
         typedMulticoreCableColumns={typedMulticoreCableConfigColumns}
-        onConfigurationComplete={(selectedCables) => {
+        onConfigurationComplete={(selectedCables:any) => {
           console.log("Selected cables:", selectedCables)
           // Handle the selected cables
         }}
