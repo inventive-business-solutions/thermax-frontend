@@ -94,7 +94,7 @@ export const LoadListcolumns  = (divisionId: Number)=> {
     {
       type: "dropdown",
       name: "panelList",
-      source: ['Panel 1', 'Panel A', 'Panel B'],
+      source: [],
       title: "PANEL",
       width: "80",
       height: "60",
@@ -308,3 +308,269 @@ export const LoadListcolumns  = (divisionId: Number)=> {
     },
   ]
 }
+export const CableSchedulecolumns  = (divisionId: Number)=> {
+  return [
+    {
+      type: "text",
+      name: "feederTag",
+      title: "FEEDER TAG NO",
+      width: "110",
+      readOnly: true,
+    },
+    {
+      type: "text",
+      name: "serviceDescription",
+      title: "SERVICE DESCRIPTION",
+      width: "225",
+      readOnly: true,
+    },
+
+    {
+      type: "text",
+      name: "working",
+      title: "WORKING LOAD IN KW",
+      width: "100",
+      readOnly: true,
+    },
+    {
+      type: "text",
+      name: "standBy",
+      title: "STAND-BY LOAD IN KW",
+      width: "100",
+      readOnly: true,
+    },
+    {
+      type: "dropdown",
+      name: "starter",
+      source: [],
+      title: "STARTER TYPE",
+      width: "80",
+      readOnly: true,
+    },
+    //value not provided
+    {
+      type: "dropdown",
+      name: "supplyVoltage",
+      source: [],
+      title: "SUPPLY VOLTAGE",
+      width: "80",
+      readOnly: true,
+    },
+    // { type: "text", name: "panel", title: "PANEL", width: "150" },
+    {
+      type: "text",
+      name: "phase",
+      // source: ["", "3 Phase", "1 Phase"],
+      title: "MOTOR RATED CURRENT IN AMP",
+      width: "140",
+    },
+    {
+      type: "dropdown",
+      name: "cableMaterial",
+      source: ["Copper", "Aluminium"],
+      title: "CABLE MATERIAL",
+      width: "100",
+    },
+
+    {
+      type: "text",
+      name: "cosRunning",
+      title: "COSφ (Running)",
+      width: "100",
+    },
+    {
+      type: "text",
+      name: "cosStarting",
+      title: "COSφ (starting)",
+      width: "100",
+    },
+    {
+      type: "text",
+      name: "resistanceMtr",
+      title: "RESISTANCE / Mtr",
+      width: "130",
+    },
+    {
+      type: "text",
+      name: "reactanceMtr",
+      title: "REACTANCE / Mtr",
+      width: "130",
+    },
+    {
+      type: "text",
+      name: "apxLength",
+      title: " APX. LENGTH (m)",
+      width: "100",
+    },
+    {
+      type: "text",
+      name: "vdRunning",
+      title: " V.D (RUNNING)",
+      width: "100",
+    },
+    {
+      type: "text",
+      name: "vdStarting",
+      title: " V.D (STARTING)",
+      width: "100",
+    },
+    {
+      type: "text",
+      name: "percentVdAtRunning",
+      title: " % VD at Running ",
+      width: "100",
+    },
+    {
+      type: "text",
+      name: "percentVdAtStart",
+      title: " % VD at Start ",
+      width: "100",
+    },
+    {
+      type: "text",
+      name: "selectedCableCarryCapacity",
+      title: "Selected cable Current carrying capacity (Amp)",
+      width: "220",
+    },
+    {
+      type: "text",
+      name: "deratingFactor",
+      title: "Derating Factor",
+      width: "200",
+    },
+    {
+      type: "text",
+      name: "finalCurrentCarryCapacity",
+      title: "Final Current carrying capacity (Amp)",
+      width: "160",
+    },
+    {
+      type: "text",
+      name: "noOfRuns",
+      title: "NO. OF RUNS",
+      width: "120",
+    },
+    {
+      type: "dropdown",
+      source: ["2C", "3C", "3.5C", "4C"],
+      name: "noOfCores",
+      title: "NO. OF CORES",
+      width: "120",
+    },
+    {
+      type: "dropdown",
+      name: "cableAsPerFl",
+      source: [
+        "2.5",
+        "2.0",
+        "4.0",
+        "6.0",
+        "10.0",
+        "16.0",
+        "25.0",
+        "35.0",
+        "50.0",
+        "70.0",
+        "95.0",
+        "120.0",
+        "150.0",
+        "185.0",
+        "240.0",
+        "25/16",
+        "35/16",
+        "50/25",
+        "70/35",
+        "95/50",
+        "120/70",
+        "150/70",
+        "185/95",
+    ], //this has to be come from backend
+      title: "FINAL CABLE SIZE",
+      width: "120",
+    },
+    {
+      type: "dropdown",
+      name: "cableAsPerFl",
+      source: ["", "Fail", "Safe"],
+      title: "CABLE SELECTED STATUS",
+      width: "140",
+    },
+    {
+      type: "text",
+      name: "cableAsPerFl",
+      title: "Cable Size As Per Heating Chart",
+      width: "150",
+    },
+  ]
+}
+
+
+
+export const multicoreCableConfigColumns = [
+  {
+    type: "checkbox",
+    title: "Select",
+    width: "80",
+  },
+  {
+    type: "text",
+    name: "tag",
+    title: "Feeder Tag",
+    width: "110",
+    height: "100",
+  },
+  {
+    type: "text",
+    name: "description",
+    title: "SERVICE DESCRIPTION",
+    width: "250",
+  },
+  {
+    type: "text",
+    name: "schemeTitle",
+    title: "SCHEME TITLE",
+    width: "225",
+  },
+  {
+    type: "text",
+    name: "subScheme",
+    title: "SUB SCHEME",
+    width: "90",
+  },
+  {
+    type: "text",
+    name: "breaker",
+    title: "DI Cable",
+    width: "90",
+  },
+  {
+    type: "text",
+    name: "breaker",
+    title: "DO Cable",
+    width: "90",
+  },
+  {
+    type: "text",
+    name: "breaker",
+    title: "AI Cable",
+    width: "90",
+  },
+  {
+    type: "text",
+    name: "breaker",
+    title: "AO Cable",
+    width: "90",
+  },
+  {
+    type: "text",
+    name: "rev",
+    title: "Additional Control Cable",
+    width: "200",
+  },
+  {
+    type: "text",
+    name: "panelName",
+    title: "Panel Name",
+    width: "90",
+  },
+]

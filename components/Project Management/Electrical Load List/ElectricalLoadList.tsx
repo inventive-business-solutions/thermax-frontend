@@ -2,33 +2,26 @@
 
 import { Button } from "antd"
 import React, { useEffect, useState } from "react"
-import CableSchedule from "./CableSchedule"
 import Download from "./Download"
-import ExcelGrid from "./Electrical Load List/LoadListComponent"
 import MotorCanopyList from "./MotorCanopyList"
 import { useLoading } from "hooks/useLoading"
-// import ExcelGrid from "./Electrical Load List/LoadListComponent"
-// import GeneralInfo from "./GeneralInfo"
-// import MotorParameters from "./MotorParameters"
-// import MainMCC from "./MCC-PCC/Main"
-// import MainLayout from "./Layout/Main"
+import LoadList from "./Electrical Load List/LoadListComponent"
+import CableSchedule from "./Cable Schedule/CableScheduleComponent"
 
 const tabData = [
-  { label: "Download", key: "1" },
-  { label: "Electrical Load List", key: "2" },
-  { label: "Cable Schedule", key: "3" },
-  { label: "Motor Canopy List", key: "4" },
+  { label: "Download", key: 1 },
+  { label: "Electrical Load List", key: 2 },
+  { label: "Cable Schedule", key: 3 },
+  { label: "Motor Canopy List", key: 4 },
 ]
 
 const ElectricalLoadList = () => {
-  const [openTab, setOpenTab] = useState<string>("2")
+  const [openTab, setOpenTab] = useState<number>(3)
   const { setLoading: setModalLoading } = useLoading()
 
   useEffect(() => {
     setModalLoading(false)
-
   }, [])
-  
 
   return (
     <>
@@ -59,20 +52,19 @@ const ElectricalLoadList = () => {
             <div className="flex-auto">
               <div className="">
                 {/* Tab Content */}
-                <div className={openTab === "1" ? "block" : "hidden"} id="link1">
+                <div className={openTab === 1 ? "block" : "hidden"} id="link1">
                   <Download />
                 </div>
 
-                <div className={openTab === "2" ? "block" : "hidden"} id="link2">
-                  {/* <p> Electrical Load List</p> */}
-                  <ExcelGrid/>
+                <div className={openTab === 2 ? "block" : "hidden"} id="link2">
+                  <LoadList onNext={() => setOpenTab((tab) => tab + 1)} />{" "}
                 </div>
 
-                <div className={openTab === "3" ? "block" : "hidden"} id="link3">
-                  <CableSchedule />
+                <div className={openTab === 3 ? "block" : "hidden"} id="link3">
+                  <CableSchedule onNext={() => setOpenTab((tab) => tab + 1)} />
                 </div>
 
-                <div className={openTab === "4" ? "block" : "hidden"} id="link4">
+                <div className={openTab === 4 ? "block" : "hidden"} id="link4">
                   <MotorCanopyList />
                 </div>
               </div>
@@ -80,7 +72,6 @@ const ElectricalLoadList = () => {
           </div>
         </div>
       </div>
-   
     </>
   )
 }

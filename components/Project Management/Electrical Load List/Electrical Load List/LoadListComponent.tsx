@@ -19,6 +19,7 @@ import ControlSchemeConfigurator from "./Control Scheme Config/ControlSchemeConf
 import LpbsConfigurator from "./LPBS Config/LpbsConfigurator"
 import ValidatePanelLoad, { PanelData } from "./Validate Panel Load/ValidatePanelLoad"
 import { useGetData } from "hooks/useCRUD"
+import { useProjectPanelData } from "hooks/useProjectPanelData"
 
 // Types definition
 type ValidColumnType =
@@ -41,25 +42,24 @@ interface PanelSumData {
   totalLoadKw: number
   totalCurrent: number
 }
-const ExcelGrid: React.FC = () => {
+
+interface LoadListProps {
+  onNext: () => void
+}
+const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
   const jRef = useRef<HTMLDivElement | null>(null)
   const [controlSchemes, setControlSchemes] = useState<any[]>([])
+  const [loadListData, setLoadListData] = useState<any[]>()
   const [panelList, setPanelList] = useState<string[]>(["Panel 1", "Panel A", "Panel B"])
   const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
   const [isControlSchemeModalOpen, setIsControlSchemeModalOpen] = useState(false)
   const [isLPBSModalOpen, setIsLPBSModalOpen] = useState(false)
   const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([])
   const [isValidatePanelLoadOpen, setIsValidatePanelLoadOpen] = useState(false)
+  const [revisionId, setRevisionId] = useState<string | null>(null)
   const [panelsSumData, setPanelsSumData] = useState<PanelSumData[]>([]) // Memoize the column configurations
-  const revision_id = localStorage.getItem("revision_id") || null
 
-  const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  console.log(revision_id,'projectPanelData revision_id');
-  
-  const { data: projectPanelData } = useGetData(
-    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  )
-  console.log(projectPanelData, "projectPanelData")
+  const { data: projectPanelData, isLoading } = useProjectPanelData(revisionId)
 
   const typedLoadListColumns = useMemo(
     () =>
@@ -105,22 +105,22 @@ const ExcelGrid: React.FC = () => {
 
     if (jRef.current) {
       const instance = jspreadsheet(jRef.current, {
-        ...options,
+        ...loadListOptions,
         columns: updatedColumns,
       })
       setSpreadsheetInstance(instance)
     }
   }
   const downloadCurrentData = () => {
-    // spreadsheetInstance?.options.csvFileName = "Motar Detail Data";
-    // spreadsheetInstance?.options.wordWrap = true;
+    // spreadsheetInstance?.loadListOptions.csvFileName = "Motar Detail Data";
+    // spreadsheetInstance?.loadListOptions.wordWrap = true;
     spreadsheetInstance?.download()
   }
 
-  // Memoize the options
-  const options = useMemo(
+  // Memoize the loadListOptions
+  const loadListOptions = useMemo(
     () => ({
-      data: mockExcel,
+      data: loadListData,
       columns: typedLoadListColumns,
       columnSorting: true,
       columnDrag: true,
@@ -134,24 +134,29 @@ const ExcelGrid: React.FC = () => {
       freezeColumns: 4,
       rowResize: true,
     }),
-    [typedLoadListColumns]
+    [typedLoadListColumns,loadListData]
   )
 
   // Initialize main spreadsheet
 
   useEffect(() => {
-    // if(revision_id){
-
-    //   // let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
-    //   console.log(projectPanelData,'projectPanelData');
-    // }
+    if (typeof window !== "undefined") {
+      const storedRevisionId = localStorage.getItem("revision_id")
+      setRevisionId(storedRevisionId)
+    }
 
     let instance: JspreadsheetInstance | null = null
     let selectedItems: string[] = []
     const storedSchemes = localStorage.getItem("selected_control_scheme")
+    const savedLoadList = localStorage.getItem("loadList")
 
     if (storedSchemes) {
       selectedItems = JSON.parse(storedSchemes) as string[]
+    }
+    if (savedLoadList) {
+      // selectedItems = JSON.parse(savedLoadList) as string[]
+      console.log(JSON.parse(savedLoadList) as string[], "load list")
+      setLoadListData(JSON.parse(savedLoadList) as string[])
     }
 
     typedLoadListColumns.forEach((column) => {
@@ -161,7 +166,7 @@ const ExcelGrid: React.FC = () => {
     })
 
     if (jRef.current && !spreadsheetInstance) {
-      instance = jspreadsheet(jRef.current, options)
+      instance = jspreadsheet(jRef.current, loadListOptions)
       setSpreadsheetInstance(instance)
     }
 
@@ -171,6 +176,39 @@ const ExcelGrid: React.FC = () => {
       }
     }
   }, [])
+  useEffect(() => {
+    if (loadListData?.length) {
+      updateLoadList()
+    }
+  }, [loadListData])
+
+  const updateLoadList = () => {
+    if (spreadsheetInstance) {
+      spreadsheetInstance.destroy()
+    }
+
+    if (jRef.current) {
+      const instance = jspreadsheet(jRef.current, {
+        ...loadListOptions,
+        // columns: updatedColumns,
+      })
+      setSpreadsheetInstance(instance)
+    }
+  }
+  //update panel dropdown
+  useEffect(() => {
+    if (projectPanelData && !isLoading) {
+      const updatedColumns = typedLoadListColumns.map((column) => {
+        if (column.name === "panelList") {
+          return { ...column, source: projectPanelData.map((item: any) => item.panel_name) }
+        }
+        return column
+      })
+
+      updateSpreadsheetColumns(updatedColumns)
+      setPanelList(projectPanelData.map((item: any) => item.panel_name))
+    }
+  }, [projectPanelData])
 
   // Fetch control schemes
   useEffect(() => {
@@ -305,28 +343,35 @@ const ExcelGrid: React.FC = () => {
 
   const handleControlSchemeComplete = (selectedSchemes: string[]) => {
     // Update main spreadsheet columns
-    const updatedColumns = typedLoadListColumns.map((column) => {
+    // const updatedColumns = typedLoadListColumns.map((column) => {
+    //   if (column.name === "controlScheme") {
+    //     return {
+    //       ...column,
+    //       source: selectedSchemes,
+    //     }
+    //   }
+    //   return column
+    // })
+
+    typedLoadListColumns.forEach((column) => {
       if (column.name === "controlScheme") {
-        return {
-          ...column,
-          source: selectedSchemes,
-        }
+        column.source = selectedSchemes
       }
-      return column
     })
+    updateLoadList()
 
     // Update main spreadsheet with new columns
-    if (spreadsheetInstance) {
-      spreadsheetInstance.destroy()
-    }
+    // if (spreadsheetInstance) {
+    //   spreadsheetInstance.destroy()
+    // }
 
-    if (jRef.current) {
-      const instance = jspreadsheet(jRef.current, {
-        ...options,
-        columns: updatedColumns,
-      })
-      setSpreadsheetInstance(instance)
-    }
+    // if (jRef.current) {
+    //   const instance = jspreadsheet(jRef.current, {
+    //     ...loadListOptions,
+    //     columns: updatedColumns,
+    //   })
+    //   setSpreadsheetInstance(instance)
+    // }
   }
 
   const handleLoadListSave = () => {
@@ -337,6 +382,7 @@ const ExcelGrid: React.FC = () => {
       return message.error("Feeder tag no. can not be repeated")
     }
     console.log(spreadsheetInstance?.getData(), "all load list data")
+    localStorage.setItem("loadList", JSON.stringify(spreadsheetInstance?.getData()))
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -504,22 +550,6 @@ const ExcelGrid: React.FC = () => {
   }
 
   const handleValidatePanelLoad = () => {
-    // Calculate panel load data here
-    // const calculatedPanelData = [
-    //   {
-    //     panelName: "Panel 1",
-    //     totalLoadKw: 100,
-    //     totalCurrent: 42.5,
-    //   },
-    //   {
-    //     panelName: "Panel 2",
-    //     totalLoadKw: 150,
-    //     totalCurrent: 63.8,
-    //   },
-    //   // ... more panels
-    // ];
-
-    // setPanelsSumData(calculatedPanelData);
     if (spreadsheetInstance) {
       const data = spreadsheetInstance.getData()
       console.log(data, "load list data")
@@ -538,7 +568,6 @@ const ExcelGrid: React.FC = () => {
           LPBS configurator
         </Button>
 
-        {/* <button className="rounded-full bg-blue-500 px-6 py-3 text-white hover:bg-blue-600"></button> */}
         {/* <button
           className="rounded-full bg-blue-500 px-6 py-3 text-white hover:bg-blue-600"
           onClick={() => setIsLPBSModalOpen(true)}
@@ -546,7 +575,7 @@ const ExcelGrid: React.FC = () => {
           LPBS configurator
         </button> */}
       </div>
-      <div className="overflow-auto">
+      <div className="m-2 flex flex-col overflow-auto">
         <div ref={jRef} />
       </div>
 
@@ -598,13 +627,15 @@ const ExcelGrid: React.FC = () => {
           Download Current Data
         </Button>
         <Button type="primary">Download Load List Template</Button>
-        <Button type="primary">Next</Button>
         <Button type="primary" onClick={handleLoadListSave}>
           Save
+        </Button>
+        <Button type="primary" onClick={onNext}>
+          Next
         </Button>
       </div>
     </>
   )
 }
 
-export default ExcelGrid
+export default LoadList
