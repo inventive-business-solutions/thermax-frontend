@@ -147,7 +147,6 @@ export const METERING_FOR_FEEDER = `/document/Metering for Feeder`
 // MCC Panel
 export const MCC_PANEL = `/document/MCC Panel`
 export const PCC_PANEL = `/document/PCC Panel`
-export const MCC_CUM_PCC_MCC_PANEL = `/document/MCC Cum PCC MCC Panel`
 export const INCOMER_AMPERE = `/document/SD Incomer Ampere`
 export const INCOMER_POLE = `/document/SD Incomer Pole`
 export const INCOMER_TYPE = `/document/SD Incomer Type`
@@ -279,3 +278,5 @@ export const HEATING_CONTROL_SCHEMES_URI = "/document/Heating Control System Ind
 export const DELETE_USER_EMAIL_API = "/method/thermax_extended_user.trigger_delete_user"
 export const APPROVER_EMAIL_NOTIFICATION_API = "/method/project.trigger_approver_notification_mail"
 export const REVIEW_SUBMISSION_EMAIL_API = "/method/db_revision.trigger_review_submission_mail"
+export const REVIEW_RESUBMISSION_EMAIL_API = "/method/db_revision.trigger_review_resubmission_mail"
+export const REVIEW_APPROVAL_EMAIL_API = "/method/db_revision.trigger_review_approval_mail"

@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef } from "react"
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,32 +13,32 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, width, classNa
 
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
+      if (e.key === "Escape") {
+        onClose()
       }
-    };
+    }
 
     const handleClickOutside = (e: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        onClose();
+        onClose()
       }
-    };
+    }
 
     if (isOpen) {
-      document.addEventListener('keydown', handleKeydown);
-      document.addEventListener('click', handleClickOutside);
+      document.addEventListener("keydown", handleKeydown)
+      document.addEventListener("click", handleClickOutside)
     } else {
-      document.removeEventListener('keydown', handleKeydown);
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("keydown", handleKeydown)
+      document.removeEventListener("click", handleClickOutside)
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeydown);
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isOpen, onClose]);
+      document.removeEventListener("keydown", handleKeydown)
+      document.removeEventListener("click", handleClickOutside)
+    }
+  }, [isOpen, onClose])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -59,12 +59,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, width, classNa
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
         {children}
@@ -72,7 +67,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, width, classNa
       </div>
 
     </div>
-  );
-};
+  )
+}
 
 export default Modal;

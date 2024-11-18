@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Modal } from "antd"
+import { Button, message, Modal } from "antd"
 import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
@@ -13,7 +13,6 @@ import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import {
   DYNAMIC_DOCUMENT_API,
   getProjectListUrl,
-  MCC_CUM_PCC_MCC_PANEL,
   MCC_PANEL,
   MCC_PCC_PLC_PANEL_1,
   MCC_PCC_PLC_PANEL_2,
@@ -23,18 +22,47 @@ import {
 } from "configs/api-endpoints"
 import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { useGetData } from "hooks/useCRUD"
 
-const PanelFormValidationSchema = zod.object({
-  panel_name: zod
-    .string({ required_error: "Panel name is required", message: "Panel name is required" })
-    .min(1, { message: "Panel name is required" }),
-  panel_sub_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
-    message: "Panel type is required",
-  }),
-  panel_main_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
-    message: "Panel type is required",
-  }),
-})
+function getPanelFormModalValidationSchema(project_panel_name: any[], editMode: boolean) {
+  return zod.object({
+    panel_name: zod
+      .string({ required_error: "Panel name is required", message: "Panel name is required" })
+      .min(1, { message: "Panel name is required" })
+      .refine(
+        (value) => {
+          return editMode || !project_panel_name.includes(value)
+        },
+        { message: "Panel Name you entered is already in use. Please enter a unique Panel Name." }
+      ),
+    panel_sub_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
+      message: "Panel type is required",
+    }),
+    panel_main_type: zod
+      .string({ required_error: "Panel type is required", message: "Panel type is required" })
+      .min(1, {
+        message: "Panel type is required",
+      }),
+  })
+}
+
+// const PanelFormValidationSchema = zod.object({
+//   panel_name: zod
+//     .string({ required_error: "Panel name is required", message: "Panel name is required" })
+//     .min(1, { message: "Panel name is required" })
+//     .refine(
+//       (value) => {
+//         return editMode || !project_oc_numbers.includes(value)
+//       },
+//       { message: "Project OC number already exists" }
+//     ),
+//   panel_sub_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
+//     message: "Panel type is required",
+//   }),
+//   panel_main_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
+//     message: "Panel type is required",
+//   }),
+// })
 
 const getDefaultValues = (editMode: boolean, values: any) => {
   return {
@@ -45,10 +73,17 @@ const getDefaultValues = (editMode: boolean, values: any) => {
 }
 
 export default function PanelFormModal({ open, setOpen, editMode, values, getProjectPanelUrl, revisionId }: any) {
-  const [message, setMessage] = useState("")
+  const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
   const { dropdownOptions: panelTypeOptions } = useDropdownOptions(`${PANEL_TYPE_API}?fields=["*"]`, "panel_name")
+
+  const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revisionId}"]]`
+  let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
+
+  const panel_data_list = projectPanelData?.map((project: any) => project.panel_name)
+
+  const PanelFormValidationSchema = getPanelFormModalValidationSchema(panel_data_list, editMode)
   const {
     control: panelControl,
     handleSubmit: panelHandleSubmit,
@@ -68,7 +103,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
   const handleCancel = () => {
     setOpen(false)
     panelReset(getDefaultValues(false, values))
-    setMessage("")
+    setInfoMessage("")
     setStatus("")
   }
 
@@ -100,12 +135,12 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
         await createData(PCC_PANEL, false, panelCreateData)
       }
       if (panelType === MCCcumPCC_PANEL_TYPE) {
-        await createData(MCC_CUM_PCC_MCC_PANEL, false, panelCreateData)
+        await createData(MCC_PANEL, false, panelCreateData)
         await createData(MCC_PCC_PLC_PANEL_1, false, panelCreateData)
         await createData(MCC_PCC_PLC_PANEL_2, false, panelCreateData)
       }
       setStatus("success")
-      setMessage("New panel created successfully")
+      setInfoMessage("New panel created successfully")
     } catch (error: any) {
       throw error
     } finally {
@@ -116,8 +151,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
   const handleUpdatePanel = async (panelData: any) => {
     try {
       await updateData(`${PROJECT_PANEL_API}/${values.name}`, false, panelData)
-      setStatus("success")
-      // setMessage("Panel information updated successfully")
+      message.success("Panel updated successfully")
     } catch (error: any) {
       throw error
     } finally {
@@ -130,10 +164,10 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
     setStatus("error")
     try {
       const errorObj = JSON.parse(error?.message) as any
-      setMessage(errorObj?.message)
+      setInfoMessage(errorObj?.message)
     } catch (parseError) {
       // If parsing fails, use the raw error message
-      setMessage(error?.message || "An unknown error occurred")
+      setInfoMessage(error?.message || "An unknown error occurred")
     }
   }
 
@@ -151,8 +185,8 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
     } finally {
       mutate(getProjectListUrl)
       setLoading(false)
+      handleCancel()
     }
-    setOpen(false)
   }
 
   return (
@@ -162,7 +196,13 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
       onCancel={handleCancel}
       footer={null}
     >
-      <form onSubmit={panelHandleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <form
+        onSubmit={(event) => {
+          event.stopPropagation()
+          panelHandleSubmit(onSubmit)(event)
+        }}
+        className="flex flex-col gap-2"
+      >
         <div className="flex flex-col gap-2">
           <div className="flex-1">
             <CustomTextInput name="panel_name" control={panelControl} label="Panel Name" type="text" />
@@ -179,9 +219,9 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
             <CustomTextInput name="panel_main_type" control={panelControl} label="Panel Type" disabled />
           </div>
         </div>
-        <AlertNotification message={message} status={status} />
+        <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button type="primary" loading={loading} htmlType="submit">
             Save
           </Button>
         </div>

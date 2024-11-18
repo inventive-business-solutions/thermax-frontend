@@ -1,7 +1,6 @@
 "use client"
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { FloatButton } from "antd"
-import Link from "next/link"
 import { useParams, usePathname, useRouter } from "next/navigation"
 import React from "react"
 import { useLoading } from "hooks/useLoading"
@@ -12,7 +11,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const params = useParams()
   const { setLoading: setModalLoading } = useLoading()
   const pathname = usePathname()
-  console.log("pathname", pathname)
   const project_information_path = `/project/${params.project_id}/project-information`
   const design_basis_path = `/project/${params.project_id}/design-basis`
   const electrical_load_list_path = `/project/${params.project_id}/electrical-load-list`
@@ -27,73 +25,76 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
   return (
     <>
-      <div className="flex flex-col gap-2">
-        <nav className="flex gap-2">
-          <div
-            className={clsx(
-              "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-              pathname.includes(project_information_path) ? "bg-green-500" : "bg-blue-700"
-            )}
-            onClick={() => handleTabChange(project_information_path)}
-          >
-            Project Information
-          </div>
-          <div
-            className={clsx(
-              "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-              pathname.includes(design_basis_path) ? "bg-green-500" : "bg-blue-700"
-            )}
-            onClick={() => handleTabChange(design_basis_path)}
-          >
-            Design Basis
-          </div>
-          <div
-            className={clsx(
-              "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-              pathname.includes(electrical_load_list_path) ? "bg-green-500" : "bg-blue-700"
-            )}
-            onClick={() => handleTabChange(electrical_load_list_path)}
-          >
-            Electrical Load List
-          </div>
-          <div
-            className={clsx(
-              "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-              pathname.includes(sld_path) ? "bg-green-500" : "bg-blue-700"
-            )}
-            onClick={() => handleTabChange(sld_path)}
-          >
-            SLD
-          </div>
-          <div
-            className={clsx(
-              "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-              pathname.includes(cable_tray_path) ? "bg-green-500" : "bg-blue-700"
-            )}
-            onClick={() => handleTabChange(cable_tray_path)}
-          >
-            Cable Tray
-          </div>
-          <div
-            className={clsx(
-              "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-              pathname.includes(earthing_path) ? "bg-green-500" : "bg-blue-700"
-            )}
-            onClick={() => handleTabChange(earthing_path)}
-          >
-            Earthing
-          </div>
-          <div
-            className={clsx(
-              "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-              pathname.includes(lighting_path) ? "bg-green-500" : "bg-blue-700"
-            )}
-            onClick={() => handleTabChange(lighting_path)}
-          >
-            Lighting
-          </div>
-        </nav>
-        <main>{children}</main>
+      <div className="flex h-full flex-col gap-4">
+        <div className="sticky top-0 z-10 w-full bg-white">
+          <nav className="flex gap-2 p-2 shadow-md">
+            <div
+              className={clsx(
+                "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
+                pathname.includes(project_information_path) ? "bg-green-700" : "bg-blue-700"
+              )}
+              onClick={() => handleTabChange(project_information_path)}
+            >
+              Project Information
+            </div>
+            <div
+              className={clsx(
+                "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
+                pathname.includes(design_basis_path) ? "bg-green-700" : "bg-blue-700"
+              )}
+              onClick={() => handleTabChange(design_basis_path)}
+            >
+              Design Basis
+            </div>
+            <div
+              className={clsx(
+                "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
+                pathname.includes(electrical_load_list_path) ? "bg-green-700" : "bg-blue-700"
+              )}
+              onClick={() => handleTabChange(electrical_load_list_path)}
+            >
+              Electrical Load List
+            </div>
+            <div
+              className={clsx(
+                "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
+                pathname.includes(sld_path) ? "bg-green-700" : "bg-blue-700"
+              )}
+              onClick={() => handleTabChange(sld_path)}
+            >
+              SLD
+            </div>
+            <div
+              className={clsx(
+                "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
+                pathname.includes(cable_tray_path) ? "bg-green-700" : "bg-blue-700"
+              )}
+              onClick={() => handleTabChange(cable_tray_path)}
+            >
+              Cable Tray
+            </div>
+            <div
+              className={clsx(
+                "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
+                pathname.includes(earthing_path) ? "bg-green-700" : "bg-blue-700"
+              )}
+              onClick={() => handleTabChange(earthing_path)}
+            >
+              Earthing
+            </div>
+            <div
+              className={clsx(
+                "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
+                pathname.includes(lighting_path) ? "bg-green-700" : "bg-blue-700"
+              )}
+              onClick={() => handleTabChange(lighting_path)}
+            >
+              Lighting
+            </div>
+          </nav>
+        </div>
+
+        <main className="flex-1 overflow-y-auto pb-4">{children}</main>
         <FloatButton icon={<QuestionCircleOutlined />} />
       </div>
     </>

@@ -37,16 +37,18 @@ import {
 } from "configs/api-endpoints"
 
 import { useDropdownOptions } from "hooks/useDropdownOptions"
-import { moveNAtoEnd } from "utils/helpers"
+import { moveNAtoEnd, sortDropdownOptions } from "utils/helpers"
 
 export default function useMCCPCCPanelDropdowns() {
-  const { dropdownOptions: incomer_ampere_options } = useDropdownOptions(`${INCOMER_AMPERE}?fields=["*"]`, "name")
+  let { dropdownOptions: incomer_ampere_options } = useDropdownOptions(`${INCOMER_AMPERE}?fields=["*"]`, "name")
+  incomer_ampere_options = sortDropdownOptions(incomer_ampere_options)
   const { dropdownOptions: incomer_pole_options } = useDropdownOptions(`${INCOMER_POLE}?fields=["*"]`, "name")
   const { dropdownOptions: incomer_type_options } = useDropdownOptions(`${INCOMER_TYPE}?fields=["*"]`, "name")
-  const { dropdownOptions: incomer_above_ampere_options } = useDropdownOptions(
+  let { dropdownOptions: incomer_above_ampere_options } = useDropdownOptions(
     `${INCOMER_ABOVE_AMPERE}?fields=["*"]`,
     "name"
   )
+  incomer_above_ampere_options = sortDropdownOptions(incomer_above_ampere_options)
   const { dropdownOptions: incomer_above_pole_options } = useDropdownOptions(
     `${INCOMER_ABOVE_POLE}?fields=["*"]`,
     "name"

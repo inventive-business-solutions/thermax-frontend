@@ -10,8 +10,8 @@ import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import { MCC_PANEL } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
-import { mccPanelValidationSchema } from "./schemas"
-import { HEATING } from "configs/constants"
+import { mccPanelValidationSchema } from "../schemas"
+import { HEATING, WWS_SPG } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 
 const getDefaultValues = (mccPanelData: any) => {
@@ -33,6 +33,8 @@ const getDefaultValues = (mccPanelData: any) => {
     is_red_cb_in_service: mccPanelData?.is_red_cb_in_service || 1,
     is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected || 1,
     current_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
+    control_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
+    control_transformer_configuration: mccPanelData?.current_transformer_coating || "NA",
     current_transformer_number: mccPanelData?.current_transformer_number || "One",
     alarm_annunciator: mccPanelData?.alarm_annunciator || "Applicable",
     mi_analog: mccPanelData?.mi_analog || "Ammeter",
@@ -94,6 +96,12 @@ const getDefaultValues = (mccPanelData: any) => {
     heater_output: mccPanelData?.heater_output || "NA",
     heater_connected_load: mccPanelData?.heater_connected_load || "NA",
     heater_temperature: mccPanelData?.heater_temperature || "NA",
+    spg_name_plate_unit_name: mccPanelData?.spg_name_plate_unit_name || "NA",
+    spg_name_plate_capacity: mccPanelData?.spg_name_plate_capacity || "NA",
+    spg_name_plate_manufacturing_year: mccPanelData?.spg_name_plate_manufacturing_year || "NA",
+    spg_name_plate_weight: mccPanelData?.spg_name_plate_weight || "NA",
+    spg_name_plate_oc_number: mccPanelData?.spg_name_plate_oc_number || "NA",
+    spg_name_plate_part_code: mccPanelData?.spg_name_plate_part_code || "NA",
   }
 }
 
@@ -158,6 +166,41 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     reset(getDefaultValues(mccPanelData?.[0]))
   }, [mccPanelData, reset])
 
+  const incomer_ampere_controlled = watch("incomer_ampere")
+  const incomer_type_controlled = watch("incomer_type")
+  const incomer_above_type_controlled = watch("incomer_above_type")
+
+  // to control the checkboxes
+
+  useEffect(() => {
+    if (
+      incomer_type_controlled === "EDO ACB" ||
+      incomer_type_controlled === "MDO ACB" ||
+      incomer_type_controlled === "EF ACB" ||
+      incomer_type_controlled === "MF ACB" ||
+      incomer_above_type_controlled === "EDO ACB" ||
+      incomer_above_type_controlled === "MDO ACB" ||
+      incomer_above_type_controlled === "EF ACB" ||
+      incomer_above_type_controlled === "MF ACB"
+    ) {
+      setValue("is_blue_cb_spring_charge_selected", 1)
+      setValue("is_red_cb_in_service", 1)
+      setValue("is_white_healthy_trip_circuit_selected", 1)
+    }
+  }, [incomer_type_controlled, incomer_above_type_controlled, setValue])
+
+  useEffect(() => {
+    if (incomer_ampere_controlled === "1000") {
+      setValue("incomer_above_ampere", "1001")
+    } else if (incomer_ampere_controlled === "400") {
+      setValue("incomer_above_ampere", "401")
+    } else if (incomer_ampere_controlled === "630") {
+      setValue("incomer_above_ampere", "631")
+    } else {
+      setValue("incomer_above_ampere", "801")
+    }
+  }, [incomer_ampere_controlled, setValue])
+
   const handleError = (error: any) => {
     try {
       const errorObj = JSON.parse(error?.message) as any
@@ -184,7 +227,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
         message.success("Panel data created successfully")
       }
     } catch (error) {
-      console.log("error: ", error)
+      console.error("error: ", error)
       handleError(error)
     } finally {
       setLoading(false)
@@ -339,6 +382,26 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               options={current_transformer_number_options}
               size="small"
               disabled={currentTransformerCoating === "NA"}
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_coating"
+              label="Control Transformer Coating"
+              options={current_transformer_coating_options}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_configuration"
+              label="Control Transformer Configuration"
+              options={current_transformer_coating_options}
+              size="small"
             />
           </div>
           <div className="flex-1">
@@ -703,7 +766,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_power_supply_vac"
-                  label="Power Supply (VAC)"
+                  label="Power Supply"
+                  addonAfter={"VAC"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -711,7 +775,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_power_supply_phase"
-                  label="Power Supply (Phase)"
+                  label="Power Supply"
+                  addonAfter={"Phase"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -719,7 +784,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_power_supply_frequency"
-                  label="Power Supply (Hz)"
+                  label="Power Supply"
+                  addonAfter={"Hz"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -729,7 +795,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_control_supply_vac"
-                  label="Control Supply (VAC)"
+                  label="Control Supply"
+                  addonAfter={"VAC"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -737,7 +804,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_control_supply_phase"
-                  label="Control Supply (Phase)"
+                  label="Control Supply"
+                  addonAfter={"Phase"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -745,7 +813,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="boiler_control_supply_frequency"
-                  label="Control Supply (Hz)"
+                  label="Control Supply"
+                  addonAfter={"Hz"}
                   disabled={watch("is_punching_details_for_boiler_selected") === 0}
                 />
               </div>
@@ -834,7 +903,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_power_supply_vac"
-                  label="Power Supply (VAC)"
+                  label="Power Supply"
+                  addonAfter={"VAC"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -842,7 +912,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_power_supply_phase"
-                  label="Power Supply (Phase)"
+                  label="Power Supply"
+                  addonAfter={"Phase"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -850,7 +921,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_power_supply_frequency"
-                  label="Power Supply (Hz)"
+                  label="Power Supply"
+                  addonAfter={"Hz"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -860,7 +932,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_control_supply_vac"
-                  label="Control Supply (VAC)"
+                  label="Control Supply"
+                  addonAfter={"VAC"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -868,7 +941,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_control_supply_phase"
-                  label="Control Supply (Phase)"
+                  label="Control Supply"
+                  addonAfter={"Phase"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -876,7 +950,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_control_supply_frequency"
-                  label="Control Supply (Hz)"
+                  label="Control Supply"
+                  addonAfter={"Hz"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
               </div>
@@ -917,6 +992,39 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   addonAfter={"Deg C"}
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
+              </div>
+            </div>
+          </>
+        )}
+        {userInfo?.division !== WWS_SPG && (
+          <>
+            <Divider>
+              <span className="font-bold text-slate-700">Name Plate Details For SPG</span>
+            </Divider>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_unit_name" label="Unit Name" />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_capacity" label="Capacity" />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_manufacturing_year"
+                  label="Year of Manufacturing"
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_weight" label="Weight" />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_oc_number" label="OC No." />
+              </div>
+              <div className="flex-1">
+                <CustomTextInput control={control} name="spg_name_plate_part_code" label="Part Code" />
               </div>
             </div>
           </>

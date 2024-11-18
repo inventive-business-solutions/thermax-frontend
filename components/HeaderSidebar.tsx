@@ -33,6 +33,7 @@ export default function HeaderSidebar() {
     last_name: string
     first_name: string
     division: keyof typeof TagColors
+    is_superuser: boolean
   } = useCurrentUser()
   const router = useRouter()
   const { setLoading } = useLoading()
@@ -43,7 +44,7 @@ export default function HeaderSidebar() {
     router.push(path)
   }
 
-  const items: MenuItem[] = [
+  let items: MenuItem[] = [
     {
       key: "1",
       label: <div onClick={() => handleLinkClick(DASHBOARD_PAGE)}>Dashboard</div>,
@@ -71,6 +72,10 @@ export default function HeaderSidebar() {
       icon: <CarryOutOutlined />,
     },
   ]
+
+  if (!userInfo?.is_superuser) {
+    items = items.filter((item: MenuItem) => item?.key !== "3")
+  }
 
   const visibleItems = items.filter((item: any) => {
     if (userInfo?.division === BTG && item.key === "3") {

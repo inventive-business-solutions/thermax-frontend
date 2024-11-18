@@ -3,7 +3,6 @@ import { Button, Divider, message, Radio, RadioChangeEvent, Select } from "antd"
 import { useParams, useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { createData, getData, updateData } from "actions/crud-actions"
-import { createDropdownOptions } from "components/Package Management/package-management.logic"
 import {
   BATTERY_LIMIT_API,
   DESIGN_BASIS_GENERAL_INFO_API,
@@ -17,13 +16,19 @@ import { useGetData } from "hooks/useCRUD"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { useLoading } from "hooks/useLoading"
 import GIPkgSelectionTabs from "./GIPkgSelection"
+import { useCurrentUser } from "hooks/useCurrentUser"
 
 const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
+  const userInfo = useCurrentUser()
   const params = useParams()
-  const [selectedPkg, setSelectedPkg] = useState("")
+  const [selectedMainPkgId, setSelectedMainPkgId] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
-  const { data: dbPkgList } = useGetData(`${MAIN_PKG_API}?fields=["*"]`)
-  const [generalInfoData, setGeneralInfoData] = useState<any>({battery_limit: "Incoming Supply at each MCC Panel by Client"})
+  const { data: dbPkgList } = useGetData(
+    `${MAIN_PKG_API}?fields=["*"]&filters=[["division_name", "=", "${userInfo?.division}"]]`
+  )
+  const [generalInfoData, setGeneralInfoData] = useState<any>({
+    battery_limit: "Incoming Supply at each MCC Panel by Client",
+  })
   const [refresh, setRefresh] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
 
@@ -35,18 +40,42 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const generalInfoDefaultData = await getData(
+  //       `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  //     )
+
+  //     const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`)
+  //     if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
+  //       setGeneralInfoData({
+  //         is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
+  //         pkgList: mainPkgData,
+  //         battery_limit: generalInfoDefaultData[0]?.battery_limit,
+  //       })
+  //     }
+  //   }
+  //   fetchData()
+  // }, [refresh, revision_id])
   useEffect(() => {
     const fetchData = async () => {
       const generalInfoDefaultData = await getData(
         `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
-
       const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`)
+
       if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
         setGeneralInfoData({
           is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
           pkgList: mainPkgData,
-          battery_limit: generalInfoDefaultData[0]?.battery_limit,
+          battery_limit: generalInfoDefaultData[0]?.battery_limit || "Incoming Supply at each MCC Panel by Client", // Set default value here
+        })
+      } else {
+        // If no data is fetched, set default values
+        setGeneralInfoData({
+          is_package_selection_enabled: false,
+          pkgList: mainPkgData,
+          battery_limit: "Incoming Supply at each MCC Panel by Client", // Default value when no data
         })
       }
     }
@@ -57,7 +86,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
 
   const filteredOptions = dbPkgList?.filter(
     (pkg: any) =>
-      pkg.package_name !== selectedPkg &&
+      pkg.name !== selectedMainPkgId &&
       !generalInfoData?.pkgList?.some((mainPkg: any) => mainPkg.main_package_name === pkg.package_name)
   )
   const { dropdownOptions: batteryLimitOptions } = useDropdownOptions(BATTERY_LIMIT_API, "name")
@@ -65,25 +94,27 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   const handleAddPkg = async () => {
     setAddPkgLoading(true)
 
-    const subPkgUrl = `${SUB_PKG_API}?fields=["*"]&filters=[["main_package_name", "=", "${selectedPkg}"]]`
-    if (!selectedPkg) {
+    const subPkgUrl = `${SUB_PKG_API}?fields=["*"]&filters=[["main_package_id", "=", "${selectedMainPkgId}"]]`
+    if (!selectedMainPkgId) {
+      message.error("Please select a main package")
       setAddPkgLoading(false)
       return
     }
     const subPkgData = await getData(subPkgUrl)
+    const mainPkgData = await getData(`${MAIN_PKG_API}/${selectedMainPkgId}`)
     const subPkgCreateData = subPkgData?.map((subPkg: any) => ({
-      main_package_name: selectedPkg,
+      main_package_name: mainPkgData?.package_name,
       sub_package_name: subPkg?.package_name,
       area_of_classification: subPkg?.classification_area,
       is_sub_package_selected: false,
     }))
     await createData(PROJECT_MAIN_PKG_API, false, {
       revision_id: revision_id,
-      main_package_name: selectedPkg,
+      main_package_name: mainPkgData?.package_name,
       sub_packages: subPkgCreateData,
     })
     setRefresh(!refresh)
-    setSelectedPkg("")
+    setSelectedMainPkgId("")
     setAddPkgLoading(false)
   }
 
@@ -165,7 +196,6 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
           <div className="font-bold text-slate-800">Package Selection</div>
           <div>
             <Radio.Group
-              defaultValue={1}
               value={generalInfoData?.is_package_selection_enabled}
               onChange={(e: RadioChangeEvent) =>
                 setGeneralInfoData({ ...generalInfoData, is_package_selection_enabled: e.target.value })
@@ -181,8 +211,14 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
           <div className="flex w-1/2">
             <Select
               placeholder="Select main package"
-              onChange={setSelectedPkg}
-              options={createDropdownOptions(filteredOptions, "package_name")}
+              onChange={setSelectedMainPkgId}
+              options={filteredOptions?.map((item: any) => {
+                return {
+                  ...item,
+                  value: item["name"],
+                  label: item["package_name"],
+                }
+              })}
               style={{ width: "100%" }}
               allowClear={false}
               disabled={generalInfoData?.is_package_selection_enabled === 0}
@@ -215,7 +251,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-4">
           <div className="flex w-3/4 gap-4">
-            <p className="text-sm font-semibold"> Power Supply At </p>
+            <p className="text-sm font-semibold"> Power Supply At The </p>
             <div className="flex-1">
               <Select
                 options={batteryLimitOptions}
@@ -231,7 +267,7 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
 
       <div className="flex w-full justify-end gap-4">
         <Button type="primary" onClick={handleSave} loading={saveLoading}>
-          Save
+          Save and Next
         </Button>
       </div>
     </div>
