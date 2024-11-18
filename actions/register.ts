@@ -4,15 +4,15 @@ import bcrypt from "bcryptjs"
 import { v4 as uuid } from "uuid"
 import {
   CREDENTIALS_EMAIL_API,
-  DIVISION_API,
   EMAIL_VERIFICATION_API,
   NEXT_AUTH_USER_API,
   THERMAX_USER_API,
   USER_API,
 } from "configs/api-endpoints"
-import { NEXT_PUBLIC_BASE_URL } from "configs/constants"
+import { BTG, NEXT_PUBLIC_BASE_URL } from "configs/constants"
 import { adminApiClient } from "./axios-clients"
 import { createData, getData, updateData } from "./crud-actions"
+import { getSuperuserEmail } from "./user-actions"
 
 export const generateSimplePassword = (length = 8) => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -188,18 +188,28 @@ export const registerNewUser = async (
 
 export const sendCredentialsEmail = async (email: string, division_name: string, is_superuser: string | boolean) => {
   try {
+    let cc_email = ""
+    if (is_superuser) {
+      cc_email = await getSuperuserEmail(BTG)
+    } else {
+      cc_email = await getSuperuserEmail(division_name)
+    }
     const system_generated_password = await generateSimplePassword()
     const hashed_password = await bcrypt.hash(system_generated_password, 10)
     await updateData(`${NEXT_AUTH_USER_API}/${email}`, true, {
       email_verified: true,
       hashed_password,
     })
+
+    const superuser = await getData(`${USER_API}/${cc_email}`)
+
     await createData(CREDENTIALS_EMAIL_API, true, {
-      email,
+      recipient_email: email,
+      cc_email: cc_email,
       password: system_generated_password,
-      sent_by: is_superuser ? "Team BTG" : `Team ${division_name}`,
       division_name,
       is_superuser,
+      sent_by: is_superuser ? "Team BTG" : `${superuser?.first_name} ${superuser?.last_name}`,
       subject: "Added New User - EnIMAX",
     })
   } catch (error) {

@@ -81,8 +81,8 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
         setStatus("error")
         setInfoMessage("User already exist")
       } else {
-        message.success("User created successfully")
         handleCancel()
+        message.success("User created successfully")
       }
     } catch (error: any) {
       throw error
@@ -110,10 +110,13 @@ export default function UserFormModal({ open, setOpen, editMode, values, editEve
       await updateData(`${USER_API}/${values.name}`, false, userData)
       await updateData(`${THERMAX_USER_API}/${values.name}`, false, userData)
 
-      setStatus("success")
-      setInfoMessage("User information updated successfully")
+      message.success("User updated successfully")
+      handleCancel()
     } catch (error: any) {
       throw error
+    } finally {
+      mutate(`${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`)
+      mutate(`${USER_API}?fields=["*"]`)
     }
   }
 
