@@ -29,9 +29,9 @@ const getDefaultValues = (pccPanelData: any) => {
     is_neural_link_with_disconnect_facility_selected:
       pccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
     is_led_type_lamp_selected: pccPanelData?.is_led_type_lamp_selected || "ON",
-    is_blue_cb_spring_charge_selected: pccPanelData?.is_blue_cb_spring_charge_selected || 1,
-    is_red_cb_in_service: pccPanelData?.is_red_cb_in_service || 1,
-    is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || 1,
+    is_blue_cb_spring_charge_selected: pccPanelData?.is_blue_cb_spring_charge_selected || 0,
+    is_red_cb_in_service: pccPanelData?.is_red_cb_in_service || 0,
+    is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || 0,
     alarm_annunciator: pccPanelData?.alarm_annunciator || "Applicable",
     control_transformer_coating: pccPanelData?.control_transformer_coating || "NA",
     control_transformer_configuration: pccPanelData?.control_transformer_configuration || "NA",
@@ -48,7 +48,7 @@ const getDefaultValues = (pccPanelData: any) => {
     busbar_material_of_construction: pccPanelData?.busbar_material_of_construction || "Aluminium",
     ga_current_density: pccPanelData?.ga_current_density || "1.0 A/Sq. mm",
     ga_panel_mounting_frame: pccPanelData?.ga_panel_mounting_frame || "Base Frame",
-    ga_panel_mounting_height: pccPanelData?.ga_panel_mounting_height || "200",
+    ga_panel_mounting_height: pccPanelData?.ga_panel_mounting_height || "100",
     is_marshalling_section_selected: pccPanelData?.is_marshalling_section_selected || 1,
     is_cable_alley_section_selected: pccPanelData?.is_cable_alley_section_selected || 1,
     is_power_and_bus_separation_section_selected: pccPanelData?.is_power_and_bus_separation_section_selected || 1,
@@ -161,10 +161,17 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const incomer_above_type_controlled = watch("incomer_above_type")
   const ga_panel_mounting_frame_controlled = watch("ga_panel_mounting_frame")
   const ga_current_density_controlled = watch("busbar_material_of_construction")
+  const control_transformer_coating_controlled = watch("control_transformer_coating")
 
   const [gaPanelMoutingHeightOptions, setGaPanelMountingHeightOptions] = useState<any[]>(
     ga_panel_mounting_height_options
   )
+
+  useEffect(() => {
+    if(control_transformer_coating_controlled === "NA") {
+      setValue("control_transformer_configuration", "NA")
+    }
+  }, [control_transformer_coating_controlled, setValue])
 
   useEffect(() => {
     if (ga_panel_mounting_frame_controlled !== "Base Frame") {
@@ -241,11 +248,6 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
         `${PCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
 
-      if (watch("mi_analog") === watch("mi_digital")) {
-        message.error("Ammeter and Digital cannot be Same")
-        return
-      }
-
       if (pccPanelData && pccPanelData.length > 0) {
         await updateData(`${PCC_PANEL}/${pccPanelData[0].name}`, false, data)
       } else {
@@ -312,6 +314,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="incomer_above_ampere"
               label="Ampere"
               options={incomer_above_ampere_options}
+              disabled={true}
               size="small"
             />
           </div>
@@ -408,6 +411,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="control_transformer_configuration"
               label="Control Transformer Configuration"
               options={current_transformer_coating_options}
+              disabled={control_transformer_coating_controlled === "NA"}
               size="small"
             />
           </div>

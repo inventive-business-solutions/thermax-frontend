@@ -71,6 +71,7 @@ export const UserList = ({ userInfo }: any) => {
       title: "Full Name",
       dataIndex: "full_name",
       key: "full_name",
+      align: "center",
       render: (text, record) => (
         <span>
           {record?.first_name} {record?.last_name}
@@ -81,12 +82,15 @@ export const UserList = ({ userInfo }: any) => {
       title: "Initials",
       dataIndex: "name_initial",
       key: "name_initial",
+      align: "center",
     },
-    { title: "Email", dataIndex: "email", key: "email" },
+    { title: "Email", dataIndex: "email", key: "email", align: "center" },
     {
-      title: "Modified Date",
-      dataIndex: "modified",
-      key: "modified",
+      title: "Created Date",
+      dataIndex: "creation",
+      key: "creation",
+      align: "center",
+
       render: (text) => new Date(text).toDateString(),
     },
     {
