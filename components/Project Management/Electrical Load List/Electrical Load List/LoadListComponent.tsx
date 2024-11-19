@@ -1,15 +1,10 @@
 "use client"
-import jspreadsheet, { Column, JspreadsheetInstance } from "jspreadsheet-ce"
+import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
 import React, { useRef, useEffect, useState, useMemo } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
-import {
-  DESIGN_BASIS_REVISION_HISTORY_API,
-  HEATING_CONTROL_SCHEMES_URI,
-  PROJECT_PANEL_API,
-} from "configs/api-endpoints"
-import Modal from "components/Modal/Modal"
+import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
 import { getData } from "actions/crud-actions"
-import { controlSchemeColumnsForHeating, lpbsColumns, mockExcel } from "../../../../app/Data"
+import { controlSchemeColumnsForHeating, lpbsColumns } from "../../../../app/Data"
 import * as XLSX from "xlsx"
 
 import { LoadListcolumns } from "../common/ExcelColumns"
@@ -17,8 +12,7 @@ import "./LoadListComponent.css"
 import { Button, message } from "antd"
 import ControlSchemeConfigurator from "./Control Scheme Config/ControlSchemeConfig"
 import LpbsConfigurator from "./LPBS Config/LpbsConfigurator"
-import ValidatePanelLoad, { PanelData } from "./Validate Panel Load/ValidatePanelLoad"
-import { useGetData } from "hooks/useCRUD"
+import ValidatePanelLoad from "./Validate Panel Load/ValidatePanelLoad"
 import { useProjectPanelData } from "hooks/useProjectPanelData"
 
 // Types definition
@@ -175,12 +169,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
         instance.destroy()
       }
     }
-  }, [])
-  useEffect(() => {
-    if (loadListData?.length) {
-      updateLoadList()
-    }
-  }, [loadListData])
+  }, [loadListOptions, spreadsheetInstance, typedLoadListColumns])
 
   const updateLoadList = () => {
     if (spreadsheetInstance) {
@@ -195,6 +184,12 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       setSpreadsheetInstance(instance)
     }
   }
+
+  useEffect(() => {
+    if (loadListData?.length) {
+      updateLoadList()
+    }
+  }, [loadListData])
   //update panel dropdown
   useEffect(() => {
     if (projectPanelData && !isLoading) {
@@ -208,7 +203,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       updateSpreadsheetColumns(updatedColumns)
       setPanelList(projectPanelData.map((item: any) => item.panel_name))
     }
-  }, [projectPanelData])
+  }, [isLoading, projectPanelData, typedLoadListColumns, updateSpreadsheetColumns])
 
   // Fetch control schemes
   useEffect(() => {
@@ -490,7 +485,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
   //   reader.readAsArrayBuffer(file)
   // }
   const getStandByKw = (item2: any, item3: any) => {
-    if (item2 != "" || item2 != "0") {
+    if (item2 !== "" || item2 !== "0") {
       return item2
     } else {
       return item3
