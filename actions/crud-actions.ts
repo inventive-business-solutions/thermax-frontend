@@ -83,7 +83,7 @@ export const downloadFile = async (url: string, useAdminClient: boolean, data: a
 
   try {
     const response = await apiClient.post(url, data, {
-      responseType: "blob", // Expect binary data
+      responseType: "arraybuffer", // Expect binary data
     })
 
     // Return binary data and headers
