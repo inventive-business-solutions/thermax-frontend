@@ -211,7 +211,7 @@ const CableTray = ({
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col px-4">
         <Divider>
           <span className="font-bold text-slate-700">Power Cable</span>
         </Divider>
@@ -322,7 +322,7 @@ const CableTray = ({
           <div className="grid grid-cols-4 gap-3">
             <div className="font-semibold text-slate-700"></div>
             <div className="font-semibold text-slate-700">Air</div>
-            <div className="font-semibold text-slate-700">Burid</div>
+            <div className="font-semibold text-slate-700">Buried</div>
           </div>
 
           <div className="grid grid-cols-4 gap-3">
@@ -1160,7 +1160,7 @@ const CableTray = ({
 
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" onClick={handleSubmit(onSubmit)} loading={loading}>
-            Save and Continue
+            Save and Next
           </Button>
         </div>
       </form>
