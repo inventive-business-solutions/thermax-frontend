@@ -204,7 +204,6 @@ const CableTray = ({
   }
 
   const onSubmit = async (data: any) => {
-    console.log("rishi")
     setLoading(true)
     try {
       const cableTrayData = await getData(
