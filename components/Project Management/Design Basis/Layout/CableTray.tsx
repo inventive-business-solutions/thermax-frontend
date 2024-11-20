@@ -20,7 +20,8 @@ const getDefaultValues = (cableTrayData: any) => {
     type_of_insulation: cableTrayData?.type_of_insulation || "PVC",
     color_scheme: cableTrayData?.color_scheme || "Red, Yellow, Blue",
     motor_voltage_drop_during_running: cableTrayData?.motor_voltage_drop_during_running || "2",
-    conductor: cableTrayData?.conductor || "Copper",
+    copper_conductor: cableTrayData?.copper_conductor || "2.5 Sq. mm",
+    aluminium_conductor: cableTrayData?.aluminium_conductor || "4 Sq. mm",
     cable_installation: cableTrayData?.cable_installation || "Air",
     motor_voltage_drop_during_starting: cableTrayData?.motor_voltage_drop_during_starting || "5",
     voltage_grade: cableTrayData?.voltage_grade || "11 kV",
@@ -96,7 +97,7 @@ const getDefaultValues = (cableTrayData: any) => {
     ambient_temp_factor_air: Number(cableTrayData?.ambient_temp_factor_air) || 2,
     ambient_temp_factor_burid: Number(cableTrayData?.ambient_temp_factor_burid) || 2,
     derating_factor_air: Number(cableTrayData?.derating_factor_air) || 2,
-    derating_factor_burid: Number(cableTrayData?.derating_factor_burid) || 2,
+    derating_factor_burid: Number(cableTrayData?.derating_factor_burid) || 4,
   }
 }
 
@@ -143,13 +144,12 @@ const CableTray = ({
     mode: "onSubmit",
   })
 
-  console.log(typeof watch("derating_factor_air"), "Derating factor")
-
   const number_of_cores_controlled = watch("number_of_cores")
   const touching_air_controlled = watch("touching_factor_air")
   const ambient_temp_factor_air_controlled = watch("ambient_temp_factor_air")
   const touching_burid_controlled = watch("touching_factor_burid")
   const ambient_temp_factor_burid_controlled = watch("ambient_temp_factor_burid")
+  const copper_conductor_controlled = watch("copper_conductor")
 
   let product = touching_air_controlled * ambient_temp_factor_air_controlled
   let product2 = touching_burid_controlled * ambient_temp_factor_burid_controlled
@@ -173,6 +173,24 @@ const CableTray = ({
   }, [number_of_cores_controlled, setValue])
 
   useEffect(() => {
+    if (copper_conductor_controlled.startsWith("2.5")) {
+      setValue("aluminium_conductor", "4 Sq. mm")
+    } else if (copper_conductor_controlled.startsWith("4")) {
+      setValue("aluminium_conductor", "6 Sq. mm")
+    } else if (copper_conductor_controlled.startsWith("6")) {
+      setValue("aluminium_conductor", "10 Sq. mm")
+    } else if (copper_conductor_controlled.startsWith("10")) {
+      setValue("aluminium_conductor", "16 Sq. mm")
+    } else if (copper_conductor_controlled.startsWith("16")) {
+      setValue("aluminium_conductor", "25 Sq. mm")
+    } else if (copper_conductor_controlled === "All") {
+      setValue("aluminium_conductor", "NA")
+    } else if (copper_conductor_controlled === "NA") {
+      setValue("aluminium_conductor", "All")
+    }
+  }, [copper_conductor_controlled, setValue])
+
+  useEffect(() => {
     reset(getDefaultValues(cableTrayData?.[0]))
   }, [cableTrayData, reset])
 
@@ -186,6 +204,7 @@ const CableTray = ({
   }
 
   const onSubmit = async (data: any) => {
+    console.log("rishi")
     setLoading(true)
     try {
       const cableTrayData = await getData(
@@ -309,9 +328,22 @@ const CableTray = ({
             <div className="">
               <CustomSingleSelect
                 control={control}
-                name="conductor"
-                label="Conductor"
-                options={conductor_options}
+                name="copper_conductor"
+                label="Copper Conductor"
+                options={conductor_options.filter((item: any) => {
+                  return !item.name.startsWith("25")
+                })}
+                size="small"
+              />
+            </div>
+            <div className="">
+              <CustomSingleSelect
+                control={control}
+                name="aluminium_conductor"
+                label="Aluminium Conductor"
+                options={conductor_options.filter((item: any) => {
+                  return !item.name.startsWith("2.")
+                })}
                 size="small"
               />
             </div>
