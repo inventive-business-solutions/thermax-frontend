@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Divider, message } from "antd" // Import Select for dropdown
+import { Button, Divider, message, Skeleton } from "antd" // Import Select for dropdown
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { createData, getData, updateData } from "actions/crud-actions"
@@ -7,7 +7,7 @@ import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { MCC_PANEL, PROJECT_INFO_API } from "configs/api-endpoints"
+import { MCC_PANEL, PROJECT_API, PROJECT_INFO_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
 import { mccPanelValidationSchema } from "../schemas"
@@ -15,7 +15,9 @@ import { HEATING, WWS_SPG } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { useParams } from "next/navigation"
 
-const getDefaultValues = (projectInfo: any, mccPanelData: any) => {
+const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: any) => {
+  // console.log("mccPanelData", mccPanelData)
+  // console.log("projectInfo", projectInfo)
   return {
     incomer_ampere: mccPanelData?.incomer_ampere || "1000",
     led_type_other_input: mccPanelData?.led_type_other_input || "NA",
@@ -73,12 +75,12 @@ const getDefaultValues = (projectInfo: any, mccPanelData: any) => {
     boiler_model: mccPanelData?.boiler_model || "NA",
     boiler_fuel: mccPanelData?.boiler_fuel || "NA",
     boiler_year: mccPanelData?.boiler_year || "NA",
-    boiler_power_supply_vac: mccPanelData?.boiler_power_supply_vac || "NA",
-    boiler_power_supply_phase: mccPanelData?.boiler_power_supply_phase || "NA",
-    boiler_power_supply_frequency: mccPanelData?.boiler_power_supply_frequency || "NA",
-    boiler_control_supply_vac: mccPanelData?.boiler_control_supply_vac || "NA",
-    boiler_control_supply_phase: mccPanelData?.boiler_control_supply_phase || "NA",
-    boiler_control_supply_frequency: mccPanelData?.boiler_control_supply_frequency || "NA",
+    boiler_power_supply_vac: mccPanelData?.boiler_power_supply_vac || projectInfo?.main_supply_lv,
+    boiler_power_supply_phase: mccPanelData?.boiler_power_supply_phase || projectInfo?.main_supply_lv_phase,
+    boiler_power_supply_frequency: mccPanelData?.boiler_power_supply_frequency || projectInfo?.frequency,
+    boiler_control_supply_vac: mccPanelData?.boiler_control_supply_vac || projectInfo?.control_supply,
+    boiler_control_supply_phase: mccPanelData?.boiler_control_supply_phase || projectInfo?.control_supply_phase,
+    boiler_control_supply_frequency: mccPanelData?.boiler_control_supply_frequency || projectInfo?.frequency,
     boiler_evaporation: mccPanelData?.boiler_evaporation || "NA",
     boiler_output: mccPanelData?.boiler_output || "NA",
     boiler_connected_load: mccPanelData?.boiler_connected_load || "NA",
@@ -87,12 +89,16 @@ const getDefaultValues = (projectInfo: any, mccPanelData: any) => {
     heater_model: mccPanelData?.heater_model || "NA",
     heater_fuel: mccPanelData?.heater_fuel || "NA",
     heater_year: mccPanelData?.heater_year || "NA",
-    heater_power_supply_vac: mccPanelData?.heater_power_supply_vac !== "NA"? mccPanelData?.heater_power_supply_vac: projectInfo?.main_supply_lv,
+    // heater_power_supply_vac:
+    //   mccPanelData?.heater_power_supply_vac !== "NA" || mccPanelData?.heater_power_supply_vac !== null
+    //     ? mccPanelData?.heater_power_supply_vac
+    //     : projectInfo?.main_supply_lv,
+    heater_power_supply_vac: mccPanelData?.heater_power_supply_vac || projectInfo?.main_supply_lv,
     heater_power_supply_phase: mccPanelData?.heater_power_supply_phase || projectInfo?.main_supply_lv_phase,
     heater_power_supply_frequency: mccPanelData?.heater_power_supply_frequency || projectInfo?.frequency,
-    heater_control_supply_vac: mccPanelData?.heater_control_supply_vac || "NA",
-    heater_control_supply_phase: mccPanelData?.heater_control_supply_phase || "NA",
-    heater_control_supply_frequency: mccPanelData?.heater_control_supply_frequency || "NA",
+    heater_control_supply_vac: mccPanelData?.heater_control_supply_vac || projectInfo?.control_supply,
+    heater_control_supply_phase: mccPanelData?.heater_control_supply_phase || projectInfo?.control_supply_phase,
+    heater_control_supply_frequency: mccPanelData?.heater_control_supply_frequency || projectInfo?.frequency,
     heater_evaporation: mccPanelData?.heater_evaporation || "NA",
     heater_output: mccPanelData?.heater_output || "NA",
     heater_connected_load: mccPanelData?.heater_connected_load || "NA",
@@ -101,8 +107,9 @@ const getDefaultValues = (projectInfo: any, mccPanelData: any) => {
     spg_name_plate_capacity: mccPanelData?.spg_name_plate_capacity || "NA",
     spg_name_plate_manufacturing_year: mccPanelData?.spg_name_plate_manufacturing_year || "NA",
     spg_name_plate_weight: mccPanelData?.spg_name_plate_weight || "NA",
-    spg_name_plate_oc_number: mccPanelData?.spg_name_plate_oc_number || "NA",
+    spg_name_plate_oc_number: mccPanelData?.spg_name_plate_oc_number || projectMetadata?.project_oc_number,
     spg_name_plate_part_code: mccPanelData?.spg_name_plate_part_code || "NA",
+    is_spg_applicable: mccPanelData?.is_spg_applicable || 0,
   }
 }
 
@@ -110,17 +117,20 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const params = useParams()
   const project_id = params.project_id
 
-  const { data: mccPanelData } = useGetData(
+  const { data: mccPanelData, isLoading: isMccPanelLoading } = useGetData(
     `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
 
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
+  const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
 
-  const { data: projectInfo } = useGetData(getProjectInfoUrl)
-
+  const { data: projectMetadata, isLoading: isProjectMetaDataLoading } = useGetData(getProjectMetadataUrl)
+  const { data: projectInfo, isLoading: isProjectInfoLoading } = useGetData(getProjectInfoUrl)
 
   const [loading, setLoading] = useState(false)
   const userInfo = useCurrentUser()
+
+  const isLoading = isMccPanelLoading || isProjectInfoLoading || isProjectMetaDataLoading
 
   const {
     incomer_ampere_options,
@@ -161,7 +171,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   const { control, handleSubmit, reset, watch, setValue } = useForm({
     resolver: zodResolver(mccPanelValidationSchema),
-    defaultValues: getDefaultValues(projectInfo, mccPanelData?.[0]),
+    defaultValues: getDefaultValues(projectMetadata, projectInfo, mccPanelData?.[0]),
     mode: "onSubmit",
   })
 
@@ -174,8 +184,11 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   }, [currentTransformerCoating, setValue])
 
   useEffect(() => {
-    reset(getDefaultValues(projectInfo, mccPanelData?.[0]))
-  }, [mccPanelData, reset])
+    if (projectInfo && mccPanelData) {
+      reset(getDefaultValues(projectMetadata, projectInfo, mccPanelData[0]))
+    }
+    // reset(getDefaultValues(projectInfo, mccPanelData?.[0]))
+  }, [mccPanelData, projectInfo, reset])
 
   const incomer_ampere_controlled = watch("incomer_ampere")
   const incomer_type_controlled = watch("incomer_type")
@@ -294,12 +307,20 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     }
   }
 
+  if (isLoading) {
+    return (
+      <div>
+        <Skeleton active paragraph={{ rows: 8 }} />
+      </div>
+    )
+  }
+
   return (
     <>
       <Divider>
         <span className="font-bold text-slate-700">Selection Details</span>
       </Divider>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <h4 className="flex-1 text-sm font-semibold text-slate-700">Incomer</h4>
@@ -1059,42 +1080,79 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             </div>
           </>
         )}
-        {userInfo?.division !== WWS_SPG && (
+        {userInfo?.division === WWS_SPG && (
           <>
             <Divider>
               <span className="font-bold text-slate-700">Name Plate Details For SPG</span>
+              <div>
+                <CustomRadioSelect
+                  control={control}
+                  name="is_spg_applicable"
+                  label=""
+                  options={[
+                    { label: "Yes", value: 1 },
+                    { label: "No", value: 0 },
+                  ]}
+                />
+              </div>
             </Divider>
             <div className="flex gap-4">
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_unit_name" label="Unit Name" />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_unit_name"
+                  label="Unit Name"
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_capacity" label="Capacity" />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_capacity"
+                  label="Capacity"
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
               <div className="flex-1">
                 <CustomTextInput
                   control={control}
                   name="spg_name_plate_manufacturing_year"
                   label="Year of Manufacturing"
+                  disabled={watch("is_spg_applicable") === 0}
                 />
               </div>
             </div>
             <div className="flex gap-4">
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_weight" label="Weight" />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_weight"
+                  label="Weight"
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_oc_number" label="OC No." />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_oc_number"
+                  label="OC No."
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_part_code" label="Part Code" />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_part_code"
+                  label="Part Code"
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
             </div>
           </>
         )}
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
-            Save and Continue
+            Save and Next
           </Button>
         </div>
       </form>

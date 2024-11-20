@@ -339,7 +339,7 @@ const CommonConfiguration = ({
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-8">
           <div className="flex-1">
             <CustomSingleSelect
