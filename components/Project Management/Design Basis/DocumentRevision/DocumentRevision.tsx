@@ -41,6 +41,7 @@ import clsx from "clsx"
 import ResubmitModel from "./ResubmitModel"
 import { releaseRevision } from "actions/design-basis_revision"
 import { getSuperuserEmail } from "actions/user-actions"
+import * as XLSX from "xlsx"
 
 export default function DocumentRevision() {
   const userInfo = useCurrentUser()
@@ -205,48 +206,21 @@ export default function DocumentRevision() {
         earthingLayoutData: earthingLayoutData[0],
       })
 
-      // Convert binary data to a Blob
-      const blob = new Blob([result?.data], {
-        type: result?.headers["content-type"] || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
+      const excelBlob = new Blob([byteArray.buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       })
-
-      // Trigger file download
-      const url = URL.createObjectURL(blob)
+      const url = window.URL.createObjectURL(excelBlob)
       const link = document.createElement("a")
       link.href = url
-      link.download = "generated_design_basis.xlsx" // File name
-      document.body.appendChild(link) // Append to DOM for Firefox compatibility
+      link.setAttribute("download", "output.xlsx") // Filename
+      document.body.appendChild(link)
       link.click()
-
-      // Cleanup
-      link.remove() // Remove the link element
-      URL.revokeObjectURL(url)
+      document.body.removeChild(link)
     } catch (error) {
-      console.error(error)
+      console.error("Error processing Excel file:", error)
     }
 
-    console.log({
-      metadata: {
-        prepared_by_initials: projectCreator?.initials,
-        checked_by_initials: projectApprover?.initials,
-        approved_by_initials: superuser?.initials,
-        division_name: projectCreator?.division,
-      },
-      project,
-      projectCreator,
-      projectApprover,
-      superuser,
-      projectInfo,
-      documentRevisions,
-      generalInfo: generalInfo[0],
-      projectMainPkgData,
-      motorParameters: motorParameters[0],
-      makeOfComponents: makeOfComponents[0],
-      commonConfigurations: commonConfigurations[0],
-      projectPanelData: finalProjectPanelData,
-      cableTrayLayoutData: cableTrayLayoutData[0],
-      earthingLayoutData: earthingLayoutData[0],
-    })
     setDownloadIconSpin(false)
   }
 
