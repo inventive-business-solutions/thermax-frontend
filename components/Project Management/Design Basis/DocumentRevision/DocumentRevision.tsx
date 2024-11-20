@@ -28,17 +28,20 @@ import {
   PROJECT_PANEL_API,
   REVIEW_APPROVAL_EMAIL_API,
   REVIEW_SUBMISSION_EMAIL_API,
+  THERMAX_USER_API,
 } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import { getThermaxDateFormat } from "utils/helpers"
-import { createData, getData, updateData } from "actions/crud-actions"
+import { createData, downloadFile, getData, updateData } from "actions/crud-actions"
 import { DB_REVISION_STATUS, MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { mutate } from "swr"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import clsx from "clsx"
 import ResubmitModel from "./ResubmitModel"
 import { releaseRevision } from "actions/design-basis_revision"
+import { getSuperuserEmail } from "actions/user-actions"
+import * as XLSX from "xlsx"
 
 export default function DocumentRevision() {
   const userInfo = useCurrentUser()
@@ -88,6 +91,10 @@ export default function DocumentRevision() {
     setDownloadIconSpin(true)
     const project = await getData(`${PROJECT_API}/${project_id}`)
     const projectInfo = await getData(`${PROJECT_INFO_API}/${project_id}`)
+    const projectCreator = await getData(`${THERMAX_USER_API}/${project?.owner}`)
+    const projectApprover = await getData(`${THERMAX_USER_API}/${project?.approver}`)
+    const superuserEmail = await getSuperuserEmail(projectCreator?.division)
+    const superuser = await getData(`${THERMAX_USER_API}/${superuserEmail}`)
     const documentRevisions = await getData(
       `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation desc`
     )
@@ -178,19 +185,42 @@ export default function DocumentRevision() {
       `${LAYOUT_EARTHING}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
     )
 
-    console.log({
-      project,
-      projectInfo,
-      documentRevisions,
-      generalInfo: generalInfo[0],
-      projectMainPkgData,
-      motorParameters: motorParameters[0],
-      makeOfComponents: makeOfComponents[0],
-      commonConfigurations: commonConfigurations[0],
-      projectPanelData: finalProjectPanelData,
-      cableTrayLayoutData: cableTrayLayoutData[0],
-      earthingLayoutData: earthingLayoutData[0],
-    })
+    try {
+      const result = await downloadFile("/method/db_revision.get_design_basis_excel", true, {
+        metadata: {
+          prepared_by_initials: projectCreator?.initials,
+          checked_by_initials: projectApprover?.initials,
+          approved_by_initials: superuser?.initials,
+          division_name: projectCreator?.division,
+        },
+        project,
+        projectInfo,
+        documentRevisions,
+        generalInfo: generalInfo[0],
+        projectMainPkgData,
+        motorParameters: motorParameters[0],
+        makeOfComponents: makeOfComponents[0],
+        commonConfigurations: commonConfigurations[0],
+        projectPanelData: finalProjectPanelData,
+        cableTrayLayoutData: cableTrayLayoutData[0],
+        earthingLayoutData: earthingLayoutData[0],
+      })
+
+      const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
+      const excelBlob = new Blob([byteArray.buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      })
+      const url = window.URL.createObjectURL(excelBlob)
+      const link = document.createElement("a")
+      link.href = url
+      link.setAttribute("download", "output.xlsx") // Filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error("Error processing Excel file:", error)
+    }
+
     setDownloadIconSpin(false)
   }
 
@@ -327,7 +357,7 @@ export default function DocumentRevision() {
                 />
               </Tooltip>
             </div>
-            <div className={clsx(projectData.approver !== userInfo.email && "hidden")}>
+            <div className={clsx(projectData?.approver !== userInfo.email && "hidden")}>
               <Tooltip title={"Resubmit for Review"}>
                 <Button
                   type="link"
@@ -357,7 +387,7 @@ export default function DocumentRevision() {
                 />
               </Tooltip>
             </div>
-            <div className={clsx(projectData.approver !== userInfo.email && "hidden")}>
+            <div className={clsx(projectData?.approver !== userInfo.email && "hidden")}>
               <Tooltip title={"Approve"}>
                 <Button
                   type="link"

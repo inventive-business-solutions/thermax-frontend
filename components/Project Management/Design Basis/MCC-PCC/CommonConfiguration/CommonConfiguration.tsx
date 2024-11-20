@@ -327,13 +327,13 @@ const CommonConfiguration = ({
         await createData(COMMON_CONFIGURATION, false, data)
         message.success("Common configuration created successfully")
       }
+      setActiveKey(projectPanelData[0]?.panel_name)
     } catch (error) {
       console.error("error: ", error)
       console.error("error: ", error)
       handleError(error)
     } finally {
       setLoading(false)
-      setActiveKey(projectPanelData[0]?.panel_name)
     }
   }
 
@@ -412,7 +412,7 @@ const CommonConfiguration = ({
               size="small"
             />
           </div> */}
-          {(userInfo?.division === WWS_SPG) && (
+          {userInfo?.division === WWS_SPG && (
             <div className="flex-1">
               <CustomSingleSelect
                 control={control}

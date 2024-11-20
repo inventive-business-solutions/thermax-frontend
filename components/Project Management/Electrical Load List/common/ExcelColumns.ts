@@ -59,7 +59,7 @@ export const LoadListcolumns = (divisionId: Number) => {
       name: "startingTime",
       source: ["10 sec", "30 sec", "60 sec"],
       title: "STARTING TIME",
-      readOnly: divisionId == 7 ? false : true,
+      readOnly: divisionId === 7 ? false : true,
 
       width: "140",
     },
@@ -97,7 +97,7 @@ export const LoadListcolumns = (divisionId: Number) => {
       name: "busSegregation",
       source: ["A", "B", "C", "NA"],
       title: "BUS  SEGREGATION",
-      readOnly: divisionId == 7 ? true : false,
+      readOnly: divisionId === 7 ? true : false,
       width: "120",
     },
     {
@@ -105,7 +105,7 @@ export const LoadListcolumns = (divisionId: Number) => {
       name: "motorRpm",
       source: ["1500", "3000", "1000", "750", "0"],
       title: "MOTOR  RPM",
-      readOnly: divisionId == 7 ? true : false,
+      readOnly: divisionId === 7 ? true : false,
       width: "70",
     },
     {

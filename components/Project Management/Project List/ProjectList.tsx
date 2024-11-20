@@ -7,7 +7,7 @@ import {
   SyncOutlined,
   UploadOutlined,
 } from "@ant-design/icons"
-import { Button, GetProps, Input, Popconfirm, Table, Tooltip } from "antd"
+import { Button, GetProps, Input, Popconfirm, Table, Tag, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -20,6 +20,7 @@ import ProjectFormModal from "./ProjectFormModal"
 import { UploadProjectFilesModal } from "./UploadProjectFilesModal"
 import { getThermaxDateFormat } from "utils/helpers"
 import { deleteProject } from "actions/project"
+import { TagColors } from "configs/constants"
 
 interface DataType {
   key: string
@@ -50,8 +51,12 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const [projectRow, setProjectRow] = useState<any>(null)
   const [projectListData, setProjectListData] = useState<any>([])
   const [searchQuery, setSearchQuery] = useState("")
+  console.log("userInfo", userInfo)
 
-  const getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
+  let getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
+  if (userInfo.is_superuser) {
+    getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
+  }
   const { data: projectList, isLoading } = useGetData(getProjectUrl)
   console.log("projectList", projectList)
   const projectOCNos = projectList?.map((project: any) => project.project_oc_number)
@@ -71,6 +76,14 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
   const columns: ColumnsType<DataType> = [
     {
+      title: () => <div className="text-center">Division</div>,
+      dataIndex: "division",
+      key: "division",
+      render: (text: keyof typeof TagColors) => {
+        return <Tag color={TagColors[text]}>{text}</Tag>
+      },
+    },
+    {
       title: () => <div className="text-center">Project OC No</div>,
       dataIndex: "project_oc_number",
       key: "project_oc_number",
@@ -88,11 +101,15 @@ export default function ProjectList({ userInfo, isComplete }: any) {
     {
       title: () => <div className="text-center">Project</div>,
       dataIndex: "project_name",
-      align:"center",
+      align: "center",
       key: "project_name",
 
       render: (text, record) => (
-        <Link href={`/project/${record.name}`} className="text-center hover:underline" onClick={() => setModalLoading(true)}>
+        <Link
+          href={`/project/${record.name}`}
+          className="text-center hover:underline"
+          onClick={() => setModalLoading(true)}
+        >
           {record.project_name}
         </Link>
       ),
@@ -127,7 +144,12 @@ export default function ProjectList({ userInfo, isComplete }: any) {
         return <div className="text-center">{text}</div>
       },
     },
-    { title: () => <div className="text-center">Approver</div>, dataIndex: "approver", key: "approver", align:"center" },
+    {
+      title: () => <div className="text-center">Approver</div>,
+      dataIndex: "approver",
+      key: "approver",
+      align: "center",
+    },
     {
       title: "Action",
       dataIndex: "action",
@@ -233,9 +255,11 @@ export default function ProjectList({ userInfo, isComplete }: any) {
               />
             </div>
           </Tooltip>
-          { !(isComplete === 1) && <Button type="primary" icon={<FolderAddOutlined />} iconPosition={"end"} onClick={handleAddProject}>
-            Add Project
-          </Button>}
+          {!(isComplete === 1) && (
+            <Button type="primary" icon={<FolderAddOutlined />} iconPosition={"end"} onClick={handleAddProject}>
+              Add Project
+            </Button>
+          )}
         </div>
       </div>
       <div className="shadow-md">

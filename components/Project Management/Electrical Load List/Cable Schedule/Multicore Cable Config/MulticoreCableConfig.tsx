@@ -525,27 +525,6 @@ import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
 import { multicoreCableConfigColumns, multicoreCableConfigGroupedColumns } from "../../common/ExcelColumns"
 import { ValidColumnType } from "../../types"
 
-// import {
-//   Heating_ControlSchemeData,
-//   Enviro_ControlSchemeDataDol,
-//   Enviro_ControlSchemeDataSD,
-//   Enviro_ControlSchemeDataVFD,
-//   WWS_IPG_data,
-//   SPG_ServicesConrolSchemesData
-// } from '../mocks/mock-data'; // Adjust import paths as needed
-
-interface PanelData {
-  [key: string]: any
-}
-
-interface UserAuth {
-  divisionId: number
-  [key: string]: any
-}
-
-// interface MulticoreCableConfigProps {
-
-// }
 interface MulticoreCableConfigProps {
   isOpen: boolean
   onClose: () => void
@@ -834,7 +813,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
     const options = {
       data,
       license: "39130-64ebc-bd98e-26bc4",
-      columns:typedMulticoreCableConfigGroupedColumns,
+      columns: typedMulticoreCableConfigGroupedColumns,
 
       updateTable: (instance: any, cell: any, col: number, row: number, val: any) => {
         if (data[row][0] === true && !selectedElMulticore.includes(data[row])) {

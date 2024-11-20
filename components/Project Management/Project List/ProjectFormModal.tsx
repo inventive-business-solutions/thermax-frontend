@@ -117,7 +117,7 @@ export default function ProjectFormModal({
       await createData(CABLE_TRAY_LAYOUT, false, { revision_id })
       await createData(LAYOUT_EARTHING, false, { revision_id })
       await createData(APPROVER_EMAIL_NOTIFICATION_API, false, {
-        approvar_email: projectData.approver,
+        approvar_email: projectData?.approver,
         creator_email: userInfo?.email,
         project_oc_number: projectData.project_oc_number,
         project_name: projectData.project_name,
