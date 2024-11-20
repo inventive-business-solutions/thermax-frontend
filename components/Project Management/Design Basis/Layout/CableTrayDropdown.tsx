@@ -43,7 +43,9 @@ export default function useCableTrayDropdowns() {
     "name"
   )
   running_motor_voltage_drop_options = sortDropdownOptions(running_motor_voltage_drop_options)
-  const { dropdownOptions: conductor_options } = useDropdownOptions(`${LAYOUT_CONDUCTOR}?fields=["*"]`, "name")
+  let { dropdownOptions: conductor_options } = useDropdownOptions(`${LAYOUT_CONDUCTOR}?fields=["*"]`, "name")
+  conductor_options = sortDropdownOptions(conductor_options)
+
   const { dropdownOptions: cable_installation_options } = useDropdownOptions(
     `${LAYOUT_CABLE_INSTALLATION}?fields=["*"]`,
     "name"
