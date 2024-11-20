@@ -206,91 +206,21 @@ export default function DocumentRevision() {
         earthingLayoutData: earthingLayoutData[0],
       })
 
-      console.log(result)
-
-      // Assuming the result.data is an array of integers (each byte as an integer)
       const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
-
-      // Parse the binary data into a workbook using XLSX.read
-      const workbook = XLSX.read(byteArray, { type: "array" })
-      console.log(workbook)
-
-      // Verify that the workbook contains sheets
-      if (workbook.SheetNames.length > 0) {
-        console.log("Workbook loaded successfully, sheets:", workbook.SheetNames)
-
-        const excelData = XLSX.write(workbook, { bookType: "xlsx", type: "array" })
-        console.log("Written Data Size:", excelData.length) // Ensure this matches the expected size (50KB)
-
-        // const excelBlob = new Blob([excelData], {
-        //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        // })
-
-        const excelBlob = new Blob([byteArray.buffer], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        })
-
-        console.log("Excel Blob:", excelBlob)
-
-        // Create a download link
-        const url = window.URL.createObjectURL(excelBlob)
-        const link = document.createElement("a")
-        link.href = url
-        link.setAttribute("download", "output.xlsx") // Filename
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      } else {
-        console.error("No sheets found in the workbook")
-      }
+      const excelBlob = new Blob([byteArray.buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      })
+      const url = window.URL.createObjectURL(excelBlob)
+      const link = document.createElement("a")
+      link.href = url
+      link.setAttribute("download", "output.xlsx") // Filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     } catch (error) {
       console.error("Error processing Excel file:", error)
     }
 
-    //   // Parse the binary data into a workbook
-    //   const workbook = XLSX.read(result?.data?.data, { type: "array" })
-
-    //   // Create a Blob from the workbook
-    //   const excelBlob = new Blob([XLSX.write(workbook, { bookType: "xlsx", type: "array" })], {
-    //     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    //   })
-
-    //   const url = window.URL.createObjectURL(excelBlob)
-
-    //   // Create a download link
-    //   // const url = window.URL.createObjectURL(new Blob([result.data]))
-    //   const link = document.createElement("a")
-    //   link.href = url
-    //   link.setAttribute("download", "output.xlsx") // Filename
-    //   document.body.appendChild(link)
-    //   link.click()
-    //   document.body.removeChild(link)
-    // } catch (error) {
-    //   console.error(error)
-    // }
-
-    // console.log({
-    //   metadata: {
-    //     prepared_by_initials: projectCreator?.initials,
-    //     checked_by_initials: projectApprover?.initials,
-    //     approved_by_initials: superuser?.initials,
-    //     division_name: projectCreator?.division,
-    //   },
-    //   project,
-    //   projectCreator,
-    //   projectApprover,
-    //   superuser,
-    //   projectInfo,
-    //   documentRevisions,
-    //   generalInfo: generalInfo[0],
-    //   projectMainPkgData,
-    //   motorParameters: motorParameters[0],
-    //   makeOfComponents: makeOfComponents[0],
-    //   commonConfigurations: commonConfigurations[0],
-    //   projectPanelData: finalProjectPanelData,
-    //   cableTrayLayoutData: cableTrayLayoutData[0],
-    //   earthingLayoutData: earthingLayoutData[0],
-    // })
     setDownloadIconSpin(false)
   }
 
