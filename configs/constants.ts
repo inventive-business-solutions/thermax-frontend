@@ -44,7 +44,7 @@ export const TagColors = {
   BTG: "magenta",
   Enviro: "green",
   Heating: "volcano",
-  Services: "blue",
+  "WWS Services": "blue",
   "WWS IPG": "cyan",
   "WWS SPG": "red",
 }

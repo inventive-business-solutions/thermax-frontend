@@ -29,7 +29,6 @@ export const adminApiClient = axios.create({
 })
 
 export const getFileUploadClient = async () => {
-  const token = await getFrappeToken()
   const apiClient = axios.create({
     baseURL: process.env.FRAPPE_BASE_URL,
     maxBodyLength: Infinity,

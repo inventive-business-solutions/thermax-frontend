@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "antd"
 import React, { useEffect, useState } from "react"
 import Download from "./Download"
 import MotorCanopyList from "./MotorCanopyList"
@@ -21,6 +20,7 @@ const ElectricalLoadList = () => {
 
   useEffect(() => {
     setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

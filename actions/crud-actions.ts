@@ -74,3 +74,24 @@ export const deleteData = async (url: string, useAdminClient: boolean) => {
     handleAPIError(error)
   }
 }
+
+export const downloadFile = async (url: string, useAdminClient: boolean, data: any) => {
+  let apiClient = await getApiClient()
+  if (useAdminClient) {
+    apiClient = adminApiClient
+  }
+
+  try {
+    const response = await apiClient.post(url, data, {
+      responseType: "arraybuffer", // Expect binary data
+    })
+
+    // Return binary data and headers
+    return {
+      data: response.data, // Binary content
+      headers: response.headers, // Response headers
+    }
+  } catch (error: any) {
+    handleAPIError(error)
+  }
+}
