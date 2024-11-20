@@ -34,7 +34,7 @@ const getDefaultValues = (pccPanelData: any) => {
     is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || 0,
     alarm_annunciator: pccPanelData?.alarm_annunciator || "Applicable",
     control_transformer_coating: pccPanelData?.control_transformer_coating || "NA",
-    control_transformer_configuration: pccPanelData?.control_transformer_configuration || "NA",
+    control_transformer_configuration: pccPanelData?.control_transformer_configuration || "Single",
     mi_analog: pccPanelData?.mi_analog || "Ammeter",
     mi_digital: pccPanelData?.mi_digital || "Ammeter",
     mi_communication_protocol: pccPanelData?.mi_communication_protocol || "Ethernet",
@@ -112,6 +112,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const {
     incomer_ampere_options,
     current_transformer_coating_options,
+    control_transformer_configuration_options,
     incomer_pole_options,
     incomer_type_options,
     incomer_above_ampere_options,
@@ -168,7 +169,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   )
 
   useEffect(() => {
-    if(control_transformer_coating_controlled === "NA") {
+    if (control_transformer_coating_controlled === "NA") {
       setValue("control_transformer_configuration", "NA")
     }
   }, [control_transformer_coating_controlled, setValue])
@@ -410,7 +411,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="control_transformer_configuration"
               label="Control Transformer Configuration"
-              options={current_transformer_coating_options}
+              options={control_transformer_configuration_options}
               disabled={control_transformer_coating_controlled === "NA"}
               size="small"
             />

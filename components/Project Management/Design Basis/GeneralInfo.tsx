@@ -40,23 +40,6 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const generalInfoDefaultData = await getData(
-  //       `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  //     )
-
-  //     const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`)
-  //     if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
-  //       setGeneralInfoData({
-  //         is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
-  //         pkgList: mainPkgData,
-  //         battery_limit: generalInfoDefaultData[0]?.battery_limit,
-  //       })
-  //     }
-  //   }
-  //   fetchData()
-  // }, [refresh, revision_id])
   useEffect(() => {
     const fetchData = async () => {
       const generalInfoDefaultData = await getData(
