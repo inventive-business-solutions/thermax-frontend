@@ -311,7 +311,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 px-4">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex justify-center bg-black text-white">
           <div className="flex-1 border border-white p-1 text-center">Motor Details</div>
