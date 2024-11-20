@@ -11,6 +11,7 @@ import { CABLE_TRAY_LAYOUT } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCableTrayDropdowns from "./CableTrayDropdown"
 import { cableTrayValidationSchema } from "./schemas"
+import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 
 const getDefaultValues = (cableTrayData: any) => {
   return {
@@ -90,6 +91,12 @@ const getDefaultValues = (cableTrayData: any) => {
     is_sct_conduit_selected: cableTrayData?.is_sct_conduit_selected || 1,
     sct_conduit_moc: cableTrayData?.sct_conduit_moc || "Sch 40 PVC",
     sct_conduit_size: cableTrayData?.sct_conduit_size || "1/8",
+    touching_factor_air: Number(cableTrayData?.touching_factor_air) || 1,
+    touching_factor_burid: Number(cableTrayData?.touching_factor_burid) || 2,
+    ambient_temp_factor_air: Number(cableTrayData?.ambient_temp_factor_air) || 2,
+    ambient_temp_factor_burid: Number(cableTrayData?.ambient_temp_factor_burid) || 2,
+    derating_factor_air: Number(cableTrayData?.derating_factor_air) || 2,
+    derating_factor_burid: Number(cableTrayData?.derating_factor_burid) || 2,
   }
 }
 
@@ -136,7 +143,24 @@ const CableTray = ({
     mode: "onSubmit",
   })
 
+  console.log(typeof watch("derating_factor_air"), "Derating factor")
+
   const number_of_cores_controlled = watch("number_of_cores")
+  const touching_air_controlled = watch("touching_factor_air")
+  const ambient_temp_factor_air_controlled = watch("ambient_temp_factor_air")
+  const touching_burid_controlled = watch("touching_factor_burid")
+  const ambient_temp_factor_burid_controlled = watch("ambient_temp_factor_burid")
+
+  let product = touching_air_controlled * ambient_temp_factor_air_controlled
+  let product2 = touching_burid_controlled * ambient_temp_factor_burid_controlled
+
+  useEffect(() => {
+    setValue("derating_factor_burid", product2)
+  }, [product2, touching_burid_controlled, ambient_temp_factor_burid_controlled, setValue])
+
+  useEffect(() => {
+    setValue("derating_factor_air", product)
+  }, [product, touching_air_controlled, ambient_temp_factor_air_controlled, setValue])
 
   useEffect(() => {
     if (number_of_cores_controlled === "3C") {
@@ -261,7 +285,7 @@ const CableTray = ({
               />
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="grid grid-cols-3 gap-4">
             {/* <div className="flex-1">
               <CustomSingleSelect
                 control={control}
@@ -272,7 +296,7 @@ const CableTray = ({
               />
             </div> */}
 
-            <div className="flex-1">
+            <div className="">
               <CustomSingleSelect
                 control={control}
                 name="voltage_grade"
@@ -282,7 +306,7 @@ const CableTray = ({
               />
             </div>
 
-            <div className="flex-1">
+            <div className="">
               <CustomSingleSelect
                 control={control}
                 name="conductor"
@@ -291,8 +315,41 @@ const CableTray = ({
                 size="small"
               />
             </div>
-            <div className="flex-1">
+            {/* <div className="flex-1">
               <CustomTextInput control={control} name="derating_factor" label="Derating Factor" size="small" />
+            </div> */}
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="font-semibold text-slate-700"></div>
+            <div className="font-semibold text-slate-700">Air</div>
+            <div className="font-semibold text-slate-700">Burid</div>
+          </div>
+
+          <div className="grid grid-cols-4 gap-3">
+            <div className="font-semibold text-slate-700">Touching Factor</div>
+            <div>
+              <CustomTextNumber control={control} name="touching_factor_air" label="" size="small" />
+            </div>
+            <div>
+              <CustomTextNumber control={control} name="touching_factor_burid" label="" size="small" />
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="font-semibold text-slate-700">Ambient Temperature Factor</div>
+            <div>
+              <CustomTextNumber control={control} name="ambient_temp_factor_air" label="" size="small" />
+            </div>
+            <div>
+              <CustomTextNumber control={control} name="ambient_temp_factor_burid" label="" size="small" />
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="font-semibold text-slate-700">Derating Factor</div>
+            <div>
+              <CustomTextNumber control={control} disabled={true} name="derating_factor_air" label="" size="small" />
+            </div>
+            <div>
+              <CustomTextNumber control={control} disabled={true} name="derating_factor_burid" label="" size="small" />
             </div>
           </div>
           {/* <div className="w-1/3 flex-1">

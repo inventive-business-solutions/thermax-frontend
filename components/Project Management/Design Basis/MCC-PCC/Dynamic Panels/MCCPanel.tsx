@@ -7,14 +7,15 @@ import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { MCC_PANEL } from "configs/api-endpoints"
+import { MCC_PANEL, PROJECT_INFO_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
 import { mccPanelValidationSchema } from "../schemas"
 import { HEATING, WWS_SPG } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
+import { useParams } from "next/navigation"
 
-const getDefaultValues = (mccPanelData: any) => {
+const getDefaultValues = (projectInfo: any, mccPanelData: any) => {
   return {
     incomer_ampere: mccPanelData?.incomer_ampere || "1000",
     led_type_other_input: mccPanelData?.led_type_other_input || "NA",
@@ -34,7 +35,7 @@ const getDefaultValues = (mccPanelData: any) => {
     is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected || 0,
     current_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
     control_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
-    control_transformer_configuration: mccPanelData?.current_transformer_coating || "NA",
+    control_transformer_configuration: mccPanelData?.control_transformer_configuration || "Single",
     current_transformer_number: mccPanelData?.current_transformer_number || "One",
     alarm_annunciator: mccPanelData?.alarm_annunciator || "Applicable",
     mi_analog: mccPanelData?.mi_analog || "Ammeter",
@@ -86,9 +87,9 @@ const getDefaultValues = (mccPanelData: any) => {
     heater_model: mccPanelData?.heater_model || "NA",
     heater_fuel: mccPanelData?.heater_fuel || "NA",
     heater_year: mccPanelData?.heater_year || "NA",
-    heater_power_supply_vac: mccPanelData?.heater_power_supply_vac || "NA",
-    heater_power_supply_phase: mccPanelData?.heater_power_supply_phase || "NA",
-    heater_power_supply_frequency: mccPanelData?.heater_power_supply_frequency || "NA",
+    heater_power_supply_vac: mccPanelData?.heater_power_supply_vac !== "NA"? mccPanelData?.heater_power_supply_vac: projectInfo?.main_supply_lv,
+    heater_power_supply_phase: mccPanelData?.heater_power_supply_phase || projectInfo?.main_supply_lv_phase,
+    heater_power_supply_frequency: mccPanelData?.heater_power_supply_frequency || projectInfo?.frequency,
     heater_control_supply_vac: mccPanelData?.heater_control_supply_vac || "NA",
     heater_control_supply_phase: mccPanelData?.heater_control_supply_phase || "NA",
     heater_control_supply_frequency: mccPanelData?.heater_control_supply_frequency || "NA",
@@ -106,9 +107,18 @@ const getDefaultValues = (mccPanelData: any) => {
 }
 
 const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
+  const params = useParams()
+  const project_id = params.project_id
+
   const { data: mccPanelData } = useGetData(
     `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
+
+  const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
+
+  const { data: projectInfo } = useGetData(getProjectInfoUrl)
+
+
   const [loading, setLoading] = useState(false)
   const userInfo = useCurrentUser()
 
@@ -143,6 +153,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     ppc_painting_standards_options,
     ppc_interior_and_exterior_paint_shade_options,
     ppc_component_mounting_plate_paint_shade_options,
+    control_transformer_configuration_options,
     ppc_base_frame_paint_shade_options,
     ppc_minimum_coating_thickness_options,
     ppc_pretreatment_panel_standard_options,
@@ -150,7 +161,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   const { control, handleSubmit, reset, watch, setValue } = useForm({
     resolver: zodResolver(mccPanelValidationSchema),
-    defaultValues: getDefaultValues(mccPanelData?.[0]),
+    defaultValues: getDefaultValues(projectInfo, mccPanelData?.[0]),
     mode: "onSubmit",
   })
 
@@ -163,7 +174,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   }, [currentTransformerCoating, setValue])
 
   useEffect(() => {
-    reset(getDefaultValues(mccPanelData?.[0]))
+    reset(getDefaultValues(projectInfo, mccPanelData?.[0]))
   }, [mccPanelData, reset])
 
   const incomer_ampere_controlled = watch("incomer_ampere")
@@ -174,14 +185,13 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const ga_panel_mounting_frame_controlled = watch("ga_panel_mounting_frame")
   const control_transformer_coating_controlled = watch("control_transformer_coating")
 
-
   const [gaCurrentDensity, setGaCurrentDensity] = useState<any[]>(ga_current_density_options)
   const [gaPanelMoutingHeightOptions, setGaPanelMountingHeightOptions] = useState<any[]>(
     ga_panel_mounting_height_options
   )
 
   useEffect(() => {
-    if(control_transformer_coating_controlled === "NA") {
+    if (control_transformer_coating_controlled === "NA") {
       setValue("control_transformer_configuration", "NA")
     }
   }, [control_transformer_coating_controlled, setValue])
@@ -451,7 +461,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="control_transformer_configuration"
               label="Control Transformer Configuration"
-              options={current_transformer_coating_options}
+              options={control_transformer_configuration_options}
               disabled={control_transformer_coating_controlled === "NA"}
               size="small"
             />
@@ -937,6 +947,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 <CustomTextInput
                   control={control}
                   name="heater_fuel"
+                  defaultValue={10}
                   label="Fuel"
                   disabled={watch("is_punching_details_for_heater_selected") === 0}
                 />
