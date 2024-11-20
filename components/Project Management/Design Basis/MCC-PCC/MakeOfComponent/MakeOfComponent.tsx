@@ -220,6 +220,7 @@ const MakeOfComponent = ({
               name="preferred_motor"
               label="Preferred Motor"
               size="small"
+              readOnly
               disabled={userInfo?.division === HEATING}
             />
           </div>
@@ -235,7 +236,7 @@ const MakeOfComponent = ({
             />
           </div>
           <div className="w-1/5">
-            <CustomTextInput control={control} name="preferred_cable" label="Preferred Cable" size="small" />
+            <CustomTextInput control={control} name="preferred_cable" readOnly label="Preferred Cable" size="small" />
           </div>
         </div>
         <div className="flex flex-1 items-center gap-4">
@@ -253,6 +254,7 @@ const MakeOfComponent = ({
               control={control}
               name="preferred_lv_switchgear"
               label="Preferred LV Switchgear"
+              readOnly
               size="small"
             />
           </div>
@@ -274,6 +276,7 @@ const MakeOfComponent = ({
               control={control}
               name="preferred_panel_enclosure"
               label="Preferred Panel Enclosure"
+              readOnly
               size="small"
             />
           </div>
@@ -289,7 +292,13 @@ const MakeOfComponent = ({
             />
           </div>
           <div className="w-1/5">
-            <CustomTextInput control={control} name="preferred_vfdvsd" label="Preferred VFD/VSD" size="small" />
+            <CustomTextInput
+              control={control}
+              name="preferred_vfdvsd"
+              label="Preferred VFD/VSD"
+              readOnly
+              size="small"
+            />
           </div>
         </div>
         <div className="flex flex-1 items-center gap-4">
@@ -307,6 +316,7 @@ const MakeOfComponent = ({
               control={control}
               name="preferred_soft_starter"
               label="Preferred Soft Starter"
+              readOnly
               size="small"
             />
           </div>
@@ -317,7 +327,7 @@ const MakeOfComponent = ({
           <CustomMultiSelect control={control} name="plc" label="PLC" options={plc_make_options || []} size="small" />
         </div>
         <div className="w-1/5">
-          <CustomTextInput control={control} name="preferred_plc" label="Preferred PLC" size="small" />
+          <CustomTextInput control={control} name="preferred_plc" readOnly label="Preferred PLC" size="small" />
         </div>
       </div>
 

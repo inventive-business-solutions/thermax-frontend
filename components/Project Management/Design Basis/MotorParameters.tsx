@@ -220,7 +220,7 @@ const getDefaultValues = (defaultData: any, projectInfoData: any) => {
     safe_area_duty: defaultData?.safe_area_duty || "S1",
     hazardous_area_duty: defaultData?.hazardous_area_duty || "S1",
     safe_area_service_factor: Number(defaultData?.safe_area_service_factor) || 1,
-    hazardous_area_service_factor: Number(defaultData?.hazardous_area_service_factor) || "1",
+    hazardous_area_service_factor: Number(defaultData?.hazardous_area_service_factor) || 1,
     safe_area_cooling_type: defaultData?.safe_area_cooling_type || "TEFC",
     hazardous_area_cooling_type: defaultData?.hazardous_area_cooling_type || "TEFC",
     safe_area_body_material: defaultData?.safe_area_body_material || "Aluminium",

@@ -412,7 +412,7 @@ const CommonConfiguration = ({
               size="small"
             />
           </div> */}
-          {(userInfo?.division === WWS_SPG) && (
+          {userInfo?.division === WWS_SPG && (
             <div className="flex-1">
               <CustomSingleSelect
                 control={control}
