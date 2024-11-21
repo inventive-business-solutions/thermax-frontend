@@ -1,6 +1,6 @@
 "use client"
 import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
-import React, { useRef, useEffect, useState, useMemo } from "react"
+import React, { useRef, useEffect, useState, useMemo, useCallback } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
 import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
 import { getData } from "actions/crud-actions"
@@ -92,19 +92,6 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
     updateSpreadsheetColumns(updatedColumns)
   }
 
-  const updateSpreadsheetColumns = (updatedColumns: any[]) => {
-    if (spreadsheetInstance) {
-      spreadsheetInstance.destroy()
-    }
-
-    if (jRef.current) {
-      const instance = jspreadsheet(jRef.current, {
-        ...loadListOptions,
-        columns: updatedColumns,
-      })
-      setSpreadsheetInstance(instance)
-    }
-  }
   const downloadCurrentData = () => {
     // spreadsheetInstance?.loadListOptions.csvFileName = "Motar Detail Data";
     // spreadsheetInstance?.loadListOptions.wordWrap = true;
@@ -129,6 +116,23 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       rowResize: true,
     }),
     [typedLoadListColumns, loadListData]
+  )
+
+  const updateSpreadsheetColumns = useCallback(
+    (updatedColumns: any[]) => {
+      if (spreadsheetInstance) {
+        spreadsheetInstance.destroy()
+      }
+
+      if (jRef.current) {
+        const instance = jspreadsheet(jRef.current, {
+          ...loadListOptions,
+          columns: updatedColumns,
+        })
+        setSpreadsheetInstance(instance)
+      }
+    },
+    [loadListOptions, spreadsheetInstance]
   )
 
   // Initialize main spreadsheet
@@ -171,7 +175,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
     }
   }, [loadListOptions, spreadsheetInstance, typedLoadListColumns])
 
-  const updateLoadList = () => {
+  const updateLoadList = useCallback(() => {
     if (spreadsheetInstance) {
       spreadsheetInstance.destroy()
     }
@@ -183,13 +187,13 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       })
       setSpreadsheetInstance(instance)
     }
-  }
+  }, [loadListOptions, spreadsheetInstance])
 
   useEffect(() => {
     if (loadListData?.length) {
       updateLoadList()
     }
-  }, [loadListData])
+  }, [loadListData, updateLoadList])
   //update panel dropdown
   useEffect(() => {
     if (projectPanelData && !isLoading) {
@@ -324,7 +328,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
     })
 
     // Highlight cells containing duplicate values in red
-    Object.entries(duplicateValues).forEach(([value, indices]) => {
+    Object.entries(duplicateValues).forEach(([_value, indices]) => {
       if (indices.length > 1) {
         indices.forEach((rowIndex) => {
           const cellAddress = `A${rowIndex + 1}`
