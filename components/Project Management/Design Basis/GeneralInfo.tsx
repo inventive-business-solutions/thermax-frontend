@@ -17,22 +17,22 @@ import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { useLoading } from "hooks/useLoading"
 import GIPkgSelectionTabs from "./GIPkgSelection"
 import { useCurrentUser } from "hooks/useCurrentUser"
+import { mutate } from "swr"
+import { SyncOutlined } from "@ant-design/icons"
 
 const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   const userInfo = useCurrentUser()
   const params = useParams()
+  const router = useRouter()
   const [selectedMainPkgId, setSelectedMainPkgId] = useState("")
   const [addPkgLoading, setAddPkgLoading] = useState(false)
-  const { data: dbPkgList } = useGetData(
-    `${MAIN_PKG_API}?fields=["*"]&filters=[["division_name", "=", "${userInfo?.division}"]]`
-  )
+
   const [generalInfoData, setGeneralInfoData] = useState<any>({
+    is_package_selection_enabled: 0,
+    pkgList: [],
     battery_limit: "Incoming Supply at each MCC Panel by Client",
   })
-  const [refresh, setRefresh] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
-
-  const router = useRouter()
 
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
@@ -40,32 +40,26 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const getGeneralInfoUrl = `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+
+  const getMainPkgUrl = `${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`
+
+  const { data: generalInfoDefaultData }: any = useGetData(getGeneralInfoUrl)
+
+  const { data: mainPkgData } = useGetData(getMainPkgUrl)
+  const { data: dbPkgList } = useGetData(
+    `${MAIN_PKG_API}?fields=["*"]&filters=[["division_name", "=", "${userInfo?.division}"]]`
+  )
+
   useEffect(() => {
-    const fetchData = async () => {
-      const generalInfoDefaultData = await getData(
-        `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-      )
-      const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`)
-
-      if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
-        setGeneralInfoData({
-          is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
-          pkgList: mainPkgData,
-          battery_limit: generalInfoDefaultData[0]?.battery_limit || "Incoming Supply at each MCC Panel by Client", // Set default value here
-        })
-      } else {
-        // If no data is fetched, set default values
-        setGeneralInfoData({
-          is_package_selection_enabled: false,
-          pkgList: mainPkgData,
-          battery_limit: "Incoming Supply at each MCC Panel by Client", // Default value when no data
-        })
-      }
+    if (generalInfoDefaultData && mainPkgData) {
+      setGeneralInfoData({
+        is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,
+        pkgList: mainPkgData,
+        battery_limit: generalInfoDefaultData[0]?.battery_limit || "Incoming Supply at each MCC Panel by Client", // Set default value here
+      })
     }
-    fetchData()
-  }, [refresh, revision_id])
-
-  const projectMainPkgUrl = `${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`
+  }, [generalInfoDefaultData, mainPkgData, revision_id])
 
   const filteredOptions = dbPkgList?.filter(
     (pkg: any) =>
@@ -91,12 +85,17 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
       area_of_classification: subPkg?.classification_area,
       is_sub_package_selected: false,
     }))
+    await updateData(`${DESIGN_BASIS_GENERAL_INFO_API}/${generalInfoDefaultData[0].name}`, false, {
+      is_package_selection_enabled: 1,
+    })
     await createData(PROJECT_MAIN_PKG_API, false, {
       revision_id: revision_id,
       main_package_name: mainPkgData?.package_name,
       sub_packages: subPkgCreateData,
     })
-    setRefresh(!refresh)
+
+    mutate(getGeneralInfoUrl)
+    mutate(getMainPkgUrl)
     setSelectedMainPkgId("")
     setAddPkgLoading(false)
   }
@@ -217,15 +216,24 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
               Add
             </Button>
           </div>
+          <div className="text-end">
+            <Button
+              icon={<SyncOutlined color="#492971" />}
+              onClick={() => {
+                mutate(getMainPkgUrl)
+                mutate(getGeneralInfoUrl)
+              }}
+            >
+              Refresh
+            </Button>
+          </div>
         </div>
       </div>
       <GIPkgSelectionTabs
-        mainPkgUrl={projectMainPkgUrl}
+        getMainPkgUrl={getMainPkgUrl}
         generalInfoData={generalInfoData}
         setMainPkgData={null}
         setGeneralInfoData={setGeneralInfoData}
-        refresh={refresh}
-        setRefresh={setRefresh}
       />
       <Divider>
         <span className="font-bold text-slate-700">Battery Limit</span>
