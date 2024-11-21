@@ -5,19 +5,17 @@ import { Popconfirm, Tabs } from "antd"
 import { deleteData, getData } from "actions/crud-actions"
 import { PROJECT_MAIN_PKG_API } from "configs/api-endpoints"
 import GISubPkgList from "./GISubPkgList"
+import { mutate } from "swr"
 
 export default function GIPkgSelectionTabs({
+  getMainPkgUrl,
   generalInfoData,
   setGeneralInfoData,
-  refresh,
-  setRefresh,
 }: {
-  mainPkgUrl: string
+  getMainPkgUrl: string
   generalInfoData: any
   setMainPkgData: any
   setGeneralInfoData: any
-  refresh?: boolean
-  setRefresh?: any
 }) {
   const tabItems = generalInfoData?.pkgList?.map((main_package: any, index: number) => ({
     key: index.toString(),
@@ -36,7 +34,7 @@ export default function GIPkgSelectionTabs({
     if (data && data.length > 0) {
       await deleteData(`${PROJECT_MAIN_PKG_API}/${data[0].name}`, false)
     }
-    setRefresh(!refresh)
+    mutate(getMainPkgUrl)
   }
   if (tabItems && tabItems.length === 0) {
     return null
