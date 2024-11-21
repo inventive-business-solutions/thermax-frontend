@@ -146,7 +146,7 @@ export const LoadListcolumns = (divisionId: Number) => {
     {
       type: "dropdown",
       name: "pkg",
-      source: [],
+      source: ["Pkg 2", "Pkg 1"],
       title: "PACKAGE",
       width: "150",
     },
@@ -154,7 +154,7 @@ export const LoadListcolumns = (divisionId: Number) => {
     {
       type: "dropdown",
       name: "area",
-      source: ["", "Safe", "Hazardous"],
+      source: ["NA", "Safe", "Hazardous"],
       title: "AREA",
       width: "150",
     },

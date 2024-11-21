@@ -45,8 +45,10 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
       const generalInfoDefaultData = await getData(
         `${DESIGN_BASIS_GENERAL_INFO_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
       )
+      
       const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${revision_id}`)
-
+      
+      console.log(mainPkgData,"generalInfoDefaultData");
       if (generalInfoDefaultData && generalInfoDefaultData.length > 0) {
         setGeneralInfoData({
           is_package_selection_enabled: generalInfoDefaultData[0]?.is_package_selection_enabled,

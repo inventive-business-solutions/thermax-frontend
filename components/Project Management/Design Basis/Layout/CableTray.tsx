@@ -1190,7 +1190,7 @@ const CableTray = ({
         </div>
 
         <div className="mt-2 flex w-full justify-end">
-          <Button type="primary" onClick={handleSubmit(onSubmit)} loading={loading}>
+          <Button  type="primary" onClick={handleSubmit(onSubmit)} loading={loading}>
             Save and Next
           </Button>
         </div>
