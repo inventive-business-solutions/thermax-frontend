@@ -23,10 +23,10 @@ export default function GISubPkgList({
   useEffect(() => {
     setMainPackage({
       ...mainPkg,
-      standard: mainPkg?.standard || "IS",
-      zone: mainPkg?.zone || "Zone 2",
-      gas_group: mainPkg?.gas_group || "IIA/IIB",
-      temperature_class: mainPkg?.temperature_class || "T3",
+      // standard: mainPkg?.standard || "IS",
+      // zone: mainPkg?.zone || "Zone 2",
+      // gas_group: mainPkg?.gas_group || "IIA/IIB",
+      // temperature_class: mainPkg?.temperature_class || "T3",
     })
   }, [mainPkg])
   const { dropdownOptions: standardOptions } = useDropdownOptions(CLASSIFICATION_AREA_STANDARD_API, "name")
@@ -137,7 +137,7 @@ export default function GISubPkgList({
                 options={standardOptions}
                 size="small"
                 style={{ width: "100%" }}
-                value={main_package?.standard || "IS"}
+                defaultValue={main_package?.standard || "IS"}
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
@@ -158,7 +158,7 @@ export default function GISubPkgList({
                 options={zoneOptions}
                 size="small"
                 style={{ width: "100%" }}
-                value={main_package?.zone || "Zone 2"}
+                defaultValue={main_package?.zone || "Zone 2"}
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
@@ -179,7 +179,7 @@ export default function GISubPkgList({
                 options={gasGroupOptions}
                 size="small"
                 style={{ width: "100%" }}
-                value={main_package?.gas_group || "IIA/IIB"}
+                defaultValue={main_package?.gas_group || "IIA/IIB"}
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
@@ -200,7 +200,7 @@ export default function GISubPkgList({
                 options={temperatureClassOptions}
                 size="small"
                 style={{ width: "100%" }}
-                value={main_package?.temperature_class || "T3"}
+                defaultValue={main_package?.temperature_class || "T3"}
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {

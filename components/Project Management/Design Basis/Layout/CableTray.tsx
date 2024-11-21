@@ -20,8 +20,8 @@ const getDefaultValues = (cableTrayData: any) => {
     type_of_insulation: cableTrayData?.type_of_insulation || "PVC",
     color_scheme: cableTrayData?.color_scheme || "Red, Yellow, Blue",
     motor_voltage_drop_during_running: cableTrayData?.motor_voltage_drop_during_running || "2",
-    copper_conductor: cableTrayData?.copper_conductor || "2.5 Sq. mm",
-    aluminium_conductor: cableTrayData?.aluminium_conductor || "4 Sq. mm",
+    copper_conductor: cableTrayData?.copper_conductor || "2.5",
+    aluminium_conductor: cableTrayData?.aluminium_conductor || "4",
     cable_installation: cableTrayData?.cable_installation || "Air",
     motor_voltage_drop_during_starting: cableTrayData?.motor_voltage_drop_during_starting || "5",
     voltage_grade: cableTrayData?.voltage_grade || "11 kV",
@@ -120,7 +120,9 @@ const CableTray = ({
     type_of_insulation_options,
     color_scheme_options,
     running_motor_voltage_drop_options,
-    conductor_options,
+    // conductor_options,
+    copper_conductor_options,
+    aluminium_conductor_options,
     starting_motor_voltage_drop_options,
     voltage_grade_options,
     gland_make_options,
@@ -328,10 +330,13 @@ const CableTray = ({
               <CustomSingleSelect
                 control={control}
                 name="copper_conductor"
-                label="Copper Conductor"
-                options={conductor_options.filter((item: any) => {
-                  return !item.name.startsWith("25")
-                })}
+                label="Copper Conductor (Sq mm. including and below)"
+                options={copper_conductor_options}
+                suffixIcon={
+                  <>
+                    <p className="text-xs font-semibold text-blue-500">Sq. mm</p>
+                  </>
+                }
                 size="small"
               />
             </div>
@@ -339,10 +344,13 @@ const CableTray = ({
               <CustomSingleSelect
                 control={control}
                 name="aluminium_conductor"
-                label="Aluminium Conductor"
-                options={conductor_options.filter((item: any) => {
-                  return !item.name.startsWith("2.")
-                })}
+                label="Aluminium Conductor (Sq mm. including and above)"
+                options={aluminium_conductor_options}
+                suffixIcon={
+                  <>
+                    <p className="text-xs font-semibold text-blue-500">Sq. mm</p>
+                  </>
+                }
                 size="small"
               />
             </div>
