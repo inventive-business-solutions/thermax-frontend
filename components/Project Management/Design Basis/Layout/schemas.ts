@@ -305,4 +305,28 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Max. Width is required",
     message: "Max. Width is required",
   }),
+  touching_factor_air: zod.number({
+    required_error: "Touching Factor is required",
+    message: "Touching factor is required",
+  }),
+  touching_factor_burid: zod.number({
+    required_error: "Toching factor is required",
+    message: "Touching factor is required",
+  }),
+  ambient_temp_factor_air: zod.number({
+    required_error: "Ambient temperature is required",
+    message: "Ambient temperature is required",
+  }),
+  ambient_temp_factor_burid: zod.number({
+    required_error: "Ambient temperature is required",
+    message: "Ambient temperature is required",
+  }),
+  derating_factor_air: zod.number({
+    required_error: "Derating factor is required",
+    message: "Derating factor is required",
+  }),
+  derating_factor_burid: zod.number({
+    required_error: "Derating Factor is required",
+    message: "Derating factor is required",
+  }),
 })

@@ -43,7 +43,7 @@ export const LoadListcolumns = (divisionId: Number) => {
     {
       type: "dropdown",
       name: "supplyVoltage",
-      source: ["230 VAC", "110 VAC"],
+      source: ["415 VAC", "460 VAC"],
       title: "SUPPLY  VOLTAGE",
       width: "140",
     },

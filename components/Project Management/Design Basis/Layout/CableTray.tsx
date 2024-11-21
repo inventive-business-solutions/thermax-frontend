@@ -11,6 +11,7 @@ import { CABLE_TRAY_LAYOUT } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCableTrayDropdowns from "./CableTrayDropdown"
 import { cableTrayValidationSchema } from "./schemas"
+import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 
 const getDefaultValues = (cableTrayData: any) => {
   return {
@@ -19,7 +20,8 @@ const getDefaultValues = (cableTrayData: any) => {
     type_of_insulation: cableTrayData?.type_of_insulation || "PVC",
     color_scheme: cableTrayData?.color_scheme || "Red, Yellow, Blue",
     motor_voltage_drop_during_running: cableTrayData?.motor_voltage_drop_during_running || "2",
-    conductor: cableTrayData?.conductor || "Copper",
+    copper_conductor: cableTrayData?.copper_conductor || "2.5 Sq. mm",
+    aluminium_conductor: cableTrayData?.aluminium_conductor || "4 Sq. mm",
     cable_installation: cableTrayData?.cable_installation || "Air",
     motor_voltage_drop_during_starting: cableTrayData?.motor_voltage_drop_during_starting || "5",
     voltage_grade: cableTrayData?.voltage_grade || "11 kV",
@@ -90,6 +92,12 @@ const getDefaultValues = (cableTrayData: any) => {
     is_sct_conduit_selected: cableTrayData?.is_sct_conduit_selected || 1,
     sct_conduit_moc: cableTrayData?.sct_conduit_moc || "Sch 40 PVC",
     sct_conduit_size: cableTrayData?.sct_conduit_size || "1/8",
+    touching_factor_air: Number(cableTrayData?.touching_factor_air) || 1,
+    touching_factor_burid: Number(cableTrayData?.touching_factor_burid) || 2,
+    ambient_temp_factor_air: Number(cableTrayData?.ambient_temp_factor_air) || 2,
+    ambient_temp_factor_burid: Number(cableTrayData?.ambient_temp_factor_burid) || 2,
+    derating_factor_air: Number(cableTrayData?.derating_factor_air) || 2,
+    derating_factor_burid: Number(cableTrayData?.derating_factor_burid) || 4,
   }
 }
 
@@ -137,6 +145,22 @@ const CableTray = ({
   })
 
   const number_of_cores_controlled = watch("number_of_cores")
+  const touching_air_controlled = watch("touching_factor_air")
+  const ambient_temp_factor_air_controlled = watch("ambient_temp_factor_air")
+  const touching_burid_controlled = watch("touching_factor_burid")
+  const ambient_temp_factor_burid_controlled = watch("ambient_temp_factor_burid")
+  const copper_conductor_controlled = watch("copper_conductor")
+
+  let product = touching_air_controlled * ambient_temp_factor_air_controlled
+  let product2 = touching_burid_controlled * ambient_temp_factor_burid_controlled
+
+  useEffect(() => {
+    setValue("derating_factor_burid", product2)
+  }, [product2, touching_burid_controlled, ambient_temp_factor_burid_controlled, setValue])
+
+  useEffect(() => {
+    setValue("derating_factor_air", product)
+  }, [product, touching_air_controlled, ambient_temp_factor_air_controlled, setValue])
 
   useEffect(() => {
     if (number_of_cores_controlled === "3C") {
@@ -147,6 +171,24 @@ const CableTray = ({
       setValue("color_scheme", "Brown, Black, Grey, Blue")
     }
   }, [number_of_cores_controlled, setValue])
+
+  useEffect(() => {
+    if (copper_conductor_controlled.startsWith("2.5")) {
+      setValue("aluminium_conductor", "4 Sq. mm")
+    } else if (copper_conductor_controlled.startsWith("4")) {
+      setValue("aluminium_conductor", "6 Sq. mm")
+    } else if (copper_conductor_controlled.startsWith("6")) {
+      setValue("aluminium_conductor", "10 Sq. mm")
+    } else if (copper_conductor_controlled.startsWith("10")) {
+      setValue("aluminium_conductor", "16 Sq. mm")
+    } else if (copper_conductor_controlled.startsWith("16")) {
+      setValue("aluminium_conductor", "25 Sq. mm")
+    } else if (copper_conductor_controlled === "All") {
+      setValue("aluminium_conductor", "NA")
+    } else if (copper_conductor_controlled === "NA") {
+      setValue("aluminium_conductor", "All")
+    }
+  }, [copper_conductor_controlled, setValue])
 
   useEffect(() => {
     reset(getDefaultValues(cableTrayData?.[0]))
@@ -187,7 +229,7 @@ const CableTray = ({
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col px-4">
         <Divider>
           <span className="font-bold text-slate-700">Power Cable</span>
         </Divider>
@@ -261,7 +303,7 @@ const CableTray = ({
               />
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="grid grid-cols-3 gap-4">
             {/* <div className="flex-1">
               <CustomSingleSelect
                 control={control}
@@ -272,7 +314,7 @@ const CableTray = ({
               />
             </div> */}
 
-            <div className="flex-1">
+            <div className="">
               <CustomSingleSelect
                 control={control}
                 name="voltage_grade"
@@ -282,17 +324,63 @@ const CableTray = ({
               />
             </div>
 
-            <div className="flex-1">
+            <div className="">
               <CustomSingleSelect
                 control={control}
-                name="conductor"
-                label="Conductor"
-                options={conductor_options}
+                name="copper_conductor"
+                label="Copper Conductor"
+                options={conductor_options.filter((item: any) => {
+                  return !item.name.startsWith("25")
+                })}
                 size="small"
               />
             </div>
-            <div className="flex-1">
+            <div className="">
+              <CustomSingleSelect
+                control={control}
+                name="aluminium_conductor"
+                label="Aluminium Conductor"
+                options={conductor_options.filter((item: any) => {
+                  return !item.name.startsWith("2.")
+                })}
+                size="small"
+              />
+            </div>
+            {/* <div className="flex-1">
               <CustomTextInput control={control} name="derating_factor" label="Derating Factor" size="small" />
+            </div> */}
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="font-semibold text-slate-700"></div>
+            <div className="font-semibold text-slate-700">Air</div>
+            <div className="font-semibold text-slate-700">Buried</div>
+          </div>
+
+          <div className="grid grid-cols-4 gap-3">
+            <div className="font-semibold text-slate-700">Touching Factor</div>
+            <div>
+              <CustomTextNumber control={control} name="touching_factor_air" label="" size="small" />
+            </div>
+            <div>
+              <CustomTextNumber control={control} name="touching_factor_burid" label="" size="small" />
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="font-semibold text-slate-700">Ambient Temperature Factor</div>
+            <div>
+              <CustomTextNumber control={control} name="ambient_temp_factor_air" label="" size="small" />
+            </div>
+            <div>
+              <CustomTextNumber control={control} name="ambient_temp_factor_burid" label="" size="small" />
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="font-semibold text-slate-700">Derating Factor</div>
+            <div>
+              <CustomTextNumber control={control} disabled={true} name="derating_factor_air" label="" size="small" />
+            </div>
+            <div>
+              <CustomTextNumber control={control} disabled={true} name="derating_factor_burid" label="" size="small" />
             </div>
           </div>
           {/* <div className="w-1/3 flex-1">
@@ -1103,7 +1191,7 @@ const CableTray = ({
 
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" onClick={handleSubmit(onSubmit)} loading={loading}>
-            Save and Continue
+            Save and Next
           </Button>
         </div>
       </form>

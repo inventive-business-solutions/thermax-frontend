@@ -210,7 +210,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 px-4">
       <div className="flex font-semibold">
         <h2>{projectData?.project_oc_number}</h2>
         <h2> / {projectData?.project_name}</h2>

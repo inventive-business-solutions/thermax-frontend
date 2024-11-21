@@ -5,6 +5,7 @@ import "jspreadsheet-ce/dist/jspreadsheet.css"
 import {
   DESIGN_BASIS_REVISION_HISTORY_API,
   HEATING_CONTROL_SCHEMES_URI,
+  PROJECT_INFO_API,
   PROJECT_PANEL_API,
 } from "configs/api-endpoints"
 import Modal from "components/Modal/Modal"
@@ -20,6 +21,7 @@ import LpbsConfigurator from "./LPBS Config/LpbsConfigurator"
 import ValidatePanelLoad, { PanelData } from "./Validate Panel Load/ValidatePanelLoad"
 import { useGetData } from "hooks/useCRUD"
 import { useProjectPanelData } from "hooks/useProjectPanelData"
+import { useParams } from "next/navigation"
 
 // Types definition
 type ValidColumnType =
@@ -42,6 +44,9 @@ interface PanelSumData {
   totalLoadKw: number
   totalCurrent: number
 }
+interface ProjectInfo {
+  main_supply_lv : string
+}
 
 interface LoadListProps {
   onNext: () => void
@@ -55,9 +60,36 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
   const [isControlSchemeModalOpen, setIsControlSchemeModalOpen] = useState(false)
   const [isLPBSModalOpen, setIsLPBSModalOpen] = useState(false)
   const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([])
+  const [projectInfo, setProjectInfo] = useState<ProjectInfo>()
   const [isValidatePanelLoadOpen, setIsValidatePanelLoadOpen] = useState(false)
   const [revisionId, setRevisionId] = useState<string | null>(null)
+
   const [panelsSumData, setPanelsSumData] = useState<PanelSumData[]>([]) // Memoize the column configurations
+  const params = useParams()
+
+  const project_id = params.project_id
+  // const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
+  const getProjectInfo = async () => {
+    try {
+      const projectInfo = await getData(
+        `${PROJECT_INFO_API}?fields=["main_supply_lv"]&filters=[["project_id", "=", "${project_id}"]]`
+      )
+      // console.log();
+      console.log(projectInfo[0], "projectInfo")
+      
+      setProjectInfo(projectInfo[0])
+    } catch (error) {
+      console.error(error)
+    }
+
+  }
+  useEffect(() => {
+    if(!projectInfo){
+      getProjectInfo()
+
+    }
+    // getProjectInfo()
+  }, [revisionId])
 
   const { data: projectPanelData, isLoading } = useProjectPanelData(revisionId)
 
@@ -212,6 +244,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
 
   // Fetch control schemes
   useEffect(() => {
+    if(controlSchemes.length) return ;
     getData(`${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`).then((res) => {
       const schemes = res
         .map((item: any) => [
@@ -359,19 +392,6 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       }
     })
     updateLoadList()
-
-    // Update main spreadsheet with new columns
-    // if (spreadsheetInstance) {
-    //   spreadsheetInstance.destroy()
-    // }
-
-    // if (jRef.current) {
-    //   const instance = jspreadsheet(jRef.current, {
-    //     ...loadListOptions,
-    //     columns: updatedColumns,
-    //   })
-    //   setSpreadsheetInstance(instance)
-    // }
   }
 
   const handleLoadListSave = () => {
@@ -410,8 +430,18 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       const newArray = jsonData.map((subArray) => subArray.slice(1))
 
       newArray.forEach((item) => {
+        console.log(item[6],!item[6], 'supply voltage');
+        console.log(projectInfo?.main_supply_lv, 'supply voltage');
+        // console.log(, 'supply voltage');
+        
         if (!item[6]) {
-          item[6] = 210 // pass main supply lv here revisit logic
+          item[6] = projectInfo?.main_supply_lv || ""// pass main supply lv here revisit logic
+        }
+        if (!item[7]) {
+          item[7] = "3 Phase" //Phase
+        }
+        if (!item[9]) {
+          item[9] = "No" // EOCR
         }
         if (getStandByKw(item[2], item[3]) >= Number(localStorage.getItem("ammeterKw"))) {
           if (!item[37]) {
@@ -436,59 +466,6 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
 
     reader.readAsArrayBuffer(file)
   }
-  // const onFileChange = (files: FileList) => {
-  //   const file = files[0] as File
-
-  //   const reader = new FileReader()
-
-  //   reader.onload = (e: any) => {
-  //     const data = new Uint8Array(e.target.result)
-  //     const workbook = XLSX.read(data, { type: "array" })
-
-  //     // Assuming there's only one sheet in the workbook
-
-  //     const sheetName = workbook.SheetNames[0]
-  //     const worksheet = workbook.Sheets[sheetName]
-  //     // Convert the worksheet to an array of arrays
-  //     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }).slice(2) as any[][]
-  //     // Remove the first element of each sub-array
-  //     const newArray = jsonData.map((subArray) => subArray.slice(1))
-  //     // console.log(newArray, 'uploaded load list');
-  //     // const main_supply_lv_val = JSON.parse(
-  //     //   this.dataService.getData("main_supply_lv_val")
-  //     // );
-  //     // console.log(main_supply_lv_val, "system supply dat");
-
-  //     newArray.forEach((item) => {
-  //       if (!item[6]) {
-  //         item[6] = main_supply_lv_val;
-  //       }
-  //       if (getStandByKw(item[2], item[3]) >= localStorage.getItem("ammeterKw")) {
-  //         if (item[37] == "" || item[37] == undefined) {
-  //           // console.log(localStorage.getItem('ammeterCt'), 'uploaded load list');
-  //           item[37] = localStorage.getItem("ammeterCt")
-  //         }
-  //       }
-  //       if (getStandByKw(item[2], item[3]) <= localStorage.getItem("dol_val")) {
-  //         if (item[5] == "" || item[5] == undefined) {
-  //           item[5] = "DOL STARTER"
-  //         }
-  //       }
-  //       if (getStandByKw(item[2], item[3]) >= localStorage.getItem("starDelta_val")) {
-  //         if (item[5] == "" || item[5] == undefined) {
-  //           item[5] = "STAR-DELTA"
-  //         }
-  //       }
-  //     })
-
-  //     // console.log(newArray, 'uploaded load list');
-
-  //     // this.dataService.setData("load_list_data", JSON.stringify(newArray))
-  //     spreadsheetInstance?.setData(newArray)
-  //   }
-
-  //   reader.readAsArrayBuffer(file)
-  // }
   const getStandByKw = (item2: any, item3: any) => {
     if (item2 != "" || item2 != "0") {
       return item2
@@ -617,6 +594,19 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       setIsValidatePanelLoadOpen(true)
     }
   }
+  const getCurrentHandle = () => {
+    if (spreadsheetInstance) {
+      const data = spreadsheetInstance.getData()
+      console.log(data, "load list data")
+
+      // calculatePanelSum(data)
+      const payload = {
+        data: JSON.stringify(data),
+      }
+      // setIsValidatePanelLoadOpen(true)
+      console.log(payload)
+    }
+  }
   return (
     <>
       <div className="mb-4 flex justify-end gap-4">
@@ -660,7 +650,9 @@ const LoadList: React.FC<LoadListProps> = ({ onNext }) => {
       />
 
       <div className="flex w-full flex-row justify-end gap-2">
-        <Button type="primary">Get Current</Button>
+        <Button type="primary" onClick={getCurrentHandle}>
+          Get Current
+        </Button>
         <Button type="primary" onClick={handleValidatePanelLoad}>
           Validate Panel Load
         </Button>

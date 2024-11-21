@@ -80,7 +80,7 @@ const getDefaultValues = (commonConfigData: any) => {
     apfc_relay: commonConfigData?.apfc_relay || "4",
     power_bus_main_busbar_selection: commonConfigData?.power_bus_main_busbar_selection || "As per IS",
     power_bus_heat_pvc_sleeve: commonConfigData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
-    power_bus_material: commonConfigData?.power_bus_material || "Copper",
+    power_bus_material: commonConfigData?.power_bus_material || "Aluminium",
     power_bus_current_density: commonConfigData?.power_bus_current_density || "0.8 A/Sq. mm",
     power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "( Min -1R X 60 mm X 12 mm) for 50 KA",
     control_bus_main_busbar_selection: commonConfigData?.control_bus_main_busbar_selection || "As per IS",
@@ -91,7 +91,7 @@ const getDefaultValues = (commonConfigData: any) => {
       commonConfigData?.control_bus_rating_of_busbar || "( Min -1R X 60 mm X 12 mm) for 50 KA",
     earth_bus_main_busbar_selection: commonConfigData?.earth_bus_main_busbar_selection || "As per IS",
     earth_bus_busbar_position: commonConfigData?.earth_bus_busbar_position || "Top",
-    earth_bus_material: commonConfigData?.earth_bus_material || "Copper",
+    earth_bus_material: commonConfigData?.earth_bus_material || "Aluminium",
     earth_bus_current_density: commonConfigData?.earth_bus_current_density || "0.8 A/Sq. mm",
     earth_bus_rating_of_busbar: commonConfigData?.earth_bus_rating_of_busbar || "( Min- 1R X 20 mm X 5 mm )",
     metering_for_feeder: commonConfigData?.metering_for_feeder || "Ammeter (Digital)",
@@ -255,7 +255,7 @@ const CommonConfiguration = ({
       )
       setCBCurrentDensityState(cb_current_options)
     }
-  }, [cb_current_density_options, control_bus_material_controlled, setValue])
+  }, [control_bus_material_controlled, setValue])
 
   // Power Bus (dependency logic)
   useEffect(() => {
@@ -301,7 +301,7 @@ const CommonConfiguration = ({
       )
       setEBCurrentDensityState(eb_current_options)
     }
-  }, [earth_bus_material_controlled, eb_current_density_options, setValue])
+  }, [earth_bus_material_controlled, setValue])
 
   const handleError = (error: any) => {
     try {
@@ -339,7 +339,7 @@ const CommonConfiguration = ({
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-8">
           <div className="flex-1">
             <CustomSingleSelect

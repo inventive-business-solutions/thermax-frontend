@@ -62,6 +62,10 @@ export default function useMCCPCCPanelDropdowns() {
     `${CURRENT_TRANSFORMER_COATING}?fields=["*"]`,
     "name"
   )
+  let { dropdownOptions: control_transformer_configuration_options } = useDropdownOptions(
+    `${CONTROL_TRANSFORMER_CONFIGURATION}?fields=["*"]`,
+    "control_transformer_configuration"
+  )
   current_transformer_coating_options = moveNAtoEnd(current_transformer_coating_options)
 
   let { dropdownOptions: current_transformer_number_options } = useDropdownOptions(
@@ -70,10 +74,10 @@ export default function useMCCPCCPanelDropdowns() {
   )
   current_transformer_number_options = moveNAtoEnd(current_transformer_number_options)
 
-  let { dropdownOptions: control_transformer_configuration_options } = useDropdownOptions(
-    `${CONTROL_TRANSFORMER_CONFIGURATION}?fields=["*"]`,
-    "control_transformer_configuration"
-  )
+  // let { dropdownOptions: control_transformer_configuration_options } = useDropdownOptions(
+  //   `${CONTROL_TRANSFORMER_CONFIGURATION}?fields=["*"]`,
+  //   "control_transformer_configuration"
+  // )
   control_transformer_configuration_options = moveNAtoEnd(control_transformer_configuration_options)
   let { dropdownOptions: mi_analog_options } = useDropdownOptions(`${MI_ANALOG}?fields=["*"]`, "name")
   mi_analog_options = moveNAtoEnd(mi_analog_options)
@@ -185,6 +189,7 @@ export default function useMCCPCCPanelDropdowns() {
     ga_moc_material_options,
     ga_moc_thickness_door_options,
     ga_moc_thickness_covers_options,
+    control_transformer_configuration_options,
     ga_mcc_compartmental_options,
     ga_mcc_construction_front_type_options,
     ga_mcc_construction_drawout_type_options,

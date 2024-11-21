@@ -220,7 +220,7 @@ const getDefaultValues = (defaultData: any, projectInfoData: any) => {
     safe_area_duty: defaultData?.safe_area_duty || "S1",
     hazardous_area_duty: defaultData?.hazardous_area_duty || "S1",
     safe_area_service_factor: Number(defaultData?.safe_area_service_factor) || 1,
-    hazardous_area_service_factor: Number(defaultData?.hazardous_area_service_factor) || "1",
+    hazardous_area_service_factor: Number(defaultData?.hazardous_area_service_factor) || 1,
     safe_area_cooling_type: defaultData?.safe_area_cooling_type || "TEFC",
     hazardous_area_cooling_type: defaultData?.hazardous_area_cooling_type || "TEFC",
     safe_area_body_material: defaultData?.safe_area_body_material || "Aluminium",
@@ -311,7 +311,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 px-4">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex justify-center bg-black text-white">
           <div className="flex-1 border border-white p-1 text-center">Motor Details</div>

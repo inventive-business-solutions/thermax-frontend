@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Divider, message } from "antd" // Import Select for dropdown
+import { Button, Divider, message, Skeleton } from "antd" // Import Select for dropdown
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { createData, getData, updateData } from "actions/crud-actions"
@@ -7,14 +7,15 @@ import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import { PCC_PANEL } from "configs/api-endpoints"
+import { PCC_PANEL, PROJECT_API, PROJECT_INFO_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useMCCPCCPanelDropdowns from "./MCCPCCPanelDropdown"
 import { pccPanelValidationSchema } from "../schemas"
 import { HEATING, WWS_SPG } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
+import { useParams } from "next/navigation"
 
-const getDefaultValues = (pccPanelData: any) => {
+const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: any) => {
   return {
     incomer_ampere: pccPanelData?.incomer_ampere || "1000",
     led_type_other_input: pccPanelData?.led_type_other_input || "NA",
@@ -34,7 +35,7 @@ const getDefaultValues = (pccPanelData: any) => {
     is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || 0,
     alarm_annunciator: pccPanelData?.alarm_annunciator || "Applicable",
     control_transformer_coating: pccPanelData?.control_transformer_coating || "NA",
-    control_transformer_configuration: pccPanelData?.control_transformer_configuration || "NA",
+    control_transformer_configuration: pccPanelData?.control_transformer_configuration || "Single",
     mi_analog: pccPanelData?.mi_analog || "Ammeter",
     mi_digital: pccPanelData?.mi_digital || "Ammeter",
     mi_communication_protocol: pccPanelData?.mi_communication_protocol || "Ethernet",
@@ -69,12 +70,12 @@ const getDefaultValues = (pccPanelData: any) => {
     boiler_model: pccPanelData?.boiler_model || "NA",
     boiler_fuel: pccPanelData?.boiler_fuel || "NA",
     boiler_year: pccPanelData?.boiler_year || "NA",
-    boiler_power_supply_vac: pccPanelData?.boiler_power_supply_vac || "NA",
-    boiler_power_supply_phase: pccPanelData?.boiler_power_supply_phase || "NA",
-    boiler_power_supply_frequency: pccPanelData?.boiler_power_supply_frequency || "NA",
-    boiler_control_supply_vac: pccPanelData?.boiler_control_supply_vac || "NA",
-    boiler_control_supply_phase: pccPanelData?.boiler_control_supply_phase || "NA",
-    boiler_control_supply_frequency: pccPanelData?.boiler_control_supply_frequency || "NA",
+    boiler_power_supply_vac: pccPanelData?.boiler_power_supply_vac || projectInfo?.main_supply_lv,
+    boiler_power_supply_phase: pccPanelData?.boiler_power_supply_phase || projectInfo?.main_supply_lv_phase,
+    boiler_power_supply_frequency: pccPanelData?.boiler_power_supply_frequency || projectInfo?.frequency,
+    boiler_control_supply_vac: pccPanelData?.boiler_control_supply_vac || projectInfo?.control_supply,
+    boiler_control_supply_phase: pccPanelData?.boiler_control_supply_phase || projectInfo?.control_supply_phase,
+    boiler_control_supply_frequency: pccPanelData?.boiler_control_supply_frequency || projectInfo?.frequency,
     boiler_evaporation: pccPanelData?.boiler_evaporation || "NA",
     boiler_output: pccPanelData?.boiler_output || "NA",
     boiler_connected_load: pccPanelData?.boiler_connected_load || "NA",
@@ -83,12 +84,12 @@ const getDefaultValues = (pccPanelData: any) => {
     heater_model: pccPanelData?.heater_model || "NA",
     heater_fuel: pccPanelData?.heater_fuel || "NA",
     heater_year: pccPanelData?.heater_year || "NA",
-    heater_power_supply_vac: pccPanelData?.heater_power_supply_vac || "NA",
-    heater_power_supply_phase: pccPanelData?.heater_power_supply_phase || "NA",
-    heater_power_supply_frequency: pccPanelData?.heater_power_supply_frequency || "NA",
-    heater_control_supply_vac: pccPanelData?.heater_control_supply_vac || "NA",
-    heater_control_supply_phase: pccPanelData?.heater_control_supply_phase || "NA",
-    heater_control_supply_frequency: pccPanelData?.heater_control_supply_frequency || "NA",
+    heater_power_supply_vac: pccPanelData?.heater_power_supply_vac || projectInfo?.main_supply_lv,
+    heater_power_supply_phase: pccPanelData?.heater_power_supply_phase || projectInfo?.main_supply_lv_phase,
+    heater_power_supply_frequency: pccPanelData?.heater_power_supply_frequency || projectInfo?.frequency,
+    heater_control_supply_vac: pccPanelData?.heater_control_supply_vac || projectInfo?.control_supply,
+    heater_control_supply_phase: pccPanelData?.heater_control_supply_phase || projectInfo?.control_supply_phase,
+    heater_control_supply_frequency: pccPanelData?.heater_control_supply_frequency || projectInfo?.frequency,
     heater_evaporation: pccPanelData?.heater_evaporation || "NA",
     heater_output: pccPanelData?.heater_output || "NA",
     heater_connected_load: pccPanelData?.heater_connected_load || "NA",
@@ -97,21 +98,33 @@ const getDefaultValues = (pccPanelData: any) => {
     spg_name_plate_capacity: pccPanelData?.spg_name_plate_capacity || "NA",
     spg_name_plate_manufacturing_year: pccPanelData?.spg_name_plate_manufacturing_year || "NA",
     spg_name_plate_weight: pccPanelData?.spg_name_plate_weight || "NA",
-    spg_name_plate_oc_number: pccPanelData?.spg_name_plate_oc_number || "NA",
+    spg_name_plate_oc_number: pccPanelData?.spg_name_plate_oc_number || projectMetadata?.project_oc_number,
     spg_name_plate_part_code: pccPanelData?.spg_name_plate_part_code || "NA",
+    is_spg_applicable: pccPanelData?.is_spg_applicable || 0,
   }
 }
 
 const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
-  const { data: pccPanelData } = useGetData(
+  const params = useParams()
+  const project_id = params.project_id
+  const { data: pccPanelData, isLoading: isPccPanelLoading } = useGetData(
     `${PCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
+  const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
+  const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
+
+  const { data: projectMetadata, isLoading: isProjectMetaDataLoading } = useGetData(getProjectMetadataUrl)
+  const { data: projectInfo, isLoading: isProjectInfoLoading } = useGetData(getProjectInfoUrl)
+
   const [loading, setLoading] = useState(false)
   const userInfo = useCurrentUser()
+
+  const isLoading = isPccPanelLoading || isProjectInfoLoading || isProjectMetaDataLoading
 
   const {
     incomer_ampere_options,
     current_transformer_coating_options,
+    control_transformer_configuration_options,
     incomer_pole_options,
     incomer_type_options,
     incomer_above_ampere_options,
@@ -148,13 +161,13 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   const { control, handleSubmit, watch, reset, setValue } = useForm({
     resolver: zodResolver(pccPanelValidationSchema),
-    defaultValues: getDefaultValues(pccPanelData?.[0]),
+    defaultValues: getDefaultValues(projectMetadata, projectInfo, pccPanelData?.[0]),
     mode: "onSubmit",
   })
 
   useEffect(() => {
-    reset(getDefaultValues(pccPanelData?.[0]))
-  }, [pccPanelData, reset])
+    reset(getDefaultValues(projectMetadata, projectInfo, pccPanelData?.[0]))
+  }, [pccPanelData, projectMetadata, projectInfo, reset])
 
   const incomer_ampere_controlled = watch("incomer_ampere")
   const incomer_type_controlled = watch("incomer_type")
@@ -168,7 +181,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   )
 
   useEffect(() => {
-    if(control_transformer_coating_controlled === "NA") {
+    if (control_transformer_coating_controlled === "NA") {
       setValue("control_transformer_configuration", "NA")
     }
   }, [control_transformer_coating_controlled, setValue])
@@ -264,12 +277,20 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     }
   }
 
+  if (isLoading) {
+    return (
+      <div>
+        <Skeleton active paragraph={{ rows: 8 }} />
+      </div>
+    )
+  }
+
   return (
     <>
       <Divider>
         <span className="font-bold text-slate-700">Selection Details</span>
       </Divider>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <h4 className="flex-1 text-sm font-semibold text-slate-700">Incomer</h4>
@@ -410,7 +431,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="control_transformer_configuration"
               label="Control Transformer Configuration"
-              options={current_transformer_coating_options}
+              options={control_transformer_configuration_options}
               disabled={control_transformer_coating_controlled === "NA"}
               size="small"
             />
@@ -1004,42 +1025,79 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             </div>
           </>
         )}
-        {userInfo?.division !== WWS_SPG && (
+        {userInfo?.division === WWS_SPG && (
           <>
             <Divider>
               <span className="font-bold text-slate-700">Name Plate Details For SPG</span>
+              <div>
+                <CustomRadioSelect
+                  control={control}
+                  name="is_spg_applicable"
+                  label=""
+                  options={[
+                    { label: "Yes", value: 1 },
+                    { label: "No", value: 0 },
+                  ]}
+                />
+              </div>
             </Divider>
             <div className="flex gap-4">
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_unit_name" label="Unit Name" />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_unit_name"
+                  label="Unit Name"
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_capacity" label="Capacity" />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_capacity"
+                  label="Capacity"
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
               <div className="flex-1">
                 <CustomTextInput
                   control={control}
                   name="spg_name_plate_manufacturing_year"
                   label="Year of Manufacturing"
+                  disabled={watch("is_spg_applicable") === 0}
                 />
               </div>
             </div>
             <div className="flex gap-4">
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_weight" label="Weight" />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_weight"
+                  label="Weight"
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_oc_number" label="OC No." />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_oc_number"
+                  label="OC No."
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
               <div className="flex-1">
-                <CustomTextInput control={control} name="spg_name_plate_part_code" label="Part Code" />
+                <CustomTextInput
+                  control={control}
+                  name="spg_name_plate_part_code"
+                  label="Part Code"
+                  disabled={watch("is_spg_applicable") === 0}
+                />
               </div>
             </div>
           </>
         )}
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
-            Save and Continue
+            Save and Next
           </Button>
         </div>
       </form>

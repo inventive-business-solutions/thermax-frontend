@@ -15,7 +15,7 @@ const tabData = [
 ]
 
 const ElectricalLoadList = () => {
-  const [openTab, setOpenTab] = useState<number>(3)
+  const [openTab, setOpenTab] = useState<number>(2)
   const { setLoading: setModalLoading } = useLoading()
 
   useEffect(() => {

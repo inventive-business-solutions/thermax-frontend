@@ -227,7 +227,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
       <Divider>
         <span className="font-bold text-slate-700">UPS</span>
       </Divider>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <CustomSingleSelect
@@ -1447,7 +1447,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
 
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
-            Save and Continue
+            Save and Next
           </Button>
         </div>
       </form>
