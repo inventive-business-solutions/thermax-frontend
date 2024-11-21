@@ -35,7 +35,7 @@ const ProjectDashboard = () => {
   const { setLoading: setModalLoading } = useLoading()
   const userInfo = useCurrentUser()
 
-  const getProjectUrl = `${PROJECT_API}?fields=["*"]`
+  const getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000`
   let { data: projectList } = useGetData(getProjectUrl)
 
   let proj = projectList?.filter((item: any) => item?.division === userInfo?.division)
