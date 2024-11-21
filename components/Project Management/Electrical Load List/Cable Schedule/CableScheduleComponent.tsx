@@ -1,11 +1,11 @@
 "use client"
-import jspreadsheet, { Column, JspreadsheetInstance } from "jspreadsheet-ce"
+import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
 import React, { useRef, useEffect, useState, useMemo } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
 
 import { CableSchedulecolumns, multicoreCableConfigColumns } from "../common/ExcelColumns"
 import "./CableScheduleComponent.css"
-import { Button, message } from "antd"
+import { Button } from "antd"
 import { ValidColumnType } from "../types"
 import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableConfig"
 
@@ -36,24 +36,19 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
     []
   )
 
-  const updateSpreadsheetColumns = (updatedColumns: any[]) => {
-    if (spreadsheetInstance) {
-      spreadsheetInstance.destroy()
-    }
+  // const updateSpreadsheetColumns = (updatedColumns: any[]) => {
+  //   if (spreadsheetInstance) {
+  //     spreadsheetInstance.destroy()
+  //   }
 
-    if (jRef.current) {
-      const instance = jspreadsheet(jRef.current, {
-        ...cableScheduleOptions,
-        columns: updatedColumns,
-      })
-      setSpreadsheetInstance(instance)
-    }
-  }
-  useEffect(() => {
-    if (cableScheduleData?.length) {
-      updateCableSchedule()
-    }
-  }, [cableScheduleData])
+  //   if (jRef.current) {
+  //     const instance = jspreadsheet(jRef.current, {
+  //       ...cableScheduleOptions,
+  //       columns: updatedColumns,
+  //     })
+  //     setSpreadsheetInstance(instance)
+  //   }
+  // }
 
   const cableScheduleOptions = useMemo(
     () => ({
@@ -76,19 +71,24 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
     [typedCableScheduleColumns, cableScheduleData]
   )
 
-  const updateCableSchedule = () => {
-    if (spreadsheetInstance) {
-      spreadsheetInstance.destroy()
-    }
+  useEffect(() => {
+    const updateCableSchedule = () => {
+      if (spreadsheetInstance) {
+        spreadsheetInstance.destroy()
+      }
 
-    if (jRef.current) {
-      const instance = jspreadsheet(jRef.current, {
-        ...cableScheduleOptions,
-        // columns: updatedColumns,
-      })
-      setSpreadsheetInstance(instance)
+      if (jRef.current) {
+        const instance = jspreadsheet(jRef.current, {
+          ...cableScheduleOptions,
+          // columns: updatedColumns,
+        })
+        setSpreadsheetInstance(instance)
+      }
     }
-  }
+    if (cableScheduleData?.length) {
+      updateCableSchedule()
+    }
+  }, [cableScheduleData, cableScheduleOptions, spreadsheetInstance])
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -124,7 +124,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
         instance.destroy()
       }
     }
-  }, [])
+  }, [cableScheduleOptions, spreadsheetInstance, typedCableScheduleColumns])
 
   // Fetch control schemes
   // useEffect(() => {

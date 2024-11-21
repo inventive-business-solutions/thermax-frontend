@@ -255,7 +255,7 @@ const CommonConfiguration = ({
       )
       setCBCurrentDensityState(cb_current_options)
     }
-  }, [control_bus_material_controlled, setValue])
+  }, [cb_current_density_options, control_bus_material_controlled, setValue])
 
   // Power Bus (dependency logic)
   useEffect(() => {
@@ -278,7 +278,7 @@ const CommonConfiguration = ({
       setPBCurrentDensityState(pb_current_options)
       setValue("power_bus_current_density", "1.0 A/Sq. mm")
     }
-  }, [power_bus_material_controlled, setValue])
+  }, [pb_current_density_options, power_bus_material_controlled, setValue])
 
   // earth Bus (Dependency logic)
   useEffect(() => {
@@ -301,7 +301,7 @@ const CommonConfiguration = ({
       )
       setEBCurrentDensityState(eb_current_options)
     }
-  }, [earth_bus_material_controlled, setValue])
+  }, [earth_bus_material_controlled, eb_current_density_options, setValue])
 
   const handleError = (error: any) => {
     try {

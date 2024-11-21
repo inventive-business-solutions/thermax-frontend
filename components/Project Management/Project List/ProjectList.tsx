@@ -7,7 +7,7 @@ import {
   SyncOutlined,
   UploadOutlined,
 } from "@ant-design/icons"
-import { Button, GetProps, Input, Popconfirm, Table, Tag, Tooltip } from "antd"
+import { Button, Input, Popconfirm, Table, Tag, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -33,8 +33,6 @@ interface DataType {
 }
 
 const { Search } = Input
-
-type SearchProps = GetProps<typeof Input.Search>
 
 const changeNameToKey = (projectList: any[]) => {
   if (!projectList) return []

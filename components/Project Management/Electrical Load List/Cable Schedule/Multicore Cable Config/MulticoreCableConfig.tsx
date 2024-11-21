@@ -169,7 +169,7 @@ import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
 interface MulticoreCableConfiguratorProps {
   isOpen: boolean
   onClose: () => void
-//   loadListData: any[]
+  //   loadListData: any[]
   typedMulticoreCableColumns: any[]
   onConfigurationComplete: (selectedCables: string[]) => void
 }
@@ -177,7 +177,7 @@ interface MulticoreCableConfiguratorProps {
 const MulticoreCableConfigurator: React.FC<MulticoreCableConfiguratorProps> = ({
   isOpen,
   onClose,
-//   loadListData,
+  //   loadListData,
   typedMulticoreCableColumns,
   onConfigurationComplete,
 }) => {
@@ -245,7 +245,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfiguratorProps> = ({
       }
 
       const LoadList = localStorage.getItem("loadList")
-      let savedLoadList;
+      let savedLoadList
       if (LoadList) {
         // selectedItems = JSON.parse(savedLoadList) as string[]
         savedLoadList = JSON.parse(LoadList) as string[]
@@ -253,30 +253,30 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfiguratorProps> = ({
         // setCableScheduleData(JSON.parse(savedLoadList) as string[])
       }
       // Update selected cables from localStorage
-      const storedCables = localStorage.getItem("selected_multicore_cables")
-    //   let updatedCables = [...loadListData]
+      // const storedCables = localStorage.getItem("selected_multicore_cables")
+      //   let updatedCables = [...loadListData]
 
-    //   if (storedCables) {
-    //     try {
-    //       const selectedItems = JSON.parse(storedCables) as string[]
-    //       updatedCables = loadListData.map((cable) => {
-    //         if (selectedItems.includes(cable[2])) {
-    //           return [true, ...cable.slice(1)]
-    //         }
-    //         return cable
-    //       })
-    //     } catch (error) {
-    //       console.error("Error parsing selected_multicore_cables:", error)
-    //     }
-    //   }
-      if(!savedLoadList){
-        return ;
+      //   if (storedCables) {
+      //     try {
+      //       const selectedItems = JSON.parse(storedCables) as string[]
+      //       updatedCables = loadListData.map((cable) => {
+      //         if (selectedItems.includes(cable[2])) {
+      //           return [true, ...cable.slice(1)]
+      //         }
+      //         return cable
+      //       })
+      //     } catch (error) {
+      //       console.error("Error parsing selected_multicore_cables:", error)
+      //     }
+      //   }
+      if (!savedLoadList) {
+        return
       }
-      const otherData = (schemeTitle : String) => {
-        const divisionId = 7 ;
-        console.log(divisionId, "multicore ui");
+      const otherData = (schemeTitle: String) => {
+        const divisionId = 7
+        console.log(divisionId, "multicore ui")
         if (divisionId === 7) {
-          return controlSchemes.find((item) => item[2] == schemeTitle);
+          return controlSchemes.find((item) => item[2] === schemeTitle)
         }
         // if (divisionId == 11) {
         //   return [
@@ -287,26 +287,26 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfiguratorProps> = ({
         // }
         // if (divisionId == 9) {
         //   //spg and services
-  
+
         //   return SPG_ServicesConrolSchemesData.find(
         //     (item) => String(item[1]).trim() == schemeTitle.trim()
         //   );
         // }
         // if (divisionId == 8) {
         //   //IPG
-  
+
         //   return WWS_IPG_data.find(
         //     (item) => String(item[1]).trim() == schemeTitle.trim()
         //   );
         // }
-      };
-      const multicoredata = savedLoadList.map((item : any) => {
+      }
+      const multicoredata = savedLoadList.map((item: any) => {
         console.log(item[11], "multicore ui")
 
         const schemedata = otherData(item[11])
         console.log(schemedata, item[10])
         console.log(schemedata, "multicore ui control scheme")
-        let divisionId = 7 // division id is to be dynamic 
+        // let divisionId = 7 // division id is to be dynamic
         return [
           false,
           item[0],
@@ -317,18 +317,18 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfiguratorProps> = ({
           schemedata[27],
           schemedata[28],
           schemedata[29],
-        //   schemedata[
-        //     divisionId === 7 ? 26 : divisionId === 11 ? 6 : divisionId === 9 ? 9 : divisionId === 8 ? 9 : null
-        //   ],
-        //   schemedata[
-        //     divisionId === 7 ? 27 : divisionId === 11 ? 7 : divisionId === 9 ? 10 : divisionId === 8 ? 9 : null
-        //   ],
-        //   schemedata[
-        //     divisionId === 7 ? 28 : divisionId === 11 ? 8 : divisionId === 9 ? 11 : divisionId === 8 ? 9 : null
-        //   ],
-        //   schemedata[
-        //     divisionId === 7 ? 29 : divisionId === 11 ? 7 : divisionId === 9 ? 12 : divisionId === 8 ? 9 : null
-        //   ],
+          //   schemedata[
+          //     divisionId === 7 ? 26 : divisionId === 11 ? 6 : divisionId === 9 ? 9 : divisionId === 8 ? 9 : null
+          //   ],
+          //   schemedata[
+          //     divisionId === 7 ? 27 : divisionId === 11 ? 7 : divisionId === 9 ? 10 : divisionId === 8 ? 9 : null
+          //   ],
+          //   schemedata[
+          //     divisionId === 7 ? 28 : divisionId === 11 ? 8 : divisionId === 9 ? 11 : divisionId === 8 ? 9 : null
+          //   ],
+          //   schemedata[
+          //     divisionId === 7 ? 29 : divisionId === 11 ? 7 : divisionId === 9 ? 12 : divisionId === 8 ? 9 : null
+          //   ],
           "",
           item[12],
         ]
@@ -359,7 +359,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfiguratorProps> = ({
         setMulticoreInstance(null)
       }
     }
-  }, [isOpen, controlSchemes, typedMulticoreCableColumns])
+  }, [isOpen, controlSchemes, typedMulticoreCableColumns, multicoreInstance])
 
   // Initialize selected cables spreadsheet
   useEffect(() => {
@@ -395,7 +395,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfiguratorProps> = ({
         setSelectedCablesInstance(null)
       }
     }
-  }, [selectedCables, typedMulticoreCableColumns])
+  }, [selectedCables, selectedCablesInstance, typedMulticoreCableColumns])
 
   const handleAdd = () => {
     if (!selectedSparePercent) {
