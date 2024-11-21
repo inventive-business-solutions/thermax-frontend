@@ -57,9 +57,24 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   if (userInfo.is_superuser) {
     getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   }
-  const { data: projectList, isLoading } = useGetData(getProjectUrl)
+  let { data: projectList, isLoading } = useGetData(getProjectUrl)
+
+  if (projectList) {
+    projectList.sort((a: any, b: any) => {
+      if (a.division === userInfo?.division && b.division !== userInfo?.division) {
+        return -1 // Place 'a' before 'b'
+      }
+      if (a.division !== userInfo?.division && b.division === userInfo?.division) {
+        return 1 // Place 'b' before 'a'
+      }
+      return 0 // No change in order if both are from the same division
+    })
+  }
+
   console.log("projectList", projectList)
-  const projectOCNos = projectList?.map((project: any) => project.project_oc_number)
+  const projectOCNos = projectList?.map(
+    (project: any) => project.division === userInfo?.division && project.project_oc_number
+  )
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
@@ -79,6 +94,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       title: () => <div className="text-center">Division</div>,
       dataIndex: "division",
       key: "division",
+      hidden: !userInfo.is_superuser,
       render: (text: keyof typeof TagColors) => {
         return <Tag color={TagColors[text]}>{text}</Tag>
       },
