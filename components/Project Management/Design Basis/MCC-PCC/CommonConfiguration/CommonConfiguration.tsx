@@ -115,9 +115,9 @@ const CommonConfiguration = ({
     `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
-  const { data: projectPanelData } = useGetData(
-    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  )
+  // const { data: projectPanelData } = useGetData(
+  //   `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  // )
   const [loading, setLoading] = useState(false)
 
   const userInfo = useCurrentUser()
@@ -327,7 +327,6 @@ const CommonConfiguration = ({
         await createData(COMMON_CONFIGURATION, false, data)
         message.success("Common configuration created successfully")
       }
-      setActiveKey(projectPanelData[0]?.panel_name)
     } catch (error) {
       console.error("error: ", error)
       console.error("error: ", error)

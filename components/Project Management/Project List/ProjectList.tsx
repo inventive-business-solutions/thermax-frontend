@@ -50,9 +50,9 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const [projectListData, setProjectListData] = useState<any>([])
   const [searchQuery, setSearchQuery] = useState("")
 
-  let getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
+  let getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   if (userInfo.is_superuser) {
-    getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
+    getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   }
   let { data: projectList, isLoading } = useGetData(getProjectUrl)
 

@@ -14,6 +14,7 @@ import { mccPanelValidationSchema } from "../schemas"
 import { HEATING, WWS_SPG } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { useParams } from "next/navigation"
+import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 
 const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: any) => {
   return {
@@ -88,10 +89,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     heater_model: mccPanelData?.heater_model || "NA",
     heater_fuel: mccPanelData?.heater_fuel || "NA",
     heater_year: mccPanelData?.heater_year || "NA",
-    // heater_power_supply_vac:
-    //   mccPanelData?.heater_power_supply_vac !== "NA" || mccPanelData?.heater_power_supply_vac !== null
-    //     ? mccPanelData?.heater_power_supply_vac
-    //     : projectInfo?.main_supply_lv,
+    special_note: mccPanelData?.special_note || "NA",
     heater_power_supply_vac: mccPanelData?.heater_power_supply_vac || projectInfo?.main_supply_lv,
     heater_power_supply_phase: mccPanelData?.heater_power_supply_phase || projectInfo?.main_supply_lv_phase,
     heater_power_supply_frequency: mccPanelData?.heater_power_supply_frequency || projectInfo?.frequency,
@@ -1159,6 +1157,18 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             </div>
           </>
         )}
+
+        <Divider>
+          <span className="font-bold text-slate-700">Special Notes</span>
+        </Divider>
+        <div className="mt-4 w-full">
+          <CustomTextAreaInput
+            control={control}
+            name="special_note"
+            label="Special Notes"
+            rows={4}
+          />
+        </div>
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
             Save and Next

@@ -50,7 +50,7 @@ export default function GIPkgSelectionTabs({
           <span>
             {tab.label}
             <Popconfirm
-              title="Are you sure you want to delete this tab?"
+              title="Are you sure you want to delete this package?"
               onConfirm={() => remove(tab.key)}
               okText="Yes"
               cancelText="No"
