@@ -298,6 +298,7 @@ export const configItemValidationSchema = zod.object({
 export const mccPanelValidationSchema = zod
   .object({
     incomer_ampere: zod.string({ required_error: "Incomer Ampere is required", message: "Incomer Ampere is required" }),
+    special_note: zod.string().optional(),
     incomer_pole: zod.string({ required_error: "Incomer Pole is required", message: "Incomer Pole is required" }),
     incomer_type: zod.string({ required_error: "Incomer Type is required", message: "Incomer Type is required" }),
     incomer_above_ampere: zod.string({
@@ -559,6 +560,7 @@ export const mccPanelValidationSchema = zod
 export const pccPanelValidationSchema = zod
   .object({
     incomer_ampere: zod.string({ required_error: "Incomer Ampere is required", message: "Incomer Ampere is required" }),
+    special_note: zod.string().optional(),
     incomer_pole: zod.string({ required_error: "Incomer Pole is required", message: "Incomer Pole is required" }),
     incomer_type: zod.string({ required_error: "Incomer Type is required", message: "Incomer Type is required" }),
     incomer_above_ampere: zod.string({
