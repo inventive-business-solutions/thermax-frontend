@@ -20,7 +20,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
 
   const typedCableScheduleColumns = useMemo(
     () =>
-      CableSchedulecolumns(7).map((column) => ({
+      CableSchedulecolumns().map((column) => ({
         ...column,
         type: column.type as ValidColumnType,
       })),

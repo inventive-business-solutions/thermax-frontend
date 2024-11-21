@@ -301,7 +301,7 @@ export const LoadListcolumns = (divisionId: Number) => {
     },
   ]
 }
-export const CableSchedulecolumns = (divisionId: Number) => {
+export const CableSchedulecolumns = () => {
   return [
     {
       type: "text",

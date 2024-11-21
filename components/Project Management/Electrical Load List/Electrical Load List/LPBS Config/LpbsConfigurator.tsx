@@ -113,7 +113,7 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
         setSelectedLpbsInstance(null)
       }
     }
-  }, [lpbsSchemesSelected, typedLpbsColumns])
+  }, [lpbsSchemesSelected, selectedLpbsInstance, typedLpbsColumns])
 
   const handleAdd = () => {
     const selected = lpbsInstance?.getData().filter((row) => row[0] === true)
