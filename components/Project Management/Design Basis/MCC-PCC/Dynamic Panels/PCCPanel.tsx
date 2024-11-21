@@ -14,10 +14,12 @@ import { pccPanelValidationSchema } from "../schemas"
 import { HEATING, WWS_SPG } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { useParams } from "next/navigation"
+import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 
 const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: any) => {
   return {
     incomer_ampere: pccPanelData?.incomer_ampere || "1000",
+    special_note: pccPanelData?.special_note || "NA",
     led_type_other_input: pccPanelData?.led_type_other_input || "NA",
     incomer_pole: pccPanelData?.incomer_pole || "3",
     incomer_type: pccPanelData?.incomer_type || "SFU",
@@ -1098,6 +1100,17 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             </div>
           </>
         )}
+        <Divider>
+          <span className="font-bold text-slate-700">Special Notes</span>
+        </Divider>
+        <div className="mt-4 w-full">
+          <CustomTextAreaInput
+            control={control}
+            name="special_note"
+            label="Special Notes"
+            rows={4}
+          />
+        </div>
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
             Save and Next
