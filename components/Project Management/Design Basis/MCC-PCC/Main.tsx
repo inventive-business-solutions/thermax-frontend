@@ -27,7 +27,9 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
     {
       label: "Make",
       key: "Make",
-      children: <MakeOfComponent revision_id={revision_id} setActiveKey={setActiveKey} />,
+      children: (
+        <MakeOfComponent revision_id={revision_id} setActiveKey={setActiveKey} />
+      ),
     },
     {
       label: "Common Configuration",
@@ -40,13 +42,13 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
     if (panel.panel_main_type === MCC_PANEL_TYPE) {
       TabMCC.push({
         label: panel?.panel_name,
-        key: panel?.name,
+        key: panel?.panel_name,
         children: <MCCPanel revision_id={revision_id} panel_id={panel?.name} />,
       })
     } else if (panel.panel_main_type === PCC_PANEL_TYPE) {
       TabMCC.push({
         label: panel?.panel_name,
-        key: panel?.name,
+        key: panel?.panel_name,
         children: <PCCPanel revision_id={revision_id} panel_id={panel?.name} />,
       })
     } else if (panel.panel_main_type === MCCcumPCC_PANEL_TYPE) {
