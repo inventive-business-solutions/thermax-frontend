@@ -18,6 +18,7 @@ import { useLoading } from "hooks/useLoading"
 import GIPkgSelectionTabs from "./GIPkgSelection"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { mutate } from "swr"
+import { SyncOutlined } from "@ant-design/icons"
 
 const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
   const userInfo = useCurrentUser()
@@ -213,6 +214,17 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
               disabled={generalInfoData?.is_package_selection_enabled === 0}
             >
               Add
+            </Button>
+          </div>
+          <div className="text-end">
+            <Button
+              icon={<SyncOutlined color="#492971" />}
+              onClick={() => {
+                mutate(getMainPkgUrl)
+                mutate(getGeneralInfoUrl)
+              }}
+            >
+              Refresh
             </Button>
           </div>
         </div>
