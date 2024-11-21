@@ -159,7 +159,17 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const isControlSupplyVDC = watch("control_supply")
   const isUtilitySupplyVDC = watch("utility_supply")
   const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+
+  const main_supply_mvControlled = watch("main_supply_mv")
+
   let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
+
+  useEffect(() => {
+    if(main_supply_mvControlled === "NA"){
+      setValue("main_supply_mv_variation", "NA")
+      setValue("main_supply_mv_phase", "NA")
+    }
+  }, [main_supply_mvControlled, setValue])
 
   useEffect(() => {
     if (isControlSupplyVDC?.endsWith("VDC")) {
@@ -323,7 +333,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="main_supply_lv_variation"
               control={control}
               label="Variation"
-              options={voltageVariationOptions}
+              options={voltageVariationOptions.filter((item: any) => item.name !== "NA")}
               size="small"
               suffixIcon={
                 <>
@@ -338,7 +348,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="main_supply_lv_phase"
               control={control}
               label="Phase"
-              options={mainSupplyPhaseOptions}
+              options={mainSupplyPhaseOptions.filter((item: any) => item.name !== "NA")}
               size="small"
             />
           </div>
