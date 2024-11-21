@@ -27,6 +27,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     incomer_above_pole: mccPanelData?.incomer_above_pole || "4",
     incomer_above_type: mccPanelData?.incomer_above_type || "SFU",
     is_under_or_over_voltage_selected: mccPanelData?.is_under_or_over_voltage_selected || 1,
+    is_other_selected: mccPanelData?.is_other_selected || 1,
     is_lsig_selected: mccPanelData?.is_lsig_selected,
     is_lsi_selected: mccPanelData?.is_lsi_selected || 1,
     is_neural_link_with_disconnect_facility_selected:
@@ -412,7 +413,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
         </div>
         <div className="mt-2 flex items-center gap-4">
           <div className="flex-1">
-            <CustomRadioSelect
+            {/* <CustomRadioSelect
               control={control}
               name="is_led_type_lamp_selected"
               label="Indication (LED Type Lamp)"
@@ -421,7 +422,17 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 { label: "OFF", value: "OFF" },
                 { label: "Other", value: "Other" },
               ]}
+            /> */}
+            <CustomRadioSelect
+              control={control}
+              name="is_led_type_lamp_selected"
+              label=""
+              options={[
+                { label: "ON", value: "ON" },
+                { label: "OFF", value: "OFF" },
+              ]}
             />
+            <CustomCheckboxInput control={control} name="is_other_selected" label="Other" />
           </div>
           {watch("is_led_type_lamp_selected") === "Other" && (
             <div className="flex-1">
