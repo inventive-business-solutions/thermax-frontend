@@ -20,8 +20,8 @@ const S3BucketUpload = ({ accept, folderPath }: { accept: string; folderPath: st
       await uploadBucketObject(folderPath, formData, file.name)
       message.success(`${file.name} uploaded successfully`)
     } catch (error) {
-      console.error("Upload failed:", error)
-      message.error(`Failed to upload ${fileList[0]?.name}`)
+      console.log("Upload failed:", error)
+      message.error(`Failed to upload ${fileList[0]?.name}. ${error}`)
     } finally {
       setUploading(false)
       setFileList([]) // Reset file list after upload
