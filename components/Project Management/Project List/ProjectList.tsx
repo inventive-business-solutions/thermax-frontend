@@ -51,7 +51,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const [projectRow, setProjectRow] = useState<any>(null)
   const [projectListData, setProjectListData] = useState<any>([])
   const [searchQuery, setSearchQuery] = useState("")
-  console.log("userInfo", userInfo)
 
   let getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   if (userInfo.is_superuser) {
@@ -71,7 +70,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
     })
   }
 
-  console.log("projectList", projectList)
   const projectOCNos = projectList?.map(
     (project: any) => project.division === userInfo?.division && project.project_oc_number
   )
@@ -210,8 +208,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
     },
   ]
 
-  const onSearch: SearchProps["onSearch"] = (value, _e, info) => console.log(info?.source, value)
-
   const handleAddProject = () => {
     setOpen(true)
     setEditMode(false)
@@ -253,7 +249,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
           <Search
             placeholder="Search Project"
             enterButton
-            onSearch={onSearch}
             allowClear
             onChange={(e) => {
               setSearchQuery(e.target.value)

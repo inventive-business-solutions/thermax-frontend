@@ -16,8 +16,6 @@ import { useCurrentUser } from "hooks/useCurrentUser"
 import { useParams } from "next/navigation"
 
 const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: any) => {
-  // console.log("mccPanelData", mccPanelData)
-  // console.log("projectInfo", projectInfo)
   return {
     incomer_ampere: mccPanelData?.incomer_ampere || "1000",
     led_type_other_input: mccPanelData?.led_type_other_input || "NA",
