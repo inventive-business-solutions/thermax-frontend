@@ -1,16 +1,16 @@
-import { JspreadsheetInstance } from "jspreadsheet-ce";
-import React, { useRef, useEffect, useState } from "react";
-import jspreadsheet from "jspreadsheet-ce";
-import { Button } from "antd";
-import AlertNotification from "components/AlertNotification";
-import Modal from "components/Modal/Modal";
+import { JspreadsheetInstance } from "jspreadsheet-ce"
+import React, { useRef, useEffect, useState } from "react"
+import jspreadsheet from "jspreadsheet-ce"
+import { Button } from "antd"
+import AlertNotification from "components/AlertNotification"
+import Modal from "components/Modal/Modal"
 
 interface LpbsConfiguratorProps {
-  isOpen: boolean;
-  onClose: () => void;
-  lpbsSchemes: any[];
-  typedLpbsColumns: any[];
-  onConfigurationComplete: (selectedSchemes: string[]) => void;
+  isOpen: boolean
+  onClose: () => void
+  lpbsSchemes: any[]
+  typedLpbsColumns: any[]
+  onConfigurationComplete: (selectedSchemes: string[]) => void
 }
 
 const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
@@ -20,35 +20,35 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
   typedLpbsColumns,
   onConfigurationComplete,
 }) => {
-  const lpbsSheetRef = useRef<HTMLDivElement | null>(null);
-  const lpbsSelectedSheetRef = useRef<HTMLDivElement | null>(null);
-  const [lpbsInstance, setLpbsInstance] = useState<JspreadsheetInstance | null>(null);
-  const [selectedLpbsInstance, setSelectedLpbsInstance] = useState<JspreadsheetInstance | null>(null);
-  const [lpbsSchemesSelected, setLpbsSchemesSelected] = useState<any[]>([]);
-  const [isLpbsSchemeEmpty, setIsLpbsSchemeEmpty] = useState(false);
+  const lpbsSheetRef = useRef<HTMLDivElement | null>(null)
+  const lpbsSelectedSheetRef = useRef<HTMLDivElement | null>(null)
+  const [lpbsInstance, setLpbsInstance] = useState<JspreadsheetInstance | null>(null)
+  const [selectedLpbsInstance, setSelectedLpbsInstance] = useState<JspreadsheetInstance | null>(null)
+  const [lpbsSchemesSelected, setLpbsSchemesSelected] = useState<any[]>([])
+  const [isLpbsSchemeEmpty, setIsLpbsSchemeEmpty] = useState(false)
 
   // Initialize main LPBS spreadsheet
   useEffect(() => {
     if (isOpen && lpbsSheetRef.current) {
       if (lpbsInstance) {
-        lpbsInstance.destroy();
+        lpbsInstance.destroy()
       }
 
       // Update selected schemes from localStorage
-      const storedSchemes = localStorage.getItem("selected_lpbs_scheme");
-      let updatedSchemes = [...lpbsSchemes];
+      const storedSchemes = localStorage.getItem("selected_lpbs_scheme")
+      let updatedSchemes = [...lpbsSchemes]
 
       if (storedSchemes) {
         try {
-          const selectedItems = JSON.parse(storedSchemes) as string[];
+          const selectedItems = JSON.parse(storedSchemes) as string[]
           updatedSchemes = lpbsSchemes.map((scheme) => {
             if (selectedItems.includes(scheme[2])) {
-              return [true, ...scheme.slice(1)];
+              return [true, ...scheme.slice(1)]
             }
-            return scheme;
-          });
+            return scheme
+          })
         } catch (error) {
-          console.error("Error parsing selected_lpbs_scheme:", error);
+          console.error("Error parsing selected_lpbs_scheme:", error)
         }
       }
 
@@ -67,23 +67,23 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
         tableHeight: "500px",
         freezeColumns: 4,
         rowResize: true,
-      });
-      setLpbsInstance(instance);
+      })
+      setLpbsInstance(instance)
     }
 
     return () => {
       if (lpbsInstance) {
-        lpbsInstance.destroy();
-        setLpbsInstance(null);
+        lpbsInstance.destroy()
+        setLpbsInstance(null)
       }
-    };
-  }, [isOpen, lpbsSchemes, typedLpbsColumns]);
+    }
+  }, [isOpen, lpbsInstance, lpbsSchemes, typedLpbsColumns])
 
   // Initialize selected schemes spreadsheet
   useEffect(() => {
     if (lpbsSelectedSheetRef.current && lpbsSchemesSelected.length > 0) {
       if (selectedLpbsInstance) {
-        selectedLpbsInstance.destroy();
+        selectedLpbsInstance.destroy()
       }
 
       const instance = jspreadsheet(lpbsSelectedSheetRef.current, {
@@ -103,36 +103,36 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
         tableHeight: "250px",
         freezeColumns: 4,
         rowResize: true,
-      });
-      setSelectedLpbsInstance(instance);
+      })
+      setSelectedLpbsInstance(instance)
     }
 
     return () => {
       if (selectedLpbsInstance) {
-        selectedLpbsInstance.destroy();
-        setSelectedLpbsInstance(null);
+        selectedLpbsInstance.destroy()
+        setSelectedLpbsInstance(null)
       }
-    };
-  }, [lpbsSchemesSelected, typedLpbsColumns]);
+    }
+  }, [lpbsSchemesSelected, selectedLpbsInstance, typedLpbsColumns])
 
   const handleAdd = () => {
-    const selected = lpbsInstance?.getData().filter((row) => row[0] === true);
+    const selected = lpbsInstance?.getData().filter((row) => row[0] === true)
 
     if (!selected?.length) {
-      setIsLpbsSchemeEmpty(true);
-      return;
+      setIsLpbsSchemeEmpty(true)
+      return
     }
 
-    setLpbsSchemesSelected(selected);
-    setIsLpbsSchemeEmpty(false);
-  };
+    setLpbsSchemesSelected(selected)
+    setIsLpbsSchemeEmpty(false)
+  }
 
   const handleConfirm = () => {
-    const selectedSchemes = lpbsSchemesSelected.map((item) => item[1]);
-    localStorage.setItem("selected_lpbs_scheme", JSON.stringify([...selectedSchemes,"NA"]));
-    onConfigurationComplete(selectedSchemes);
-    onClose();
-  };
+    const selectedSchemes = lpbsSchemesSelected.map((item) => item[1])
+    localStorage.setItem("selected_lpbs_scheme", JSON.stringify([...selectedSchemes, "NA"]))
+    onConfigurationComplete(selectedSchemes)
+    onClose()
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -157,7 +157,7 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
         )}
       </div>
     </Modal>
-  );
-};
+  )
+}
 
-export default LpbsConfigurator;
+export default LpbsConfigurator
