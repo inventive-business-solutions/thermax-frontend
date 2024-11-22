@@ -1,11 +1,11 @@
 "use client"
-import jspreadsheet, { Column, JspreadsheetInstance } from "jspreadsheet-ce"
+import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
 import React, { useRef, useEffect, useState, useMemo } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
 
 import { CableSchedulecolumns, multicoreCableConfigColumns } from "../common/ExcelColumns"
 import "./CableScheduleComponent.css"
-import { Button, message } from "antd"
+import { Button } from "antd"
 import { ValidColumnType } from "../types"
 import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableConfig"
 
@@ -20,7 +20,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
 
   const typedCableScheduleColumns = useMemo(
     () =>
-      CableSchedulecolumns(7).map((column) => ({
+      CableSchedulecolumns().map((column) => ({
         ...column,
         type: column.type as ValidColumnType,
       })),
@@ -36,24 +36,19 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
     []
   )
 
-  const updateSpreadsheetColumns = (updatedColumns: any[]) => {
-    if (spreadsheetInstance) {
-      spreadsheetInstance.destroy()
-    }
+  // const updateSpreadsheetColumns = (updatedColumns: any[]) => {
+  //   if (spreadsheetInstance) {
+  //     spreadsheetInstance.destroy()
+  //   }
 
-    if (jRef.current) {
-      const instance = jspreadsheet(jRef.current, {
-        ...cableScheduleOptions,
-        columns: updatedColumns,
-      })
-      setSpreadsheetInstance(instance)
-    }
-  }
-  useEffect(() => {
-    if (cableScheduleData?.length) {
-      updateCableSchedule()
-    }
-  }, [cableScheduleData])
+  //   if (jRef.current) {
+  //     const instance = jspreadsheet(jRef.current, {
+  //       ...cableScheduleOptions,
+  //       columns: updatedColumns,
+  //     })
+  //     setSpreadsheetInstance(instance)
+  //   }
+  // }
 
   const cableScheduleOptions = useMemo(
     () => ({
@@ -76,55 +71,61 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
     [typedCableScheduleColumns, cableScheduleData]
   )
 
-  const updateCableSchedule = () => {
-    if (spreadsheetInstance) {
-      spreadsheetInstance.destroy()
-    }
-
-    if (jRef.current) {
-      const instance = jspreadsheet(jRef.current, {
-        ...cableScheduleOptions,
-        // columns: updatedColumns,
-      })
-      setSpreadsheetInstance(instance)
-    }
-  }
-
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedLoadList = localStorage.getItem("loadList")
-      if (savedLoadList) {
-        // selectedItems = JSON.parse(savedLoadList) as string[]
-        console.log(JSON.parse(savedLoadList) as string[], "load list")
-        setCableScheduleData(JSON.parse(savedLoadList) as string[])
+    const updateCableSchedule = () => {
+      if (spreadsheetInstance) {
+        spreadsheetInstance.destroy()
+      }
+
+      if (jRef.current) {
+        const instance = jspreadsheet(jRef.current, {
+          ...cableScheduleOptions,
+          // columns: updatedColumns,
+        })
+        setSpreadsheetInstance(instance)
       }
     }
-
-    let instance: JspreadsheetInstance | null = null
-    let selectedItems: string[] = []
-    const storedSchemes = localStorage.getItem("selected_control_scheme")
-
-    if (storedSchemes) {
-      selectedItems = JSON.parse(storedSchemes) as string[]
+    if (cableScheduleData?.length) {
+      updateCableSchedule()
     }
+  }, [cableScheduleData, cableScheduleOptions, spreadsheetInstance])
 
-    typedCableScheduleColumns.forEach((column) => {
-      if (column.name === "controlScheme") {
-        column.source = selectedItems
-      }
-    })
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     const savedLoadList = localStorage.getItem("loadList")
+  //     if (savedLoadList) {
+  //       // selectedItems = JSON.parse(savedLoadList) as string[]
+  //       console.log(JSON.parse(savedLoadList) as string[], "load list")
+  //       setCableScheduleData(JSON.parse(savedLoadList) as string[])
+  //     }
+  //   }
 
-    if (jRef.current && !spreadsheetInstance) {
-      instance = jspreadsheet(jRef.current, cableScheduleOptions)
-      setSpreadsheetInstance(instance)
-    }
+  //   let instance: JspreadsheetInstance | null = null
+  //   let selectedItems: string[] = []
+  //   const storedSchemes = localStorage.getItem("selected_control_scheme")
 
-    return () => {
-      if (instance) {
-        instance.destroy()
-      }
-    }
-  }, [])
+  //   if (storedSchemes) {
+  //     selectedItems = JSON.parse(storedSchemes) as string[]
+  //   }
+
+  //   typedCableScheduleColumns.forEach((column) => {
+  //     if (column.name === "controlScheme") {
+  //       column.source = selectedItems
+  //     }
+  //   })
+
+  //   if (jRef.current && !spreadsheetInstance) {
+  //     instance = jspreadsheet(jRef.current, cableScheduleOptions)
+  //     setSpreadsheetInstance(instance)
+  //   }
+
+  //   return () => {
+  //     if (instance) {
+  //       instance.destroy()
+  //     }
+  //   }
+  // }, [cableScheduleOptions, spreadsheetInstance, typedCableScheduleColumns])
+  
 
   // Fetch control schemes
   // useEffect(() => {

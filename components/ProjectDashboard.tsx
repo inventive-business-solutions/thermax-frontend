@@ -10,15 +10,6 @@ import { PROJECT_API } from "configs/api-endpoints"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { useGetData } from "hooks/useCRUD"
 
-const ProjectArray1 = [
-  {
-    image: LogoImage,
-    heading: "PROJECT SUMMARY",
-    quantity: "163",
-    colour: "Blue",
-  },
-]
-
 interface Project {
   id: number
   creation: string
@@ -35,7 +26,7 @@ const ProjectDashboard = () => {
   const { setLoading: setModalLoading } = useLoading()
   const userInfo = useCurrentUser()
 
-  const getProjectUrl = `${PROJECT_API}?fields=["*"]`
+  const getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000`
   let { data: projectList } = useGetData(getProjectUrl)
 
   let proj = projectList?.filter((item: any) => item?.division === userInfo?.division)
@@ -77,21 +68,19 @@ const ProjectDashboard = () => {
         <h2 className="text-lg font-bold tracking-wide">Project Dashboard</h2>
         <div className="p-4">
           <div className="flex justify-center px-4 py-2 ">
-            {ProjectArray1.map((item, index) => (
-              <Link key={index} href={PROJECTS_PAGE} onClick={() => setModalLoading(true)}>
-                <Card bordered hoverable className="shadow-md">
-                  <div className="flex gap-4">
-                    <div>
-                      <Image src={item.image} alt="Description of the image" width={65} height={65} priority />
-                    </div>
-                    <div className="flex flex-col items-center justify-center text-gray-700">
-                      <div className="font-bold">{item.heading}</div>
-                      <div className="font-semibold">{proj?.length}</div>
-                    </div>
+            <Link href={PROJECTS_PAGE} onClick={() => setModalLoading(true)}>
+              <Card bordered hoverable className="shadow-md">
+                <div className="flex gap-4">
+                  <div>
+                    <Image src={"/eni_max_logo.png"} alt="Description of the image" width={65} height={65} priority />
                   </div>
-                </Card>
-              </Link>
-            ))}
+                  <div className="flex flex-col items-center justify-center text-gray-700">
+                    <div className="font-bold">PROJECT SUMMARY</div>
+                    <div className="font-semibold">{proj?.length}</div>
+                  </div>
+                </div>
+              </Card>
+            </Link>
           </div>
           <div className="flex justify-start gap-4">
             {projectCountsByYearArray?.map((item: any, index: any) => (

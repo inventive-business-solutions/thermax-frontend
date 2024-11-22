@@ -44,7 +44,12 @@ export default function useCableTrayDropdowns() {
   )
   running_motor_voltage_drop_options = sortDropdownOptions(running_motor_voltage_drop_options)
   let { dropdownOptions: conductor_options } = useDropdownOptions(`${LAYOUT_CONDUCTOR}?fields=["*"]`, "name")
-  conductor_options = sortDropdownOptions(conductor_options)
+  // conductor_options = sortDropdownOptions(conductor_options)
+  let copper_conductor_options = conductor_options?.filter((item: any) => !item.name.startsWith("25"))
+  copper_conductor_options = sortDropdownOptions(copper_conductor_options)
+
+  let aluminium_conductor_options = conductor_options?.filter((item: any) => !item.name.startsWith("2.5"))
+  aluminium_conductor_options = sortDropdownOptions(aluminium_conductor_options)
 
   const { dropdownOptions: cable_installation_options } = useDropdownOptions(
     `${LAYOUT_CABLE_INSTALLATION}?fields=["*"]`,
@@ -98,7 +103,9 @@ export default function useCableTrayDropdowns() {
     type_of_insulation_options,
     color_scheme_options,
     running_motor_voltage_drop_options,
-    conductor_options,
+    // conductor_options,
+    copper_conductor_options,
+    aluminium_conductor_options,
     cable_installation_options,
     starting_motor_voltage_drop_options,
     voltage_grade_options,

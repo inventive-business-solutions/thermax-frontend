@@ -529,6 +529,7 @@ interface MulticoreCableConfigProps {
   isOpen: boolean
   onClose: () => void
   //   loadListData: any[]
+  //   loadListData: any[]
   typedMulticoreCableColumns: any[]
   onConfigurationComplete: (selectedCables: any[]) => void
 }
@@ -536,6 +537,7 @@ interface MulticoreCableConfigProps {
 const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
   isOpen,
   onClose,
+  //   loadListData,
   //   loadListData,
   typedMulticoreCableColumns,
   onConfigurationComplete,

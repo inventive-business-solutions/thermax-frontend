@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Divider, message } from "antd"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo, useCallback, memo } from "react"
 import { useForm } from "react-hook-form"
 
 import { createData, getData, updateData } from "actions/crud-actions"
@@ -20,8 +20,8 @@ const getDefaultValues = (cableTrayData: any) => {
     type_of_insulation: cableTrayData?.type_of_insulation || "PVC",
     color_scheme: cableTrayData?.color_scheme || "Red, Yellow, Blue",
     motor_voltage_drop_during_running: cableTrayData?.motor_voltage_drop_during_running || "2",
-    copper_conductor: cableTrayData?.copper_conductor || "2.5 Sq. mm",
-    aluminium_conductor: cableTrayData?.aluminium_conductor || "4 Sq. mm",
+    copper_conductor: cableTrayData?.copper_conductor || "2.5",
+    aluminium_conductor: cableTrayData?.aluminium_conductor || "4",
     cable_installation: cableTrayData?.cable_installation || "Air",
     motor_voltage_drop_during_starting: cableTrayData?.motor_voltage_drop_during_starting || "5",
     voltage_grade: cableTrayData?.voltage_grade || "11 kV",
@@ -120,7 +120,9 @@ const CableTray = ({
     type_of_insulation_options,
     color_scheme_options,
     running_motor_voltage_drop_options,
-    conductor_options,
+    // conductor_options,
+    copper_conductor_options,
+    aluminium_conductor_options,
     starting_motor_voltage_drop_options,
     voltage_grade_options,
     gland_make_options,
@@ -138,98 +140,150 @@ const CableTray = ({
     conduit_size_options,
   } = useCableTrayDropdowns()
 
-  const { control, handleSubmit, reset, watch, setValue } = useForm({
-    resolver: zodResolver(cableTrayValidationSchema),
-    defaultValues: getDefaultValues(cableTrayData?.[0]),
-    mode: "onSubmit",
-  })
+  // const memoizedOptions = useMemo(
+  //   () => ({
+  //     no_of_core_options,
+  //     specific_requirement_options,
+  //     type_of_insulation_options,
+  //     color_scheme_options,
+  //     running_motor_voltage_drop_options,
+  //     // conductor_options,
+  //     copper_conductor_options,
+  //     aluminium_conductor_options,
+  //     starting_motor_voltage_drop_options,
+  //     voltage_grade_options,
+  //     gland_make_options,
+  //     gland_moc_options,
+  //     type_of_gland_options,
+  //     future_space_on_trays_options,
+  //     cable_placement_options,
+  //     cable_tray_orientation_options,
+  //     material_construction_dry_area_options,
+  //     material_construction_wet_area_options,
+  //     cable_tray_width_options,
+  //     cable_tray_height_options,
+  //     cable_tray_thickness_options,
+  //     conduit_moc_options,
+  //     conduit_size_options,
+  //   }),
+  //   []
+  // )
 
-  const number_of_cores_controlled = watch("number_of_cores")
-  const touching_air_controlled = watch("touching_factor_air")
-  const ambient_temp_factor_air_controlled = watch("ambient_temp_factor_air")
-  const touching_burid_controlled = watch("touching_factor_burid")
-  const ambient_temp_factor_burid_controlled = watch("ambient_temp_factor_burid")
-  const copper_conductor_controlled = watch("copper_conductor")
+  const formConfig = useMemo(
+    () => ({
+      resolver: zodResolver(cableTrayValidationSchema),
+      defaultValues: getDefaultValues(cableTrayData?.[0]),
+      mode: "onSubmit" as const, // Add 'as const' to make it a literal type
+    }),
+    [cableTrayData]
+  )
 
-  let product = touching_air_controlled * ambient_temp_factor_air_controlled
-  let product2 = touching_burid_controlled * ambient_temp_factor_burid_controlled
+  const { control, reset, watch, setValue, getValues } = useForm(formConfig)
+
+  const watchedValues = watch([
+    "number_of_cores",
+    "touching_factor_air",
+    "ambient_temp_factor_air",
+    "touching_factor_burid",
+    "ambient_temp_factor_burid",
+    "copper_conductor",
+  ])
+
+  const [
+    number_of_cores_controlled,
+    touching_air_controlled,
+    ambient_temp_factor_air_controlled,
+    touching_burid_controlled,
+    ambient_temp_factor_burid_controlled,
+  ] = watchedValues
+
+  const { product, product2 } = useMemo(
+    () => ({
+      product: touching_air_controlled * ambient_temp_factor_air_controlled,
+      product2: touching_burid_controlled * ambient_temp_factor_burid_controlled,
+    }),
+    [
+      touching_air_controlled,
+      ambient_temp_factor_air_controlled,
+      touching_burid_controlled,
+      ambient_temp_factor_burid_controlled,
+    ]
+  )
 
   useEffect(() => {
     setValue("derating_factor_burid", product2)
-  }, [product2, touching_burid_controlled, ambient_temp_factor_burid_controlled, setValue])
+  }, [product2, setValue])
 
   useEffect(() => {
     setValue("derating_factor_air", product)
-  }, [product, touching_air_controlled, ambient_temp_factor_air_controlled, setValue])
+  }, [product, setValue])
 
   useEffect(() => {
+    const updates: Record<string, any> = {}
+
     if (number_of_cores_controlled === "3C") {
-      setValue("color_scheme", "Red, Yellow, Blue")
+      updates.color_scheme = "Red, Yellow, Blue"
     } else if (number_of_cores_controlled === "3.5C") {
-      setValue("color_scheme", "Red, Yellow, Blue, Black")
+      updates.color_scheme = "Red, Yellow, Blue, Black"
     } else if (number_of_cores_controlled === "4C") {
-      setValue("color_scheme", "Brown, Black, Grey, Blue")
+      updates.color_scheme = "Brown, Black, Grey, Blue"
+    }
+
+    if (Object.keys(updates).length) {
+      Object.entries(updates).forEach(([key, value]) => setValue(key, value))
     }
   }, [number_of_cores_controlled, setValue])
 
-  useEffect(() => {
-    if (copper_conductor_controlled.startsWith("2.5")) {
-      setValue("aluminium_conductor", "4 Sq. mm")
-    } else if (copper_conductor_controlled.startsWith("4")) {
-      setValue("aluminium_conductor", "6 Sq. mm")
-    } else if (copper_conductor_controlled.startsWith("6")) {
-      setValue("aluminium_conductor", "10 Sq. mm")
-    } else if (copper_conductor_controlled.startsWith("10")) {
-      setValue("aluminium_conductor", "16 Sq. mm")
-    } else if (copper_conductor_controlled.startsWith("16")) {
-      setValue("aluminium_conductor", "25 Sq. mm")
-    } else if (copper_conductor_controlled === "All") {
-      setValue("aluminium_conductor", "NA")
-    } else if (copper_conductor_controlled === "NA") {
-      setValue("aluminium_conductor", "All")
-    }
-  }, [copper_conductor_controlled, setValue])
-
-  useEffect(() => {
-    reset(getDefaultValues(cableTrayData?.[0]))
-  }, [cableTrayData, reset])
-
   const handleError = (error: any) => {
     try {
-      const errorObj = JSON.parse(error?.message) as any
-      message?.error(errorObj?.message)
+      const errorObj: any = JSON.parse(error.message)
+      message.error(errorObj.message)
     } catch (parseError) {
-      message?.error(error?.message || "An unknown error occured")
+      message.error(error.message || "An unknown error occurred")
     }
   }
 
-  const onSubmit = async (data: any) => {
-    setLoading(true)
-    try {
-      const cableTrayData = await getData(
-        `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-      )
+  const onSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      setLoading(true)
+      try {
+        const formData = getValues()
+        const existingCableTrayData = await getData(
+          `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+        )
 
-      if (cableTrayData && cableTrayData.length > 0) {
-        await updateData(`${CABLE_TRAY_LAYOUT}/${cableTrayData[0].name}`, false, data)
-      } else {
-        data["revision_id"] = revision_id
-        await createData(CABLE_TRAY_LAYOUT, false, data)
+        if (existingCableTrayData?.length > 0) {
+          await updateData(`${CABLE_TRAY_LAYOUT}/${existingCableTrayData[0].name}`, false, formData)
+        } else {
+          formData.revision_id = revision_id
+          await createData(CABLE_TRAY_LAYOUT, false, formData)
+        }
+
+        message.success("Cable Tray Data updated successfully")
+        reset(getDefaultValues(formData))
+        setActiveKey("2")
+      } catch (error) {
+        console.error("Submission error:", error)
+        handleError(error)
+      } finally {
+        setLoading(false)
       }
+    },
+    [revision_id, reset, setActiveKey, getValues]
+  )
 
-      message.success("Cable Tray Data updated successfully")
-    } catch (error) {
-      console.error("error: ", error)
-      handleError(error)
-    } finally {
-      setLoading(false)
-      setActiveKey("2")
-    }
-  }
+  // const debouncedSubmit = useMemo(
+  //   () =>
+  //     debounce((data: any) => {
+  //       onSubmit(data)
+  //     }, 500),
+  //   [onSubmit]
+  // )
 
-  return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col px-4">
+  const renderForm = useMemo(
+    () => (
+      <form onSubmit={onSubmit} className="flex flex-col px-4">
         <Divider>
           <span className="font-bold text-slate-700">Power Cable</span>
         </Divider>
@@ -305,14 +359,14 @@ const CableTray = ({
           </div>
           <div className="grid grid-cols-3 gap-4">
             {/* <div className="flex-1">
-              <CustomSingleSelect
-                control={control}
-                name="cable_installation"
-                label="Cable Installation (Provided on trays whenever possible)"
-                options={cable_installation_options}
-                size="small"
-              />
-            </div> */}
+            <CustomSingleSelect
+              control={control}
+              name="cable_installation"
+              label="Cable Installation (Provided on trays whenever possible)"
+              options={cable_installation_options}
+              size="small"
+            />
+          </div> */}
 
             <div className="">
               <CustomSingleSelect
@@ -328,10 +382,13 @@ const CableTray = ({
               <CustomSingleSelect
                 control={control}
                 name="copper_conductor"
-                label="Copper Conductor"
-                options={conductor_options.filter((item: any) => {
-                  return !item.name.startsWith("25")
-                })}
+                label="Copper Conductor (Sq mm. including and below)"
+                options={copper_conductor_options}
+                suffixIcon={
+                  <>
+                    <p className="text-xs font-semibold text-blue-500">Sq. mm</p>
+                  </>
+                }
                 size="small"
               />
             </div>
@@ -339,16 +396,19 @@ const CableTray = ({
               <CustomSingleSelect
                 control={control}
                 name="aluminium_conductor"
-                label="Aluminium Conductor"
-                options={conductor_options.filter((item: any) => {
-                  return !item.name.startsWith("2.")
-                })}
+                label="Aluminium Conductor (Sq mm. including and above)"
+                options={aluminium_conductor_options}
+                suffixIcon={
+                  <>
+                    <p className="text-xs font-semibold text-blue-500">Sq. mm</p>
+                  </>
+                }
                 size="small"
               />
             </div>
             {/* <div className="flex-1">
-              <CustomTextInput control={control} name="derating_factor" label="Derating Factor" size="small" />
-            </div> */}
+            <CustomTextInput control={control} name="derating_factor" label="Derating Factor" size="small" />
+          </div> */}
           </div>
           <div className="grid grid-cols-4 gap-3">
             <div className="font-semibold text-slate-700"></div>
@@ -384,8 +444,8 @@ const CableTray = ({
             </div>
           </div>
           {/* <div className="w-1/3 flex-1">
-            <CustomTextInput control={control} name="derating_factor" label="Derating Factor" size="small" />
-          </div> */}
+          <CustomTextInput control={control} name="derating_factor" label="Derating Factor" size="small" />
+        </div> */}
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Gland Details</span>
@@ -1190,13 +1250,43 @@ const CableTray = ({
         </div>
 
         <div className="mt-2 flex w-full justify-end">
-          <Button  type="primary" onClick={handleSubmit(onSubmit)} loading={loading}>
+          <Button type="primary" onClick={onSubmit} loading={loading}>
             Save and Next
           </Button>
         </div>
       </form>
-    </>
+    ),
+    [
+      aluminium_conductor_options,
+      cable_placement_options,
+      cable_tray_height_options,
+      cable_tray_orientation_options,
+      cable_tray_thickness_options,
+      cable_tray_width_options,
+      color_scheme_options,
+      conduit_moc_options,
+      conduit_size_options,
+      control,
+      copper_conductor_options,
+      future_space_on_trays_options,
+      gland_make_options,
+      gland_moc_options,
+      loading,
+      material_construction_dry_area_options,
+      material_construction_wet_area_options,
+      no_of_core_options,
+      onSubmit,
+      running_motor_voltage_drop_options,
+      specific_requirement_options,
+      starting_motor_voltage_drop_options,
+      type_of_gland_options,
+      type_of_insulation_options,
+      voltage_grade_options,
+      watch,
+    ]
   )
+
+  return renderForm
 }
 
-export default CableTray
+export default memo(CableTray)

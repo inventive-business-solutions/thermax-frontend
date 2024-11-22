@@ -14,10 +14,9 @@ import { mccPanelValidationSchema } from "../schemas"
 import { HEATING, WWS_SPG } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { useParams } from "next/navigation"
+import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 
 const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: any) => {
-  // console.log("mccPanelData", mccPanelData)
-  // console.log("projectInfo", projectInfo)
   return {
     incomer_ampere: mccPanelData?.incomer_ampere || "1000",
     led_type_other_input: mccPanelData?.led_type_other_input || "NA",
@@ -27,6 +26,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     incomer_above_pole: mccPanelData?.incomer_above_pole || "4",
     incomer_above_type: mccPanelData?.incomer_above_type || "SFU",
     is_under_or_over_voltage_selected: mccPanelData?.is_under_or_over_voltage_selected || 1,
+    is_other_selected: mccPanelData?.is_other_selected || 1,
     is_lsig_selected: mccPanelData?.is_lsig_selected,
     is_lsi_selected: mccPanelData?.is_lsi_selected || 1,
     is_neural_link_with_disconnect_facility_selected:
@@ -89,10 +89,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     heater_model: mccPanelData?.heater_model || "NA",
     heater_fuel: mccPanelData?.heater_fuel || "NA",
     heater_year: mccPanelData?.heater_year || "NA",
-    // heater_power_supply_vac:
-    //   mccPanelData?.heater_power_supply_vac !== "NA" || mccPanelData?.heater_power_supply_vac !== null
-    //     ? mccPanelData?.heater_power_supply_vac
-    //     : projectInfo?.main_supply_lv,
+    special_note: mccPanelData?.special_note || "NA",
     heater_power_supply_vac: mccPanelData?.heater_power_supply_vac || projectInfo?.main_supply_lv,
     heater_power_supply_phase: mccPanelData?.heater_power_supply_phase || projectInfo?.main_supply_lv_phase,
     heater_power_supply_frequency: mccPanelData?.heater_power_supply_frequency || projectInfo?.frequency,
@@ -188,7 +185,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       reset(getDefaultValues(projectMetadata, projectInfo, mccPanelData[0]))
     }
     // reset(getDefaultValues(projectInfo, mccPanelData?.[0]))
-  }, [mccPanelData, projectInfo, reset])
+  }, [mccPanelData, projectInfo, projectMetadata, reset])
 
   const incomer_ampere_controlled = watch("incomer_ampere")
   const incomer_type_controlled = watch("incomer_type")
@@ -221,7 +218,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       let newOptions = ga_panel_mounting_height_options.filter((item: any) => item.name === "100" || item.name === "75")
       setGaPanelMountingHeightOptions(newOptions)
     }
-  }, [ga_panel_mounting_frame_controlled, setValue])
+  }, [ga_panel_mounting_frame_controlled, ga_panel_mounting_height_options, setValue])
 
   useEffect(() => {
     if (ga_current_density_controlled === "Aluminium") {
@@ -235,7 +232,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       )
       setGaCurrentDensity(temp_ga_current_density)
     }
-  }, [ga_current_density_controlled, setValue])
+  }, [ga_current_density_controlled, ga_current_density_options, setValue])
 
   useEffect(() => {
     if (current_transformer_coating_Controlled === "NA") {
@@ -412,7 +409,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
         </div>
         <div className="mt-2 flex items-center gap-4">
           <div className="flex-1">
-            <CustomRadioSelect
+            {/* <CustomRadioSelect
               control={control}
               name="is_led_type_lamp_selected"
               label="Indication (LED Type Lamp)"
@@ -421,7 +418,17 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 { label: "OFF", value: "OFF" },
                 { label: "Other", value: "Other" },
               ]}
+            /> */}
+            <CustomRadioSelect
+              control={control}
+              name="is_led_type_lamp_selected"
+              label=""
+              options={[
+                { label: "ON", value: "ON" },
+                { label: "OFF", value: "OFF" },
+              ]}
             />
+            <CustomCheckboxInput control={control} name="is_other_selected" label="Other" />
           </div>
           {watch("is_led_type_lamp_selected") === "Other" && (
             <div className="flex-1">
@@ -1150,6 +1157,18 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             </div>
           </>
         )}
+
+        <Divider>
+          <span className="font-bold text-slate-700">Special Notes</span>
+        </Divider>
+        <div className="mt-4 w-full">
+          <CustomTextAreaInput
+            control={control}
+            name="special_note"
+            label="Special Notes"
+            rows={4}
+          />
+        </div>
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
             Save and Next

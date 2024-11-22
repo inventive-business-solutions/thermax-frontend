@@ -9,7 +9,7 @@ import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { COMMON_CONFIGURATION, PROJECT_PANEL_API } from "configs/api-endpoints"
+import { COMMON_CONFIGURATION } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { configItemValidationSchema } from "../schemas"
@@ -106,7 +106,6 @@ const getDefaultValues = (commonConfigData: any) => {
 
 const CommonConfiguration = ({
   revision_id,
-  setActiveKey,
 }: {
   revision_id: string
   setActiveKey: React.Dispatch<React.SetStateAction<string>>
@@ -115,9 +114,9 @@ const CommonConfiguration = ({
     `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
-  const { data: projectPanelData } = useGetData(
-    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  )
+  // const { data: projectPanelData } = useGetData(
+  //   `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  // )
   const [loading, setLoading] = useState(false)
 
   const userInfo = useCurrentUser()
@@ -255,7 +254,7 @@ const CommonConfiguration = ({
       )
       setCBCurrentDensityState(cb_current_options)
     }
-  }, [control_bus_material_controlled, setValue])
+  }, [cb_current_density_options, control_bus_material_controlled, setValue])
 
   // Power Bus (dependency logic)
   useEffect(() => {
@@ -278,7 +277,7 @@ const CommonConfiguration = ({
       setPBCurrentDensityState(pb_current_options)
       setValue("power_bus_current_density", "1.0 A/Sq. mm")
     }
-  }, [power_bus_material_controlled, setValue])
+  }, [pb_current_density_options, power_bus_material_controlled, setValue])
 
   // earth Bus (Dependency logic)
   useEffect(() => {
@@ -301,7 +300,7 @@ const CommonConfiguration = ({
       )
       setEBCurrentDensityState(eb_current_options)
     }
-  }, [earth_bus_material_controlled, setValue])
+  }, [earth_bus_material_controlled, eb_current_density_options, setValue])
 
   const handleError = (error: any) => {
     try {
@@ -327,7 +326,6 @@ const CommonConfiguration = ({
         await createData(COMMON_CONFIGURATION, false, data)
         message.success("Common configuration created successfully")
       }
-      setActiveKey(projectPanelData[0]?.panel_name)
     } catch (error) {
       console.error("error: ", error)
       console.error("error: ", error)

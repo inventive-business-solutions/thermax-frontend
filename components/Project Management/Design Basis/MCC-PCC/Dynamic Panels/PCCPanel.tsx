@@ -14,10 +14,12 @@ import { pccPanelValidationSchema } from "../schemas"
 import { HEATING, WWS_SPG } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { useParams } from "next/navigation"
+import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 
 const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: any) => {
   return {
     incomer_ampere: pccPanelData?.incomer_ampere || "1000",
+    special_note: pccPanelData?.special_note || "NA",
     led_type_other_input: pccPanelData?.led_type_other_input || "NA",
     incomer_pole: pccPanelData?.incomer_pole || "3",
     incomer_type: pccPanelData?.incomer_type || "SFU",
@@ -25,6 +27,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     incomer_above_pole: pccPanelData?.incomer_above_pole || "4",
     incomer_above_type: pccPanelData?.incomer_above_type || "SFU",
     is_under_or_over_voltage_selected: pccPanelData?.is_under_or_over_voltage_selected || 1,
+    is_other_selected: pccPanelData?.is_other_selected || 1,
     is_lsig_selected: pccPanelData?.is_lsig_selected || 1,
     is_lsi_selected: pccPanelData?.is_lsi_selected || 1,
     is_neural_link_with_disconnect_facility_selected:
@@ -34,10 +37,10 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     is_red_cb_in_service: pccPanelData?.is_red_cb_in_service || 0,
     is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || 0,
     alarm_annunciator: pccPanelData?.alarm_annunciator || "Applicable",
-    control_transformer_coating: pccPanelData?.control_transformer_coating || "NA",
+    control_transformer_coating: pccPanelData?.control_transformer_coating || "Cast Resin",
     control_transformer_configuration: pccPanelData?.control_transformer_configuration || "Single",
     mi_analog: pccPanelData?.mi_analog || "Ammeter",
-    mi_digital: pccPanelData?.mi_digital || "Ammeter",
+    mi_digital: pccPanelData?.mi_digital || "Multifunction meter",
     mi_communication_protocol: pccPanelData?.mi_communication_protocol || "Ethernet",
     ga_moc_material: pccPanelData?.ga_moc_material || "FRP",
     ga_moc_thickness_door: pccPanelData?.ga_moc_thickness_door || "1.6",
@@ -47,7 +50,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     ga_pcc_construction_drawout_type: pccPanelData?.ga_pcc_construction_drawout_type || "Drawout Type",
     ga_pcc_construction_type: pccPanelData?.ga_pcc_construction_type || "Intelligent",
     busbar_material_of_construction: pccPanelData?.busbar_material_of_construction || "Aluminium",
-    ga_current_density: pccPanelData?.ga_current_density || "1.0 A/Sq. mm",
+    ga_current_density: pccPanelData?.ga_current_density || "0.8 A/Sq. mm",
     ga_panel_mounting_frame: pccPanelData?.ga_panel_mounting_frame || "Base Frame",
     ga_panel_mounting_height: pccPanelData?.ga_panel_mounting_height || "100",
     is_marshalling_section_selected: pccPanelData?.is_marshalling_section_selected || 1,
@@ -198,7 +201,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       let newOptions = ga_panel_mounting_height_options.filter((item: any) => item.name === "100" || item.name === "75")
       setGaPanelMountingHeightOptions(newOptions)
     }
-  }, [ga_panel_mounting_frame_controlled, setValue])
+  }, [ga_panel_mounting_frame_controlled, ga_panel_mounting_height_options, setValue])
 
   useEffect(() => {
     if (ga_current_density_controlled === "Aluminium") {
@@ -212,7 +215,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       )
       setGaCurrentDensity(temp_ga_current_density)
     }
-  }, [ga_current_density_controlled, setValue])
+  }, [ga_current_density_controlled, ga_current_density_options, setValue])
 
   // to control the checkboxes
 
@@ -381,19 +384,21 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           </div>
         </div>
         <div className="mt-2 flex items-center gap-4">
-          <div className="flex-1">
+          <div className="grid flex-1 grid-cols-2 items-center justify-center">
+            <div className="col-span-2 font-semibold">Indication (LED Type Lamp)</div>
             <CustomRadioSelect
               control={control}
               name="is_led_type_lamp_selected"
-              label="Indication (LED Type Lamp)"
+              label=""
               options={[
                 { label: "ON", value: "ON" },
                 { label: "OFF", value: "OFF" },
-                { label: "Other", value: "Other" },
               ]}
             />
+            <CustomCheckboxInput control={control} name="is_other_selected" label="Other" />
           </div>
-          {watch("is_led_type_lamp_selected") === "Other" && (
+
+          {watch("is_other_selected") && (
             <div className="flex-1">
               <CustomTextInput control={control} name="led_type_other_input" label="" />
             </div>
@@ -1095,6 +1100,17 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             </div>
           </>
         )}
+        <Divider>
+          <span className="font-bold text-slate-700">Special Notes</span>
+        </Divider>
+        <div className="mt-4 w-full">
+          <CustomTextAreaInput
+            control={control}
+            name="special_note"
+            label="Special Notes"
+            rows={4}
+          />
+        </div>
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
             Save and Next

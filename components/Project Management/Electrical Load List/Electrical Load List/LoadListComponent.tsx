@@ -3,7 +3,10 @@ import jspreadsheet, { CellValue, Column, JspreadsheetInstance, JspreadsheetInst
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
 import {
+  COMMON_CONFIGURATION,
   HEATING_CONTROL_SCHEMES_URI,
+  MAIN_SUPPLY_LV_API,
+  MAKE_OF_COMPONENT_API,
   MOTOR_PARAMETER_API,
   PROJECT_INFO_API,
   PROJECT_MAIN_PKG_LIST_API,
@@ -20,6 +23,8 @@ import ValidatePanelLoad, { PanelData } from "./Validate Panel Load/ValidatePane
 import { useGetData } from "hooks/useCRUD"
 import { useProjectPanelData } from "hooks/useProjectPanelData"
 import { useParams } from "next/navigation"
+import useMakeOfComponentDropdowns from "components/Project Management/Design Basis/MCC-PCC/MakeOfComponent/MakeDropdowns"
+import { useLoading } from "hooks/useLoading"
 
 // Types definition
 type ValidColumnType =
@@ -70,11 +75,21 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
 
   const params = useParams()
   const project_id = params.project_id
-
+  const { setLoading } = useLoading()
   // Data hooks
   const { data: motorParameters } = useGetData(
     `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
   )
+  const { data: commonConfigurationData } = useGetData(
+    `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+  )
+
+  const { data: makeOfComponent } = useGetData(
+    `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+  )
+  const { motors_make_options } = useMakeOfComponentDropdowns()
+  console.log(makeOfComponent, motors_make_options, "motors_make_options")
+
   const { data: projectPanelData, isLoading } = useProjectPanelData(designBasisRevisionId)
 
   const handleCellChange = (
@@ -85,43 +100,37 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
     newValue: CellValue,
     oldValue: CellValue
   ) => {
-    let data: any[][] = spreadsheetRef?.current?.getData() || [];
-    console.log(data,'load list data');
-    console.log('col index :', typeof(colIndex));
-    // if(colIndex === '21'){
-    //   console.log('col index :', colIndex);
+    let data: any = spreadsheetRef?.current?.getData() || []
+    console.log(data, "load list data")
+    console.log("col index :", typeof colIndex)
 
-
-    // }
     if (colIndex === "21") {
-     console.log(motorParameters,'vishal motor parameters');
-     
-      subPackages?.forEach((pckg) => {
-        // console.log();
-        
-        if (pckg.map((pkg: any) => pkg.sub_packages)
-          .flat()
-          .map((item: any) => item.sub_package_name).includes(newValue)) {
-          if (pckg.area_of_classification == "Hazardous Area") {
-            (data[rowIndex][22] = "Hazardous");
-              (data[rowIndex][23] = ),
-              (data[rowIndex][24] = generalInfo1[1]["value"]),
-              (data[rowIndex][25] = generalInfo1[2]["value"]),
-              (data[rowIndex][26] = generalInfo1[3]["value"]);
+      console.log(subPackages, "vishal motor parameters")
+
+      subPackages?.forEach((pckg: any) => {
+        let selectedPckg = pckg?.sub_packages?.find((item: any) => item.sub_package_name == newValue)
+        console.log(selectedPckg)
+
+        if (selectedPckg) {
+          if (selectedPckg?.area_of_classification == "Hazardous Area") {
+            ;(data[rowIndex][22] = "Hazardous"),
+              (data[rowIndex][23] = pckg?.standard),
+              (data[rowIndex][24] = pckg?.zone),
+              (data[rowIndex][25] = pckg?.gas_group),
+              (data[rowIndex][26] = pckg?.temperature_class)
           } else {
-            data[rowIndex][22] = "Safe";
-            data[rowIndex][23] = "NA";
-            data[rowIndex][24] = "NA";
-            data[rowIndex][25] = "NA";
-            data[rowIndex][26] = "NA";
+            data[rowIndex][22] = "Safe"
+            data[rowIndex][23] = "NA"
+            data[rowIndex][24] = "NA"
+            data[rowIndex][25] = "NA"
+            data[rowIndex][26] = "NA"
           }
         }
-      });
+      })
       // updateSheetData(data)
       // setLoadListData(data)
       spreadsheetRef?.current?.setData(data)
-      console.log(data,'load list data');
-
+      console.log(data, "load list data")
     }
     // if (col == "5" || col == "4") {
     //   if (
@@ -132,7 +141,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
     //     data[row][32] = "Yes";
     //   }
     // }
-    
+
     console.log(element, cell, colIndex, rowIndex, newValue, oldValue)
   }
   // Memoized columns with typed validation
@@ -159,6 +168,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
       loadingSpin: true,
       filters: true,
       tableWidth: "100%",
+
       tableHeight: "550px",
       freezeColumns: 4,
       rowResize: true,
@@ -172,6 +182,17 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
       const projectInfo = await getData(
         `${PROJECT_INFO_API}?fields=["main_supply_lv"]&filters=[["project_id", "=", "${project_id}"]]`
       )
+      const MAIN_SUPPLY_LV = await getData(`${MAIN_SUPPLY_LV_API}?fields=["*"]`)
+      if (MAIN_SUPPLY_LV.length) {
+        typedLoadListColumns.forEach((column) => {
+          if (column.name === "supplyVoltage") {
+            column.source = MAIN_SUPPLY_LV.map((item: any) => item.voltage)
+          }
+        })
+      }
+
+      console.log(MAIN_SUPPLY_LV, "projectInfo")
+
       setProjectInfo(projectInfo[0])
     } catch (error) {
       console.error("Error fetching project info:", error)
@@ -238,6 +259,8 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
 
   // Fetch control schemes
   useEffect(() => {
+    // isLoading
+    setLoading(true)
     let selectedItems: string[] = []
     const storedSchemes = localStorage.getItem("selected_control_scheme")
     const savedLoadList = localStorage.getItem("loadList")
@@ -248,9 +271,11 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
     if (savedLoadList) {
       // selectedItems = JSON.parse(savedLoadList) as string[]
       console.log(JSON.parse(savedLoadList) as string[], "load list")
-      updateSheetData(JSON.parse(savedLoadList) as string[])
+      // updateSheetData(JSON.parse(savedLoadList) as string[])
       setLoadListData(JSON.parse(savedLoadList) as string[])
     }
+    console.log(storedSchemes, "selectedSchemes")
+    console.log(selectedItems, "selectedSchemes")
 
     typedLoadListColumns.forEach((column) => {
       if (column.name === "controlScheme") {
@@ -266,7 +291,33 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
           false,
           item.scheme,
           item.sub_scheme,
-          // ... other mapping logic remains the same
+          item.scheme_title,
+          item.description,
+          item.breaker,
+          item.lpbs,
+          item.lpbs_inc_dec_ind,
+          item.ammeter,
+          item.thermistor_relay,
+          item.motor_space_heater,
+          item.plc_current_signal,
+          item.plc_speed_signal,
+          item.olr,
+          item.phase,
+          item.limit_switch,
+          item.motor_protection_relay,
+          item.field_isolator,
+          item.local_panel,
+          item.field_ess,
+          item.electronic_relay,
+          item.plc1_and_plc2,
+          item.mcc_start_stop,
+          item.input_choke,
+          item.output_choke,
+          item.separate_plc_start_stop,
+          item.di,
+          item.do,
+          item.ai,
+          item.ao,
         ])
         .sort((a: any, b: any) => {
           const [prefixA, numA] = a[2].split("-")
@@ -295,26 +346,26 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
   }, [projectPanelData, isLoading, typedLoadListColumns, updateSpreadsheetColumns])
 
   // Utility function to update spreadsheet data
-  const updateSheetData = useCallback(
-    (newData: any[], options?: { columns?: any[] }) => {
-      setLoadListData(newData)
+  // const updateSheetData = useCallback(
+  //   (newData: any[], options?: { columns?: any[] }) => {
+  //     setLoadListData(newData)
 
-      if (spreadsheetRef.current) {
-        spreadsheetRef.current.destroy()
-      }
+  //     if (spreadsheetRef.current) {
+  //       spreadsheetRef.current.destroy()
+  //     }
 
-      if (jRef.current) {
-        const columns = options?.columns || typedLoadListColumns
-        const instance = jspreadsheet(jRef.current, {
-          ...loadListOptions,
-          data: newData,
-          columns: columns,
-        })
-        spreadsheetRef.current = instance
-      }
-    },
-    [typedLoadListColumns, loadListOptions]
-  )
+  //     if (jRef.current) {
+  //       const columns = options?.columns || typedLoadListColumns
+  //       const instance = jspreadsheet(jRef.current, {
+  //         ...loadListOptions,
+  //         data: newData,
+  //         columns: columns,
+  //       })
+  //       spreadsheetRef.current = instance
+  //     }
+  //   },
+  //   [typedLoadListColumns, loadListOptions]
+  // )
 
   const handleControlSchemeComplete = (selectedSchemes: string[]) => {
     console.log(selectedSchemes)
@@ -449,6 +500,51 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let payload = {
+      tagNo: "",
+      serviceDescription: "",
+      workingKw: 0.1,
+      standByKw: 0.1,
+      kva: 0,
+      starterType: "",
+      supplyVoltage: "",
+      phase: "",
+      startingTime: "",
+      eocrApplicable: "",
+      lpbsType: "",
+      controlScheme: "",
+      panel: "",
+      busSegregation: "",
+      motorRpm: 0,
+      typeOfMotorMounting: "",
+      motorFrameSize: "",
+      motorGd2: "",
+      motorDrivenEquipmentGd2: "",
+      bkw: "",
+      typeOfCoupling: "",
+      package: "",
+      area: "",
+      standard: "",
+      zone: "",
+      gasGroup: "",
+      tempClass: "",
+      remark: "",
+      rev: "",
+      spaceHeater: "",
+      bearingRtd: "",
+      windingRtd: "",
+      thermistor: "",
+      typeOfBearing: "",
+      powerFactor: "",
+      motorEfficiency: "",
+      localIsolator: "",
+      panelAmmeter: "",
+      motorMake: "",
+      motorScope: "",
+      motorLocation: "",
+      motorPartCode: "",
+      motorRatedCurrent: "",
+    }
     const file = event.target.files?.[0] as File
 
     // const file = files[0] as File;
@@ -475,6 +571,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
       newArray.forEach((item) => {
         console.log(item[6], !item[6], "supply voltage")
         console.log(projectInfo?.main_supply_lv, "supply voltage")
+        console.log(motorParameters, "upload sheet")
         // console.log(, 'supply voltage');
 
         if (!item[6]) {
@@ -486,22 +583,51 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
         if (!item[9]) {
           item[9] = "No" // EOCR
         }
-        if (getStandByKw(item[2], item[3]) >= Number(localStorage.getItem("ammeterKw"))) {
+        if (!item[29]) {
+          item[29] = getStandByKw(item[2], item[3]) >= Number(motorParameters[0]?.safe_area_space_heater) ? "Yes" : "No" // space heater criteria
+        }
+        if (!item[30]) {
+          item[30] = getStandByKw(item[2], item[3]) >= Number(motorParameters[0]?.safe_area_bearing_rtd) ? "Yes" : "No" // bearing rtd criteria
+        }
+        if (!item[31]) {
+          item[31] = getStandByKw(item[2], item[3]) >= Number(motorParameters[0]?.safe_area_winding_rtd) ? "Yes" : "No" // winding rtd criteria
+        }
+        if (!item[32]) {
+          item[32] =
+            getStandByKw(item[2], item[3]) >= Number(motorParameters[0]?.safe_area_thermister) &&
+            item[5]?.includes("VFD")
+              ? "Yes"
+              : "No" // thermistor criteria
+        }
+        if (!item[34]) {
+          item[34] = "0.8" // power factor
+        }
+        if (!item[35]) {
+          item[35] = motorParameters[0]?.safe_area_efficiency_level // efficieany
+        }
+        if (!item[36]) {
+          item[36] = "No" // local isolator
+        }
+        console.log(commonConfigurationData)
+
+        // }
+        if (getStandByKw(item[2], item[3]) >= Number(commonConfigurationData[0]?.ammeter)) {
           if (!item[37]) {
-            item[37] = localStorage.getItem("ammeterCt")
+            item[37] = commonConfigurationData[0]?.ammeter_configuration
           }
         }
-        if (getStandByKw(item[2], item[3]) <= Number(localStorage.getItem("dol_val"))) {
+        if (getStandByKw(item[2], item[3]) <= Number(commonConfigurationData[0]?.dol_starter)) {
           if (!item[5]) {
             item[5] = "DOL STARTER"
           }
         }
-        if (getStandByKw(item[2], item[3]) >= Number(localStorage.getItem("starDelta_val"))) {
+        if (getStandByKw(item[2], item[3]) >= Number(commonConfigurationData[0]?.star_delta_starter)) {
           if (!item[5]) {
             item[5] = "STAR-DELTA"
           }
         }
       })
+      console.log(newArray)
 
       // Set the processed data to the spreadsheet instance
       spreadsheetRef?.current?.setData(newArray)

@@ -39,24 +39,24 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
   useEffect(() => {
     if (isOpen && lpbsSheetRef.current) {
       if (lpbsInstance) {
-        lpbsInstance.destroy();
+        lpbsInstance.destroy()
       }
 
       // Update selected schemes from localStorage
-      const storedSchemes = localStorage.getItem("selected_lpbs_scheme");
-      let updatedSchemes = [...lpbsSchemes];
+      const storedSchemes = localStorage.getItem("selected_lpbs_scheme")
+      let updatedSchemes = [...lpbsSchemes]
 
       if (storedSchemes) {
         try {
-          const selectedItems = JSON.parse(storedSchemes) as string[];
+          const selectedItems = JSON.parse(storedSchemes) as string[]
           updatedSchemes = lpbsSchemes.map((scheme) => {
             if (selectedItems.includes(scheme[2])) {
-              return [true, ...scheme.slice(1)];
+              return [true, ...scheme.slice(1)]
             }
-            return scheme;
-          });
+            return scheme
+          })
         } catch (error) {
-          console.error("Error parsing selected_lpbs_scheme:", error);
+          console.error("Error parsing selected_lpbs_scheme:", error)
         }
       }
 
@@ -75,23 +75,23 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
         tableHeight: "500px",
         freezeColumns: 4,
         rowResize: true,
-      });
-      setLpbsInstance(instance);
+      })
+      setLpbsInstance(instance)
     }
 
     return () => {
       if (lpbsInstance) {
-        lpbsInstance.destroy();
-        setLpbsInstance(null);
+        lpbsInstance.destroy()
+        setLpbsInstance(null)
       }
-    };
-  }, [isOpen, lpbsSchemes, typedLpbsColumns]);
+    }
+  }, [isOpen, lpbsInstance, lpbsSchemes, typedLpbsColumns])
 
   // Initialize selected schemes spreadsheet
   useEffect(() => {
     if (lpbsSelectedSheetRef.current && lpbsSchemesSelected.length > 0) {
       if (selectedLpbsInstance) {
-        selectedLpbsInstance.destroy();
+        selectedLpbsInstance.destroy()
       }
 
       const instance = jspreadsheet(lpbsSelectedSheetRef.current, {
@@ -111,36 +111,36 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
         tableHeight: "250px",
         freezeColumns: 4,
         rowResize: true,
-      });
-      setSelectedLpbsInstance(instance);
+      })
+      setSelectedLpbsInstance(instance)
     }
 
     return () => {
       if (selectedLpbsInstance) {
-        selectedLpbsInstance.destroy();
-        setSelectedLpbsInstance(null);
+        selectedLpbsInstance.destroy()
+        setSelectedLpbsInstance(null)
       }
-    };
-  }, [lpbsSchemesSelected, typedLpbsColumns]);
+    }
+  }, [lpbsSchemesSelected, selectedLpbsInstance, typedLpbsColumns])
 
   const handleAdd = () => {
-    const selected = lpbsInstance?.getData().filter((row) => row[0] === true);
+    const selected = lpbsInstance?.getData().filter((row) => row[0] === true)
 
     if (!selected?.length) {
-      setIsLpbsSchemeEmpty(true);
-      return;
+      setIsLpbsSchemeEmpty(true)
+      return
     }
 
-    setLpbsSchemesSelected(selected);
-    setIsLpbsSchemeEmpty(false);
-  };
+    setLpbsSchemesSelected(selected)
+    setIsLpbsSchemeEmpty(false)
+  }
 
   const handleConfirm = () => {
-    const selectedSchemes = lpbsSchemesSelected.map((item) => item[1]);
-    localStorage.setItem("selected_lpbs_scheme", JSON.stringify([...selectedSchemes,"NA"]));
-    onConfigurationComplete(selectedSchemes);
-    onClose();
-  };
+    const selectedSchemes = lpbsSchemesSelected.map((item) => item[1])
+    localStorage.setItem("selected_lpbs_scheme", JSON.stringify([...selectedSchemes, "NA"]))
+    onConfigurationComplete(selectedSchemes)
+    onClose()
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -165,7 +165,7 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
         )}
       </div>
     </Modal>
-  );
-};
+  )
+}
 
-export default LpbsConfigurator;
+export default LpbsConfigurator

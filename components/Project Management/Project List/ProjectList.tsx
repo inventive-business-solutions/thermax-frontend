@@ -7,7 +7,7 @@ import {
   SyncOutlined,
   UploadOutlined,
 } from "@ant-design/icons"
-import { Button, GetProps, Input, Popconfirm, Table, Tag, Tooltip } from "antd"
+import { Button, Input, Popconfirm, Table, Tag, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -34,8 +34,6 @@ interface DataType {
 
 const { Search } = Input
 
-type SearchProps = GetProps<typeof Input.Search>
-
 const changeNameToKey = (projectList: any[]) => {
   if (!projectList) return []
   projectList.forEach((project) => {
@@ -51,15 +49,28 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const [projectRow, setProjectRow] = useState<any>(null)
   const [projectListData, setProjectListData] = useState<any>([])
   const [searchQuery, setSearchQuery] = useState("")
-  console.log("userInfo", userInfo)
 
-  let getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
+  let getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   if (userInfo.is_superuser) {
-    getProjectUrl = `${PROJECT_API}?fields=["*"]&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
+    getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   }
-  const { data: projectList, isLoading } = useGetData(getProjectUrl)
-  console.log("projectList", projectList)
-  const projectOCNos = projectList?.map((project: any) => project.project_oc_number)
+  let { data: projectList, isLoading } = useGetData(getProjectUrl)
+
+  if (projectList) {
+    projectList.sort((a: any, b: any) => {
+      if (a.division === userInfo?.division && b.division !== userInfo?.division) {
+        return -1 // Place 'a' before 'b'
+      }
+      if (a.division !== userInfo?.division && b.division === userInfo?.division) {
+        return 1 // Place 'b' before 'a'
+      }
+      return 0 // No change in order if both are from the same division
+    })
+  }
+
+  const projectOCNos = projectList?.map(
+    (project: any) => project.division === userInfo?.division && project.project_oc_number
+  )
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
@@ -79,6 +90,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       title: () => <div className="text-center">Division</div>,
       dataIndex: "division",
       key: "division",
+      hidden: !userInfo.is_superuser,
       render: (text: keyof typeof TagColors) => {
         return <Tag color={TagColors[text]}>{text}</Tag>
       },
@@ -194,8 +206,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
     },
   ]
 
-  const onSearch: SearchProps["onSearch"] = (value, _e, info) => console.log(info?.source, value)
-
   const handleAddProject = () => {
     setOpen(true)
     setEditMode(false)
@@ -237,7 +247,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
           <Search
             placeholder="Search Project"
             enterButton
-            onSearch={onSearch}
             allowClear
             onChange={(e) => {
               setSearchQuery(e.target.value)

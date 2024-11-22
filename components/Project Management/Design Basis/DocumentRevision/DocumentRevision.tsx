@@ -41,7 +41,6 @@ import clsx from "clsx"
 import ResubmitModel from "./ResubmitModel"
 import { releaseRevision } from "actions/design-basis_revision"
 import { getSuperuserEmail } from "actions/user-actions"
-import * as XLSX from "xlsx"
 
 export default function DocumentRevision() {
   const userInfo = useCurrentUser()
@@ -265,6 +264,7 @@ export default function DocumentRevision() {
     {
       title: () => <div className="text-center">Document Name</div>,
       dataIndex: "documentName",
+      align:"center",
       render: (text, record) => (
         <Tooltip title="Edit Revision" placement="top">
           <Button
