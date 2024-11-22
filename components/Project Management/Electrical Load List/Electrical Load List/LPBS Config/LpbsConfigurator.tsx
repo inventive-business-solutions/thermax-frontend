@@ -1,32 +1,40 @@
-import { JspreadsheetInstance } from "jspreadsheet-ce"
-import React, { useRef, useEffect, useState } from "react"
-import jspreadsheet from "jspreadsheet-ce"
-import { Button } from "antd"
-import AlertNotification from "components/AlertNotification"
-import Modal from "components/Modal/Modal"
+import { JspreadsheetInstance } from "jspreadsheet-ce";
+import React, { useRef, useEffect, useState, useMemo } from "react";
+import jspreadsheet from "jspreadsheet-ce";
+import { Button } from "antd";
+import AlertNotification from "components/AlertNotification";
+import Modal from "components/Modal/Modal";
+import { lpbsColumns } from "app/Data";
+import { ValidColumnType } from "../../types";
 
 interface LpbsConfiguratorProps {
-  isOpen: boolean
-  onClose: () => void
-  lpbsSchemes: any[]
-  typedLpbsColumns: any[]
-  onConfigurationComplete: (selectedSchemes: string[]) => void
+  isOpen: boolean;
+  onClose: () => void;
+  lpbsSchemes: any[];
+  onConfigurationComplete: (selectedSchemes: string[]) => void;
 }
 
 const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = ({
   isOpen,
   onClose,
   lpbsSchemes,
-  typedLpbsColumns,
   onConfigurationComplete,
 }) => {
-  const lpbsSheetRef = useRef<HTMLDivElement | null>(null)
-  const lpbsSelectedSheetRef = useRef<HTMLDivElement | null>(null)
-  const [lpbsInstance, setLpbsInstance] = useState<JspreadsheetInstance | null>(null)
-  const [selectedLpbsInstance, setSelectedLpbsInstance] = useState<JspreadsheetInstance | null>(null)
-  const [lpbsSchemesSelected, setLpbsSchemesSelected] = useState<any[]>([])
-  const [isLpbsSchemeEmpty, setIsLpbsSchemeEmpty] = useState(false)
+  const lpbsSheetRef = useRef<HTMLDivElement | null>(null);
+  const lpbsSelectedSheetRef = useRef<HTMLDivElement | null>(null);
+  const [lpbsInstance, setLpbsInstance] = useState<JspreadsheetInstance | null>(null);
+  const [selectedLpbsInstance, setSelectedLpbsInstance] = useState<JspreadsheetInstance | null>(null);
+  const [lpbsSchemesSelected, setLpbsSchemesSelected] = useState<any[]>([]);
+  const [isLpbsSchemeEmpty, setIsLpbsSchemeEmpty] = useState(false);
 
+  const typedLpbsColumns = useMemo(
+    () =>
+      lpbsColumns.map((column) => ({
+        ...column,
+        type: column.type as ValidColumnType,
+      })),
+    []
+  )
   // Initialize main LPBS spreadsheet
   useEffect(() => {
     if (isOpen && lpbsSheetRef.current) {

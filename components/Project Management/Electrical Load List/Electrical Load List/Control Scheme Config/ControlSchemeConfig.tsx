@@ -1,16 +1,18 @@
 // ControlSchemeConfigurator.tsx
 import { JspreadsheetInstance } from "jspreadsheet-ce"
-import React, { useRef, useEffect, useState } from "react"
+import React, { useRef, useEffect, useState, useMemo } from "react"
 import jspreadsheet from "jspreadsheet-ce"
 import { Button } from "antd"
 import AlertNotification from "components/AlertNotification"
 import Modal from "components/Modal/Modal"
+import { controlSchemeColumnsForHeating } from "app/Data"
+import { ValidColumnType } from "../../types"
 
 interface ControlSchemeConfiguratorProps {
   isOpen: boolean
   onClose: () => void
   controlSchemes: any[]
-  typedControlSchemeColumns: any[]
+  // typedControlSchemeColumns: any[];
   onConfigurationComplete: (selectedSchemes: string[]) => void
 }
 
@@ -18,7 +20,7 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   isOpen,
   onClose,
   controlSchemes,
-  typedControlSchemeColumns,
+  // typedControlSchemeColumns,
   onConfigurationComplete,
 }) => {
   const controlSchemeSheetRef = useRef<HTMLDivElement | null>(null)
@@ -27,7 +29,14 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   const [selectedSchemeInstance, setSelectedSchemeInstance] = useState<JspreadsheetInstance | null>(null)
   const [controlSchemesSelected, setControlSchemesSelected] = useState<any[]>([])
   const [isControlSchemeEmpty, setIsControlSchemeEmpty] = useState(false)
-
+  const typedControlSchemeColumns = useMemo(
+    () =>
+      controlSchemeColumnsForHeating.map((column) => ({
+        ...column,
+        type: column.type as ValidColumnType,
+      })),
+    []
+  )
   // Initialize main control scheme spreadsheet
   useEffect(() => {
     if (isOpen && controlSchemeSheetRef.current) {
@@ -78,7 +87,7 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
         setControlSchemeInstance(null)
       }
     }
-  }, [isOpen, controlSchemes, typedControlSchemeColumns, controlSchemeInstance])
+  }, [isOpen, controlSchemes, typedControlSchemeColumns])
 
   // Initialize selected schemes spreadsheet
   useEffect(() => {
@@ -114,7 +123,7 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
         setSelectedSchemeInstance(null)
       }
     }
-  }, [controlSchemesSelected, selectedSchemeInstance, typedControlSchemeColumns])
+  }, [controlSchemesSelected, typedControlSchemeColumns])
 
   const handleAdd = () => {
     const selected = controlSchemeInstance?.getData().filter((row) => row[0] === true)
@@ -131,7 +140,7 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   const handleConfirm = () => {
     const selectedSchemes = controlSchemesSelected.map((item) => item[2])
     localStorage.setItem("selected_control_scheme", JSON.stringify([...selectedSchemes, "NA"]))
-    onConfigurationComplete(selectedSchemes)
+    onConfigurationComplete([...selectedSchemes, "NA"])
     onClose()
   }
 
