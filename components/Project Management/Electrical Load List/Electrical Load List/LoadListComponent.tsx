@@ -114,20 +114,19 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
 
         if (selectedPckg) {
           if (selectedPckg?.area_of_classification === "Hazardous Area") {
-            data[rowIndex][22] = "Hazardous";
-            data[rowIndex][23] = pckg?.standard;
-            data[rowIndex][24] = pckg?.zone;
-            data[rowIndex][25] = pckg?.gas_group;
-            data[rowIndex][26] = pckg?.temperature_class;
+            data[rowIndex][22] = "Hazardous"
+            data[rowIndex][23] = pckg?.standard
+            data[rowIndex][24] = pckg?.zone
+            data[rowIndex][25] = pckg?.gas_group
+            data[rowIndex][26] = pckg?.temperature_class
           } else {
-            data[rowIndex][22] = "Safe";
-            data[rowIndex][23] = "NA";
-            data[rowIndex][24] = "NA";
-            data[rowIndex][25] = "NA";
-            data[rowIndex][26] = "NA";
+            data[rowIndex][22] = "Safe"
+            data[rowIndex][23] = "NA"
+            data[rowIndex][24] = "NA"
+            data[rowIndex][25] = "NA"
+            data[rowIndex][26] = "NA"
           }
         }
-        
       })
       // updateSheetData(data)
       // setLoadListData(data)
@@ -399,7 +398,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
   const downloadCurrentData = () => {
     console.log(spreadsheetRef?.current)
 
-    spreadsheetRef?.current?.download();
+    spreadsheetRef?.current?.download()
   }
   const validateUniqueFeederTag = () => {
     if (!spreadsheetRef) {
@@ -631,7 +630,6 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
       })
       console.log(newArray)
 
-      // Set the processed data to the spreadsheet instance
       spreadsheetRef?.current?.setData(newArray)
     }
 
@@ -639,63 +637,38 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
   }
 
   const handleCurrentCalculation = async () => {
+    setLoading(true)
+    const loadList = spreadsheetRef?.current?.getData()
     const data = await getCurrentCalculation({
       divisionName: "Heating",
-      data: [
-        {
-          kw: 11,
-          supplyVoltage: 415,
-          phase: "3 Phase",
-          powerFactor: 0.8,
+      data: loadList?.map((row: any) => {
+        return {
+          kw: getStandByKw(row[2], row[3]),
+          supplyVoltage: Number(row[6].split(" ")[0]),
+          phase: row[7],
+          powerFactor: Number(row[34]),
           motorFrameSize: "",
           motorPartCode: "",
           motorRatedCurrent: "",
-          tagNo: "M01",
-          starterType: "",
-        },
-        {
-          kw: 0.75,
-          supplyVoltage: 415,
-          phase: "1 Phase",
-          powerFactor: 0.8,
-          motorFrameSize: "",
-          motorPartCode: "",
-          motorRatedCurrent: "",
-          tagNo: "M02",
-        },
-        {
-          kw: 9.3,
-          supplyVoltage: 460,
-          phase: "1 Phase",
-          powerFactor: 0.8,
-          motorFrameSize: "",
-          motorPartCode: "",
-          motorRatedCurrent: "",
-          tagNo: "M03",
-        },
-        {
-          kw: 6,
-          supplyVoltage: 415,
-          phase: "3 Phase",
-          powerFactor: 0.8,
-          motorFrameSize: "",
-          motorPartCode: "",
-          motorRatedCurrent: "",
-          tagNo: "M04",
-        },
-        {
-          kw: 4,
-          supplyVoltage: 460,
-          phase: "1 Phase",
-          powerFactor: 0.8,
-          motorFrameSize: "",
-          motorPartCode: "",
-          motorRatedCurrent: "",
-          tagNo: "M05",
-        },
-      ],
+          tagNo: row[0],
+          starterType: row[5],
+        }
+      }),
     })
-    console.log("Current Calculation", data)
+    const updatedLoadList: any = loadList?.map((row: any) => {
+      const calculationResult = data?.find((item: any) => item.tagNo === row[0])
+      if (calculationResult) {
+        const updatedRow = [...row]
+        updatedRow[42] = calculationResult.motorRatedCurrent
+        return updatedRow
+      }
+      return row
+    })
+
+    spreadsheetRef?.current?.setData(updatedLoadList)
+    setLoading(false)
+
+    // setLoadListData(updatedLoadList)
   }
   return (
     <>

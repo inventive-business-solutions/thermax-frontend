@@ -65,7 +65,7 @@ export const getCurrentCalculation = async (loadListData: any) => {
 
     return {
       ...item,
-      current: current.toFixed(2),
+      motorRatedCurrent : current.toFixed(2),
     }
   })
 
