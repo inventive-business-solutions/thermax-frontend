@@ -113,20 +113,21 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
         console.log(selectedPckg)
 
         if (selectedPckg) {
-          if (selectedPckg?.area_of_classification == "Hazardous Area") {
-            ;(data[rowIndex][22] = "Hazardous"),
-              (data[rowIndex][23] = pckg?.standard),
-              (data[rowIndex][24] = pckg?.zone),
-              (data[rowIndex][25] = pckg?.gas_group),
-              (data[rowIndex][26] = pckg?.temperature_class)
+          if (selectedPckg?.area_of_classification === "Hazardous Area") {
+            data[rowIndex][22] = "Hazardous";
+            data[rowIndex][23] = pckg?.standard;
+            data[rowIndex][24] = pckg?.zone;
+            data[rowIndex][25] = pckg?.gas_group;
+            data[rowIndex][26] = pckg?.temperature_class;
           } else {
-            data[rowIndex][22] = "Safe"
-            data[rowIndex][23] = "NA"
-            data[rowIndex][24] = "NA"
-            data[rowIndex][25] = "NA"
-            data[rowIndex][26] = "NA"
+            data[rowIndex][22] = "Safe";
+            data[rowIndex][23] = "NA";
+            data[rowIndex][24] = "NA";
+            data[rowIndex][25] = "NA";
+            data[rowIndex][26] = "NA";
           }
         }
+        
       })
       // updateSheetData(data)
       // setLoadListData(data)
@@ -398,7 +399,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
   const downloadCurrentData = () => {
     console.log(spreadsheetRef?.current)
 
-    spreadsheetRef?.current
+    spreadsheetRef?.current?.download();
   }
   const validateUniqueFeederTag = () => {
     if (!spreadsheetRef) {
