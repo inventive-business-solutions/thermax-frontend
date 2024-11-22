@@ -41,25 +41,29 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, className }) =
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black opacity-50">
-      <div style={{ width: "100%" }}>
-        <div
-          ref={modalRef}
-          className={`relative rounded-lg bg-white p-8 shadow-lg ${className || ""}`} // Append additional className here
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-auto">
+      <div style={{width: '100%'}}>
+        
+      <div
+        ref={modalRef}
+        className={`bg-white p-8 rounded-lg shadow-lg relative ${className || ''}`} // Append additional className here
+      >
+        <button
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          onClick={onClose}
         >
-          <button className="absolute right-4 top-4 text-gray-500 hover:text-gray-700" onClick={onClose}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="size-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          {children}
-        </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="size-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        {children}
+      </div>
       </div>
     </div>
   )

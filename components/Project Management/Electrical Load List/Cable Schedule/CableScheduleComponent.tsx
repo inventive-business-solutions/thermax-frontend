@@ -90,41 +90,42 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
     }
   }, [cableScheduleData, cableScheduleOptions, spreadsheetInstance])
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedLoadList = localStorage.getItem("loadList")
-      if (savedLoadList) {
-        // selectedItems = JSON.parse(savedLoadList) as string[]
-        console.log(JSON.parse(savedLoadList) as string[], "load list")
-        setCableScheduleData(JSON.parse(savedLoadList) as string[])
-      }
-    }
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     const savedLoadList = localStorage.getItem("loadList")
+  //     if (savedLoadList) {
+  //       // selectedItems = JSON.parse(savedLoadList) as string[]
+  //       console.log(JSON.parse(savedLoadList) as string[], "load list")
+  //       setCableScheduleData(JSON.parse(savedLoadList) as string[])
+  //     }
+  //   }
 
-    let instance: JspreadsheetInstance | null = null
-    let selectedItems: string[] = []
-    const storedSchemes = localStorage.getItem("selected_control_scheme")
+  //   let instance: JspreadsheetInstance | null = null
+  //   let selectedItems: string[] = []
+  //   const storedSchemes = localStorage.getItem("selected_control_scheme")
 
-    if (storedSchemes) {
-      selectedItems = JSON.parse(storedSchemes) as string[]
-    }
+  //   if (storedSchemes) {
+  //     selectedItems = JSON.parse(storedSchemes) as string[]
+  //   }
 
-    typedCableScheduleColumns.forEach((column) => {
-      if (column.name === "controlScheme") {
-        column.source = selectedItems
-      }
-    })
+  //   typedCableScheduleColumns.forEach((column) => {
+  //     if (column.name === "controlScheme") {
+  //       column.source = selectedItems
+  //     }
+  //   })
 
-    if (jRef.current && !spreadsheetInstance) {
-      instance = jspreadsheet(jRef.current, cableScheduleOptions)
-      setSpreadsheetInstance(instance)
-    }
+  //   if (jRef.current && !spreadsheetInstance) {
+  //     instance = jspreadsheet(jRef.current, cableScheduleOptions)
+  //     setSpreadsheetInstance(instance)
+  //   }
 
-    return () => {
-      if (instance) {
-        instance.destroy()
-      }
-    }
-  }, [cableScheduleOptions, spreadsheetInstance, typedCableScheduleColumns])
+  //   return () => {
+  //     if (instance) {
+  //       instance.destroy()
+  //     }
+  //   }
+  // }, [cableScheduleOptions, spreadsheetInstance, typedCableScheduleColumns])
+  
 
   // Fetch control schemes
   // useEffect(() => {
@@ -192,7 +193,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
         isOpen={isMulticoreModalOpen}
         onClose={() => setIsMulticoreModalOpen(false)}
         typedMulticoreCableColumns={typedMulticoreCableConfigColumns}
-        onConfigurationComplete={(selectedCables) => {
+        onConfigurationComplete={(selectedCables:any) => {
           console.log("Selected cables:", selectedCables)
           // Handle the selected cables
         }}
