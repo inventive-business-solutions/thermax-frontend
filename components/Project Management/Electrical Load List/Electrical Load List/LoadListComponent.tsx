@@ -25,6 +25,7 @@ import { useProjectPanelData } from "hooks/useProjectPanelData"
 import { useParams } from "next/navigation"
 import useMakeOfComponentDropdowns from "components/Project Management/Design Basis/MCC-PCC/MakeOfComponent/MakeDropdowns"
 import { useLoading } from "hooks/useLoading"
+import { getCurrentCalculation } from "actions/electrical-load-list"
 
 // Types definition
 type ValidColumnType =
@@ -635,6 +636,66 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
 
     reader.readAsArrayBuffer(file)
   }
+
+  const handleCurrentCalculation = async () => {
+    const data = await getCurrentCalculation({
+      divisionName: "Heating",
+      data: [
+        {
+          kw: 11,
+          supplyVoltage: 415,
+          phase: "3 Phase",
+          powerFactor: 0.8,
+          motorFrameSize: "",
+          motorPartCode: "",
+          motorRatedCurrent: "",
+          tagNo: "M01",
+          starterType: "",
+        },
+        {
+          kw: 0.75,
+          supplyVoltage: 415,
+          phase: "1 Phase",
+          powerFactor: 0.8,
+          motorFrameSize: "",
+          motorPartCode: "",
+          motorRatedCurrent: "",
+          tagNo: "M02",
+        },
+        {
+          kw: 9.3,
+          supplyVoltage: 460,
+          phase: "1 Phase",
+          powerFactor: 0.8,
+          motorFrameSize: "",
+          motorPartCode: "",
+          motorRatedCurrent: "",
+          tagNo: "M03",
+        },
+        {
+          kw: 6,
+          supplyVoltage: 415,
+          phase: "3 Phase",
+          powerFactor: 0.8,
+          motorFrameSize: "",
+          motorPartCode: "",
+          motorRatedCurrent: "",
+          tagNo: "M04",
+        },
+        {
+          kw: 4,
+          supplyVoltage: 460,
+          phase: "1 Phase",
+          powerFactor: 0.8,
+          motorFrameSize: "",
+          motorPartCode: "",
+          motorRatedCurrent: "",
+          tagNo: "M05",
+        },
+      ],
+    })
+    console.log("Current Calculation", data)
+  }
   return (
     <>
       <div className="mb-4 flex justify-end gap-4">
@@ -676,7 +737,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
       />
 
       <div className="flex w-full flex-row justify-end gap-2">
-        <Button type="primary" onClick={getCurrentHandle}>
+        <Button type="primary" onClick={handleCurrentCalculation}>
           Get Current
         </Button>
         <Button type="primary" onClick={handleValidatePanelLoad}>

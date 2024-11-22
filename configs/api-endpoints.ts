@@ -281,3 +281,8 @@ export const APPROVER_EMAIL_NOTIFICATION_API = "/method/project.trigger_approver
 export const REVIEW_SUBMISSION_EMAIL_API = "/method/db_revision.trigger_review_submission_mail"
 export const REVIEW_RESUBMISSION_EMAIL_API = "/method/db_revision.trigger_review_resubmission_mail"
 export const REVIEW_APPROVAL_EMAIL_API = "/method/db_revision.trigger_review_approval_mail"
+
+// Load List
+export const CABLE_SIZE_HEATING_API = `/document/Cable Size Heating`
+
+export const HEATING_SWITCHGEAR_HEATER_API = `/document/Heating Switchgear Combination Heaters`
