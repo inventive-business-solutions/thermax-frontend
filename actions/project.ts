@@ -18,8 +18,94 @@ import {
   PROJECT_PANEL_API,
   DYNAMIC_DOCUMENT_API,
   PROJECT_API,
+  APPROVER_EMAIL_NOTIFICATION_API,
+  ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
+  ELECTRICAL_LOAD_LIST_API,
+  CABLE_SCHEDULE_REVISION_HISTORY_API,
+  CABLE_SCHEDULE_API,
+  MOTOR_CANOPY_REVISION_HISTORY_API,
+  MOTOR_CANOPY_LIST_API,
+  MOTOR_SPECIFICATIONS_REVISION_HISTORY_API,
+  MOTOR_SPECIFICATION_LIST_API,
+  LBPS_SPECIFICATIONS_REVISION_HISTORY_API,
+  LBPS_SPECIFICATION_LIST_API,
+  LOCAL_ISOLATOR_REVISION_HISTORY_API,
+  LOCAL_ISOLATOR_SPECIFICATION_LIST_API,
 } from "configs/api-endpoints"
-import { deleteData, getData } from "./crud-actions"
+import { createData, deleteData, getData } from "./crud-actions"
+
+export const createProject = async (projectData: any, userInfo: any) => {
+  try {
+    // Create Project
+    const projectCreatedata = await createData(PROJECT_API, false, projectData)
+    const project_id = projectCreatedata.name
+    await createData(PROJECT_INFO_API, false, { project_id })
+    await createData(STATIC_DOCUMENT_API, false, { project_id })
+
+    // Create Design Basis Revision History
+    const designBasisRevisionHistoryData = await createData(DESIGN_BASIS_REVISION_HISTORY_API, false, { project_id })
+    const design_basis_revision_id = designBasisRevisionHistoryData.name
+    await createData(DESIGN_BASIS_GENERAL_INFO_API, false, { revision_id: design_basis_revision_id })
+    await createData(MOTOR_PARAMETER_API, false, { revision_id: design_basis_revision_id })
+    await createData(MAKE_OF_COMPONENT_API, false, { revision_id: design_basis_revision_id })
+    await createData(COMMON_CONFIGURATION, false, { revision_id: design_basis_revision_id })
+    await createData(CABLE_TRAY_LAYOUT, false, { revision_id: design_basis_revision_id })
+    await createData(LAYOUT_EARTHING, false, { revision_id: design_basis_revision_id })
+
+    // ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API
+    const electricalLoadListRevisionHistoryData = await createData(ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, false, {
+      project_id,
+    })
+    const electrical_load_list_revision_id = electricalLoadListRevisionHistoryData.name
+    await createData(ELECTRICAL_LOAD_LIST_API, false, { revision_id: electrical_load_list_revision_id })
+
+    // CABLE_SCHEDULE_REVISION_HISTORY_API
+    const cableScheduleRevisionHistoryData = await createData(CABLE_SCHEDULE_REVISION_HISTORY_API, false, {
+      project_id,
+    })
+    const cable_schedule_revision_id = cableScheduleRevisionHistoryData.name
+    await createData(CABLE_SCHEDULE_API, false, { revision_id: cable_schedule_revision_id })
+
+    // MOTOR_CANOPY_REVISION_HISTORY_API, MOTOR_CANOPY_LIST_API
+    const motorCanopyRevisionHistoryData = await createData(MOTOR_CANOPY_REVISION_HISTORY_API, false, {
+      project_id,
+    })
+    const motor_canopy_revision_id = motorCanopyRevisionHistoryData.name
+    await createData(MOTOR_CANOPY_LIST_API, false, { revision_id: motor_canopy_revision_id })
+
+    // MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, MOTOR_SPECIFICATION_LIST_API
+    const motorSpecificationsRevisionHistoryData = await createData(MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, false, {
+      project_id,
+    })
+    const motor_specifications_revision_id = motorSpecificationsRevisionHistoryData.name
+    await createData(MOTOR_SPECIFICATION_LIST_API, false, { revision_id: motor_specifications_revision_id })
+
+    // LBPS_SPECIFICATIONS_REVISION_HISTORY_API, LBPS_SPECIFICATION_LIST_API
+    const lbpsSpecificationsRevisionHistoryData = await createData(LBPS_SPECIFICATIONS_REVISION_HISTORY_API, false, {
+      project_id,
+    })
+    const lbps_specifications_revision_id = lbpsSpecificationsRevisionHistoryData.name
+    await createData(LBPS_SPECIFICATION_LIST_API, false, { revision_id: lbps_specifications_revision_id })
+
+    // LOCAL_ISOLATOR_REVISION_HISTORY_API, LOCAL_ISOLATOR_SPECIFICATION_LIST_API
+    const localIsolatorRevisionHistoryData = await createData(LOCAL_ISOLATOR_REVISION_HISTORY_API, false, {
+      project_id,
+    })
+    const local_isolator_revision_id = localIsolatorRevisionHistoryData.name
+    await createData(LOCAL_ISOLATOR_SPECIFICATION_LIST_API, false, { revision_id: local_isolator_revision_id })
+
+    await createData(APPROVER_EMAIL_NOTIFICATION_API, false, {
+      approvar_email: projectData?.approver,
+      creator_email: userInfo?.email,
+      project_oc_number: projectData.project_oc_number,
+      project_name: projectData.project_name,
+      sent_by: `${userInfo?.first_name} ${userInfo?.last_name}`,
+      subject: "Approver - EnIMAX",
+    })
+  } catch (error: any) {
+    throw error
+  }
+}
 
 export const deleteProject = async (project_id: string) => {
   try {
