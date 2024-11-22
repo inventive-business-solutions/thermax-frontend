@@ -32,10 +32,6 @@ const ProjectDashboard = () => {
   let proj = projectList?.filter((item: any) => item?.division === userInfo?.division)
 
   function countProjectsByYearAsArray(projectList: Project[]): YearCount[] {
-    if (!Array.isArray(projectList)) {
-      console.error("Invalid input: projectList must be an array.")
-      return []
-    }
     const yearCount: { [key: number]: number } = {}
 
     projectList?.forEach((project) => {
