@@ -29,6 +29,7 @@ import {
   THERMAX_USER_API,
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { createProject } from "actions/project"
 
 const getProjectFormValidationSchema = (project_oc_numbers: string[], editMode: boolean) => {
   return zod.object({
@@ -104,26 +105,7 @@ export default function ProjectFormModal({
 
   const handleCreateProject = async (projectData: any) => {
     try {
-      const projectCreatedata = await createData(PROJECT_API, false, projectData)
-      const project_id = projectCreatedata.name
-      await createData(PROJECT_INFO_API, false, { project_id })
-      await createData(STATIC_DOCUMENT_API, false, { project_id })
-      const revisionHistoryData = await createData(DESIGN_BASIS_REVISION_HISTORY_API, false, { project_id })
-      const revision_id = revisionHistoryData.name
-      await createData(DESIGN_BASIS_GENERAL_INFO_API, false, { revision_id })
-      await createData(MOTOR_PARAMETER_API, false, { revision_id })
-      await createData(MAKE_OF_COMPONENT_API, false, { revision_id })
-      await createData(COMMON_CONFIGURATION, false, { revision_id })
-      await createData(CABLE_TRAY_LAYOUT, false, { revision_id })
-      await createData(LAYOUT_EARTHING, false, { revision_id })
-      await createData(APPROVER_EMAIL_NOTIFICATION_API, false, {
-        approvar_email: projectData?.approver,
-        creator_email: userInfo?.email,
-        project_oc_number: projectData.project_oc_number,
-        project_name: projectData.project_name,
-        sent_by: `${userInfo?.first_name} ${userInfo?.last_name}`,
-        subject: "Approver - EnIMAX",
-      })
+      await createProject(projectData, userInfo)
       setOpen(false)
       message.success("Project created successfully")
     } catch (error: any) {

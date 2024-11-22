@@ -972,7 +972,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="w-100">
       <div className="w-full">
-        <div className="mb-4 mt-4 flex justify-end gap-4 ">
+        <div className="my-4 flex justify-end gap-4 ">
           <select
             value={selectedPercent}
             onChange={(e) => setSelectedPercent(e.target.value)}
