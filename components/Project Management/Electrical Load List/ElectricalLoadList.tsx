@@ -64,14 +64,13 @@ const ElectricalLoadList = ({
 
                 <div className={openTab === 2 ? "block" : "hidden"} id="link2">
                   <LoadList
-                    onNext={() => setOpenTab((tab) => tab + 1)}
                     designBasisRevisionId={revision_id}
                     loadListLatestRevisionId={loadListLatestRevisionId}
                   />{" "}
                 </div>
 
                 <div className={openTab === 3 ? "block" : "hidden"} id="link3">
-                  <CableSchedule onNext={() => setOpenTab((tab) => tab + 1)} />
+                  <CableSchedule />
                 </div>
 
                 <div className={openTab === 4 ? "block" : "hidden"} id="link4">
