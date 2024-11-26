@@ -52,7 +52,7 @@ export const createProject = async (projectData: any, userInfo: any) => {
     await createData(CABLE_TRAY_LAYOUT, false, { revision_id: design_basis_revision_id })
     await createData(LAYOUT_EARTHING, false, { revision_id: design_basis_revision_id })
 
-    // await createData(ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, false, { project_id })
+    await createData(ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, false, { project_id })
     // await createData(CABLE_SCHEDULE_REVISION_HISTORY_API, false, { project_id })
     // await createData(MOTOR_CANOPY_REVISION_HISTORY_API, false, { project_id })
     // await createData(MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, false, { project_id })
@@ -209,14 +209,14 @@ export const deleteProject = async (project_id: string) => {
       await deleteData(`${DESIGN_BASIS_REVISION_HISTORY_API}/${revisionID}`, false)
     }
 
-    // const electricalLoadListRevisionHistory = await getData(
-    //   `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
-    // )
-    // for (const revision of electricalLoadListRevisionHistory || []) {
-    //   const revisionID = revision.name
+    const electricalLoadListRevisionHistory = await getData(
+      `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    )
+    for (const revision of electricalLoadListRevisionHistory || []) {
+      const revisionID = revision.name
 
-    //   await deleteData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${revisionID}`, false)
-    // }
+      await deleteData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${revisionID}`, false)
+    }
 
     // const cableScheduleRevisionHistory = await getData(
     //   `${CABLE_SCHEDULE_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
