@@ -1,15 +1,15 @@
 import React, { ReactNode, useEffect, useRef } from "react"
 
 interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: ReactNode;
-  width?: string;
-  className?: string; // Optional className prop
+  isOpen: boolean
+  onClose: () => void
+  children: ReactNode
+  width?: string
+  className?: string // Optional className prop
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, width, className }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, className }) => {
+  const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
@@ -41,7 +41,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, width, classNa
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-auto">
       <div style={{width: '100%'}}>
         
       <div
@@ -65,9 +65,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, width, classNa
         {children}
       </div>
       </div>
-
     </div>
   )
 }
 
-export default Modal;
+export default Modal

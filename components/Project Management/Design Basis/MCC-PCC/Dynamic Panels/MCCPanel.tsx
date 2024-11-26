@@ -185,7 +185,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       reset(getDefaultValues(projectMetadata, projectInfo, mccPanelData[0]))
     }
     // reset(getDefaultValues(projectInfo, mccPanelData?.[0]))
-  }, [mccPanelData, projectInfo, reset])
+  }, [mccPanelData, projectInfo, projectMetadata, reset])
 
   const incomer_ampere_controlled = watch("incomer_ampere")
   const incomer_type_controlled = watch("incomer_type")
@@ -218,7 +218,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       let newOptions = ga_panel_mounting_height_options.filter((item: any) => item.name === "100" || item.name === "75")
       setGaPanelMountingHeightOptions(newOptions)
     }
-  }, [ga_panel_mounting_frame_controlled, setValue])
+  }, [ga_panel_mounting_frame_controlled, ga_panel_mounting_height_options, setValue])
 
   useEffect(() => {
     if (ga_current_density_controlled === "Aluminium") {
@@ -232,7 +232,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       )
       setGaCurrentDensity(temp_ga_current_density)
     }
-  }, [ga_current_density_controlled, setValue])
+  }, [ga_current_density_controlled, ga_current_density_options, setValue])
 
   useEffect(() => {
     if (current_transformer_coating_Controlled === "NA") {

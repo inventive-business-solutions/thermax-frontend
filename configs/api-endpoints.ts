@@ -23,7 +23,23 @@ export const PROJECT_MAIN_PKG_LIST_API = `/method/project_main_package.get_proje
 export const PROJECT_MAIN_PKG_API = `/document/Project Main Package`
 export const BATTERY_LIMIT_API = `/document/Battery Limit`
 export const DESIGN_BASIS_GENERAL_INFO_API = `/document/Design Basis General Info`
+
+// Revision History
 export const DESIGN_BASIS_REVISION_HISTORY_API = `/document/Design Basis Revision History`
+export const ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API = `/document/Electrical Load List Revision History`
+export const CABLE_SCHEDULE_REVISION_HISTORY_API = `/document/Cable Schedule Revision History`
+export const MOTOR_CANOPY_REVISION_HISTORY_API = `/document/Motor Canopy Revision History`
+export const MOTOR_SPECIFICATIONS_REVISION_HISTORY_API = `/document/Motor Specifications Revision History`
+export const LBPS_SPECIFICATIONS_REVISION_HISTORY_API = `/document/LBPS Specifications Revision History`
+export const LOCAL_ISOLATOR_REVISION_HISTORY_API = `/document/Local Isolator Revision History`
+
+// Electrical Load List
+export const ELECTRICAL_LOAD_LIST_API = `/document/Electrical Load List`
+export const CABLE_SCHEDULE_API = `/document/Cable Schedule`
+export const MOTOR_CANOPY_LIST_API = `/document/Motor Canopy List`
+export const MOTOR_SPECIFICATION_LIST_API = `/document/Motor Specification and List`
+export const LBPS_SPECIFICATION_LIST_API = `/document/LBPS Specification and List`
+export const LOCAL_ISOLATOR_SPECIFICATION_LIST_API = `/document/Local Isolator Specification and List`
 
 // Motor Parameters API Endpoints
 export const MOTOR_PARAMETER_API = `/document/Design Basis Motor Parameters`
@@ -276,8 +292,14 @@ export const CREDENTIALS_EMAIL_API = "/method/thermax_extended_user.trigger_send
 //control schemes
 
 export const HEATING_CONTROL_SCHEMES_URI = "/document/Heating Control System Index"
+export const LPBS_SCHEMES_URI = "/document/LPBS Combination"
 export const DELETE_USER_EMAIL_API = "/method/thermax_extended_user.trigger_delete_user"
 export const APPROVER_EMAIL_NOTIFICATION_API = "/method/project.trigger_approver_notification_mail"
 export const REVIEW_SUBMISSION_EMAIL_API = "/method/db_revision.trigger_review_submission_mail"
 export const REVIEW_RESUBMISSION_EMAIL_API = "/method/db_revision.trigger_review_resubmission_mail"
 export const REVIEW_APPROVAL_EMAIL_API = "/method/db_revision.trigger_review_approval_mail"
+
+// Load List
+export const CABLE_SIZE_HEATING_API = `/document/Cable Size Heating`
+
+export const HEATING_SWITCHGEAR_HEATER_API = `/document/Heating Switchgear Combination Heaters`

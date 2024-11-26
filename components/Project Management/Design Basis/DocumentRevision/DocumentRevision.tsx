@@ -41,7 +41,6 @@ import clsx from "clsx"
 import ResubmitModel from "./ResubmitModel"
 import { releaseRevision } from "actions/design-basis_revision"
 import { getSuperuserEmail } from "actions/user-actions"
-import * as XLSX from "xlsx"
 
 export default function DocumentRevision() {
   const userInfo = useCurrentUser()
