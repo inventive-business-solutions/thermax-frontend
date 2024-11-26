@@ -344,7 +344,7 @@ export const CableSchedulecolumns = () => {
     {
       type: "text",
       name: "feederTag",
-      title: "FEEDER TAG NO",
+      title: "TAG NO",
       width: "110",
       readOnly: true,
     },
@@ -360,14 +360,14 @@ export const CableSchedulecolumns = () => {
       type: "text",
       name: "working",
       title: "WORKING LOAD IN KW",
-      width: "100",
+      width: "50",
       readOnly: true,
     },
     {
       type: "text",
       name: "standBy",
       title: "STAND-BY LOAD IN KW",
-      width: "100",
+      width: "50",
       readOnly: true,
     },
     {
