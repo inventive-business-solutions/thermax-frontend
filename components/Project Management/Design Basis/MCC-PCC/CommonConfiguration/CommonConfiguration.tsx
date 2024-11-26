@@ -94,13 +94,13 @@ const getDefaultValues = (commonConfigData: any) => {
     earth_bus_material: commonConfigData?.earth_bus_material || "Aluminium",
     earth_bus_current_density: commonConfigData?.earth_bus_current_density || "0.8 A/Sq. mm",
     earth_bus_rating_of_busbar: commonConfigData?.earth_bus_rating_of_busbar || "( Min- 1R X 20 mm X 5 mm )",
-    metering_for_feeder: commonConfigData?.metering_for_feeder || "Ammeter (Digital)",
+    metering_for_feeders: commonConfigData?.metering_for_feeders || "Ammeter (Digital)",
     cooling_fans: commonConfigData?.cooling_fans || "Not Applicable",
     louvers_and_filters: commonConfigData?.louvers_and_filters || "Not Applicable",
     alarm_annunciator: commonConfigData?.alarm_annunciator || "Not Applicable",
     control_transformer: commonConfigData?.control_transformer || "Not Applicable",
-    commissioning_spare: commonConfigData?.commissioning_spare || "NA",
-    two_year_operational_spare: commonConfigData?.two_year_operational_spare || "NA",
+    commissioning_spare: commonConfigData?.commissioning_spare || "Not Applicable",
+    two_year_operational_spare: commonConfigData?.two_year_operational_spare || "Not Applicable",
   }
 }
 
@@ -1178,7 +1178,7 @@ const CommonConfiguration = ({
         <div className="w-1/3 flex-1">
           <CustomSingleSelect
             control={control}
-            name="metering_for_feeder"
+            name="metering_for_feeders"
             label="Metering for Feeder"
             options={metering_for_feeder_options || []}
             size="small"

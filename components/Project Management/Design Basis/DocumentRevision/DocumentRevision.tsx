@@ -206,6 +206,29 @@ export default function DocumentRevision() {
         earthingLayoutData: earthingLayoutData[0],
       })
 
+      const payload = {
+        metadata: {
+          prepared_by_initials: projectCreator?.initials,
+          checked_by_initials: projectApprover?.initials,
+          approved_by_initials: superuser?.initials,
+          division_name: projectCreator?.division,
+        },
+        project,
+        projectInfo,
+        documentRevisions,
+        generalInfo: generalInfo[0],
+        projectMainPkgData,
+        motorParameters: motorParameters[0],
+        makeOfComponents: makeOfComponents[0],
+        commonConfigurations: commonConfigurations[0],
+        projectPanelData: finalProjectPanelData,
+        cableTrayLayoutData: cableTrayLayoutData[0],
+        earthingLayoutData: earthingLayoutData[0],
+      }
+
+      // Log the payload
+      console.log("Payload being sent:", JSON.stringify(payload, null, 2))
+
       const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
       const excelBlob = new Blob([byteArray.buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -265,7 +288,7 @@ export default function DocumentRevision() {
     {
       title: () => <div className="text-center">Document Name</div>,
       dataIndex: "documentName",
-      align:"center",
+      align: "center",
       render: (text, record) => (
         <Tooltip title="Edit Revision" placement="top">
           <Button

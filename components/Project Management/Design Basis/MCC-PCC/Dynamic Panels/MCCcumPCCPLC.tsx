@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Divider, message } from "antd"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { createData, getData, updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
@@ -166,7 +166,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     eo_scada_furniture_options,
   } = usePLCDropdowns()
 
-  const { control, handleSubmit, reset, watch } = useForm({
+  const { control, handleSubmit, reset, watch, getValues } = useForm({
     resolver: zodResolver(plcPanelValidationSchema),
     defaultValues: getDefaultValues(plcPanelData?.[0]),
     mode: "onSubmit",
@@ -187,9 +187,10 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     }
   }
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = useCallback(async (e: React.FormEvent) => {
     setLoading(true)
     try {
+      let data = getValues()
       const mccPanelData1 = await getData(
         `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
@@ -200,16 +201,26 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
       if (mccPanelData1 && mccPanelData1.length > 0) {
         await updateData(`${MCC_PCC_PLC_PANEL_1}/${mccPanelData1[0].name}`, false, data)
       } else {
-        data["revision_id"] = revision_id
-        data["panel_id"] = panel_id
+        const combined_Data = {
+          ...data,
+          revision_id,
+          panel_id,
+        }
+        data = { ...combined_Data }
+        // data["revision_id"] = revision_id
+        // data["panel_id"] = panel_id
         await createData(MCC_PCC_PLC_PANEL_1, false, data)
       }
 
       if (mccPanelData2 && mccPanelData2.length > 0) {
         await updateData(`${MCC_PCC_PLC_PANEL_2}/${mccPanelData2[0].name}`, false, data)
       } else {
-        data["revision_id"] = revision_id
-        data["panel_id"] = panel_id
+        const combined_Data = {
+          ...data,
+          revision_id,
+          panel_id,
+        }
+        data = { ...combined_Data }
         await createData(MCC_PCC_PLC_PANEL_2, false, data)
       }
 
@@ -220,14 +231,14 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     } finally {
       setLoading(false)
     }
-  }
+  }, [revision_id, reset, getValues])
 
   return (
     <>
       <Divider>
         <span className="font-bold text-slate-700">UPS</span>
       </Divider>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
+      <form onSubmit={onSubmit} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <CustomSingleSelect
@@ -1446,7 +1457,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </div>
 
         <div className="mt-2 flex w-full justify-end">
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button type="primary" onClick={onSubmit} loading={loading}>
             Save and Next
           </Button>
         </div>

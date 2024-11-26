@@ -84,7 +84,7 @@ const fieldSchema = zod.object({
     required_error: "Safe area thermister is required",
     message: "Safe area thermister is required",
   }),
-  hazardous_area_themister: zod.string({
+  hazardous_area_thermister: zod.string({
     required_error: "Hazardous area thermister is required",
     message: "Hazardous area thermister is required",
   }),
@@ -203,7 +203,7 @@ const getDefaultValues = (defaultData: any, projectInfoData: any) => {
     safe_area_terminal_box_ip_rating: defaultData?.safe_area_terminal_box_ip_rating || "IP55",
     hazardous_area_terminal_box_ip_rating: defaultData?.hazardous_area_terminal_box_ip_rating || "IP55",
     safe_area_thermister: defaultData?.safe_area_thermister || "110",
-    hazardous_area_themister: defaultData?.hazardous_area_themister || "110",
+    hazardous_area_thermister: defaultData?.hazardous_area_thermister || "110",
     safe_area_space_heater: defaultData?.safe_area_space_heater || "110",
     hazardous_area_space_heater: defaultData?.hazardous_area_space_heater || "110",
     hazardous_area_certification: defaultData?.hazardous_area_certification || "PESO",
@@ -524,7 +524,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
             <CustomSingleSelect
               control={control}
               options={hazardousThermistorOptions}
-              name="hazardous_area_themister"
+              name="hazardous_area_thermister"
               placeholder="Select hazardous area thermister"
               label=""
               variant={isHazardous ? "borderless" : "filled"}

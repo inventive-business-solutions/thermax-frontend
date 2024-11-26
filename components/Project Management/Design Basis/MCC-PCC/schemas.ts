@@ -272,7 +272,7 @@ export const configItemValidationSchema = zod.object({
     message: "Earth Bus Rating of Busbar is required",
   }),
   // Metering for Feeder
-  metering_for_feeder: zod.string({
+  metering_for_feeders: zod.string({
     required_error: "Metering for Feeder is required",
     message: "Metering for Feeder is required",
   }),
@@ -305,6 +305,16 @@ export const mccPanelValidationSchema = zod
       required_error: "Incomer Above Ampere is required",
       message: "Incomer Above Ampere is required",
     }),
+    control_transformer_coating: zod.string({
+      required_error: "Control Transformer Coating is required",
+      message: "Control Transformer Coating is required",
+    }),
+    control_transformer_configuration: zod.string({
+      required_error: "Control Transformer Configuration is required",
+      message: "Control Transformer Configuration is required",
+    }),
+    is_other_selected: zod.number({ required_error: "This field is required", message: "This field is required" }),
+    led_type_other_input: zod.string().optional(),
     incomer_above_pole: zod.string({
       required_error: "Incomer Above Pole is required",
       message: "Incomer Above Pole is required",
@@ -317,7 +327,7 @@ export const mccPanelValidationSchema = zod
     is_lsig_selected: zod.number().optional(),
     is_lsi_selected: zod.number().optional(),
     is_neural_link_with_disconnect_facility_selected: zod.number().optional(),
-    is_led_type_lamp_selected: zod.string({
+    is_led_type_lamp_selected: zod.number({
       required_error: "LED Type Lamp is required",
       message: "LED Type Lamp is required",
     }),
@@ -575,6 +585,14 @@ export const pccPanelValidationSchema = zod
       required_error: "Incomer Above Type is required",
       message: "Incomer Above Type is required",
     }),
+    control_transformer_coating: zod.string({
+      required_error: "Control Transformer Coating is required",
+      message: "Control Transformer Coating is required",
+    }),
+    control_transformer_configuration: zod.string({
+      required_error: "Control Transformer Configuration is required",
+      message: "Control Transformer Configuration is required",
+    }),
     is_under_or_over_voltage_selected: zod.number().optional(),
     is_lsig_selected: zod.number().optional(),
     is_lsi_selected: zod.number().optional(),
@@ -822,6 +840,14 @@ export const plcPanelValidationSchema = zod.object({
   is_ups_battery_mounting_rack_selected: zod.number({
     required_error: "UPS Battery Mounting Rack is required",
     message: "UPS Battery Mounting Rack is required",
+  }),
+  control_transformer_coating: zod.string({
+    required_error: "Control Transformer Coating is required",
+    message: "Control Transformer Coating is required",
+  }),
+  control_transformer_configuration: zod.string({
+    required_error: "Control Transformer Configuration is required",
+    message: "Control Transformer Configuration is required",
   }),
   plc_cpu_or_processor_module_or_series: zod.string({
     required_error: "PLC CPU/Processor Module/Series is required",
