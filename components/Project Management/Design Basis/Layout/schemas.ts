@@ -5,6 +5,14 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Number of cores is required",
     message: "Number of cores is required",
   }),
+  copper_conductor: zod.string({
+    required_error: "Copper Conductor is required",
+    message: "Copper Conductor is required",
+  }),
+  aluminium_conductor: zod.string({
+    required_error: "Aluminium Conductor is required",
+    message: "Aluminium Conductor is required",
+  }),
   specific_requirement: zod.string({
     required_error: "Specific requirement is required",
     message: "Specific requirement is required",

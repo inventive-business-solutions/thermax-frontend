@@ -264,7 +264,7 @@ export default function DocumentRevision() {
     {
       title: () => <div className="text-center">Document Name</div>,
       dataIndex: "documentName",
-      align:"center",
+      align: "center",
       render: (text, record) => (
         <Tooltip title="Edit Revision" placement="top">
           <Button
