@@ -1,6 +1,22 @@
 "use client"
-import { BellFilled, CopyOutlined, DownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
-import { Button, Table, TableColumnType, Tabs, Tooltip } from "antd"
+import {
+  BellFilled,
+  CloudDownloadOutlined,
+  CopyOutlined,
+  DownloadOutlined,
+  ExportOutlined,
+  FolderOpenOutlined,
+  SyncOutlined,
+} from "@ant-design/icons"
+import { releaseRevision } from "actions/design-basis_revision"
+import { Button, message, Table, TableColumnsType, TableColumnType, Tabs, Tag, Tooltip } from "antd"
+import { DESIGN_BASIS_REVISION_HISTORY_API } from "configs/api-endpoints"
+import { DB_REVISION_STATUS } from "configs/constants"
+import { useLoading } from "hooks/useLoading"
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { mutate } from "swr"
+import { getThermaxDateFormat } from "utils/helpers"
 
 interface TableDataType {
   key: React.Key
@@ -28,6 +44,13 @@ const DownloadTable = ({ dataSource }: { dataSource: TableDataType[] }) => {
 }
 
 const Download: React.FC = () => {
+  const { setLoading: setModalLoading } = useLoading()
+  const router = useRouter()
+  const [downloadIconSpin, setDownloadIconSpin] = useState(false)
+  const [submitIconSpin, setSubmitIconSpin] = useState(false)
+
+  const params = useParams()
+  const project_id = params.project_id as string
   const dataSource: TableDataType[] = [
     {
       key: 1,
@@ -57,12 +80,165 @@ const Download: React.FC = () => {
       ),
     },
   ]
+  const dbRevisionHistoryUrl = `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
+  const handleDownload = async (revision_id: string) => {}
+
+  const handleRelease = async (revision_id: string) => {
+    setModalLoading(true)
+    try {
+      await releaseRevision(project_id, revision_id)
+      mutate(dbRevisionHistoryUrl)
+      message.success("Design Basis revision is released and locked")
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setModalLoading(false)
+    }
+  }
+  // const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  const columns: TableColumnsType = [
+    {
+      title: () => <div className="text-center">Document Name</div>,
+      dataIndex: "documentName",
+      align: "center",
+      render: (text, record) => (
+        <Tooltip title="Edit Revision" placement="top">
+          <Button
+            type="link"
+            iconPosition="start"
+            onClick={() => {
+              setModalLoading(true)
+              router.push(`/project/${project_id}/design-basis/general-info`)
+            }}
+            icon={<FolderOpenOutlined style={{ color: "#fef65b", fontSize: "1.2rem" }} />}
+            disabled={record.status === DB_REVISION_STATUS.Released}
+          >
+            {text}
+          </Button>
+        </Tooltip>
+      ),
+    },
+    {
+      title: () => <div className="text-center">Status</div>,
+      dataIndex: "status",
+      render: (text) => (
+        <div className="text-center">
+          <Tag color="green">{text}</Tag>
+        </div>
+      ),
+    },
+    {
+      title: () => <div className="text-center">Document Revision</div>,
+      dataIndex: "documentRevision",
+      render: (text) => <div className="text-center">{text}</div>,
+    },
+    {
+      title: () => <div className="text-center">Created Date</div>,
+      dataIndex: "createdDate",
+      render: (text) => {
+        const date = new Date(text)
+        const stringDate = getThermaxDateFormat(date)
+        return stringDate
+      },
+    },
+    {
+      title: () => <div className="text-center">Download</div>,
+      dataIndex: "download",
+      render(text, record) {
+        return (
+          <div className="flex flex-row justify-center gap-2 hover:cursor-pointer">
+            <div>
+              <Tooltip title={"Download"}>
+                <Button
+                  type="link"
+                  shape="circle"
+                  icon={
+                    <CloudDownloadOutlined
+                      style={{
+                        fontSize: "1rem",
+                        color: "green",
+                      }}
+                      spin={downloadIconSpin}
+                    />
+                  }
+                  onClick={() => handleDownload(record?.key)}
+                />
+              </Tooltip>
+            </div>
+            <div>
+              <Tooltip title={"Submit for Review"}>
+                <Button
+                  type="link"
+                  shape="circle"
+                  icon={
+                    <ExportOutlined
+                      style={{
+                        color: [
+                          DB_REVISION_STATUS.Released,
+                          DB_REVISION_STATUS.Submitted,
+                          DB_REVISION_STATUS.Approved,
+                        ].includes(record?.status)
+                          ? "grey"
+                          : "orange",
+                      }}
+                      spin={submitIconSpin}
+                    />
+                  }
+                  disabled={[
+                    DB_REVISION_STATUS.Released,
+                    DB_REVISION_STATUS.Submitted,
+                    DB_REVISION_STATUS.Approved,
+                  ].includes(record?.status)}
+                />
+              </Tooltip>
+            </div>
+          </div>
+        )
+      },
+    },
+    {
+      title: () => <div className="text-center">Release</div>,
+      dataIndex: "release",
+      render: (text, record) => {
+        return (
+          <div className="text-center">
+            <Button
+              type="primary"
+              size="small"
+              name="Release"
+              disabled={record.status === DB_REVISION_STATUS.Released || record.status !== DB_REVISION_STATUS.Approved}
+              onClick={() => handleRelease(record.key)}
+            >
+              Release
+            </Button>
+          </div>
+        )
+      },
+    },
+  ]
 
   const DownloadTabs = [
     {
       label: `DOWNLOAD ELECTRICAL LOAD LIST`,
       key: "1",
-      children: <DownloadTable dataSource={dataSource} />,
+      children: (
+        <>
+          <div className="text-end">
+            <Button icon={<SyncOutlined color="#492971" />} onClick={() => mutate(dbRevisionHistoryUrl)}>
+              {" "}
+              Refresh
+            </Button>
+          </div>
+
+          <div className="mt-2">
+            <Table columns={columns} dataSource={dataSource} size="small" />
+          </div>
+        </>
+      ),
     },
     {
       label: `DOWNLOAD CABLE SCHEDULE`,

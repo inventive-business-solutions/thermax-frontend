@@ -11,7 +11,7 @@ import {
   PROJECT_INFO_API,
   PROJECT_MAIN_PKG_LIST_API,
 } from "configs/api-endpoints"
-import { getData } from "actions/crud-actions"
+import { createData, getData } from "actions/crud-actions"
 import * as XLSX from "xlsx"
 
 import { LoadListcolumns } from "../common/ExcelColumns"
@@ -53,11 +53,14 @@ interface ProjectInfo {
 }
 
 interface LoadListProps {
-  onNext: () => void
+  // onNext: () => void
+
   designBasisRevisionId: string
+  loadListLatestRevisionId: string
 }
-const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) => {
+const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLatestRevisionId }) => {
   console.log(designBasisRevisionId, "vishal")
+
   const jRef = useRef<HTMLDivElement | null>(null)
   const spreadsheetRef = useRef<JspreadsheetInstance | null>(null)
 
@@ -103,10 +106,10 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
   ) => {
     let data: any = spreadsheetRef?.current?.getData() || []
     console.log(data, "load list data")
-    console.log("col index :", typeof colIndex)
+    // console.log("col index :", typeof colIndex)
 
     if (colIndex === "21") {
-      console.log(subPackages, "vishal motor parameters")
+      console.log(subPackages, "sub package")
 
       subPackages?.forEach((pckg: any) => {
         let selectedPckg = pckg?.sub_packages?.find((item: any) => item.sub_package_name == newValue)
@@ -214,8 +217,10 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
               .map((item: any) => item.sub_package_name)
           }
         })
+        console.log(mainPkgData, "main package")
+
         setSubPackages(mainPkgData)
-        console.log(mainPkgData?.map((pkg: any) => pkg.sub_packages).flat(), "vishal")
+        // console.log(mainPkgData?.map((pkg: any) => pkg.sub_packages).flat(), "vishal")
 
         // updateSpreadsheetColumns(updatedColumns)
       }
@@ -261,7 +266,9 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
   // Fetch control schemes
   useEffect(() => {
     // isLoading
-    setLoading(true)
+    // setLoading(true)
+    setLoading(false)
+
     let selectedItems: string[] = []
     const storedSchemes = localStorage.getItem("selected_control_scheme")
     const savedLoadList = localStorage.getItem("loadList")
@@ -380,20 +387,13 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
   }
   const handleLpbsComplete = (selectedSchemes: string[]) => {
     typedLoadListColumns.forEach((column) => {
-      if (column.name === "controlScheme") {
+      if (column.name === "lbpsType") {
         column.source = selectedSchemes
       }
     })
     // updateLoadList()
   }
-  const getCurrentHandle = () => {
-    // typedLoadListColumns.forEach((column) => {
-    //   if (column.name === "controlScheme") {
-    //     column.source = selectedSchemes
-    //   }
-    // })
-    // updateLoadList()
-  }
+
   const handleValidatePanelLoad = () => {}
   const downloadCurrentData = () => {
     console.log(spreadsheetRef?.current)
@@ -489,94 +489,93 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
     return isInvalid
   }
 
-  const handleLoadListSave = () => {
+  const handleLoadListSave = async () => {
     if (validateLoadValues()) {
       return message.error("KW should be in one column only")
     }
     if (validateUniqueFeederTag()) {
       return message.error("Feeder tag no. can not be repeated")
     }
+    // let json = {
+    //   tagNo: "",
+    //   serviceDescription: "",
+    //   workingKw: 0.1,
+    //   standByKw: 0.1,
+    //   kva: 0,
+    //   starterType: "",
+    //   supplyVoltage: "",
+    //   phase: "",
+    //   startingTime: "",
+    //   eocrApplicable: "",
+    //   lpbsType: "",
+    //   controlScheme: "",
+    //   panel: "",
+    //   busSegregation: "",
+    //   motorRpm: 0,
+    //   typeOfMotorMounting: "",
+    //   motorFrameSize: "",
+    //   motorGd2: "",
+    //   motorDrivenEquipmentGd2: "",
+    //   bkw: "",
+    //   typeOfCoupling: "",
+    //   package: "",
+    //   area: "",
+    //   standard: "",
+    //   zone: "",
+    //   gasGroup: "",
+    //   tempClass: "",
+    //   remark: "",
+    //   rev: "",
+    //   spaceHeater: "",
+    //   bearingRtd: "",
+    //   windingRtd: "",
+    //   thermistor: "",
+    //   typeOfBearing: "",
+    //   powerFactor: "",
+    //   motorEfficiency: "",
+    //   localIsolator: "",
+    //   panelAmmeter: "",
+    //   motorMake: "",
+    //   motorScope: "",
+    //   motorLocation: "",
+    //   motorPartCode: "",
+    //   motorRatedCurrent: "",
+    // }
+    let payload = {
+      revision_id: loadListLatestRevisionId,
+    }
+    try {
+      const respose = await createData("", false, {})
+    } catch (error) {}
     console.log(spreadsheetRef?.current?.getData(), "all load list data")
     localStorage.setItem("loadList", JSON.stringify(spreadsheetRef?.current?.getData()))
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let payload = {
-      tagNo: "",
-      serviceDescription: "",
-      workingKw: 0.1,
-      standByKw: 0.1,
-      kva: 0,
-      starterType: "",
-      supplyVoltage: "",
-      phase: "",
-      startingTime: "",
-      eocrApplicable: "",
-      lpbsType: "",
-      controlScheme: "",
-      panel: "",
-      busSegregation: "",
-      motorRpm: 0,
-      typeOfMotorMounting: "",
-      motorFrameSize: "",
-      motorGd2: "",
-      motorDrivenEquipmentGd2: "",
-      bkw: "",
-      typeOfCoupling: "",
-      package: "",
-      area: "",
-      standard: "",
-      zone: "",
-      gasGroup: "",
-      tempClass: "",
-      remark: "",
-      rev: "",
-      spaceHeater: "",
-      bearingRtd: "",
-      windingRtd: "",
-      thermistor: "",
-      typeOfBearing: "",
-      powerFactor: "",
-      motorEfficiency: "",
-      localIsolator: "",
-      panelAmmeter: "",
-      motorMake: "",
-      motorScope: "",
-      motorLocation: "",
-      motorPartCode: "",
-      motorRatedCurrent: "",
-    }
     const file = event.target.files?.[0] as File
 
-    // const file = files[0] as File;
     const reader = new FileReader()
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const data = new Uint8Array(e.target?.result as ArrayBuffer)
       const workbook = XLSX.read(data, { type: "array" })
 
-      // Assuming there's only one sheet in the workbook
-      // const sheetName = workbook.SheetNames[0];
       const sheetName = workbook.SheetNames[0]
       if (!sheetName) {
         console.error("No sheets found in workbook")
         return
       }
       const worksheet = workbook.Sheets[sheetName] as any
-      // Convert the worksheet to an array of arrays
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }).slice(2) as any[][]
 
-      // Remove the first element of each sub-array
       const newArray = jsonData.map((subArray) => subArray.slice(1))
 
       newArray.forEach((item) => {
         console.log(item[6], !item[6], "supply voltage")
         console.log(projectInfo?.main_supply_lv, "supply voltage")
         console.log(motorParameters, "upload sheet")
-        // console.log(, 'supply voltage');
-
         if (!item[6]) {
-          item[6] = projectInfo?.main_supply_lv || "" // pass main supply lv here revisit logic
+          item[6] = projectInfo?.main_supply_lv || "" // main supply lv
         }
         if (!item[7]) {
           item[7] = "3 Phase" //Phase
@@ -614,7 +613,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
         // }
         if (getStandByKw(item[2], item[3]) >= Number(commonConfigurationData[0]?.ammeter)) {
           if (!item[37]) {
-            item[37] = commonConfigurationData[0]?.ammeter_configuration
+            item[37] = commonConfigurationData[0]?.ammeter_configuration //ametter config selection
           }
         }
         if (getStandByKw(item[2], item[3]) <= Number(commonConfigurationData[0]?.dol_starter)) {
@@ -677,7 +676,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
           Control Scheme Configurator
         </Button>
         <Button type="primary" onClick={() => setIsLPBSModalOpen(true)} className="hover:bg-blue-600">
-          LPBS configurator
+          LPBS Configurator
         </Button>
 
         {/* <button
@@ -701,7 +700,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
       <LpbsConfigurator
         isOpen={isLPBSModalOpen}
         onClose={() => setIsLPBSModalOpen(false)}
-        lpbsSchemes={lpbsSchemes}
+        // lpbsSchemes={lpbsSchemes}
         onConfigurationComplete={handleLpbsComplete}
       />
       <ValidatePanelLoad
@@ -742,7 +741,7 @@ const LoadList: React.FC<LoadListProps> = ({ onNext, designBasisRevisionId }) =>
         <Button type="primary" onClick={handleLoadListSave}>
           Save
         </Button>
-        <Button type="primary" onClick={onNext}>
+        <Button type="primary" onClick={() => {}}>
           Next
         </Button>
       </div>

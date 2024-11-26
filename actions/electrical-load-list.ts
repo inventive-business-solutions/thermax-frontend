@@ -1,8 +1,8 @@
 "use server"
 
-import { HEATING } from "configs/constants"
+import { DB_REVISION_STATUS, HEATING } from "configs/constants"
 import { getData } from "./crud-actions"
-import { CABLE_SIZE_HEATING_API, HEATING_SWITCHGEAR_HEATER_API } from "configs/api-endpoints"
+import { CABLE_SIZE_HEATING_API, ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, HEATING_SWITCHGEAR_HEATER_API } from "configs/api-endpoints"
 
 export const getCurrentCalculation = async (loadListData: any) => {
   const division = loadListData.divisionName
@@ -71,3 +71,13 @@ export const getCurrentCalculation = async (loadListData: any) => {
 
   return calculatedData
 }
+
+
+export const getLatestLoadlistRevision = async (projectId: string) => {
+  const dbRevisionData = await getData(
+    `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${projectId}"], ["status", "in", ["${DB_REVISION_STATUS.Unsubmitted}", "${DB_REVISION_STATUS.Submitted}", "${DB_REVISION_STATUS.Resubmitted}"]]]&fields=["*"]&order_by=creation desc`
+  )
+
+  return dbRevisionData
+}
+

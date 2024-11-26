@@ -14,7 +14,13 @@ const tabData = [
   { label: "Motor Canopy List", key: 4 },
 ]
 
-const ElectricalLoadList = ({ revision_id }: { revision_id: string }) => {
+const ElectricalLoadList = ({
+  revision_id,
+  loadListLatestRevisionId,
+}: {
+  revision_id: string
+  loadListLatestRevisionId: string
+}) => {
   const [openTab, setOpenTab] = useState<number>(2)
   const { setLoading: setModalLoading } = useLoading()
 
@@ -57,7 +63,11 @@ const ElectricalLoadList = ({ revision_id }: { revision_id: string }) => {
                 </div>
 
                 <div className={openTab === 2 ? "block" : "hidden"} id="link2">
-                  <LoadList onNext={() => setOpenTab((tab) => tab + 1)} designBasisRevisionId={revision_id}/>{" "}
+                  <LoadList
+                    onNext={() => setOpenTab((tab) => tab + 1)}
+                    designBasisRevisionId={revision_id}
+                    loadListLatestRevisionId={loadListLatestRevisionId}
+                  />{" "}
                 </div>
 
                 <div className={openTab === 3 ? "block" : "hidden"} id="link3">

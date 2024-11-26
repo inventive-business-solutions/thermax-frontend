@@ -8,11 +8,12 @@ import "./CableScheduleComponent.css"
 import { Button } from "antd"
 import { ValidColumnType } from "../types"
 import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableConfig"
+import { useLoading } from "hooks/useLoading"
 
 interface CableScheduleProps {
-  onNext: () => void
+  // onNext: () => void
 }
-const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
+const CableSchedule: React.FC<CableScheduleProps> = ({}) => {
   const jRef = useRef<HTMLDivElement | null>(null)
   const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
   const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
@@ -27,6 +28,11 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
     []
   )
 
+  const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    setModalLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const typedMulticoreCableConfigColumns = useMemo(
     () =>
       multicoreCableConfigColumns.map((column) => ({
@@ -125,7 +131,6 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
   //     }
   //   }
   // }, [cableScheduleOptions, spreadsheetInstance, typedCableScheduleColumns])
-  
 
   // Fetch control schemes
   // useEffect(() => {
@@ -193,7 +198,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
         isOpen={isMulticoreModalOpen}
         onClose={() => setIsMulticoreModalOpen(false)}
         typedMulticoreCableColumns={typedMulticoreCableConfigColumns}
-        onConfigurationComplete={(selectedCables:any) => {
+        onConfigurationComplete={(selectedCables: any) => {
           console.log("Selected cables:", selectedCables)
           // Handle the selected cables
         }}
@@ -206,7 +211,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ onNext }) => {
         <Button type="primary" onClick={handleCableScheduleSave}>
           Save
         </Button>
-        <Button type="primary" onClick={onNext}>
+        <Button type="primary" onClick={() => {}}>
           Next
         </Button>
 
