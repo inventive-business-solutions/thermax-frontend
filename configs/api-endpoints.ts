@@ -26,7 +26,7 @@ export const DESIGN_BASIS_GENERAL_INFO_API = `/document/Design Basis General Inf
 
 // Revision History
 export const DESIGN_BASIS_REVISION_HISTORY_API = `/document/Design Basis Revision History`
-export const ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API = `/document/Electrical Load List Revision History`
+export const ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API = `/document/Load List Revisions`
 export const CABLE_SCHEDULE_REVISION_HISTORY_API = `/document/Cable Schedule Revision History`
 export const MOTOR_CANOPY_REVISION_HISTORY_API = `/document/Motor Canopy Revision History`
 export const MOTOR_SPECIFICATIONS_REVISION_HISTORY_API = `/document/Motor Specifications Revision History`
