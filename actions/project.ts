@@ -52,47 +52,12 @@ export const createProject = async (projectData: any, userInfo: any) => {
     await createData(CABLE_TRAY_LAYOUT, false, { revision_id: design_basis_revision_id })
     await createData(LAYOUT_EARTHING, false, { revision_id: design_basis_revision_id })
 
-    // ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API
-    const electricalLoadListRevisionHistoryData = await createData(ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, false, {
-      project_id,
-    })
-    const electrical_load_list_revision_id = electricalLoadListRevisionHistoryData.name
-    await createData(ELECTRICAL_LOAD_LIST_API, false, { revision_id: electrical_load_list_revision_id })
-
-    // CABLE_SCHEDULE_REVISION_HISTORY_API
-    const cableScheduleRevisionHistoryData = await createData(CABLE_SCHEDULE_REVISION_HISTORY_API, false, {
-      project_id,
-    })
-    const cable_schedule_revision_id = cableScheduleRevisionHistoryData.name
-    await createData(CABLE_SCHEDULE_API, false, { revision_id: cable_schedule_revision_id })
-
-    // MOTOR_CANOPY_REVISION_HISTORY_API, MOTOR_CANOPY_LIST_API
-    const motorCanopyRevisionHistoryData = await createData(MOTOR_CANOPY_REVISION_HISTORY_API, false, {
-      project_id,
-    })
-    const motor_canopy_revision_id = motorCanopyRevisionHistoryData.name
-    await createData(MOTOR_CANOPY_LIST_API, false, { revision_id: motor_canopy_revision_id })
-
-    // MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, MOTOR_SPECIFICATION_LIST_API
-    const motorSpecificationsRevisionHistoryData = await createData(MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, false, {
-      project_id,
-    })
-    const motor_specifications_revision_id = motorSpecificationsRevisionHistoryData.name
-    await createData(MOTOR_SPECIFICATION_LIST_API, false, { revision_id: motor_specifications_revision_id })
-
-    // LBPS_SPECIFICATIONS_REVISION_HISTORY_API, LBPS_SPECIFICATION_LIST_API
-    const lbpsSpecificationsRevisionHistoryData = await createData(LBPS_SPECIFICATIONS_REVISION_HISTORY_API, false, {
-      project_id,
-    })
-    const lbps_specifications_revision_id = lbpsSpecificationsRevisionHistoryData.name
-    await createData(LBPS_SPECIFICATION_LIST_API, false, { revision_id: lbps_specifications_revision_id })
-
-    // LOCAL_ISOLATOR_REVISION_HISTORY_API, LOCAL_ISOLATOR_SPECIFICATION_LIST_API
-    const localIsolatorRevisionHistoryData = await createData(LOCAL_ISOLATOR_REVISION_HISTORY_API, false, {
-      project_id,
-    })
-    const local_isolator_revision_id = localIsolatorRevisionHistoryData.name
-    await createData(LOCAL_ISOLATOR_SPECIFICATION_LIST_API, false, { revision_id: local_isolator_revision_id })
+    await createData(ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, false, { project_id })
+    // await createData(CABLE_SCHEDULE_REVISION_HISTORY_API, false, { project_id })
+    // await createData(MOTOR_CANOPY_REVISION_HISTORY_API, false, { project_id })
+    // await createData(MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, false, { project_id })
+    // await createData(LBPS_SPECIFICATIONS_REVISION_HISTORY_API, false, { project_id })
+    // await createData(LOCAL_ISOLATOR_REVISION_HISTORY_API, false, { project_id })
 
     await createData(APPROVER_EMAIL_NOTIFICATION_API, false, {
       approvar_email: projectData?.approver,
@@ -243,6 +208,61 @@ export const deleteProject = async (project_id: string) => {
 
       await deleteData(`${DESIGN_BASIS_REVISION_HISTORY_API}/${revisionID}`, false)
     }
+
+    const electricalLoadListRevisionHistory = await getData(
+      `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    )
+    for (const revision of electricalLoadListRevisionHistory || []) {
+      const revisionID = revision.name
+
+      await deleteData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${revisionID}`, false)
+    }
+
+    // const cableScheduleRevisionHistory = await getData(
+    //   `${CABLE_SCHEDULE_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    // )
+    // for (const revision of cableScheduleRevisionHistory || []) {
+    //   const revisionID = revision.name
+
+    //   await deleteData(`${CABLE_SCHEDULE_REVISION_HISTORY_API}/${revisionID}`, false)
+    // }
+
+    // const motorCanopyRevisionHistory = await getData(
+    //   `${MOTOR_CANOPY_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    // )
+    // for (const revision of motorCanopyRevisionHistory || []) {
+    //   const revisionID = revision.name
+
+    //   await deleteData(`${MOTOR_CANOPY_REVISION_HISTORY_API}/${revisionID}`, false)
+    // }
+
+    // const motorSpecificationsRevisionHistory = await getData(
+    //   `${MOTOR_SPECIFICATIONS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    // )
+    // for (const revision of motorSpecificationsRevisionHistory || []) {
+    //   const revisionID = revision.name
+
+    //   await deleteData(`${MOTOR_SPECIFICATIONS_REVISION_HISTORY_API}/${revisionID}`, false)
+    // }
+
+    // const lbpsSpecificationsRevisionHistory = await getData(
+    //   `${LBPS_SPECIFICATIONS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    // )
+    // for (const revision of lbpsSpecificationsRevisionHistory || []) {
+    //   const revisionID = revision.name
+
+    //   await deleteData(`${LBPS_SPECIFICATIONS_REVISION_HISTORY_API}/${revisionID}`, false)
+    // }
+
+    // const localIsolatorRevisionHistory = await getData(
+    //   `${LOCAL_ISOLATOR_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    // )
+    // for (const revision of localIsolatorRevisionHistory || []) {
+    //   const revisionID = revision.name
+
+    //   await deleteData(`${LOCAL_ISOLATOR_REVISION_HISTORY_API}/${revisionID}`, false)
+    // }
+
     await deleteData(`${PROJECT_API}/${project_id}`, false)
   } catch (error) {
     throw error
