@@ -184,20 +184,30 @@ const CommonConfiguration = ({
     metering_for_feeder_options,
   } = useCommonConfigDropdowns()
 
-  const [testing_standards, setTestingStandards] = useState<any[]>(
-    Array.isArray(testing_standard_options) ? [...testing_standard_options] : []
+  // const [testing_standards, setTestingStandards] = useState<any[]>(
+  //   Array.isArray(testing_standard_options) ? [...testing_standard_options] : []
+  // )
+  const iec_testing_standards = testing_standard_options?.filter(
+    (item: any) => item.name.startsWith("IEC") || item.name === "NA"
   )
-  const [dm_standards, setDmStandards] = useState<any[]>(
-    Array.isArray(dm_standard_options) ? [...dm_standard_options] : []
+  const is_testing_standards = testing_standard_options?.filter(
+    (item: any) => item.name.startsWith("IS") || item.name === "NA"
   )
-  const [pb_current_densityState, setPBCurrentDensityState] = useState<any[]>(
-    Array.isArray(pb_current_density_options) ? [...pb_current_density_options] : []
+
+  const iec_dm_standards = dm_standard_options?.filter((item: any) => item.name.startsWith("IEC") || item.name === "NA")
+  const is_dm_standards = dm_standard_options?.filter((item: any) => item.name.startsWith("IS") || item.name === "NA")
+
+  const al_pb_current_density = pb_current_density_options?.filter((item: any) => item.name.startsWith("0.8"))
+  const cu_pb_current_density = pb_current_density_options?.filter(
+    (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
   )
-  const [cb_current_densityState, setCBCurrentDensityState] = useState<any[]>(
-    Array.isArray(pb_current_density_options) ? [...pb_current_density_options] : []
+  const al_cb_current_density = cb_current_density_options?.filter((item: any) => item.name.startsWith("0.8"))
+  const cu_cb_current_density = cb_current_density_options?.filter(
+    (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
   )
-  const [eb_current_densityState, setEBCurrentDensityState] = useState<any[]>(
-    Array.isArray(pb_current_density_options) ? [...pb_current_density_options] : []
+  const al_eb_current_density = eb_current_density_options?.filter((item: any) => item.name.startsWith("0.8"))
+  const cu_eb_current_density = eb_current_density_options?.filter(
+    (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
   )
 
   const { control, handleSubmit, reset, watch, setValue } = useForm({
@@ -238,21 +248,11 @@ const CommonConfiguration = ({
     if (control_bus_material_controlled === "Aluminium") {
       setValue("control_bus_rating_of_busbar", "( Min -1R X 60 mm X 12 mm) for 50 KA")
       setValue("control_bus_current_density", "0.8 A/Sq. mm")
-      let cb_current_options = cb_current_density_options.filter((item: any) => item.name.startsWith("0.8"))
-      setCBCurrentDensityState(cb_current_options)
     } else if (control_bus_material_controlled === "Copper") {
       setValue("control_bus_rating_of_busbar", "( Min - 1R X 40 mm X 10 mm )  ")
       setValue("control_bus_current_density", "1.0 A/Sq. mm")
-      let cb_current_options = cb_current_density_options.filter(
-        (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
-      )
-      setCBCurrentDensityState(cb_current_options)
     } else {
       setValue("control_bus_current_density", "1.0 A/Sq. mm")
-      let cb_current_options = cb_current_density_options.filter(
-        (item: any) => item.name.startsWith("1.0") || item.name.startsWith("1.2")
-      )
-      setCBCurrentDensityState(cb_current_options)
     }
   }, [cb_current_density_options, control_bus_material_controlled, setValue])
 
@@ -261,20 +261,10 @@ const CommonConfiguration = ({
     if (power_bus_material_controlled === "Aluminium") {
       setValue("power_bus_rating_of_busbar", "( Min -1R X 60 mm X 12 mm) for 50 KA")
       setValue("power_bus_current_density", "0.8 A/Sq. mm")
-      let pb_current_options = pb_current_density_options.filter((item: any) => item.name.startsWith("0.8"))
-      setPBCurrentDensityState(pb_current_options)
     } else if (power_bus_material_controlled === "Copper") {
       setValue("power_bus_rating_of_busbar", "( Min - 1R X 40 mm X 10 mm )  ")
       setValue("power_bus_current_density", "1.0 A/Sq. mm")
-      let pb_current_options = pb_current_density_options.filter(
-        (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
-      )
-      setPBCurrentDensityState(pb_current_options)
     } else {
-      let pb_current_options = pb_current_density_options.filter(
-        (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
-      )
-      setPBCurrentDensityState(pb_current_options)
       setValue("power_bus_current_density", "1.0 A/Sq. mm")
     }
   }, [pb_current_density_options, power_bus_material_controlled, setValue])
@@ -284,21 +274,11 @@ const CommonConfiguration = ({
     if (earth_bus_material_controlled === "Aluminium") {
       setValue("earth_bus_rating_of_busbar", "( Min - 1R X 40 mm X 10 mm )")
       setValue("earth_bus_current_density", "0.8 A/Sq. mm")
-      let eb_current_options = eb_current_density_options.filter((item: any) => item.name.startsWith("0.8"))
-      setEBCurrentDensityState(eb_current_options)
     } else if (earth_bus_material_controlled === "Copper") {
       setValue("earth_bus_rating_of_busbar", "( Min- 1R X 20 mm X 5 mm )")
       setValue("earth_bus_current_density", "1.0 A/Sq. mm")
-      let eb_current_options = eb_current_density_options.filter(
-        (item: any) => item.name.startsWith("1.0") || item.name.startsWith("1.2")
-      )
-      setEBCurrentDensityState(eb_current_options)
     } else {
       setValue("earth_bus_current_density", "1.0 A/Sq. mm")
-      let eb_current_options = eb_current_density_options.filter(
-        (item: any) => item.name.startsWith("1.0") || item.name.startsWith("1.2")
-      )
-      setEBCurrentDensityState(eb_current_options)
     }
   }, [earth_bus_material_controlled, eb_current_density_options, setValue])
 
@@ -442,19 +422,6 @@ const CommonConfiguration = ({
                 { label: "IEC", value: "IEC" },
                 { label: "IS", value: "IS" },
               ]}
-              onChange={(e) => {
-                const selectedValue = e.target.value
-
-                const filterOptions = (options: any) => {
-                  return options?.filter((item: any) => item.name.startsWith(selectedValue) || item.name === "NA")
-                }
-
-                const filteredDmStandards = filterOptions(dm_standard_options)
-                const filteredTestingStandards = filterOptions(testing_standard_options)
-
-                setDmStandards(filteredDmStandards)
-                setTestingStandards(filteredTestingStandards)
-              }}
             />
           </div>
           <div className="flex-1">
@@ -462,11 +429,7 @@ const CommonConfiguration = ({
               control={control}
               name="dm_standard"
               label="Design & Manufacturer's standard"
-              options={
-                dm_standards?.length === 0
-                  ? dm_standard_options.filter((item: any) => item?.name?.startsWith("IEC") || item?.name === "NA")
-                  : dm_standards
-              }
+              options={watch("supply_feeder_standard").startsWith("IEC") ? iec_dm_standards : is_dm_standards}
               size="small"
             />
           </div>
@@ -475,11 +438,7 @@ const CommonConfiguration = ({
               control={control}
               name="testing_standard"
               label="Testing Standard"
-              options={
-                testing_standards?.length === 0
-                  ? testing_standard_options.filter((item: any) => item?.name?.startsWith("IEC") || item?.name === "NA")
-                  : testing_standards
-              }
+              options={watch("supply_feeder_standard").startsWith("IEC") ? iec_testing_standards : is_testing_standards}
               size="small"
             />
           </div>
@@ -1049,8 +1008,7 @@ const CommonConfiguration = ({
               control={control}
               name="power_bus_current_density"
               label="Current Density"
-              // options={pb_current_density_options || []}
-              options={pb_current_densityState}
+              options={watch("power_bus_material") === "Aluminium" ? al_pb_current_density : cu_pb_current_density}
               size="small"
             />
           </div>
@@ -1104,7 +1062,7 @@ const CommonConfiguration = ({
               control={control}
               name="control_bus_current_density"
               label="Current Density"
-              options={cb_current_densityState}
+              options={watch("control_bus_material") === "Aluminium" ? al_cb_current_density : cu_cb_current_density}
               size="small"
             />
           </div>
@@ -1158,7 +1116,7 @@ const CommonConfiguration = ({
               control={control}
               name="earth_bus_current_density"
               label="Current Density"
-              options={eb_current_densityState}
+              options={watch("earth_bus_material") === "Aluminium" ? al_eb_current_density : cu_eb_current_density}
               size="small"
             />
           </div>
