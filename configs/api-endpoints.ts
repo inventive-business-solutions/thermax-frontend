@@ -34,7 +34,6 @@ export const LBPS_SPECIFICATIONS_REVISION_HISTORY_API = `/document/LBPS Specific
 export const LOCAL_ISOLATOR_REVISION_HISTORY_API = `/document/Local Isolator Revision History`
 
 // Electrical Load List
-export const ELECTRICAL_LOAD_LIST_API = `/document/Electrical Load List`
 export const CABLE_SCHEDULE_API = `/document/Cable Schedule`
 export const MOTOR_CANOPY_LIST_API = `/document/Motor Canopy List`
 export const MOTOR_SPECIFICATION_LIST_API = `/document/Motor Specification and List`

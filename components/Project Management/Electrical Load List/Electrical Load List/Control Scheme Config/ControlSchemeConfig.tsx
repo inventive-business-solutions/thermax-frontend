@@ -12,7 +12,7 @@ interface ControlSchemeConfiguratorProps {
   isOpen: boolean
   onClose: () => void
   controlSchemes: any[]
-  // typedControlSchemeColumns: any[];
+  selectedControlSchemes: any[];
   onConfigurationComplete: (selectedSchemes: string[]) => void
 }
 
@@ -20,7 +20,7 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   isOpen,
   onClose,
   controlSchemes,
-  // typedControlSchemeColumns,
+  selectedControlSchemes,
   onConfigurationComplete,
 }) => {
   const controlSchemeSheetRef = useRef<HTMLDivElement | null>(null)
@@ -45,12 +45,13 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
       }
 
       // Update selected schemes from localStorage
-      const storedSchemes = localStorage.getItem("selected_control_scheme")
+      // const storedSchemes = localStorage.getItem("selected_control_scheme")
       let updatedSchemes = [...controlSchemes]
 
-      if (storedSchemes) {
+      // if (storedSchemes) {
         try {
-          const selectedItems = JSON.parse(storedSchemes) as string[]
+          // const selectedItems = JSON.parse(storedSchemes) as string[]
+          const selectedItems = selectedControlSchemes
           updatedSchemes = controlSchemes.map((scheme) => {
             if (selectedItems.includes(scheme[2])) {
               return [true, ...scheme.slice(1)]
@@ -60,7 +61,7 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
         } catch (error) {
           console.error("Error parsing selected_control_scheme:", error)
         }
-      }
+      // }
 
       const instance = jspreadsheet(controlSchemeSheetRef.current, {
         data: updatedSchemes,
@@ -139,7 +140,7 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
 
   const handleConfirm = () => {
     const selectedSchemes = controlSchemesSelected.map((item) => item[2])
-    localStorage.setItem("selected_control_scheme", JSON.stringify([...selectedSchemes, "NA"]))
+    // localStorage.setItem("selected_control_scheme", JSON.stringify([...selectedSchemes, "NA"]))
     onConfigurationComplete([...selectedSchemes, "NA"])
     onClose()
   }

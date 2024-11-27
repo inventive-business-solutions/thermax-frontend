@@ -9,9 +9,11 @@ import {
   SyncOutlined,
 } from "@ant-design/icons"
 import { releaseRevision } from "actions/design-basis_revision"
+import { getLatestLoadlistRevision } from "actions/electrical-load-list"
 import { Button, message, Table, TableColumnsType, TableColumnType, Tabs, Tag, Tooltip } from "antd"
-import { DESIGN_BASIS_REVISION_HISTORY_API } from "configs/api-endpoints"
+import { DESIGN_BASIS_REVISION_HISTORY_API, ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
+import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -51,44 +53,29 @@ const Download: React.FC = () => {
 
   const params = useParams()
   const project_id = params.project_id as string
-  const dataSource: TableDataType[] = [
-    {
-      key: 1,
-      documentName: (
-        <div>
-          <Tooltip title="Edit Revision" placement="top">
-            <Button type="link" iconPosition="start" icon={<FolderOpenOutlined />}>
-              Document 1
-            </Button>
-          </Tooltip>
-        </div>
-      ),
-      status: "Approved",
-      documentRevision: "Rev 1",
-      createdDate: "2024-09-19",
-      action: <CopyOutlined />,
-      download: (
-        <div className="flex flex-row justify-start gap-2">
-          <DownloadOutlined />
-          <BellFilled />
-        </div>
-      ),
-      release: (
-        <Button type="primary" size="small" name="Release">
-          Release
-        </Button>
-      ),
-    },
-  ]
-  const dbRevisionHistoryUrl = `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
+  const dbLoadlistHistoryUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
+  const { data: revisionHistory } = useGetData(dbLoadlistHistoryUrl)
+  console.log(revisionHistory,"revisionHistory");
+  
+
+  const dataSource = revisionHistory?.map((item: any, index: number) => ({
+    key: item.name,
+    documentName: "Load List",
+    status: item.status,
+    documentRevision: `R${index}`,
+    createdDate: item.creation,
+  }))
+
+  console.log(revisionHistory, "revisionHistory")
+
   const handleDownload = async (revision_id: string) => {}
 
   const handleRelease = async (revision_id: string) => {
     setModalLoading(true)
     try {
       await releaseRevision(project_id, revision_id)
-      mutate(dbRevisionHistoryUrl)
-      message.success("Design Basis revision is released and locked")
+      mutate(dbLoadlistHistoryUrl)
+      message.success("Load list revision is released and locked")
     } catch (error) {
       console.error(error)
     } finally {
@@ -111,8 +98,8 @@ const Download: React.FC = () => {
             type="link"
             iconPosition="start"
             onClick={() => {
-              setModalLoading(true)
-              router.push(`/project/${project_id}/design-basis/general-info`)
+              // setModalLoading(true)
+              // router.push(`/project/${project_id}/design-basis/general-info`)
             }}
             icon={<FolderOpenOutlined style={{ color: "#fef65b", fontSize: "1.2rem" }} />}
             disabled={record.status === DB_REVISION_STATUS.Released}
@@ -210,7 +197,7 @@ const Download: React.FC = () => {
               type="primary"
               size="small"
               name="Release"
-              disabled={record.status === DB_REVISION_STATUS.Released || record.status !== DB_REVISION_STATUS.Approved}
+              // disabled={record.status === DB_REVISION_STATUS.Released || record.status !== DB_REVISION_STATUS.Approved}
               onClick={() => handleRelease(record.key)}
             >
               Release
@@ -228,7 +215,7 @@ const Download: React.FC = () => {
       children: (
         <>
           <div className="text-end">
-            <Button icon={<SyncOutlined color="#492971" />} onClick={() => mutate(dbRevisionHistoryUrl)}>
+            <Button icon={<SyncOutlined color="#492971" />} onClick={() => mutate(dbLoadlistHistoryUrl)}>
               {" "}
               Refresh
             </Button>
