@@ -56,3 +56,7 @@ export const DB_REVISION_STATUS = {
   Approved: "Approved",
   Released: "Released",
 }
+export const LOAD_LIST_REVISION_STATUS = {
+  NotReleased: "Not Released",
+  Released: "Released",
+}
