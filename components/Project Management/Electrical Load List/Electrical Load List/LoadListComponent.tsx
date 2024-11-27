@@ -177,7 +177,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       item.standby_kw,
       item.kva,
       item.starter_type,
-      String(item.supply_voltage) + " VAC",
+      item.supply_voltage + ` VAC`,
       item.phase,
       item.starting_time,
       item.eocr_applicable,
@@ -233,7 +233,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       tableWidth: "100%",
 
       tableHeight: "550px",
-      freezeColumns: 4,
+      freezeColumns: 6,
       rowResize: true,
     }),
     [typedLoadListColumns, loadListData]
@@ -266,7 +266,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
   const fetchSubPackageOptions = useCallback(async () => {
     try {
       const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${designBasisRevisionId}`)
-      console.log(mainPkgData, "vishal")
+      console.log(mainPkgData, "main package")
 
       if (mainPkgData?.length) {
         typedLoadListColumns.forEach((column) => {
@@ -283,9 +283,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         console.log(mainPkgData, "main package")
 
         setSubPackages(mainPkgData)
-        // console.log(mainPkgData?.map((pkg: any) => pkg.sub_packages).flat(), "vishal")
-
-        // updateSpreadsheetColumns(updatedColumns)
       }
     } catch (error) {
       console.error("Error fetching sub-package options:", error)
@@ -295,6 +292,9 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
   // Spreadsheet data update function
   const updateSpreadsheetColumns = useCallback(
     (updatedColumns: any[]) => {
+      console.log(getArrayOfLoadListData(loadListData), "load list data")
+      console.log(updatedColumns, "load list data")
+
       if (spreadsheetRef.current) {
         spreadsheetRef.current.destroy()
       }
@@ -308,7 +308,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         spreadsheetRef.current = instance
       }
     },
-    [loadListOptions, loadListData]
+    [loadListOptions, loadListData, projectInfo]
   )
   const getSelectedSchemes = () => {
     if (loadListData?.electrical_load_list_data?.length) {
@@ -329,7 +329,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
 
   // Initialization effects
   useEffect(() => {
-    fetchProjectInfo()
+    // fetchProjectInfo()
     if (designBasisRevisionId) {
       fetchSubPackageOptions()
     }
@@ -362,7 +362,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         if (column.name === "lbpsType") {
           console.log([...new Set(selectedLpbsItems), "NA"], "selectedLpbsItems")
 
-          column.source = [...new Set(selectedLpbsItems), "NA"]
+          column.source = [...new Set(selectedLpbsItems.filter((item: any) => item != "NA")), "NA"]
         }
       })
       // updateSheetData(loadListData)
@@ -371,36 +371,8 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
 
   // Fetch control schemes
   useEffect(() => {
-    // isLoading
-    // setLoading(true)
     setLoading(false)
-
-    let selectedItems: string[] = []
-    const storedSchemes = localStorage.getItem("selected_control_scheme")
-    const savedLoadList = localStorage.getItem("loadList")
-    console.log(storedSchemes, "getSchemes")
-
-    if (storedSchemes) {
-      selectedItems = JSON.parse(storedSchemes) as string[]
-    } else {
-      console.log(loadListData, "getSchemes")
-      const getSchemes = loadListData?.electrical_load_list_data?.map((item: any) => item.control_scheme)
-      console.log(getSchemes, "getSchemes")
-    }
-    if (savedLoadList) {
-      // selectedItems = JSON.parse(savedLoadList) as string[]
-      console.log(JSON.parse(savedLoadList) as string[], "load list")
-      // updateSheetData(JSON.parse(savedLoadList) as string[])
-      // setLoadListData(JSON.parse(savedLoadList) as string[])
-    }
-    console.log(storedSchemes, "selectedSchemes")
-    console.log(selectedItems, "selectedSchemes")
-
-    typedLoadListColumns.forEach((column) => {
-      if (column.name === "controlScheme") {
-        column.source = selectedItems
-      }
-    })
+    fetchProjectInfo()
 
     if (controlSchemes.length) return
 
@@ -631,32 +603,32 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
           motor_rpm: row[14],
           motor_mounting_type: row[15],
           motor_frame_size: row[16],
-          motor_gd2: row[18],
-          motor_driven_equipment_gd2: row[19],
-          bkw: row[20],
-          coupling_type: row[21],
-          package: row[22],
-          area: row[23],
-          standard: row[24],
-          zone: row[25],
-          gas_group: row[26],
-          temperature_class: row[27],
-          remark: row[28],
-          rev: row[29],
-          space_heater: row[30],
-          bearing_rtd: row[31],
-          winding_rtd: row[32],
-          thermistor: row[33],
-          bearing_type: row[34],
-          power_factor: row[35],
-          motor_efficiency: row[36],
-          local_isolator: row[37],
-          panel_ammeter: row[38],
-          motor_make: row[39],
-          motor_scope: row[40],
-          motor_location: row[41],
-          motor_part_code: row[42],
-          motor_rated_current: row[43],
+          motor_gd2: row[17],
+          motor_driven_equipment_gd2: row[18],
+          bkw: row[19],
+          coupling_type: row[20],
+          package: row[21],
+          area: row[22],
+          standard: row[23],
+          zone: row[24],
+          gas_group: row[25],
+          temperature_class: row[26],
+          remark: row[27],
+          rev: row[28],
+          space_heater: row[29],
+          bearing_rtd: row[30],
+          winding_rtd: row[31],
+          thermistor: row[32],
+          bearing_type: row[33],
+          power_factor: row[34],
+          motor_efficiency: row[35],
+          local_isolator: row[36],
+          panel_ammeter: row[37],
+          motor_make: row[38],
+          motor_scope: row[39],
+          motor_location: row[40],
+          motor_part_code: row[41],
+          motor_rated_current: row[42],
         }
       }),
     }

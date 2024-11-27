@@ -30,7 +30,7 @@ export const LoadListcolumns = (division: string) => {
       title: "KVA",
       width: "70",
       // readOnly: true,
-      readOnly: division == "11" ? false : true,
+      readOnly: division == "Enviro" ? false : true,
     },
     {
       type: "dropdown",
@@ -164,7 +164,7 @@ export const LoadListcolumns = (division: string) => {
         "NA",
       ],
       name: "motorFrameSize",
-      readOnly: division === "Heating" ? false : false,
+      readOnly: division === "Heating" ? true : false,
 
       title: "MOTOR  FRAME SIZE",
       width: "150",
