@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Divider, message, Skeleton } from "antd" // Import Select for dropdown
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { createData, getData, updateData } from "actions/crud-actions"
 import CustomCheckboxInput from "components/FormInputs/CustomCheckbox"
@@ -27,7 +27,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     incomer_above_type: mccPanelData?.incomer_above_type || "SFU",
     is_under_or_over_voltage_selected: mccPanelData?.is_under_or_over_voltage_selected || 1,
     is_other_selected: mccPanelData?.is_other_selected || 1,
-    is_lsig_selected: mccPanelData?.is_lsig_selected,
+    is_lsig_selected: mccPanelData?.is_lsig_selected || 1,
     is_lsi_selected: mccPanelData?.is_lsi_selected || 1,
     is_neural_link_with_disconnect_facility_selected:
       mccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
@@ -166,7 +166,22 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     ppc_pretreatment_panel_standard_options,
   } = useMCCPCCPanelDropdowns()
 
-  const { control, handleSubmit, reset, watch, setValue } = useForm({
+  const aluminium_current_density_options = ga_current_density_options.filter((item: any) =>
+    item.name.startsWith("0.8")
+  )
+  const copper_current_density_options = ga_current_density_options?.filter(
+    (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
+  )
+
+  const base_frame_options = ga_panel_mounting_height_options?.filter(
+    (item: any) => item.name == "100" || item.name === "75"
+  )
+
+  const extended_frame_options = ga_panel_mounting_height_options?.filter(
+    (item: any) => item.name === "200" || item.name === "300" || item.name === "500"
+  )
+
+  const { control, handleSubmit, reset, watch, setValue, getValues } = useForm({
     resolver: zodResolver(mccPanelValidationSchema),
     defaultValues: getDefaultValues(projectMetadata, projectInfo, mccPanelData?.[0]),
     mode: "onSubmit",
@@ -195,11 +210,6 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const ga_panel_mounting_frame_controlled = watch("ga_panel_mounting_frame")
   const control_transformer_coating_controlled = watch("control_transformer_coating")
 
-  const [gaCurrentDensity, setGaCurrentDensity] = useState<any[]>(ga_current_density_options)
-  const [gaPanelMoutingHeightOptions, setGaPanelMountingHeightOptions] = useState<any[]>(
-    ga_panel_mounting_height_options
-  )
-
   useEffect(() => {
     if (control_transformer_coating_controlled === "NA") {
       setValue("control_transformer_configuration", "NA")
@@ -209,28 +219,16 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   useEffect(() => {
     if (ga_panel_mounting_frame_controlled !== "Base Frame") {
       setValue("ga_panel_mounting_height", "200")
-      let newOptions = ga_panel_mounting_height_options.filter(
-        (item: any) => item.name === "200" || item.name === "300" || item.name === "500"
-      )
-      setGaPanelMountingHeightOptions(newOptions)
     } else {
       setValue("ga_panel_mounting_height", "100")
-      let newOptions = ga_panel_mounting_height_options.filter((item: any) => item.name === "100" || item.name === "75")
-      setGaPanelMountingHeightOptions(newOptions)
     }
   }, [ga_panel_mounting_frame_controlled, ga_panel_mounting_height_options, setValue])
 
   useEffect(() => {
     if (ga_current_density_controlled === "Aluminium") {
       setValue("ga_current_density", "0.8 A/Sq. mm")
-      let temp_ga_current_density = ga_current_density_options.filter((item: any) => item.name.startsWith("0.8"))
-      setGaCurrentDensity(temp_ga_current_density)
     } else {
       setValue("ga_current_density", "1.0 A/Sq. mm")
-      let temp_ga_current_density = ga_current_density_options.filter(
-        (item: any) => item.name.startsWith("1.0") || item.name.startsWith("1.2")
-      )
-      setGaCurrentDensity(temp_ga_current_density)
     }
   }, [ga_current_density_controlled, ga_current_density_options, setValue])
 
@@ -280,29 +278,40 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     }
   }
 
-  const onSubmit = async (data: any) => {
-    setLoading(true)
-    try {
-      const mccPanelData = await getData(
-        `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
-      )
+  const onSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      setLoading(true)
+      try {
+        let data = getValues()
+        const mccPanelData = await getData(
+          `${MCC_PANEL}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
+        )
 
-      if (mccPanelData && mccPanelData.length > 0) {
-        await updateData(`${MCC_PANEL}/${mccPanelData[0].name}`, false, data)
-        message.success("Panel data updated successfully")
-      } else {
-        data["revision_id"] = revision_id
-        data["panel_id"] = panel_id
-        await createData(MCC_PANEL, false, data)
-        message.success("Panel data created successfully")
+        if (mccPanelData && mccPanelData.length > 0) {
+          await updateData(`${MCC_PANEL}/${mccPanelData[0].name}`, false, data)
+          message.success("Panel data updated successfully")
+        } else {
+          const combined_Data = {
+            ...data,
+            revision_id,
+            panel_id,
+          }
+
+          data = { ...combined_Data }
+          // data["revision_id"] = revision_id
+          // data["panel_id"] = panel_id
+          await createData(MCC_PANEL, false, data)
+          message.success("Panel data created successfully")
+        }
+      } catch (error) {
+        console.error("error: ", error)
+        handleError(error)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error("error: ", error)
-      handleError(error)
-    } finally {
-      setLoading(false)
-    }
-  }
+    },
+    [revision_id, reset, getValues]
+  )
 
   if (isLoading) {
     return (
@@ -317,7 +326,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
       <Divider>
         <span className="font-bold text-slate-700">Selection Details</span>
       </Divider>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
+      <form onSubmit={onSubmit} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <h4 className="flex-1 text-sm font-semibold text-slate-700">Incomer</h4>
@@ -424,8 +433,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="is_led_type_lamp_selected"
               label=""
               options={[
-                { label: "ON", value: 1},
-                { label: "OFF", value: 0},
+                { label: "ON", value: 1 },
+                { label: "OFF", value: 0 },
               ]}
             />
             <CustomCheckboxInput control={control} name="is_other_selected" label="Other" />
@@ -626,7 +635,11 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_current_density"
               label="Current Density"
-              options={gaCurrentDensity}
+              options={
+                watch("busbar_material_of_construction") === "Aluminium"
+                  ? aluminium_current_density_options
+                  : copper_current_density_options
+              }
               size="small"
             />
           </div>
@@ -644,7 +657,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_panel_mounting_height"
               label="Height of Base Frame (mm)"
-              options={gaPanelMoutingHeightOptions}
+              options={watch("ga_panel_mounting_frame") === "Base Frame" ? base_frame_options : extended_frame_options}
               size="small"
             />
           </div>
@@ -1162,15 +1175,10 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           <span className="font-bold text-slate-700">Special Notes</span>
         </Divider>
         <div className="mt-4 w-full">
-          <CustomTextAreaInput
-            control={control}
-            name="special_note"
-            label="Special Notes"
-            rows={4}
-          />
+          <CustomTextAreaInput control={control} name="special_note" label="Special Notes" rows={4} />
         </div>
         <div className="mt-2 flex w-full justify-end">
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button type="primary" onClick={onSubmit} loading={loading}>
             Save and Next
           </Button>
         </div>
