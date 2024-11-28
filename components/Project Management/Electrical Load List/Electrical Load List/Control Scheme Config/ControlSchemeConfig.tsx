@@ -7,19 +7,22 @@ import AlertNotification from "components/AlertNotification"
 import Modal from "components/Modal/Modal"
 import { controlSchemeColumnsForHeating } from "app/Data"
 import { ValidColumnType } from "../../types"
+import { useLoading } from "hooks/useLoading"
+import { getData } from "actions/crud-actions"
+import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
 
 interface ControlSchemeConfiguratorProps {
   isOpen: boolean
   onClose: () => void
-  controlSchemes: any[]
-  selectedControlSchemes: any[];
+  // controlSchemes: any[]
+  selectedControlSchemes: any[]
   onConfigurationComplete: (selectedSchemes: string[]) => void
 }
 
 const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   isOpen,
   onClose,
-  controlSchemes,
+  // controlSchemes,
   selectedControlSchemes,
   onConfigurationComplete,
 }) => {
@@ -27,6 +30,8 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   const controlSchemeSelectedSheetRef = useRef<HTMLDivElement | null>(null)
   const [controlSchemeInstance, setControlSchemeInstance] = useState<JspreadsheetInstance | null>(null)
   const [selectedSchemeInstance, setSelectedSchemeInstance] = useState<JspreadsheetInstance | null>(null)
+  const [controlSchemes, setControlSchemes] = useState<any[]>([])
+  const { setLoading } = useLoading()
   const [controlSchemesSelected, setControlSchemesSelected] = useState<any[]>([])
   const [isControlSchemeEmpty, setIsControlSchemeEmpty] = useState(false)
   const typedControlSchemeColumns = useMemo(
@@ -37,7 +42,60 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
       })),
     []
   )
+  // Fetch control schemes
+  useEffect(() => {
+    setLoading(true)
+    // fetchProjectInfo()
+
+    if (controlSchemes.length) return
+
+    getData(`${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`).then((res) => {
+      const sortedSchemes = res
+        .map((item: any) => [
+          false,
+          item.scheme,
+          item.sub_scheme,
+          item.scheme_title,
+          item.description,
+          item.breaker,
+          item.lpbs,
+          item.lpbs_inc_dec_ind,
+          item.ammeter,
+          item.thermistor_relay,
+          item.motor_space_heater,
+          item.plc_current_signal,
+          item.plc_speed_signal,
+          item.olr,
+          item.phase,
+          item.limit_switch,
+          item.motor_protection_relay,
+          item.field_isolator,
+          item.local_panel,
+          item.field_ess,
+          item.electronic_relay,
+          item.plc1_and_plc2,
+          item.mcc_start_stop,
+          item.input_choke,
+          item.output_choke,
+          item.separate_plc_start_stop,
+          item.di,
+          item.do,
+          item.ai,
+          item.ao,
+        ])
+        .sort((a: any, b: any) => {
+          const [prefixA, numA] = a[2].split("-")
+          const [prefixB, numB] = b[2].split("-")
+          return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
+        })
+
+      // setLpbsSchemes(sortedSchemes)
+      setControlSchemes(sortedSchemes)
+      setLoading(false)
+    })
+  }, [])
   // Initialize main control scheme spreadsheet
+
   useEffect(() => {
     if (isOpen && controlSchemeSheetRef.current) {
       if (controlSchemeInstance) {
@@ -49,18 +107,18 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
       let updatedSchemes = [...controlSchemes]
 
       // if (storedSchemes) {
-        try {
-          // const selectedItems = JSON.parse(storedSchemes) as string[]
-          const selectedItems = selectedControlSchemes
-          updatedSchemes = controlSchemes.map((scheme) => {
-            if (selectedItems.includes(scheme[2])) {
-              return [true, ...scheme.slice(1)]
-            }
-            return scheme
-          })
-        } catch (error) {
-          console.error("Error parsing selected_control_scheme:", error)
-        }
+      try {
+        // const selectedItems = JSON.parse(storedSchemes) as string[]
+        const selectedItems = selectedControlSchemes
+        updatedSchemes = controlSchemes.map((scheme) => {
+          if (selectedItems.includes(scheme[2])) {
+            return [true, ...scheme.slice(1)]
+          }
+          return scheme
+        })
+      } catch (error) {
+        console.error("Error parsing selected_control_scheme:", error)
+      }
       // }
 
       const instance = jspreadsheet(controlSchemeSheetRef.current, {
