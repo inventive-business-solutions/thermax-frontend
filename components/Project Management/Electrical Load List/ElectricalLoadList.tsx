@@ -70,7 +70,7 @@ const ElectricalLoadList = ({
                 </div>
 
                 <div className={openTab === 3 ? "block" : "hidden"} id="link3">
-                  <CableSchedule />
+                  {/* <CableSchedule /> */}
                 </div>
 
                 <div className={openTab === 4 ? "block" : "hidden"} id="link4">

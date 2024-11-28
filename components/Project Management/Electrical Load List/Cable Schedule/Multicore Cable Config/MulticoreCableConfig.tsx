@@ -524,12 +524,15 @@ import { getData } from "actions/crud-actions"
 import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
 import { multicoreCableConfigColumns, multicoreCableConfigGroupedColumns } from "../../common/ExcelColumns"
 import { ValidColumnType } from "../../types"
+import { useCurrentUser } from "hooks/useCurrentUser"
+import { ENVIRO, HEATING, WWS_IPG, WWS_SPG } from "configs/constants"
 
 interface MulticoreCableConfigProps {
   isOpen: boolean
   onClose: () => void
   //   loadListData: any[]
-  //   loadListData: any[]
+  loadListData: any[]
+  // loadListData:,
   typedMulticoreCableColumns: any[]
   onConfigurationComplete: (selectedCables: any[]) => void
 }
@@ -538,7 +541,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
   isOpen,
   onClose,
   //   loadListData,
-  //   loadListData,
+  loadListData,
   typedMulticoreCableColumns,
   onConfigurationComplete,
 }) => {
@@ -555,7 +558,9 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
   const [selectedElements, setSelectedElements] = useState<any[]>([])
   const [selectedPercent, setSelectedPercent] = useState<string | number>("")
   const [controlSchemes, setControlSchemes] = useState<any[]>([])
-
+  const userInfo: {
+    division: string
+  } = useCurrentUser()
   const userData = { divisionId: 7 }
 
   const sparePercent = [10, 20]
@@ -668,16 +673,16 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
   // }
 
   const findOtherData = (schemeTitle: string) => {
-    const divisionId = userData.divisionId
+    const division = userInfo.division
 
-    switch (divisionId) {
-      case 7:
+    switch (division) {
+      case HEATING:
         return controlSchemes?.find((item) => item[2] === schemeTitle)
-      case 11:
+      case ENVIRO:
         return [].find((item) => item[1] === schemeTitle)
-      case 9:
+      case WWS_SPG:
         return [].find((item) => String(item[1]).trim() === schemeTitle.trim())
-      case 8:
+      case WWS_IPG:
         return [].find((item) => String(item[1]).trim() === schemeTitle.trim())
       default:
         return null
@@ -833,7 +838,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
       tableOverflow: true,
       filters: true,
       tableWidth: "100%",
-      tableHeight: "600px",
+      tableHeight: "300px",
       freezeColumns: 0,
     }
 
@@ -914,52 +919,44 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
   useEffect(() => {
     localStorage.setItem("load_list_tab", JSON.stringify(2))
 
-    const savedLoadList = localStorage.getItem("loadList")
-    let loadList: any[] = []
-    if (savedLoadList) {
-      // selectedItems = JSON.parse(savedLoadList) as string[]
-      console.log(JSON.parse(savedLoadList) as string[], "load list")
-      loadList = JSON.parse(savedLoadList) as string[]
-      // setCableScheduleData(JSON.parse(savedLoadList) as string[])
-    }
     // const loadList = JSON.parse(localStorage.getItem('loadList'));
-    console.log(loadList, "loadList")
+    console.log(loadListData, "loadListData")
 
-    const processedData = loadList?.map((item: any) => {
-      const schemeData = findOtherData(item[11])
+    const processedData = loadListData?.map((item: any) => {
+      const schemeData = findOtherData(item.control_scheme)
       // const divisionId = userData.divisionId // to be populated from dynamic
-      const divisionId = 7
+      const division = userInfo.division
 
       const getSchemeIndex = () => {
-        switch (divisionId) {
-          case 7:
+        switch (division) {
+          case HEATING:
             return 26
-          // case 11:
-          //   return 6
+          case ENVIRO:
+            return 6
           // case 9:
           // case 8:
           //   return 9
-          // default:
-          //   return null
+          default:
+            return 0
         }
       }
-      console.log(item, "loadList")
+      console.log(item, "loadList item")
       if (!schemeData) {
-        return
+        return [false, item.tag_number, item.service_description, item.control_scheme, "", 0, 0, 0, 0, "", item.panel]
       }
 
       return [
         false,
-        item[0],
-        item[1],
-        item[11],
+        item.tag_number,
+        item.service_description,
+        item.control_scheme,
         "",
         schemeData[getSchemeIndex()],
         schemeData[getSchemeIndex() + 1],
         schemeData[getSchemeIndex() + 2],
         schemeData[getSchemeIndex() + 3],
         "",
-        item[12],
+        item.panel,
       ]
     })
     console.log(processedData, "processedData")
@@ -968,47 +965,70 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
     }
     initializeMulticoreUi(processedData)
   }, [isOpen])
+  const handleClearSelection = () => {
+    tbleSelected?.destroy()
+    console.log(
+      tble.getData().map((item: any) => {
+        let arr = [...item]
+        arr[0] = false
+        return arr
+      })
+    )
+    tble.setData(
+      tble.getData().map((item: any) => {
+        let arr = [...item]
+        arr[0] = false
+        return arr
+      })
+    )
 
+    setGrouping([])
+    setSelectedPercent("")
+  }
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="w-100">
-      <div className="w-full">
-        <div className="my-4 flex justify-end gap-4 ">
-          <select
-            value={selectedPercent}
-            onChange={(e) => setSelectedPercent(e.target.value)}
-            className="rounded border p-2"
-          >
-            <option value="">Select Spare %</option>
-            {sparePercent.map((percent) => (
-              <option key={percent} value={percent}>
-                {percent}%
-              </option>
-            ))}
-          </select>
+    <Modal isOpen={isOpen} onClose={onClose} className="w-42 m-11">
+      <div className="w-100">
+        <div className="flex-col px-36">
+          <div className="my-4 flex justify-end gap-4 ">
+            <select
+              value={selectedPercent}
+              onChange={(e) => setSelectedPercent(e.target.value)}
+              className="rounded border p-2"
+            >
+              <option value="">Select Spare %</option>
+              {sparePercent.map((percent) => (
+                <option key={percent} value={percent}>
+                  {percent}%
+                </option>
+              ))}
+            </select>
 
-          <button
-            onClick={() => setSelectedPercent("")}
-            className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
-          >
-            Clear Selection
-          </button>
-        </div>
-
-        <div ref={spreadsheetRef} id="spreadsheet_multicore_ui" className="" />
-        <div className="my-4 flex justify-end">
-          <button onClick={addGroup} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-            Add Group
-          </button>
-        </div>
-
-        <div ref={groupingRef} id="spreadsheet_grouping" />
-        {grouping.length > 0 && (
-          <div className="my-2 flex justify-end">
-            <button onClick={onConfirm} className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">
-              Confirm
+            <button
+              onClick={handleClearSelection}
+              className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+            >
+              Clear Selection
             </button>
           </div>
-        )}
+          <div className="flex justify-center">
+            <div ref={spreadsheetRef} id="spreadsheet_multicore_ui" className="" />
+          </div>
+          <div className="my-4 flex justify-end">
+            <button onClick={addGroup} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+              Add Group
+            </button>
+          </div>
+          <div className="flex justify-center">
+            <div ref={groupingRef} id="spreadsheet_grouping" />
+          </div>
+          {grouping.length > 0 && (
+            <div className="my-2 flex justify-end">
+              <button onClick={onConfirm} className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+                Confirm
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </Modal>
   )

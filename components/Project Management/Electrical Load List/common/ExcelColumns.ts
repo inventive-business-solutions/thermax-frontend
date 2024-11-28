@@ -22,7 +22,7 @@ export const LoadListcolumns = (division: string) => {
       type: "text",
       name: "standBy",
       title: "STAND-BY  LOAD IN KW",
-      width: "70",
+      width: "80",
     },
     {
       type: "text",
@@ -389,14 +389,21 @@ export const CableSchedulecolumns = () => {
       type: "text",
       name: "working",
       title: "WORKING LOAD IN KW",
-      width: "50",
+      width: "80",
       readOnly: true,
     },
     {
       type: "text",
       name: "standBy",
       title: "STAND-BY LOAD IN KW",
-      width: "50",
+      width: "80",
+      readOnly: true,
+    },
+    {
+      type: "text",
+      name: "kva",
+      title: "KVA",
+      width: "70",
       readOnly: true,
     },
     {
@@ -424,9 +431,9 @@ export const CableSchedulecolumns = () => {
     },
     //value not provided
     {
-      type: "dropdown",
+      type: "text",
       name: "supplyVoltage",
-      source: [],
+      // source: [],
       title: "SUPPLY VOLTAGE",
       width: "80",
       readOnly: true,
@@ -566,7 +573,7 @@ export const CableSchedulecolumns = () => {
     {
       type: "dropdown",
       name: "cableAsPerFl",
-      source: ["", "Fail", "Safe"],
+      source: ["Fail", "Safe"],
       title: "CABLE SELECTED STATUS",
       width: "140",
     },
@@ -690,7 +697,7 @@ export const multicoreCableConfigGroupedColumns = [
     type: "text",
     name: "tag",
     title: "Service Description",
-    width: "220",
+    width: "270",
   },
   {
     type: "text",

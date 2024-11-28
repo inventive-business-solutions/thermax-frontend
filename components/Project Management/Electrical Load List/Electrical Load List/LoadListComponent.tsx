@@ -23,7 +23,7 @@ import LpbsConfigurator from "./LPBS Config/LpbsConfigurator"
 import ValidatePanelLoad, { PanelData } from "./Validate Panel Load/ValidatePanelLoad"
 import { useGetData } from "hooks/useCRUD"
 import { useProjectPanelData } from "hooks/useProjectPanelData"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import useMakeOfComponentDropdowns from "components/Project Management/Design Basis/MCC-PCC/MakeOfComponent/MakeDropdowns"
 import { useLoading } from "hooks/useLoading"
 import { getCurrentCalculation } from "actions/electrical-load-list"
@@ -77,6 +77,7 @@ const useDataFetching = (designBasisRevisionId: string, loadListLatestRevisionId
   const [isLoading, setIsLoading] = useState(true)
   const [loadListData, setLoadListData] = useState<any>(null)
   const [motorParameters, setMotorParameters] = useState<any[]>([])
+
   const [commonConfigurationData, setCommonConfigurationData] = useState<any[]>([])
   const [makeOfComponent, setMakeOfComponent] = useState<any[]>([])
   // const [projectPanelData, setProjectPanelData] = useState<ProjectPanelData[]>([]);
@@ -142,6 +143,8 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
   const jRef = useRef<HTMLDivElement | null>(null)
   const spreadsheetRef = useRef<JspreadsheetInstance | null>(null)
   const params = useParams()
+  const router = useRouter()
+
   const project_id = params.project_id as string
 
   const {
@@ -676,9 +679,12 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
   const handleLoadListSave = async () => {
     setLoading(true)
     if (validateLoadValues()) {
+      setLoading(false)
+
       return message.error("KW should be in one column only")
     }
     if (validateUniqueFeederTag()) {
+      setLoading(false)
       return message.error("Feeder tag no. can not be repeated")
     }
 
@@ -1023,7 +1029,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         <Button type="primary" onClick={handleLoadListSave}>
           Save
         </Button>
-        <Button type="primary" onClick={() => {}}>
+        <Button type="primary" onClick={() => router.push(`/project/${project_id}/electrical-load-list/cable-schedule`)}>
           Next
         </Button>
       </div>
