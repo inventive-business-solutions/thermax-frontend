@@ -431,7 +431,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomRadioSelect
               control={control}
               name="is_led_type_lamp_selected"
-              label=""
+              label="Indication (LED Type Lamp)"
               options={[
                 { label: "ON", value: 1 },
                 { label: "OFF", value: 0 },

@@ -1085,7 +1085,7 @@ export const plcPanelValidationSchema = zod.object({
     required_error: "No of HID ES is required",
     message: "No of HID ES is required",
   }),
-  no_of_hid_es: zod.number({ required_error: "No of HID ES is required", message: "No of HID ES is required" }),
+  no_of_hid_es: zod.string({ required_error: "No of HID ES is required", message: "No of HID ES is required" }),
   is_no_of_hid_os_selected: zod.number({
     required_error: "No of HID OS is required",
     message: "No of HID OS is required",

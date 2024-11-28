@@ -166,13 +166,81 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     eo_scada_furniture_options,
   } = usePLCDropdowns()
 
-  const { control, handleSubmit, reset, watch, getValues } = useForm({
+  const { control, handleSubmit, reset, watch, getValues, setValue } = useForm({
     resolver: zodResolver(plcPanelValidationSchema),
     defaultValues: getDefaultValues(plcPanelData?.[0]),
     mode: "onSubmit",
   })
   const isClientOrThermaxScopeisSelected = watch("ups_scope")
   const isRtdModuleSelected = watch("is_rtd_tc_moduule_selected")
+
+  const is_third_party_communication_protocol_selected_controlled = watch(
+    "is_third_party_communication_protocol_selected"
+  )
+  const is_client_system_communication_selected_controlled = watch("is_client_system_communication_selected")
+  const  is_cpu_redundancy_selected_controlled = watch("is_cpu_redundancy_selected")
+  const is_plc_and_ups_marshalling_cabinet_selected_controlled = watch("is_plc_and_ups_marshalling_cabinet_selected")
+  const is_no_of_contact_selected_controlled = watch("is_no_of_contact_selected")
+  const is_plc_spare_io_count_selected_controlled = watch("is_plc_spare_io_count_selected")
+  const is_plc_spare_memory_selected_controlled = watch("is_plc_spare_memory_selected")
+  const is_rtd_tc_moduule_selected_controlled = watch("is_rtd_tc_moduule_selected")
+
+  const is_no_of_hid_es_selected_controlled = watch("is_no_of_hid_es_selected")
+  const is_no_of_hid_os_selected_controlled = watch("is_no_of_hid_os_selected")
+  const is_hid_hmi_size_selected_controlled = watch("is_hid_hmi_size_selected")
+
+  useEffect(() => {
+    if (is_third_party_communication_protocol_selected_controlled === 0) {
+      setValue("third_party_communication_protocol", "NA")
+    }
+    if (is_client_system_communication_selected_controlled === 0) {
+      setValue("client_system_communication", "NA")
+    }
+    if(is_cpu_redundancy_selected_controlled === 0) {
+      setValue("cpu_redundancy", "NA")
+    }
+    if(is_plc_and_ups_marshalling_cabinet_selected_controlled === 0) {
+      setValue("marshalling_cabinet_for_plc_and_ups", "NA")
+    }
+    if(is_no_of_contact_selected_controlled === 0){
+      setValue("do_module_no_of_contact", "NA")
+    }
+    if(is_plc_spare_io_count_selected_controlled === 0){
+      setValue("plc_spare_io_count", "NA")
+    }
+    if(is_plc_spare_memory_selected_controlled === 0){
+      setValue("plc_spare_memory", "NA")
+    }
+    if(is_rtd_tc_moduule_selected_controlled === 0) {
+      setValue("rtd_tc_module_density", "NA")
+      setValue("rtd_tc_module_input_type", "NA")
+      setValue("rtd_tc_module_scan_time", "NA")
+      setValue("is_rtd_tc_module_hart_protocol_support_selected", 0)
+    }
+
+    if(is_no_of_hid_es_selected_controlled == 0) {
+      setValue("no_of_hid_es", 0)
+    }
+    if(is_no_of_hid_os_selected_controlled == 0) {
+      setValue("no_of_hid_os", 0)
+    }
+    if(is_hid_hmi_size_selected_controlled == 0) {
+      setValue("hid_hmi_size", 0)
+    }
+  }, [
+    is_third_party_communication_protocol_selected_controlled,
+    is_client_system_communication_selected_controlled,
+    is_cpu_redundancy_selected_controlled,
+    is_plc_and_ups_marshalling_cabinet_selected_controlled,
+    is_no_of_contact_selected_controlled,
+    is_plc_spare_io_count_selected_controlled,
+    is_plc_spare_memory_selected_controlled,
+    is_rtd_tc_moduule_selected_controlled,
+    is_no_of_hid_es_selected_controlled,
+    is_no_of_hid_os_selected_controlled,
+    is_hid_hmi_size_selected_controlled,
+    setValue,
+  ])
 
   useEffect(() => {
     reset(getDefaultValues(plcPanelData?.[0]))
@@ -187,51 +255,54 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     }
   }
 
-  const onSubmit = useCallback(async (e: React.FormEvent) => {
-    setLoading(true)
-    try {
-      let data = getValues()
-      const mccPanelData1 = await getData(
-        `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
-      )
-      const mccPanelData2 = await getData(
-        `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
-      )
+  const onSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      setLoading(true)
+      try {
+        let data = getValues()
+        const mccPanelData1 = await getData(
+          `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
+        )
+        const mccPanelData2 = await getData(
+          `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
+        )
 
-      if (mccPanelData1 && mccPanelData1.length > 0) {
-        await updateData(`${MCC_PCC_PLC_PANEL_1}/${mccPanelData1[0].name}`, false, data)
-      } else {
-        const combined_Data = {
-          ...data,
-          revision_id,
-          panel_id,
+        if (mccPanelData1 && mccPanelData1.length > 0) {
+          await updateData(`${MCC_PCC_PLC_PANEL_1}/${mccPanelData1[0].name}`, false, data)
+        } else {
+          const combined_Data = {
+            ...data,
+            revision_id,
+            panel_id,
+          }
+          data = { ...combined_Data }
+          // data["revision_id"] = revision_id
+          // data["panel_id"] = panel_id
+          await createData(MCC_PCC_PLC_PANEL_1, false, data)
         }
-        data = { ...combined_Data }
-        // data["revision_id"] = revision_id
-        // data["panel_id"] = panel_id
-        await createData(MCC_PCC_PLC_PANEL_1, false, data)
-      }
 
-      if (mccPanelData2 && mccPanelData2.length > 0) {
-        await updateData(`${MCC_PCC_PLC_PANEL_2}/${mccPanelData2[0].name}`, false, data)
-      } else {
-        const combined_Data = {
-          ...data,
-          revision_id,
-          panel_id,
+        if (mccPanelData2 && mccPanelData2.length > 0) {
+          await updateData(`${MCC_PCC_PLC_PANEL_2}/${mccPanelData2[0].name}`, false, data)
+        } else {
+          const combined_Data = {
+            ...data,
+            revision_id,
+            panel_id,
+          }
+          data = { ...combined_Data }
+          await createData(MCC_PCC_PLC_PANEL_2, false, data)
         }
-        data = { ...combined_Data }
-        await createData(MCC_PCC_PLC_PANEL_2, false, data)
-      }
 
-      message.success("PLC Data updated successfully")
-    } catch (error) {
-      console.error(error)
-      handleError(error)
-    } finally {
-      setLoading(false)
-    }
-  }, [revision_id, reset, getValues])
+        message.success("PLC Data updated successfully")
+      } catch (error) {
+        console.error(error)
+        handleError(error)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [revision_id, reset, getValues]
+  )
 
   return (
     <>

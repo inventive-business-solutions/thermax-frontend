@@ -67,6 +67,7 @@ import {
 } from "configs/api-endpoints"
 
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { lte } from "lodash"
 import { moveNAtoEnd, sortDropdownOptions } from "utils/helpers"
 
 export default function useCommonConfigDropdowns() {
@@ -179,45 +180,56 @@ export default function useCommonConfigDropdowns() {
   const { dropdownOptions: stopped_closed_options } = useDropdownOptions(`${STOPPED_CLOSED}?fields=["*"]`, "name")
   const { dropdownOptions: trip_options } = useDropdownOptions(`${TRIP}?fields=["*"]`, "trip")
 
-  const { dropdownOptions: field_motor_type_options } = useDropdownOptions(`${FIELD_MOTOR_TYPE}?fields=["*"]`, "type")
-  const { dropdownOptions: field_motor_enclosure_options } = useDropdownOptions(
+  let { dropdownOptions: field_motor_type_options } = useDropdownOptions(`${FIELD_MOTOR_TYPE}?fields=["*"]`, "type")
+  field_motor_type_options = moveNAtoEnd(field_motor_type_options)
+  let { dropdownOptions: field_motor_enclosure_options } = useDropdownOptions(
     `${FIELD_MOTOR_ENCLOSURE}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: field_motor_material_options } = useDropdownOptions(
+  field_motor_enclosure_options = moveNAtoEnd(field_motor_enclosure_options)
+  let { dropdownOptions: field_motor_material_options } = useDropdownOptions(
     `${FIELD_MOTOR_MATERIAL}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: field_motor_qty_options } = useDropdownOptions(`${FIELD_MOTOR_QTY}?fields=["*"]`, "name")
-  const { dropdownOptions: field_motor_color_shade_options } = useDropdownOptions(
+  field_motor_material_options = moveNAtoEnd(field_motor_material_options)
+  let { dropdownOptions: field_motor_qty_options } = useDropdownOptions(`${FIELD_MOTOR_QTY}?fields=["*"]`, "name")
+  field_motor_qty_options = moveNAtoEnd(field_motor_qty_options)
+  let { dropdownOptions: field_motor_color_shade_options } = useDropdownOptions(
     `${FIELD_MOTOR_COLOUR_SHADE}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: field_motor_cable_entry_options } = useDropdownOptions(
+  field_motor_color_shade_options = moveNAtoEnd(field_motor_color_shade_options)
+  let { dropdownOptions: field_motor_cable_entry_options } = useDropdownOptions(
     `${FIELD_MOTOR_CABLE_ENTRY}?fields=["*"]`,
     "name"
   )
-  const { dropdownOptions: field_motor_canopy_on_top_options } = useDropdownOptions(
+  field_motor_cable_entry_options = moveNAtoEnd(field_motor_cable_entry_options)
+  let { dropdownOptions: field_motor_canopy_on_top_options } = useDropdownOptions(
     `${FIELD_MOTOR_CANOPY_ON_TOP}?fields=["*"]`,
     "name"
   )
+  field_motor_canopy_on_top_options = moveNAtoEnd(field_motor_canopy_on_top_options)
 
-  const { dropdownOptions: lpbs_type_options } = useDropdownOptions(`${LPBS_TYPE}?fields=["*"]`, "name")
-  const { dropdownOptions: lpbs_enclosure_options } = useDropdownOptions(`${LPBS_ENCLOSURE}?fields=["*"]`, "name")
-  const { dropdownOptions: lpbs_material_options } = useDropdownOptions(`${LPBS_MATERIAL}?fields=["*"]`, "name")
-  const { dropdownOptions: lpbs_qty_options } = useDropdownOptions(`${LPBS_QTY}?fields=["*"]`, "name")
-  const { dropdownOptions: lpbs_color_shade_options } = useDropdownOptions(
+  let { dropdownOptions: lpbs_type_options } = useDropdownOptions(`${LPBS_TYPE}?fields=["*"]`, "name")
+  lpbs_type_options = moveNAtoEnd(lpbs_type_options)
+  let { dropdownOptions: lpbs_enclosure_options } = useDropdownOptions(`${LPBS_ENCLOSURE}?fields=["*"]`, "name")
+  lpbs_enclosure_options = moveNAtoEnd(lpbs_enclosure_options)
+  let { dropdownOptions: lpbs_material_options } = useDropdownOptions(`${LPBS_MATERIAL}?fields=["*"]`, "name")
+  lpbs_material_options = moveNAtoEnd(lpbs_material_options)
+  let { dropdownOptions: lpbs_qty_options } = useDropdownOptions(`${LPBS_QTY}?fields=["*"]`, "name")
+  lpbs_qty_options = moveNAtoEnd(lpbs_qty_options)
+  let { dropdownOptions: lpbs_color_shade_options } = useDropdownOptions(
     `${LPBS_COLOR_SHADE}?fields=["*"]`,
     "lpbs_color_shade"
   )
-  const { dropdownOptions: lpbs_canopy_on_top_options } = useDropdownOptions(
-    `${LPBS_CANOPY_ON_TOP}?fields=["*"]`,
-    "name"
-  )
-  const { dropdownOptions: lpbs_push_button_start_color_options } = useDropdownOptions(
+  lpbs_color_shade_options = moveNAtoEnd(lpbs_color_shade_options)
+  let { dropdownOptions: lpbs_canopy_on_top_options } = useDropdownOptions(`${LPBS_CANOPY_ON_TOP}?fields=["*"]`, "name")
+  lpbs_canopy_on_top_options = moveNAtoEnd(lpbs_canopy_on_top_options)
+  let { dropdownOptions: lpbs_push_button_start_color_options } = useDropdownOptions(
     `${LPBS_PUSH_BUTTON_START_COLOR}?fields=["*"]`,
     "name"
   )
+  lpbs_push_button_start_color_options = moveNAtoEnd(lpbs_push_button_start_color_options)
   let { dropdownOptions: lpbs_indicator_on_options } = useDropdownOptions(
     `${LPBS_INDICATOR_ON_COLOR}?fields=["*"]`,
     "name"

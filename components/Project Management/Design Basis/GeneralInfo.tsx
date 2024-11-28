@@ -144,6 +144,15 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
           gas_group: mainPkg?.gas_group,
           temperature_class: mainPkg?.temperature_class,
         })
+
+        console.log("log", {
+          main_package_name: mainPkg.main_package_name,
+          sub_packages: updateSubPkgList,
+          standard: mainPkg?.standard,
+          zone: mainPkg?.zone,
+          gas_group: mainPkg?.gas_group,
+          temperature_class: mainPkg?.temperature_class,
+        })
       }
 
       const motorParameters = await getData(

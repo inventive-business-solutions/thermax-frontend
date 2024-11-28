@@ -192,12 +192,12 @@ const getDefaultValues = (defaultData: any, projectInfoData: any) => {
     hazardous_area_temperature_rise: defaultData?.hazardous_area_temperature_rise || "Class-B",
     safe_area_enclosure_ip_rating: defaultData?.safe_area_enclosure_ip_rating || "IP55",
     hazardous_area_enclosure_ip_rating: defaultData?.hazardous_area_enclosure_ip_rating || "IP55",
-    safe_area_max_temperature: defaultData?.safe_area_max_temperature || projectInfoData?.electrical_design_temperature,
+    safe_area_max_temperature: projectInfoData?.electrical_design_temperature || defaultData?.safe_area_max_temperature,
     hazardous_area_max_temperature:
-      defaultData?.hazardous_area_max_temperature || projectInfoData?.electrical_design_temperature,
-    safe_area_min_temperature: defaultData?.safe_area_min_temperature || projectInfoData?.ambient_temperature_min,
+      projectInfoData?.electrical_design_temperature || defaultData?.hazardous_area_max_temperature,
+    safe_area_min_temperature: projectInfoData?.ambient_temperature_min || defaultData?.safe_area_min_temperature,
     hazardous_area_min_temperature:
-      defaultData?.hazardous_area_min_temperature || projectInfoData?.ambient_temperature_min,
+      projectInfoData?.ambient_temperature_min || defaultData?.hazardous_area_min_temperature,
     safe_area_altitude: defaultData?.safe_area_altitude || "7.5",
     hazardous_area_altitude: defaultData?.hazardous_area_altitude || "7.5",
     safe_area_terminal_box_ip_rating: defaultData?.safe_area_terminal_box_ip_rating || "IP55",
@@ -285,7 +285,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
     hazardousTerminalBoxOptions,
   } = useMotorParametersDropdowns()
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, setValue } = useForm({
     resolver: zodResolver(fieldSchema),
     defaultValues: getDefaultValues(motorParameters?.[0], projectInfoData),
     mode: "onSubmit",
@@ -294,6 +294,15 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
   useEffect(() => {
     reset(getDefaultValues(motorParameters?.[0], projectInfoData))
   }, [reset, motorParameters, projectInfoData])
+
+  useEffect(() => {
+    setValue("safe_area_max_temperature", projectInfoData?.electrical_design_temperatur)
+    setValue("hazardous_area_max_temperature", projectInfoData?.electrical_design_temperatur)
+  }, [projectInfoData, setValue])
+  useEffect(() => {
+    setValue("safe_area_min_temperature", projectInfoData?.ambient_temperature_min)
+    setValue("hazardous_area_min_temperature", projectInfoData?.ambient_temperature_min)
+  }, [projectInfoData, setValue])
 
   const onSubmit = async (data: any) => {
     setLoading(true)
