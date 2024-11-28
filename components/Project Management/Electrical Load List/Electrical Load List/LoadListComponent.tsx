@@ -17,13 +17,13 @@ import * as XLSX from "xlsx"
 
 import { LoadListcolumns } from "../common/ExcelColumns"
 import "./LoadListComponent.css"
-import { Button, message } from "antd"
+import { Button, message, Spin } from "antd"
 import ControlSchemeConfigurator from "./Control Scheme Config/ControlSchemeConfig"
 import LpbsConfigurator from "./LPBS Config/LpbsConfigurator"
 import ValidatePanelLoad, { PanelData } from "./Validate Panel Load/ValidatePanelLoad"
 import { useGetData } from "hooks/useCRUD"
 import { useProjectPanelData } from "hooks/useProjectPanelData"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import useMakeOfComponentDropdowns from "components/Project Management/Design Basis/MCC-PCC/MakeOfComponent/MakeDropdowns"
 import { useLoading } from "hooks/useLoading"
 import { getCurrentCalculation } from "actions/electrical-load-list"
@@ -61,52 +61,155 @@ interface LoadListProps {
   designBasisRevisionId: string
   loadListLatestRevisionId: any
 }
-const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLatestRevisionId }) => {
-  console.log(loadListLatestRevisionId, "loadListLatestRevisionId")
 
+// Custom hook type definitions
+interface ProjectPanelData {
+  panel_name: string
+  // Add other relevant properties
+}
+
+interface DataFetchResult<T> {
+  data: T[]
+  isLoading: boolean
+}
+
+const useDataFetching = (designBasisRevisionId: string, loadListLatestRevisionId: string, project_id: string) => {
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadListData, setLoadListData] = useState<any>(null)
+  const [motorParameters, setMotorParameters] = useState<any[]>([])
+
+  const [commonConfigurationData, setCommonConfigurationData] = useState<any[]>([])
+  const [makeOfComponent, setMakeOfComponent] = useState<any[]>([])
+  // const [projectPanelData, setProjectPanelData] = useState<ProjectPanelData[]>([]);
+  const [projectInfo, setProjectInfo] = useState<any>(null)
+  const [mainSupplyLV, setMainSupplyLV] = useState<string[]>([])
+  const [subPackages, setSubPackages] = useState<any[]>([])
+  const { data: projectPanelData } = useProjectPanelData(designBasisRevisionId)
+
+  const fetchAllData = useCallback(async () => {
+    try {
+      setIsLoading(true)
+
+      // Modify the panel data fetching to extract the array
+      // const panelData = projectPanelResult.data;
+
+      // Fetch all required data in parallel
+      const [loadList, motorParams, commonConfig, makeComponent, projInfo, mainSupply, mainPkgData] = await Promise.all(
+        [
+          getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`),
+          getData(`${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`),
+          getData(`${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`),
+          getData(`${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`),
+          getData(`${PROJECT_INFO_API}?fields=["main_supply_lv"]&filters=[["project_id", "=", "${project_id}"]]`),
+          getData(`${MAIN_SUPPLY_LV_API}?fields=["voltage"]`),
+          getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${designBasisRevisionId}`),
+        ]
+      )
+
+      setLoadListData(loadList)
+      setMotorParameters(motorParams)
+      setCommonConfigurationData(commonConfig)
+      setMakeOfComponent(makeComponent)
+      // setProjectPanelData(panelData);
+      setProjectInfo(projInfo[0])
+      setMainSupplyLV(mainSupply.map((item: any) => item.voltage))
+      setSubPackages(mainPkgData)
+    } catch (error) {
+      console.error("Error fetching data:", error)
+      message.error("Failed to load data")
+    } finally {
+      setIsLoading(false)
+    }
+  }, [designBasisRevisionId, loadListLatestRevisionId])
+
+  useEffect(() => {
+    fetchAllData()
+  }, [fetchAllData])
+
+  return {
+    isLoading,
+    loadListData,
+    motorParameters,
+    commonConfigurationData,
+    makeOfComponent,
+    projectPanelData,
+    projectInfo,
+    mainSupplyLV,
+    subPackages,
+    refetch: fetchAllData,
+  }
+}
+const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLatestRevisionId }) => {
   const jRef = useRef<HTMLDivElement | null>(null)
   const spreadsheetRef = useRef<JspreadsheetInstance | null>(null)
+  const params = useParams()
+  const router = useRouter()
 
-  // const [loadListData, setLoadListData] = useState<any[]>([])
-  const [controlSchemes, setControlSchemes] = useState<any[]>([])
-  const [subPackages, setSubPackages] = useState<any[]>([])
-  const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([])
-  const [panelList, setPanelList] = useState<string[]>([])
-  const [projectInfo, setProjectInfo] = useState<ProjectInfo>()
+  const project_id = params.project_id as string
+
+  const {
+    isLoading,
+    loadListData,
+    motorParameters,
+    commonConfigurationData,
+    projectPanelData,
+    projectInfo,
+    mainSupplyLV,
+    subPackages,
+  } = useDataFetching(designBasisRevisionId, loadListLatestRevisionId, project_id)
+  console.log(mainSupplyLV, "panelList")
+
+  // Memo for panel list
+  const panelList = useMemo(() => projectPanelData?.map((item: any) => item.panel_name) || [], [projectPanelData])
+  console.log(panelList, "panelList")
+
+  // Effect to initialize spreadsheet
+
+  // console.log(loadListLatestRevisionId, "loadListLatestRevisionId")
+
+  // const jRef = useRef<HTMLDivElement | null>(null)
+  // const spreadsheetRef = useRef<JspreadsheetInstance | null>(null)
+
+  // // const [loadListData, setLoadListData] = useState<any[]>([])
+  // const [controlSchemes, setControlSchemes] = useState<any[]>([])
+  // const [subPackages, setSubPackages] = useState<any[]>([])
+  // const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([])
+  // const [panelList, setPanelList] = useState<string[]>([])
+  // const [projectInfo, setProjectInfo] = useState<ProjectInfo>()
   const [panelsSumData, setPanelsSumData] = useState<PanelSumData[]>([])
 
-  // Modal states
+  // // Modal states
   const [isControlSchemeModalOpen, setIsControlSchemeModalOpen] = useState(false)
   const [isLPBSModalOpen, setIsLPBSModalOpen] = useState(false)
   const [isValidatePanelLoadOpen, setIsValidatePanelLoadOpen] = useState(false)
   const userInfo: {
     division: string
   } = useCurrentUser()
-  const params = useParams()
-  const project_id = params.project_id
+  // const params = useParams()
+  // const project_id = params.project_id
   const { setLoading } = useLoading()
-  // Data hooks
+  // // Data hooks
 
-  const gerLoadListUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`
-  const getLoadListUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?fields=["*"]&filters=[["revision_id", "=", "${loadListLatestRevisionId}"]]`
+  // const gerLoadListUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`
+  // const getLoadListUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?fields=["*"]&filters=[["revision_id", "=", "${loadListLatestRevisionId}"]]`
 
-  const { data: loadListData }: any = useGetData(gerLoadListUrl)
-  console.log(loadListData, "getLoadListUrl")
-  const { data: motorParameters } = useGetData(
-    `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-  )
-  const { data: commonConfigurationData } = useGetData(
-    `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-  )
+  // const { data: loadListData }: any = useGetData(gerLoadListUrl)
+  // console.log(loadListData, "getLoadListUrl")
+  // const { data: motorParameters } = useGetData(
+  //   `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+  // )
+  // const { data: commonConfigurationData } = useGetData(
+  //   `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+  // )
 
-  const { data: makeOfComponent } = useGetData(
-    `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-  )
-  const { motors_make_options } = useMakeOfComponentDropdowns()
-  console.log(makeOfComponent, motors_make_options, "motors_make_options")
+  // const { data: makeOfComponent } = useGetData(
+  //   `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+  // )
+  // const { motors_make_options } = useMakeOfComponentDropdowns()
+  // console.log(makeOfComponent, motors_make_options, "motors_make_options")
 
-  const { data: projectPanelData, isLoading } = useProjectPanelData(designBasisRevisionId)
-  console.log(loadListLatestRevisionId, "load list rev")
+  // const { data: projectPanelData, isLoading } = useProjectPanelData(designBasisRevisionId)
+  // console.log(loadListLatestRevisionId, "load list rev")
 
   const handleCellChange = (
     element: JspreadsheetInstanceElement,
@@ -177,7 +280,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       item.standby_kw,
       item.kva,
       item.starter_type,
-      String(item.supply_voltage) + " VAC",
+      item.supply_voltage + ` VAC`,
       item.phase,
       item.starting_time,
       item.eocr_applicable,
@@ -233,68 +336,68 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       tableWidth: "100%",
 
       tableHeight: "550px",
-      freezeColumns: 4,
+      freezeColumns: 6,
       rowResize: true,
     }),
     [typedLoadListColumns, loadListData]
   )
 
   // Fetch and update functions with useCallback
-  const fetchProjectInfo = useCallback(async () => {
-    try {
-      const projectInfo = await getData(
-        `${PROJECT_INFO_API}?fields=["main_supply_lv"]&filters=[["project_id", "=", "${project_id}"]]`
-      )
-      const MAIN_SUPPLY_LV = await getData(`${MAIN_SUPPLY_LV_API}?fields=["voltage"]`)
+  // const fetchProjectInfo = useCallback(async () => {
+  //   try {
+  //     const projectInfo = await getData(
+  //       `${PROJECT_INFO_API}?fields=["main_supply_lv"]&filters=[["project_id", "=", "${project_id}"]]`
+  //     )
+  //     const MAIN_SUPPLY_LV = await getData(`${MAIN_SUPPLY_LV_API}?fields=["voltage"]`)
 
-      if (MAIN_SUPPLY_LV.length) {
-        typedLoadListColumns.forEach((column) => {
-          if (column.name === "supplyVoltage") {
-            column.source = ["110 VAC", "230 VAC", ...MAIN_SUPPLY_LV.map((item: any) => item.voltage)]
-          }
-        })
-      }
+  //     if (MAIN_SUPPLY_LV.length) {
+  //       typedLoadListColumns.forEach((column) => {
+  //         if (column.name === "supplyVoltage") {
+  //           column.source = ["110 VAC", "230 VAC", ...MAIN_SUPPLY_LV.map((item: any) => item.voltage)]
+  //         }
+  //       })
+  //     }
 
-      console.log(MAIN_SUPPLY_LV, "projectInfo")
+  //     console.log(MAIN_SUPPLY_LV, "projectInfo")
 
-      setProjectInfo(projectInfo[0])
-    } catch (error) {
-      console.error("Error fetching project info:", error)
-    }
-  }, [project_id])
+  //     setProjectInfo(projectInfo[0])
+  //   } catch (error) {
+  //     console.error("Error fetching project info:", error)
+  //   }
+  // }, [project_id])
 
-  const fetchSubPackageOptions = useCallback(async () => {
-    try {
-      const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${designBasisRevisionId}`)
-      console.log(mainPkgData, "vishal")
+  // const fetchSubPackageOptions = useCallback(async () => {
+  //   try {
+  //     const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${designBasisRevisionId}`)
+  //     console.log(mainPkgData, "main package")
 
-      if (mainPkgData?.length) {
-        typedLoadListColumns.forEach((column) => {
-          if (column.name === "pkg") {
-            column.source = [
-              ...mainPkgData
-                ?.map((pkg: any) => pkg.sub_packages)
-                .flat()
-                .map((item: any) => item.sub_package_name),
-              "NA",
-            ]
-          }
-        })
-        console.log(mainPkgData, "main package")
+  //     if (mainPkgData?.length) {
+  //       typedLoadListColumns.forEach((column) => {
+  //         if (column.name === "pkg") {
+  //           column.source = [
+  //             ...mainPkgData
+  //               ?.map((pkg: any) => pkg.sub_packages)
+  //               .flat()
+  //               .map((item: any) => item.sub_package_name),
+  //             "NA",
+  //           ]
+  //         }
+  //       })
+  //       console.log(mainPkgData, "main package")
 
-        setSubPackages(mainPkgData)
-        // console.log(mainPkgData?.map((pkg: any) => pkg.sub_packages).flat(), "vishal")
-
-        // updateSpreadsheetColumns(updatedColumns)
-      }
-    } catch (error) {
-      console.error("Error fetching sub-package options:", error)
-    }
-  }, [designBasisRevisionId, typedLoadListColumns])
+  //       setSubPackages(mainPkgData)
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching sub-package options:", error)
+  //   }
+  // }, [designBasisRevisionId, typedLoadListColumns])
 
   // Spreadsheet data update function
   const updateSpreadsheetColumns = useCallback(
     (updatedColumns: any[]) => {
+      console.log(getArrayOfLoadListData(loadListData), "load list data")
+      console.log(updatedColumns, "load list data")
+
       if (spreadsheetRef.current) {
         spreadsheetRef.current.destroy()
       }
@@ -308,7 +411,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         spreadsheetRef.current = instance
       }
     },
-    [loadListOptions, loadListData]
+    [loadListOptions, loadListData, projectInfo]
   )
   const getSelectedSchemes = () => {
     if (loadListData?.electrical_load_list_data?.length) {
@@ -328,12 +431,12 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
   }
 
   // Initialization effects
-  useEffect(() => {
-    fetchProjectInfo()
-    if (designBasisRevisionId) {
-      fetchSubPackageOptions()
-    }
-  }, [fetchProjectInfo, fetchSubPackageOptions, designBasisRevisionId])
+  // useEffect(() => {
+  //   // fetchProjectInfo()
+  //   if (designBasisRevisionId) {
+  //     fetchSubPackageOptions()
+  //   }
+  // }, [fetchProjectInfo, fetchSubPackageOptions, designBasisRevisionId])
 
   useEffect(() => {
     console.log(loadListData, "getSchemes")
@@ -362,107 +465,81 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         if (column.name === "lbpsType") {
           console.log([...new Set(selectedLpbsItems), "NA"], "selectedLpbsItems")
 
-          column.source = [...new Set(selectedLpbsItems), "NA"]
+          column.source = [...new Set(selectedLpbsItems.filter((item: any) => item != "NA")), "NA"]
         }
       })
       // updateSheetData(loadListData)
     }
   }, [loadListData])
 
-  // Fetch control schemes
   useEffect(() => {
-    // isLoading
-    // setLoading(true)
-    setLoading(false)
-
-    let selectedItems: string[] = []
-    const storedSchemes = localStorage.getItem("selected_control_scheme")
-    const savedLoadList = localStorage.getItem("loadList")
-    console.log(storedSchemes, "getSchemes")
-
-    if (storedSchemes) {
-      selectedItems = JSON.parse(storedSchemes) as string[]
-    } else {
-      console.log(loadListData, "getSchemes")
-      const getSchemes = loadListData?.electrical_load_list_data?.map((item: any) => item.control_scheme)
-      console.log(getSchemes, "getSchemes")
+    console.log(mainSupplyLV, "mainSupplyLV")
+    console.log(subPackages, "subPackages")
+    if (subPackages?.length) {
+      typedLoadListColumns.forEach((column) => {
+        if (column.name === "pkg") {
+          column.source = [
+            ...subPackages
+              ?.map((pkg: any) => pkg.sub_packages)
+              .flat()
+              .map((item: any) => item.sub_package_name),
+            "NA",
+          ]
+        }
+      })
     }
-    if (savedLoadList) {
-      // selectedItems = JSON.parse(savedLoadList) as string[]
-      console.log(JSON.parse(savedLoadList) as string[], "load list")
-      // updateSheetData(JSON.parse(savedLoadList) as string[])
-      // setLoadListData(JSON.parse(savedLoadList) as string[])
-    }
-    console.log(storedSchemes, "selectedSchemes")
-    console.log(selectedItems, "selectedSchemes")
 
-    typedLoadListColumns.forEach((column) => {
-      if (column.name === "controlScheme") {
-        column.source = selectedItems
+    if (panelList.length) {
+      typedLoadListColumns.forEach((column) => {
+        if (column.name === "panelList") {
+          column.source = panelList
+        }
+      })
+    }
+    if (mainSupplyLV.length) {
+      typedLoadListColumns.forEach((column) => {
+        if (column.name === "supplyVoltage") {
+          column.source = ["110 VAC", "230 VAC", ...mainSupplyLV]
+        }
+      })
+    }
+    // fetchProjectInfo()
+  }, [mainSupplyLV, panelList, subPackages])
+  useEffect(() => {
+    if (!isLoading && loadListData && panelList.length > 0 && mainSupplyLV.length && jRef.current) {
+      if (spreadsheetRef.current) {
+        spreadsheetRef.current.destroy()
       }
-    })
 
-    if (controlSchemes.length) return
+      const instance = jspreadsheet(jRef.current, loadListOptions)
+      spreadsheetRef.current = instance
+    }
+  }, [isLoading, loadListData, loadListOptions, panelList])
 
-    getData(`${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`).then((res) => {
-      const sortedSchemes = res
-        .map((item: any) => [
-          false,
-          item.scheme,
-          item.sub_scheme,
-          item.scheme_title,
-          item.description,
-          item.breaker,
-          item.lpbs,
-          item.lpbs_inc_dec_ind,
-          item.ammeter,
-          item.thermistor_relay,
-          item.motor_space_heater,
-          item.plc_current_signal,
-          item.plc_speed_signal,
-          item.olr,
-          item.phase,
-          item.limit_switch,
-          item.motor_protection_relay,
-          item.field_isolator,
-          item.local_panel,
-          item.field_ess,
-          item.electronic_relay,
-          item.plc1_and_plc2,
-          item.mcc_start_stop,
-          item.input_choke,
-          item.output_choke,
-          item.separate_plc_start_stop,
-          item.di,
-          item.do,
-          item.ai,
-          item.ao,
-        ])
-        .sort((a: any, b: any) => {
-          const [prefixA, numA] = a[2].split("-")
-          const [prefixB, numB] = b[2].split("-")
-          return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
-        })
+  // Rest of the existing methods remain the same...
 
-      setLpbsSchemes(sortedSchemes)
-      setControlSchemes(sortedSchemes)
-    })
-  }, [])
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Spin size="large" tip="Loading load list data..." />
+      </div>
+    )
+  }
 
   // Update panel dropdown
-  useEffect(() => {
-    if (projectPanelData && !isLoading) {
-      const updatedColumns = typedLoadListColumns.map((column) => {
-        if (column.name === "panelList") {
-          return { ...column, source: projectPanelData.map((item: any) => item.panel_name) }
-        }
-        return column
-      })
+  // useEffect(() => {
+  //   if (projectPanelData && !isLoading) {
+  //     const updatedColumns = typedLoadListColumns.map((column) => {
+  //       if (column.name === "panelList") {
+  //         return { ...column, source: projectPanelData.map((item: any) => item.panel_name) }
+  //       }
+  //       return column
+  //     })
 
-      updateSpreadsheetColumns(updatedColumns)
-      setPanelList(projectPanelData.map((item: any) => item.panel_name))
-    }
-  }, [projectPanelData, isLoading, typedLoadListColumns, updateSpreadsheetColumns])
+  //     updateSpreadsheetColumns(updatedColumns)
+  //     setPanelList(projectPanelData.map((item: any) => item.panel_name))
+  //   }
+  // }, [projectPanelData, isLoading, typedLoadListColumns, updateSpreadsheetColumns])
 
   // Utility function to update spreadsheet data
   // const updateSheetData = useCallback(
@@ -602,9 +679,12 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
   const handleLoadListSave = async () => {
     setLoading(true)
     if (validateLoadValues()) {
+      setLoading(false)
+
       return message.error("KW should be in one column only")
     }
     if (validateUniqueFeederTag()) {
+      setLoading(false)
       return message.error("Feeder tag no. can not be repeated")
     }
 
@@ -631,32 +711,32 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
           motor_rpm: row[14],
           motor_mounting_type: row[15],
           motor_frame_size: row[16],
-          motor_gd2: row[18],
-          motor_driven_equipment_gd2: row[19],
-          bkw: row[20],
-          coupling_type: row[21],
-          package: row[22],
-          area: row[23],
-          standard: row[24],
-          zone: row[25],
-          gas_group: row[26],
-          temperature_class: row[27],
-          remark: row[28],
-          rev: row[29],
-          space_heater: row[30],
-          bearing_rtd: row[31],
-          winding_rtd: row[32],
-          thermistor: row[33],
-          bearing_type: row[34],
-          power_factor: row[35],
-          motor_efficiency: row[36],
-          local_isolator: row[37],
-          panel_ammeter: row[38],
-          motor_make: row[39],
-          motor_scope: row[40],
-          motor_location: row[41],
-          motor_part_code: row[42],
-          motor_rated_current: row[43],
+          motor_gd2: row[17],
+          motor_driven_equipment_gd2: row[18],
+          bkw: row[19],
+          coupling_type: row[20],
+          package: row[21],
+          area: row[22],
+          standard: row[23],
+          zone: row[24],
+          gas_group: row[25],
+          temperature_class: row[26],
+          remark: row[27],
+          rev: row[28],
+          space_heater: row[29],
+          bearing_rtd: row[30],
+          winding_rtd: row[31],
+          thermistor: row[32],
+          bearing_type: row[33],
+          power_factor: row[34],
+          motor_efficiency: row[35],
+          local_isolator: row[36],
+          panel_ammeter: row[37],
+          motor_make: row[38],
+          motor_scope: row[39],
+          motor_location: row[40],
+          motor_part_code: row[41],
+          motor_rated_current: row[42],
         }
       }),
     }
@@ -815,6 +895,68 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     // Clean up the temporary anchor element
     link?.parentNode?.removeChild(link)
   }
+  const handleValidatePanelLoad = () => {
+    if (spreadsheetRef?.current) {
+      const data = spreadsheetRef?.current?.getData()
+      console.log(data, "load list data")
+
+      calculatePanelSum(data)
+      setIsValidatePanelLoadOpen(true)
+    }
+  }
+  const calculatePanelSum = (electricalLoadListData: any) => {
+    // Transform panelList to string array
+    const workingPanelList: string[] = panelList
+      .map((p: any) => (typeof p === "object" && p !== null && "name" in p ? p.name : String(p)))
+      .filter(Boolean)
+
+    // Initialize panelsSumData object
+    const panelsSumData: Record<string, PanelSumData> = Object.fromEntries(
+      workingPanelList.map((panelType) => [
+        panelType,
+        {
+          panelName: panelType,
+          workingLoadSum: 0,
+          standbyLoadSum: 0,
+          totalLoadKw: 0,
+          totalCurrent: 0,
+        },
+      ])
+    )
+
+    // Calculate sums for each panel
+    electricalLoadListData.forEach((row: any) => {
+      const panelType = String(row[12] || "")
+      const workingLoad = parseFloat(String(row[2] || "0"))
+      const standbyLoad = parseFloat(String(row[3] || "0"))
+      const current = parseFloat(String(row[42] || "0"))
+
+      // Type guard to ensure panel exists
+      if (!panelType || !(panelType in panelsSumData)) {
+        return
+      }
+
+      if (!isNaN(workingLoad) && !isNaN(standbyLoad)) {
+        // TypeScript now knows panel must exist
+        const panel = panelsSumData[panelType] as PanelSumData
+        panel.workingLoadSum += workingLoad
+        panel.standbyLoadSum += standbyLoad
+        panel.totalLoadKw = panel.workingLoadSum
+
+        if (workingLoad !== 0) {
+          panel.totalCurrent += current
+        }
+      }
+    })
+
+    // Filter out panels with zero current
+    const filteredPanelData = Object.values(panelsSumData).filter((item) => item.totalCurrent !== 0)
+
+    setPanelsSumData(filteredPanelData)
+    // return Object.values(panelsSumData).filter((item) => item.totalCurrent !== 0)
+  }
+  // console.log(panelsSumData, "panelsSumData")
+
   return (
     <>
       <div className="mb-4 flex justify-end gap-4">
@@ -824,13 +966,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         <Button type="primary" onClick={() => setIsLPBSModalOpen(true)} className="hover:bg-blue-600">
           LPBS Configurator
         </Button>
-
-        {/* <button
-          className="rounded-full bg-blue-500 px-6 py-3 text-white hover:bg-blue-600"
-          onClick={() => setIsLPBSModalOpen(true)}
-        >
-          LPBS configurator
-        </button> */}
       </div>
       <div className="m-2 flex flex-col overflow-auto">
         <div ref={jRef} />
@@ -839,7 +974,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       <ControlSchemeConfigurator
         isOpen={isControlSchemeModalOpen}
         onClose={() => setIsControlSchemeModalOpen(false)}
-        controlSchemes={controlSchemes}
+        // controlSchemes={controlSchemes}
         selectedControlSchemes={getSelectedSchemes()}
         onConfigurationComplete={handleControlSchemeComplete}
       />
@@ -847,7 +982,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       <LpbsConfigurator
         isOpen={isLPBSModalOpen}
         onClose={() => setIsLPBSModalOpen(false)}
-        // lpbsSchemes={lpbsSchemes}
         selectedLpbsSchemes={getSelectedLpbsSchemes()}
         onConfigurationComplete={handleLpbsComplete}
       />
@@ -861,7 +995,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         <Button type="primary" onClick={handleCurrentCalculation}>
           Get Current
         </Button>
-        <Button type="primary" onClick={() => setIsValidatePanelLoadOpen(true)}>
+        <Button type="primary" onClick={handleValidatePanelLoad}>
           Validate Panel Load
         </Button>
         <Button type="primary">
@@ -895,7 +1029,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         <Button type="primary" onClick={handleLoadListSave}>
           Save
         </Button>
-        <Button type="primary" onClick={() => {}}>
+        <Button type="primary" onClick={() => router.push(`/project/${project_id}/electrical-load-list/cable-schedule`)}>
           Next
         </Button>
       </div>

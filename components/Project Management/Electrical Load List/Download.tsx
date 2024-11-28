@@ -98,8 +98,8 @@ const Download: React.FC = () => {
             type="link"
             iconPosition="start"
             onClick={() => {
-              // setModalLoading(true)
-              // router.push(`/project/${project_id}/design-basis/general-info`)
+              setModalLoading(true)
+              router.push(`/project/${project_id}/electrical-load-list/load-list`)
             }}
             icon={<FolderOpenOutlined style={{ color: "#fef65b", fontSize: "1.2rem" }} />}
             disabled={record.status === DB_REVISION_STATUS.Released}
