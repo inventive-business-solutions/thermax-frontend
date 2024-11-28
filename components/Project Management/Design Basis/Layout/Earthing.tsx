@@ -89,7 +89,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
   return (
     <>
       <Divider orientation="center" orientationMargin={0}>
-      <span className="font-bold text-slate-700">Material Of Construction</span>
+        <span className="font-bold text-slate-700">Material Of Construction</span>
       </Divider>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex gap-4">

@@ -212,7 +212,7 @@ export default function DocumentRevision() {
       const url = window.URL.createObjectURL(excelBlob)
       const link = document.createElement("a")
       link.href = url
-      link.setAttribute("download", "output.xlsx") // Filename
+      link.setAttribute("download", `Design_Basis_${project?.project_oc_number}_R${documentRevisions[0]?.idx}.xlsx`) // Filename
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -299,6 +299,7 @@ export default function DocumentRevision() {
     {
       title: () => <div className="text-center">Created Date</div>,
       dataIndex: "createdDate",
+      align:"center",
       render: (text) => {
         const date = new Date(text)
         const stringDate = getThermaxDateFormat(date)

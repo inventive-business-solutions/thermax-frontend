@@ -1085,7 +1085,7 @@ export const plcPanelValidationSchema = zod.object({
     required_error: "No of HID ES is required",
     message: "No of HID ES is required",
   }),
-  no_of_hid_es: zod.number({ required_error: "No of HID ES is required", message: "No of HID ES is required" }),
+  no_of_hid_es: zod.string({ required_error: "No of HID ES is required", message: "No of HID ES is required" }),
   is_no_of_hid_os_selected: zod.number({
     required_error: "No of HID OS is required",
     message: "No of HID OS is required",
@@ -1095,7 +1095,7 @@ export const plcPanelValidationSchema = zod.object({
     required_error: "No of HID HMI is required",
     message: "No of HID HMI is required",
   }),
-  no_of_hid_hmi: zod.number({ required_error: "No of HID HMI is required", message: "No of HID HMI is required" }),
+  no_of_hid_hmi: zod.string({ required_error: "No of HID HMI is required", message: "No of HID HMI is required" }),
   is_hid_hmi_size_selected: zod.number({
     required_error: "HID HMI Size is required",
     message: "HID HMI Size is required",

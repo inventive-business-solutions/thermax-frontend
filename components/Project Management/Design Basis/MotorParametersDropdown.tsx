@@ -73,7 +73,7 @@ export default function useMotorParametersDropdowns() {
   )
   safeThermistorOptions = sortDropdownOptions(safeThermistorOptions)
   let { dropdownOptions: hazardousThermistorOptions } = useDropdownOptions(
-    `/document/Thermister Hazardous?fields=["*"]`,
+    `/document/Thermister Hazardous?limit=100&fields=["*"]`,
     "name"
   )
   hazardousThermistorOptions = sortDropdownOptions(hazardousThermistorOptions)
