@@ -1095,7 +1095,7 @@ export const plcPanelValidationSchema = zod.object({
     required_error: "No of HID HMI is required",
     message: "No of HID HMI is required",
   }),
-  no_of_hid_hmi: zod.number({ required_error: "No of HID HMI is required", message: "No of HID HMI is required" }),
+  no_of_hid_hmi: zod.string({ required_error: "No of HID HMI is required", message: "No of HID HMI is required" }),
   is_hid_hmi_size_selected: zod.number({
     required_error: "HID HMI Size is required",
     message: "HID HMI Size is required",

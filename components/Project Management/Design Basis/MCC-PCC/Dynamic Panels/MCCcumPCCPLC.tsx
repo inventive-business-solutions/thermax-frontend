@@ -185,10 +185,6 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
   const is_plc_spare_memory_selected_controlled = watch("is_plc_spare_memory_selected")
   const is_rtd_tc_moduule_selected_controlled = watch("is_rtd_tc_moduule_selected")
 
-  const is_no_of_hid_es_selected_controlled = watch("is_no_of_hid_es_selected")
-  const is_no_of_hid_os_selected_controlled = watch("is_no_of_hid_os_selected")
-  const is_hid_hmi_size_selected_controlled = watch("is_hid_hmi_size_selected")
-
   useEffect(() => {
     if (is_third_party_communication_protocol_selected_controlled === 0) {
       setValue("third_party_communication_protocol", "NA")
@@ -218,15 +214,6 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
       setValue("is_rtd_tc_module_hart_protocol_support_selected", 0)
     }
 
-    if(is_no_of_hid_es_selected_controlled == 0) {
-      setValue("no_of_hid_es", 0)
-    }
-    if(is_no_of_hid_os_selected_controlled == 0) {
-      setValue("no_of_hid_os", 0)
-    }
-    if(is_hid_hmi_size_selected_controlled == 0) {
-      setValue("hid_hmi_size", 0)
-    }
   }, [
     is_third_party_communication_protocol_selected_controlled,
     is_client_system_communication_selected_controlled,
@@ -236,9 +223,6 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     is_plc_spare_io_count_selected_controlled,
     is_plc_spare_memory_selected_controlled,
     is_rtd_tc_moduule_selected_controlled,
-    is_no_of_hid_es_selected_controlled,
-    is_no_of_hid_os_selected_controlled,
-    is_hid_hmi_size_selected_controlled,
     setValue,
   ])
 
@@ -1214,7 +1198,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 <div className="flex-1">
                   <CustomRadioSelect
                     control={control}
-                    name="no_of_hid_hmi"
+                    name="is_no_of_hid_hmi_selected"
                     label=""
                     options={[
                       { label: "Yes", value: 1 },
@@ -1229,7 +1213,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   name="no_of_hid_hmi"
                   label=""
                   size="small"
-                  disabled={watch("no_of_hid_hmi") === 0}
+                  disabled={watch("is_no_of_hid_hmi_selected") === 0}
                 />
               </div>
             </div>
