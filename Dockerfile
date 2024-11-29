@@ -1,14 +1,20 @@
 # Use the latest Node.js version
 FROM node:23-alpine
 
+# Enable Corepack (required for Yarn 4.x and above)
+RUN corepack enable
+
 # Set the working directory
 WORKDIR /app
 
 # Copy the package.json file and yarn.lock file
 COPY package.json yarn.lock ./
 
+# Ensure the correct Yarn version (4.5.0) is used
+RUN corepack prepare yarn@4.5.0 --activate
+
 # Install the dependencies
-RUN yarn install
+RUN yarn install --immutable
 
 # Accept build arguments
 ARG FRAPPE_ADMIN_AUTH_SECRET
