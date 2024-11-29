@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Install the dependencies
-RUN yarn install --immutable-cache
+RUN yarn install
 
 # Accept build arguments
 ARG FRAPPE_ADMIN_AUTH_SECRET
