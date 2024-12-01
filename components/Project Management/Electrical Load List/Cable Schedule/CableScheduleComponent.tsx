@@ -379,6 +379,34 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId 
 
   const handleCableScheduleSave = () => {
     const data = spreadsheetInstance?.getData()
+    let payload = {
+      tag_number: "",
+      service_description: "",
+      working_kw: 0,
+      standby_kw: 0,
+      kva: 0,
+      starter_type: "",
+      supply_voltage: 0,
+      motor_rated_current: 0,
+      cable_material: "",
+      cos_running: 0,
+      cos_starting: 0,
+      resistance_mtr: 0,
+      ractance_mtr: 0,
+      apx_length: 0,
+      vd_running: 0,
+      vd_starting: 0,
+      percent_vd_at_running: 0,
+      percent_vd_at_starting: 0,
+      selected_cable_capacity_amp: 0,
+      derating_factor: 0,
+      final_capacity: 0,
+      no_of_runs: 0,
+      no_of_cores: "",
+      final_cable_size: "",
+      cable_selected_status: "",
+      cable_size_as_per_heating_chart: "",
+    }
     console.log(data, "all load list data")
     // Add your save logic here
   }
