@@ -56,8 +56,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   }
   let { data: projectList, isLoading } = useGetData(getProjectUrl)
 
-  console.log("projectList", projectList)
-
   if (projectList) {
     projectList.sort((a: any, b: any) => {
       if (a.division === userInfo?.division && b.division !== userInfo?.division) {
