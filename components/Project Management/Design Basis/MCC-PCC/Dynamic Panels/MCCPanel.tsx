@@ -25,16 +25,16 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     incomer_above_ampere: mccPanelData?.incomer_above_ampere || "1001",
     incomer_above_pole: mccPanelData?.incomer_above_pole || "4",
     incomer_above_type: mccPanelData?.incomer_above_type || "SFU",
-    is_under_or_over_voltage_selected: mccPanelData?.is_under_or_over_voltage_selected || 1,
-    is_other_selected: mccPanelData?.is_other_selected || 1,
-    is_lsig_selected: mccPanelData?.is_lsig_selected || 1,
-    is_lsi_selected: mccPanelData?.is_lsi_selected || 1,
+    is_under_or_over_voltage_selected: mccPanelData?.is_under_or_over_voltage_selected?.toString() || "1",
+    is_other_selected: mccPanelData?.is_other_selected?.toString() || "1",
+    is_lsig_selected: mccPanelData?.is_lsig_selected?.toString() || "1",
+    is_lsi_selected: mccPanelData?.is_lsi_selected || "1",
     is_neural_link_with_disconnect_facility_selected:
-      mccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
-    is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected || 1,
-    is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected || 0,
-    is_red_cb_in_service: mccPanelData?.is_red_cb_in_service || 0,
-    is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected || 0,
+      mccPanelData?.is_neural_link_with_disconnect_facility_selected || "1",
+    is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected || "1",
+    is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected?.toString() || "0",
+    is_red_cb_in_service: mccPanelData?.is_red_cb_in_service?.toString() || "0",
+    is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected?.toString() || "0",
     current_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
     control_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
     control_transformer_configuration: mccPanelData?.control_transformer_configuration || "Single",
@@ -54,10 +54,10 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     ga_current_density: mccPanelData?.ga_current_density || "0.8 A/Sq. mm",
     ga_panel_mounting_frame: mccPanelData?.ga_panel_mounting_frame || "Base Frame",
     ga_panel_mounting_height: mccPanelData?.ga_panel_mounting_height || "100",
-    is_marshalling_section_selected: mccPanelData?.is_marshalling_section_selected || 1,
-    is_cable_alley_section_selected: mccPanelData?.is_cable_alley_section_selected || 1,
-    is_power_and_bus_separation_section_selected: mccPanelData?.is_power_and_bus_separation_section_selected || 1,
-    is_both_side_extension_section_selected: mccPanelData?.is_both_side_extension_section_selected || 1,
+    is_marshalling_section_selected: mccPanelData?.is_marshalling_section_selected || "1",
+    is_cable_alley_section_selected: mccPanelData?.is_cable_alley_section_selected || "1",
+    is_power_and_bus_separation_section_selected: mccPanelData?.is_power_and_bus_separation_section_selected || "1",
+    is_both_side_extension_section_selected: mccPanelData?.is_both_side_extension_section_selected || "1",
     ga_gland_plate_3mm_drill_type: mccPanelData?.ga_gland_plate_3mm_drill_type || "Drilled",
     ga_gland_plate_3mm_attachment_type: mccPanelData?.ga_gland_plate_3mm_attachment_type || "Detachable",
     ga_busbar_chamber_position: mccPanelData?.ga_busbar_chamber_position || "Top",
@@ -71,7 +71,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     ppc_minimum_coating_thickness: mccPanelData?.ppc_minimum_coating_thickness || "As per Client Specification",
     ppc_pretreatment_panel_standard: mccPanelData?.ppc_pretreatment_panel_standard || "OEM Standard for pretreatment",
     vfd_auto_manual_selection: mccPanelData?.vfd_auto_manual_selection || "Applicable",
-    is_punching_details_for_boiler_selected: mccPanelData?.is_punching_details_for_boiler_selected || 0,
+    is_punching_details_for_boiler_selected: mccPanelData?.is_punching_details_for_boiler_selected?.toString() || "0",
     boiler_model: mccPanelData?.boiler_model || "NA",
     boiler_fuel: mccPanelData?.boiler_fuel || "NA",
     boiler_year: mccPanelData?.boiler_year || "NA",
@@ -85,7 +85,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     boiler_output: mccPanelData?.boiler_output || "NA",
     boiler_connected_load: mccPanelData?.boiler_connected_load || "NA",
     boiler_design_pressure: mccPanelData?.boiler_design_pressure || "NA",
-    is_punching_details_for_heater_selected: mccPanelData?.is_punching_details_for_heater_selected || 0,
+    is_punching_details_for_heater_selected: mccPanelData?.is_punching_details_for_heater_selected?.toString() || "0",
     heater_model: mccPanelData?.heater_model || "NA",
     heater_fuel: mccPanelData?.heater_fuel || "NA",
     heater_year: mccPanelData?.heater_year || "NA",
@@ -106,7 +106,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     spg_name_plate_weight: mccPanelData?.spg_name_plate_weight || "NA",
     spg_name_plate_oc_number: mccPanelData?.spg_name_plate_oc_number || projectMetadata?.project_oc_number,
     spg_name_plate_part_code: mccPanelData?.spg_name_plate_part_code || "NA",
-    is_spg_applicable: mccPanelData?.is_spg_applicable || 0,
+    is_spg_applicable: mccPanelData?.is_spg_applicable?.toString() || "0",
   }
 }
 
@@ -174,7 +174,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   )
 
   const base_frame_options = ga_panel_mounting_height_options?.filter(
-    (item: any) => item.name == "100" || item.name === "75"
+    (item: any) => item.name === "100" || item.name === "75"
   )
 
   const extended_frame_options = ga_panel_mounting_height_options?.filter(
@@ -832,8 +832,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="is_punching_details_for_boiler_selected"
                   label=""
                   options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
+                    { label: "Yes", value: "1" },
+                    { label: "No", value: "0" },
                   ]}
                 />
               </div>
@@ -844,7 +844,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="boiler_model"
                   label="Model"
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -852,7 +852,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="boiler_fuel"
                   label="Fuel"
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -860,7 +860,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="boiler_year"
                   label="Year"
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
             </div>
@@ -871,7 +871,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_power_supply_vac"
                   label="Power Supply"
                   addonAfter={"VAC"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -880,7 +880,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_power_supply_phase"
                   label="Power Supply"
                   addonAfter={"Phase"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -889,7 +889,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_power_supply_frequency"
                   label="Power Supply"
                   addonAfter={"Hz"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
             </div>
@@ -900,7 +900,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_control_supply_vac"
                   label="Control Supply"
                   addonAfter={"VAC"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -909,7 +909,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_control_supply_phase"
                   label="Control Supply"
                   addonAfter={"Phase"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -918,7 +918,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_control_supply_frequency"
                   label="Control Supply"
                   addonAfter={"Hz"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
             </div>
@@ -929,7 +929,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_evaporation"
                   label="Evaporation"
                   addonAfter={"Kg/Hr"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -938,7 +938,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_output"
                   label="Output"
                   addonAfter={"MW"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -947,7 +947,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_connected_load"
                   label="Connected Load"
                   addonAfter={"KW"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -956,7 +956,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_design_pressure"
                   label="Design Pressure"
                   addonAfter={"Kg/cm2(g)/Bar"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
             </div>
@@ -969,8 +969,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="is_punching_details_for_heater_selected"
                   label=""
                   options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
+                    { label: "Yes", value: "1" },
+                    { label: "No", value: "0" },
                   ]}
                 />
               </div>
@@ -981,7 +981,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="heater_model"
                   label="Model"
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -990,7 +990,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_fuel"
                   defaultValue={10}
                   label="Fuel"
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -998,7 +998,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="heater_year"
                   label="Year"
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
             </div>
@@ -1009,7 +1009,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_power_supply_vac"
                   label="Power Supply"
                   addonAfter={"VAC"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1018,7 +1018,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_power_supply_phase"
                   label="Power Supply"
                   addonAfter={"Phase"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1027,7 +1027,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_power_supply_frequency"
                   label="Power Supply"
                   addonAfter={"Hz"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
             </div>
@@ -1038,7 +1038,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_control_supply_vac"
                   label="Control Supply"
                   addonAfter={"VAC"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1047,7 +1047,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_control_supply_phase"
                   label="Control Supply"
                   addonAfter={"Phase"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1056,7 +1056,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_control_supply_frequency"
                   label="Control Supply"
                   addonAfter={"Hz"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
             </div>
@@ -1067,7 +1067,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_evaporation"
                   label="Evaporation"
                   addonAfter={"Kcal/Hr"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1076,7 +1076,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_output"
                   label="Output"
                   addonAfter={"MW"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1085,7 +1085,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_connected_load"
                   label="Connected Load"
                   addonAfter={"KW"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1094,7 +1094,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_temperature"
                   label="Temperature"
                   addonAfter={"Deg C"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
             </div>
@@ -1110,8 +1110,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="is_spg_applicable"
                   label=""
                   options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
+                    { label: "Yes", value: "1" },
+                    { label: "No", value: "0" },
                   ]}
                 />
               </div>
@@ -1122,7 +1122,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_unit_name"
                   label="Unit Name"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1130,7 +1130,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_capacity"
                   label="Capacity"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1138,7 +1138,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_manufacturing_year"
                   label="Year of Manufacturing"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
             </div>
@@ -1148,7 +1148,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_weight"
                   label="Weight"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1156,7 +1156,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_oc_number"
                   label="OC No."
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1164,7 +1164,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_part_code"
                   label="Part Code"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
             </div>
