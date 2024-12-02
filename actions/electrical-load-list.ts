@@ -81,3 +81,11 @@ export const getLatestLoadlistRevision = async (projectId: string) => {
   return dbRevisionData
 }
 
+export const getLatestCableScheduleRevision = async (projectId: string) => {
+  const dbRevisionData = await getData(
+    `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${projectId}"], ["status", "in", ["${LOAD_LIST_REVISION_STATUS.NotReleased}"]]]&fields=["*"]&order_by=creation desc`
+  )
+
+  return dbRevisionData
+}
+
