@@ -27,18 +27,11 @@ export const DESIGN_BASIS_GENERAL_INFO_API = `/document/Design Basis General Inf
 // Revision History
 export const DESIGN_BASIS_REVISION_HISTORY_API = `/document/Design Basis Revision History`
 export const ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API = `/document/Load List Revisions`
-export const CABLE_SCHEDULE_REVISION_HISTORY_API = `/document/Cable Schedule Revision History`
+export const CABLE_SCHEDULE_REVISION_HISTORY_API = `/document/Cable Schedule Revisions`
 export const MOTOR_CANOPY_REVISION_HISTORY_API = `/document/Motor Canopy Revision History`
 export const MOTOR_SPECIFICATIONS_REVISION_HISTORY_API = `/document/Motor Specifications Revision History`
 export const LBPS_SPECIFICATIONS_REVISION_HISTORY_API = `/document/LBPS Specifications Revision History`
 export const LOCAL_ISOLATOR_REVISION_HISTORY_API = `/document/Local Isolator Revision History`
-
-// Electrical Load List
-export const CABLE_SCHEDULE_API = `/document/Cable Schedule`
-export const MOTOR_CANOPY_LIST_API = `/document/Motor Canopy List`
-export const MOTOR_SPECIFICATION_LIST_API = `/document/Motor Specification and List`
-export const LBPS_SPECIFICATION_LIST_API = `/document/LBPS Specification and List`
-export const LOCAL_ISOLATOR_SPECIFICATION_LIST_API = `/document/Local Isolator Specification and List`
 
 // Motor Parameters API Endpoints
 export const MOTOR_PARAMETER_API = `/document/Design Basis Motor Parameters`
