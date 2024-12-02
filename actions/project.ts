@@ -21,15 +21,6 @@ import {
   APPROVER_EMAIL_NOTIFICATION_API,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
   CABLE_SCHEDULE_REVISION_HISTORY_API,
-  CABLE_SCHEDULE_API,
-  MOTOR_CANOPY_REVISION_HISTORY_API,
-  MOTOR_CANOPY_LIST_API,
-  MOTOR_SPECIFICATIONS_REVISION_HISTORY_API,
-  MOTOR_SPECIFICATION_LIST_API,
-  LBPS_SPECIFICATIONS_REVISION_HISTORY_API,
-  LBPS_SPECIFICATION_LIST_API,
-  LOCAL_ISOLATOR_REVISION_HISTORY_API,
-  LOCAL_ISOLATOR_SPECIFICATION_LIST_API,
 } from "configs/api-endpoints"
 import { createData, deleteData, getData } from "./crud-actions"
 
@@ -52,7 +43,7 @@ export const createProject = async (projectData: any, userInfo: any) => {
     await createData(LAYOUT_EARTHING, false, { revision_id: design_basis_revision_id })
 
     await createData(ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, false, { project_id })
-    // await createData(CABLE_SCHEDULE_REVISION_HISTORY_API, false, { project_id })
+    await createData(CABLE_SCHEDULE_REVISION_HISTORY_API, false, { project_id })
     // await createData(MOTOR_CANOPY_REVISION_HISTORY_API, false, { project_id })
     // await createData(MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, false, { project_id })
     // await createData(LBPS_SPECIFICATIONS_REVISION_HISTORY_API, false, { project_id })
@@ -217,14 +208,14 @@ export const deleteProject = async (project_id: string) => {
       await deleteData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${revisionID}`, false)
     }
 
-    // const cableScheduleRevisionHistory = await getData(
-    //   `${CABLE_SCHEDULE_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
-    // )
-    // for (const revision of cableScheduleRevisionHistory || []) {
-    //   const revisionID = revision.name
+    const cableScheduleRevisionHistory = await getData(
+      `${CABLE_SCHEDULE_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    )
+    for (const revision of cableScheduleRevisionHistory || []) {
+      const revisionID = revision.name
 
-    //   await deleteData(`${CABLE_SCHEDULE_REVISION_HISTORY_API}/${revisionID}`, false)
-    // }
+      await deleteData(`${CABLE_SCHEDULE_REVISION_HISTORY_API}/${revisionID}`, false)
+    }
 
     // const motorCanopyRevisionHistory = await getData(
     //   `${MOTOR_CANOPY_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
