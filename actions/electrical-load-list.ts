@@ -148,3 +148,44 @@ export const getFrameSizeCalculation = async () => {
     return calculatedData
   }
 }
+
+export const motorCanopyCalculation = async (loadListData: any) => {
+  const calculatedData = loadListData.map((item: any) => {
+    const kw = item.kw
+    const speed = item.speed
+    const moutingType = item.mounting_type
+    const frameSize = item.frame_size
+
+    // Hit motor canopy doctype api and get all the values
+
+    // Filter the data based on the speed, kw, mounting type and frame size
+
+    // If the data is found, return the data
+
+    // If the data is not found, return empty object
+
+    return {
+      ...item,
+      frameSize: "",
+    }
+  })
+
+  return calculatedData
+}
+
+export const getCableSizingCalculation = async (loadListData: any) => {
+  const division = loadListData.divisionName
+  const calcData = loadListData.data
+  // Get the cable sizing data
+  // e.g. const cableSizingData = await getData(`${CABLE_SIZE_API}?fields=["*"]&limit=1000`)
+
+  // Get data from design basis via latest revision id
+  // const perc_voltage_drop_running = designBasisData.perc_voltage_drop_running
+  // const perc_voltage_drop_starting = designBasisData.perc_voltage_drop_starting
+  // const copper_conductor = designBasisData.copper_conductor
+  // const aluminium_conductor = designBasisData.aluminium_conductor
+
+  if (division === HEATING) {
+    return calcData
+  }
+}
