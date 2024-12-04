@@ -1,17 +1,23 @@
-"use client"
-import { Tabs } from "antd"
-import React, { useEffect, useState } from "react"
-import { useLoading } from "hooks/useLoading"
-import MCCcumPCCPLCPanel from "./MCCcumPCCPLC"
-import MCCPanel from "./MCCPanel"
+"use client";
+import { Tabs } from "antd";
+import React, { useEffect, useState } from "react";
+import MCCcumPCCPLCPanel from "./MCCcumPCCPLC";
+import MCCPanel from "./MCCPanel";
+import { useLoading } from "@/hooks/useLoading";
 
-const MCCcumPCC = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
-  const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
-  const { setLoading: setModalLoading } = useLoading()
+const MCCcumPCC = ({
+  revision_id,
+  panel_id,
+}: {
+  revision_id: string;
+  panel_id: string;
+}) => {
+  const [activeKey, setActiveKey] = useState<string>("1"); // Default active tab
+  const { setLoading: setModalLoading } = useLoading();
   useEffect(() => {
-    setModalLoading(false)
+    setModalLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const TabMCC = [
     {
@@ -22,13 +28,15 @@ const MCCcumPCC = ({ revision_id, panel_id }: { revision_id: string; panel_id: s
     {
       label: "PLC",
       key: "2",
-      children: <MCCcumPCCPLCPanel revision_id={revision_id} panel_id={panel_id} />,
+      children: (
+        <MCCcumPCCPLCPanel revision_id={revision_id} panel_id={panel_id} />
+      ),
     },
-  ]
+  ];
 
   const onChange = (key: string) => {
-    setActiveKey(key) // Update active tab
-  }
+    setActiveKey(key); // Update active tab
+  };
 
   return (
     <div>
@@ -43,7 +51,7 @@ const MCCcumPCC = ({ revision_id, panel_id }: { revision_id: string; panel_id: s
         }))}
       />
     </div>
-  )
-}
+  );
+};
 
-export default MCCcumPCC
+export default MCCcumPCC;

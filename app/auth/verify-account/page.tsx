@@ -1,42 +1,43 @@
-"use client"
-import { Result } from "antd"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
-import { verifyAccount } from "actions/verification-token"
-import Loader from "components/Loader"
-import { UNAUTHORIZED } from "configs/constants"
+"use client";
+import { verifyAccount } from "@/actions/verification-token";
+import Loader from "@/components/Loader";
+import { UNAUTHORIZED } from "@/configs/constants";
+import { Result } from "antd";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function VerifyAccount() {
-  const [validToken, setValidToken] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const searchParams = useSearchParams()
-  const router = useRouter()
+  const [validToken, setValidToken] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
-    setLoading(true)
-    const token = searchParams.get("token")
+    setLoading(true);
+    const token = searchParams.get("token");
     if (!token) {
-      router.push(UNAUTHORIZED)
-      return
+      router.push(UNAUTHORIZED);
+      return;
     }
 
-    ;(async () => {
+    (async () => {
       try {
-        const { valid } = await verifyAccount(token)
+        const { valid } = await verifyAccount(token);
 
         if (!valid) {
-          router.push(UNAUTHORIZED)
+          router.push(UNAUTHORIZED);
         }
-        setValidToken(true)
+        setValidToken(true);
       } catch (error) {
-        router.push(UNAUTHORIZED)
+        console.error(error);
+        router.push(UNAUTHORIZED);
       }
-    })()
-    setLoading(false)
-  }, [searchParams, router])
+    })();
+    setLoading(false);
+  }, [searchParams, router]);
 
   if (loading) {
-    return <Loader />
+    return <Loader />;
   }
 
   return (
@@ -54,5 +55,5 @@ export default function VerifyAccount() {
         />
       )}
     </div>
-  )
+  );
 }
