@@ -1,28 +1,34 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Divider, message } from "antd"
-import React, { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import * as zod from "zod"
-import { getData, updateData } from "actions/crud-actions"
-import { MAKE_OF_COMPONENT_API } from "configs/api-endpoints"
-import { HEATING } from "configs/constants"
-import { useGetData } from "hooks/useCRUD"
-import { useCurrentUser } from "hooks/useCurrentUser"
-import { useLoading } from "hooks/useLoading"
-import useMakeOfComponentDropdowns from "./MakeDropdowns"
-import CustomTextInput from "components/FormInputs/CustomInput"
-import CustomMultiSelect from "components/FormInputs/CustomMultiSelect"
+import { getData, updateData } from "@/actions/crud-actions";
+import CustomTextInput from "@/components/FormInputs/CustomInput";
+import CustomMultiSelect from "@/components/FormInputs/CustomMultiSelect";
+import { MAKE_OF_COMPONENT_API } from "@/configs/api-endpoints";
+import { HEATING } from "@/configs/constants";
+import { useGetData } from "@/hooks/useCRUD";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useLoading } from "@/hooks/useLoading";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Divider, message } from "antd";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as zod from "zod";
+import useMakeOfComponentDropdowns from "./MakeDropdowns";
 
 // Define Zod schema for validation
 const makeOfComponentSchema = zod.object({
-  motor: zod.array(zod.string(), { required_error: "Motor is required", message: "Motor is required" }),
+  motor: zod.array(zod.string(), {
+    required_error: "Motor is required",
+    message: "Motor is required",
+  }),
   preferred_motor: zod.string({
     required_error: "Preferred Motor is required",
     message: "Preferred Motor is required",
   }),
-  cable: zod.array(zod.string(), { required_error: "Cable is required", message: "Cable is required" }),
+  cable: zod.array(zod.string(), {
+    required_error: "Cable is required",
+    message: "Cable is required",
+  }),
   preferred_cable: zod.string({
     required_error: "Preferred Cable is required",
     message: "Preferred Cable is required",
@@ -59,21 +65,25 @@ const makeOfComponentSchema = zod.object({
     required_error: "Preferred Soft Starter is required",
     message: "Preferred Soft Starter is required",
   }),
-  plc: zod.array(zod.string(), { required_error: "PLC is required", message: "PLC is required" }),
+  plc: zod.array(zod.string(), {
+    required_error: "PLC is required",
+    message: "PLC is required",
+  }),
   preferred_plc: zod.string({
     required_error: "Preferred PLC is required",
     message: "Preferred PLC is required",
   }),
-})
+});
 
 const parseToArray = (value: any) => {
   try {
-    return Array.isArray(value) ? value : JSON.parse(value)
-  } catch (e) {
+    return Array.isArray(value) ? value : JSON.parse(value);
+  } catch (error) {
+    console.error(error);
     // If parsing fails, return the value wrapped in an array
-    return Array.isArray(value) ? value : [value]
+    return Array.isArray(value) ? value : [value];
   }
-}
+};
 
 const getDefaultValues = (data: any) => {
   return {
@@ -83,30 +93,35 @@ const getDefaultValues = (data: any) => {
     preferred_cable: data?.preferred_cable || "Gemscab",
     lv_switchgear: parseToArray(data?.lv_switchgear || "Siemens"),
     preferred_lv_switchgear: data?.preferred_lv_switchgear || "Siemens",
-    panel_enclosure: parseToArray(data?.panel_enclosure || "Thermax Approved Vendor"),
-    preferred_panel_enclosure: data?.preferred_panel_enclosure || "Thermax Approved Vendor",
-    variable_frequency_speed_drive_vfd_vsd: parseToArray(data?.variable_frequency_speed_drive_vfd_vsd || "Danfoss"),
+    panel_enclosure: parseToArray(
+      data?.panel_enclosure || "Thermax Approved Vendor"
+    ),
+    preferred_panel_enclosure:
+      data?.preferred_panel_enclosure || "Thermax Approved Vendor",
+    variable_frequency_speed_drive_vfd_vsd: parseToArray(
+      data?.variable_frequency_speed_drive_vfd_vsd || "Danfoss"
+    ),
     preferred_vfdvsd: data?.preferred_vfdvsd || "Danfoss",
     soft_starter: parseToArray(data?.soft_starter || "ABB"),
     preferred_soft_starter: data?.preferred_soft_starter || "ABB",
     plc: parseToArray(data?.plc || "Siemens"),
     preferred_plc: data?.preferred_plc || "Siemens",
-  }
-}
+  };
+};
 
 const MakeOfComponent = ({
   revision_id,
   setActiveKey,
 }: {
-  revision_id: string
-  setActiveKey: React.Dispatch<React.SetStateAction<string>>
+  revision_id: string;
+  setActiveKey: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-  const [loading, setLoading] = useState(false)
-  const userInfo = useCurrentUser()
+  const [loading, setLoading] = useState(false);
+  const userInfo = useCurrentUser();
 
   const { data: makeOfComponent } = useGetData(
     `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  )
+  );
 
   const {
     motors_make_options,
@@ -116,52 +131,62 @@ const MakeOfComponent = ({
     panel_enclosure_options,
     lv_switchgear_options,
     cable_make_options,
-  } = useMakeOfComponentDropdowns()
-  const { setLoading: setModalLoading } = useLoading()
+  } = useMakeOfComponentDropdowns();
+  const { setLoading: setModalLoading } = useLoading();
 
   useEffect(() => {
-    setModalLoading(false)
-  })
+    setModalLoading(false);
+  });
 
   const { control, handleSubmit, reset, watch, setValue } = useForm({
     resolver: zodResolver(makeOfComponentSchema),
     defaultValues: getDefaultValues(makeOfComponent?.[0]),
     mode: "onSubmit",
-  })
+  });
 
-  const motor = watch("motor") as string[]
-  const cable = watch("cable") as string[]
-  const lv_switchgear = watch("lv_switchgear") as string[]
-  const panel_enclosure = watch("panel_enclosure") as string[]
-  const vfd_vsd = watch("variable_frequency_speed_drive_vfd_vsd") as string[]
-  const soft_starter = watch("soft_starter") as string[]
-  const plc = watch("plc") as string[]
-
-  useEffect(() => {
-    setValue("preferred_motor", motor[0])
-    setValue("preferred_cable", cable[0])
-    setValue("preferred_lv_switchgear", lv_switchgear[0])
-    setValue("preferred_panel_enclosure", panel_enclosure[0])
-    setValue("preferred_vfdvsd", vfd_vsd[0])
-    setValue("preferred_soft_starter", soft_starter[0])
-    setValue("preferred_plc", plc[0])
-  }, [cable, lv_switchgear, motor, panel_enclosure, plc, setValue, soft_starter, vfd_vsd])
+  const motor = watch("motor") as string[];
+  const cable = watch("cable") as string[];
+  const lv_switchgear = watch("lv_switchgear") as string[];
+  const panel_enclosure = watch("panel_enclosure") as string[];
+  const vfd_vsd = watch("variable_frequency_speed_drive_vfd_vsd") as string[];
+  const soft_starter = watch("soft_starter") as string[];
+  const plc = watch("plc") as string[];
 
   useEffect(() => {
-    reset(getDefaultValues(makeOfComponent?.[0]))
-  }, [makeOfComponent, reset])
+    setValue("preferred_motor", motor[0]);
+    setValue("preferred_cable", cable[0]);
+    setValue("preferred_lv_switchgear", lv_switchgear[0]);
+    setValue("preferred_panel_enclosure", panel_enclosure[0]);
+    setValue("preferred_vfdvsd", vfd_vsd[0]);
+    setValue("preferred_soft_starter", soft_starter[0]);
+    setValue("preferred_plc", plc[0]);
+  }, [
+    cable,
+    lv_switchgear,
+    motor,
+    panel_enclosure,
+    plc,
+    setValue,
+    soft_starter,
+    vfd_vsd,
+  ]);
+
+  useEffect(() => {
+    reset(getDefaultValues(makeOfComponent?.[0]));
+  }, [makeOfComponent, reset]);
 
   const handleError = (error: any) => {
     try {
-      const errorObj = JSON.parse(error?.message) as any
-      message.error(errorObj?.message)
+      const errorObj = JSON.parse(error?.message) as any;
+      message.error(errorObj?.message);
     } catch (parseError) {
-      message.error(error?.message || "An unknown error occured")
+      console.error(parseError);
+      message.error(error?.message || "An unknown error occured");
     }
-  }
+  };
 
   const onSubmit = async (data: any) => {
-    setLoading(true)
+    setLoading(true);
     const fieldsToStringify = [
       "motor",
       "cable",
@@ -170,35 +195,42 @@ const MakeOfComponent = ({
       "variable_frequency_speed_drive_vfd_vsd",
       "soft_starter",
       "plc",
-    ]
+    ];
 
-    const transformedData = { ...data }
+    const transformedData = { ...data };
 
     fieldsToStringify.forEach((field) => {
       if (Array.isArray(transformedData[field])) {
-        transformedData[field] = JSON.stringify(transformedData[field])
+        transformedData[field] = JSON.stringify(transformedData[field]);
       }
-    })
+    });
     try {
       const makeOfComponentData = await getData(
         `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-      )
+      );
       if (makeOfComponentData && makeOfComponentData.length > 0) {
-        await updateData(`${MAKE_OF_COMPONENT_API}/${makeOfComponentData[0].name}`, false, transformedData)
-        message.success("Make of Component Saved Successfully")
+        await updateData(
+          `${MAKE_OF_COMPONENT_API}/${makeOfComponentData[0].name}`,
+          false,
+          transformedData
+        );
+        message.success("Make of Component Saved Successfully");
       } else {
-        message.error("Make of Component not found for this revision")
+        message.error("Make of Component not found for this revision");
       }
     } catch (error) {
-      handleError(error)
+      handleError(error);
     } finally {
-      setLoading(false)
-      setActiveKey("Common Configuration")
+      setLoading(false);
+      setActiveKey("Common Configuration");
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-2 px-4"
+    >
       <Divider className="flex items-center justify-center">
         <h2 className="font-bold text-slate-700">Make of Components</h2>
       </Divider>
@@ -236,7 +268,13 @@ const MakeOfComponent = ({
             />
           </div>
           <div className="w-1/5">
-            <CustomTextInput control={control} name="preferred_cable" readOnly label="Preferred Cable" size="small" />
+            <CustomTextInput
+              control={control}
+              name="preferred_cable"
+              readOnly
+              label="Preferred Cable"
+              size="small"
+            />
           </div>
         </div>
         <div className="flex flex-1 items-center gap-4">
@@ -324,10 +362,22 @@ const MakeOfComponent = ({
       </div>
       <div className="flex flex-1 items-center gap-4">
         <div className="w-4/5">
-          <CustomMultiSelect control={control} name="plc" label="PLC" options={plc_make_options || []} size="small" />
+          <CustomMultiSelect
+            control={control}
+            name="plc"
+            label="PLC"
+            options={plc_make_options || []}
+            size="small"
+          />
         </div>
         <div className="w-1/5">
-          <CustomTextInput control={control} name="preferred_plc" readOnly label="Preferred PLC" size="small" />
+          <CustomTextInput
+            control={control}
+            name="preferred_plc"
+            readOnly
+            label="Preferred PLC"
+            size="small"
+          />
         </div>
       </div>
 
@@ -337,7 +387,7 @@ const MakeOfComponent = ({
         </Button>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default MakeOfComponent
+export default MakeOfComponent;

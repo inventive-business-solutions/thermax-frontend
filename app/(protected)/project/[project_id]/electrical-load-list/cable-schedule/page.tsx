@@ -1,5 +1,4 @@
-import { getLatestCableScheduleRevision, getLatestLoadlistRevision } from "actions/electrical-load-list"
-import CableScheduleComponent from "components/Project Management/Electrical Load List/Cable Schedule/CableScheduleComponent"
+import { getLatestCableScheduleRevision, getLatestLoadlistRevision } from "@/actions/electrical-load-list"
 
 export default async function CableSchedule({ params }: { params: { project_id: string } }) {
   const loadListRevisionData = await getLatestLoadlistRevision(params.project_id)

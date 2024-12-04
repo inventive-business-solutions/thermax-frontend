@@ -1,60 +1,68 @@
-"use client"
+"use client";
 
-import { DeleteOutlined, EditOutlined, SyncOutlined, UserAddOutlined } from "@ant-design/icons"
-import { Button, message, Popconfirm, Table, Tooltip } from "antd"
-import { ColumnsType } from "antd/es/table"
-import { useEffect, useState } from "react"
-import { mutate } from "swr"
-import { THERMAX_USER_API, USER_API } from "configs/api-endpoints"
-import { useGetData } from "hooks/useCRUD"
-import { useLoading } from "hooks/useLoading"
-import { changeNameToKey, mergeLists } from "utils/helpers"
-import UserFormModal from "./UserModal"
-import { deleteUser } from "actions/user-actions"
+import { deleteUser } from "@/actions/user-actions";
+import { THERMAX_USER_API, USER_API } from "@/configs/api-endpoints";
+import { useGetData } from "@/hooks/useCRUD";
+import { useLoading } from "@/hooks/useLoading";
+import { mergeLists, changeNameToKey } from "@/utils/helpers";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SyncOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
+import { Button, message, Popconfirm, Table, Tooltip } from "antd";
+import { ColumnsType } from "antd/es/table";
+import { useEffect, useState } from "react";
+import { mutate } from "swr";
+import UserFormModal from "./UserModal";
 
 interface DataType {
-  key: string
-  first_name?: string
-  last_name?: string
-  division: string
-  creation: string
-  modified: string
+  key: string;
+  first_name?: string;
+  last_name?: string;
+  division: string;
+  creation: string;
+  modified: string;
 }
 
 export const UserList = ({ userInfo }: any) => {
-  const [open, setOpen] = useState(false)
-  const [editMode, setEditMode] = useState(false)
-  const [userRow, setUserRow] = useState<any>(null)
-  const [editEventTrigger, setEditEventTrigger] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [userRow, setUserRow] = useState<any>(null);
+  const [editEventTrigger, setEditEventTrigger] = useState(false);
 
-  const thermaxUserUrl = `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`
-  const { data: thermaxUserList } = useGetData(thermaxUserUrl)
-  const { data: userList } = useGetData(`${USER_API}?fields=["*"]`)
-  const mergedList = mergeLists([thermaxUserList, userList], [{ fromKey: "name", toKey: "name" }])
-  const { setLoading: setModalLoading } = useLoading()
+  const thermaxUserUrl = `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"]]`;
+  const { data: thermaxUserList } = useGetData(thermaxUserUrl);
+  const { data: userList } = useGetData(`${USER_API}?fields=["*"]`);
+  const mergedList = mergeLists(
+    [thermaxUserList, userList],
+    [{ fromKey: "name", toKey: "name" }]
+  );
+  const { setLoading: setModalLoading } = useLoading();
   useEffect(() => {
-    setModalLoading(false)
+    setModalLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const handleEdit = (selectedRow: any) => {
-    setEditEventTrigger(!editEventTrigger)
-    setEditMode(true)
-    setUserRow(selectedRow)
-    setOpen(true)
-  }
+    setEditEventTrigger(!editEventTrigger);
+    setEditMode(true);
+    setUserRow(selectedRow);
+    setOpen(true);
+  };
 
   const handleDelete = async (selectedRowID: string) => {
     try {
-      await deleteUser(selectedRowID)
-      message.success("User deleted successfully")
+      await deleteUser(selectedRowID);
+      message.success("User deleted successfully");
     } catch (error) {
-      message.error("Error deleting user")
-      console.error("Error deleting user", error)
+      message.error("Error deleting user");
+      console.error("Error deleting user", error);
     } finally {
-      mutate(thermaxUserUrl)
+      mutate(thermaxUserUrl);
     }
-  }
+  };
 
   const columns: ColumnsType<DataType> = [
     {
@@ -92,7 +100,12 @@ export const UserList = ({ userInfo }: any) => {
           <div className="flex justify-center gap-2">
             <Tooltip placement="top" title="Edit">
               <div className="rounded-full hover:bg-blue-100">
-                <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+                <Button
+                  type="link"
+                  shape="circle"
+                  icon={<EditOutlined />}
+                  onClick={() => handleEdit(record)}
+                />
               </div>
             </Tooltip>
 
@@ -110,23 +123,26 @@ export const UserList = ({ userInfo }: any) => {
                     shape="circle"
                     icon={<DeleteOutlined />}
                     danger
-                    disabled={record.key === userInfo?.email || record.is_superuser === 1}
+                    disabled={
+                      record.key === userInfo?.email ||
+                      record.is_superuser === 1
+                    }
                   />
                 </div>
               </Popconfirm>
             </Tooltip>
           </div>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const handleAdd = () => {
-    setEditEventTrigger(!editEventTrigger)
-    setOpen(true)
-    setEditMode(false)
-    setUserRow(null)
-  }
+    setEditEventTrigger(!editEventTrigger);
+    setOpen(true);
+    setEditMode(false);
+    setUserRow(null);
+  };
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
@@ -135,17 +151,32 @@ export const UserList = ({ userInfo }: any) => {
         <div className="flex gap-3">
           <Tooltip title="Refresh">
             <div className="rounded-full hover:bg-blue-100">
-              <Button type="link" shape="circle" icon={<SyncOutlined />} onClick={() => mutate(thermaxUserUrl)} />
+              <Button
+                type="link"
+                shape="circle"
+                icon={<SyncOutlined />}
+                onClick={() => mutate(thermaxUserUrl)}
+              />
             </div>
           </Tooltip>
-          <Button type="primary" icon={<UserAddOutlined />} iconPosition={"start"} onClick={handleAdd}>
+          <Button
+            type="primary"
+            icon={<UserAddOutlined />}
+            iconPosition={"start"}
+            onClick={handleAdd}
+          >
             New User
           </Button>
         </div>
       </div>
 
       <div className="shadow-md">
-        <Table columns={columns} dataSource={changeNameToKey(mergedList)} pagination={{ size: "small" }} size="small" />
+        <Table
+          columns={columns}
+          dataSource={changeNameToKey(mergedList)}
+          pagination={{ size: "small" }}
+          size="small"
+        />
       </div>
 
       <UserFormModal
@@ -157,5 +188,5 @@ export const UserList = ({ userInfo }: any) => {
         userInfo={userInfo}
       />
     </div>
-  )
-}
+  );
+};

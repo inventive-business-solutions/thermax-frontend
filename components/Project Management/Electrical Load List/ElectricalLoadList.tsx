@@ -1,48 +1,55 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from "react"
-import Download from "./Download"
-import MotorCanopyList from "./MotorCanopyList"
-import { useLoading } from "hooks/useLoading"
-import LoadList from "./Electrical Load List/LoadListComponent"
-import CableSchedule from "./Cable Schedule/CableScheduleComponent"
+import React, { useEffect, useState } from "react";
+import Download from "./Download";
+import MotorCanopyList from "./MotorCanopyList";
+import LoadList from "./Electrical Load List/LoadListComponent";
+import { useLoading } from "@/hooks/useLoading";
 
 const tabData = [
   { label: "Download", key: 1 },
   { label: "Electrical Load List", key: 2 },
   { label: "Cable Schedule", key: 3 },
   { label: "Motor Canopy List", key: 4 },
-]
+];
 
 const ElectricalLoadList = ({
   revision_id,
   loadListLatestRevisionId,
 }: {
-  revision_id: string
-  loadListLatestRevisionId: string
+  revision_id: string;
+  loadListLatestRevisionId: string;
 }) => {
-  const [openTab, setOpenTab] = useState<number>(2)
-  const { setLoading: setModalLoading } = useLoading()
+  const [openTab, setOpenTab] = useState<number>(2);
+  const { setLoading: setModalLoading } = useLoading();
 
   useEffect(() => {
-    setModalLoading(false)
+    setModalLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   return (
     <>
       <div className="m-4 flex flex-wrap">
         <div className="w-full">
-          <ul className="mb-0 flex list-none flex-row flex-wrap pb-4 pt-3" role="tablist">
+          <ul
+            className="mb-0 flex list-none flex-row flex-wrap pb-4 pt-3"
+            role="tablist"
+          >
             {tabData.map((tab) => (
-              <li key={tab.key} className="-mb-px mr-2 flex-auto text-center last:mr-0">
+              <li
+                key={tab.key}
+                className="-mb-px mr-2 flex-auto text-center last:mr-0"
+              >
                 <a
                   className={`block rounded border px-5 py-3 text-xs font-bold uppercase leading-normal shadow-lg ${
-                    openTab === tab.key ? "bg-primary-600 text-white" : "bg-white text-primary-600"
+                    openTab === tab.key
+                      ? "bg-primary-600 text-white"
+                      : "bg-white text-primary-600"
                   }`}
                   onClick={(e) => {
-                    e.preventDefault()
-                    setOpenTab(tab.key)
+                    e.preventDefault();
+                    setOpenTab(tab.key);
                   }}
                   data-toggle="tab"
                   href={`#link${tab.key}`}
@@ -82,7 +89,7 @@ const ElectricalLoadList = ({
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ElectricalLoadList
+export default ElectricalLoadList;

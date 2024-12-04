@@ -1,4 +1,11 @@
-"use client"
+"use client";
+import { updateData } from "@/actions/crud-actions";
+import { deleteProject } from "@/actions/project";
+import { PROJECT_API } from "@/configs/api-endpoints";
+import { TagColors } from "@/configs/constants";
+import { useGetData } from "@/hooks/useCRUD";
+import { useLoading } from "@/hooks/useLoading";
+import { getThermaxDateFormat } from "@/utils/helpers";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -6,86 +13,86 @@ import {
   FolderAddOutlined,
   SyncOutlined,
   UploadOutlined,
-} from "@ant-design/icons"
-import { Button, Input, Popconfirm, Table, Tag, Tooltip } from "antd"
-import type { ColumnsType } from "antd/es/table"
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { mutate } from "swr"
-import { updateData } from "actions/crud-actions"
-import { PROJECT_API } from "configs/api-endpoints"
-import { useGetData } from "hooks/useCRUD"
-import { useLoading } from "hooks/useLoading"
-import ProjectFormModal from "./ProjectFormModal"
-import { UploadProjectFilesModal } from "./UploadProjectFilesModal"
-import { getThermaxDateFormat } from "utils/helpers"
-import { deleteProject } from "actions/project"
-import { TagColors } from "configs/constants"
+} from "@ant-design/icons";
+import { Button, Input, message, Popconfirm, Table, Tag, Tooltip } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { mutate } from "swr";
+import ProjectFormModal from "./ProjectFormModal";
+import { UploadProjectFilesModal } from "./UploadProjectFilesModal";
 
 interface DataType {
-  key: string
-  name?: string
-  project_oc_number: string
-  client_name: string
-  project_name: string
-  creation: string
-  modified: string
+  key: string;
+  name?: string;
+  project_oc_number: string;
+  client_name: string;
+  project_name: string;
+  creation: string;
+  modified: string;
 }
 
-const { Search } = Input
+const { Search } = Input;
 
 const changeNameToKey = (projectList: any[]) => {
-  if (!projectList) return []
+  if (!projectList) return [];
   projectList.forEach((project) => {
-    project.key = project.name
-  })
-  return projectList
-}
+    project.key = project.name;
+  });
+  return projectList;
+};
 
 export default function ProjectList({ userInfo, isComplete }: any) {
-  const [open, setOpen] = useState(false)
-  const [uploadFileOpen, setUploadFileOpen] = useState(false)
-  const [editMode, setEditMode] = useState(false)
-  const [projectRow, setProjectRow] = useState<any>(null)
-  const [projectListData, setProjectListData] = useState<any>([])
-  const [searchQuery, setSearchQuery] = useState("")
+  const [open, setOpen] = useState(false);
+  const [uploadFileOpen, setUploadFileOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [projectRow, setProjectRow] = useState<any>(null);
+  const [projectListData, setProjectListData] = useState<any>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  let getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
+  let getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["division", "=",  "${userInfo?.division}"], ["is_complete", "=", "${isComplete}"]]&order_by=creation desc`;
   if (userInfo.is_superuser) {
-    getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
+    getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`;
   }
-  let { data: projectList, isLoading } = useGetData(getProjectUrl)
-
-  console.log("projectList", projectList)
+  const { data: projectList, isLoading } = useGetData(getProjectUrl);
 
   if (projectList) {
     projectList.sort((a: any, b: any) => {
-      if (a.division === userInfo?.division && b.division !== userInfo?.division) {
-        return -1 // Place 'a' before 'b'
+      if (
+        a.division === userInfo?.division &&
+        b.division !== userInfo?.division
+      ) {
+        return -1; // Place 'a' before 'b'
       }
-      if (a.division !== userInfo?.division && b.division === userInfo?.division) {
-        return 1 // Place 'b' before 'a'
+      if (
+        a.division !== userInfo?.division &&
+        b.division === userInfo?.division
+      ) {
+        return 1; // Place 'b' before 'a'
       }
-      return 0 // No change in order if both are from the same division
-    })
+      return 0; // No change in order if both are from the same division
+    });
   }
 
   const projectOCNos = projectList?.map(
-    (project: any) => project.division === userInfo?.division && project.project_oc_number
-  )
-  const { setLoading: setModalLoading } = useLoading()
+    (project: any) =>
+      project.division === userInfo?.division && project.project_oc_number
+  );
+  const { setLoading: setModalLoading } = useLoading();
   useEffect(() => {
-    setModalLoading(false)
+    setModalLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
     const filteredList = projectList?.filter((project: any) =>
-      Object.values(project).some((value) => String(value).toLowerCase().includes(searchQuery.toLowerCase()))
-    )
-    setProjectListData(filteredList)
+      Object.values(project).some((value) =>
+        String(value).toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+    setProjectListData(filteredList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectList, searchQuery])
+  }, [projectList, searchQuery]);
 
   const columns: ColumnsType<DataType> = [
     {
@@ -94,7 +101,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       key: "division",
       hidden: !userInfo.is_superuser,
       render: (text: keyof typeof TagColors) => {
-        return <Tag color={TagColors[text]}>{text}</Tag>
+        return <Tag color={TagColors[text]}>{text}</Tag>;
       },
     },
     {
@@ -102,14 +109,14 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       dataIndex: "project_oc_number",
       key: "project_oc_number",
       render: (text) => {
-        return <div className="text-center">{text}</div>
+        return <div className="text-center">{text}</div>;
       },
     },
     {
       title: () => <div className="text-center">Client Name</div>,
       dataIndex: "client_name",
       render: (text) => {
-        return <div className="text-center">{text}</div>
+        return <div className="text-center">{text}</div>;
       },
     },
     {
@@ -134,9 +141,9 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       key: "creation",
       align: "center",
       render: (text) => {
-        const date = new Date(text)
-        const stringDate = getThermaxDateFormat(date)
-        return stringDate
+        const date = new Date(text);
+        const stringDate = getThermaxDateFormat(date);
+        return stringDate;
       },
     },
     {
@@ -145,9 +152,9 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       key: "modified",
       align: "center",
       render: (text) => {
-        const date = new Date(text)
-        const stringDate = getThermaxDateFormat(date)
-        return stringDate
+        const date = new Date(text);
+        const stringDate = getThermaxDateFormat(date);
+        return stringDate;
       },
     },
     {
@@ -155,7 +162,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       dataIndex: "owner",
       key: "owner",
       render: (text) => {
-        return <div className="text-center">{text}</div>
+        return <div className="text-center">{text}</div>;
       },
     },
     {
@@ -172,10 +179,20 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       render: (text, record: any) => (
         <div className="flex justify-center gap-2">
           <Tooltip placement="top" title="Edit">
-            <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEditProject(record)} />
+            <Button
+              type="link"
+              shape="circle"
+              icon={<EditOutlined />}
+              onClick={() => handleEditProject(record)}
+            />
           </Tooltip>
           <Tooltip placement="top" title="Upload Files">
-            <Button type="link" shape="circle" icon={<UploadOutlined />} onClick={() => handleUploadFiles(record)} />
+            <Button
+              type="link"
+              shape="circle"
+              icon={<UploadOutlined />}
+              onClick={() => handleUploadFiles(record)}
+            />
           </Tooltip>
           {Boolean(userInfo.is_superuser) && (
             <>
@@ -187,7 +204,11 @@ export default function ProjectList({ userInfo, isComplete }: any) {
                   cancelText="No"
                   placement="topRight"
                 >
-                  <Button type="link" shape="circle" icon={<FileDoneOutlined />} />
+                  <Button
+                    type="link"
+                    shape="circle"
+                    icon={<FileDoneOutlined />}
+                  />
                 </Popconfirm>
               </Tooltip>
               <Tooltip placement="top" title="Delete">
@@ -198,7 +219,12 @@ export default function ProjectList({ userInfo, isComplete }: any) {
                   cancelText="No"
                   placement="topRight"
                 >
-                  <Button type="link" shape="circle" icon={<DeleteOutlined />} danger />
+                  <Button
+                    type="link"
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                    danger
+                  />
                 </Popconfirm>
               </Tooltip>
             </>
@@ -206,38 +232,44 @@ export default function ProjectList({ userInfo, isComplete }: any) {
         </div>
       ),
     },
-  ]
+  ];
 
   const handleAddProject = () => {
-    setOpen(true)
-    setEditMode(false)
-    setProjectRow(null)
-  }
+    setOpen(true);
+    setEditMode(false);
+    setProjectRow(null);
+  };
 
   const handleEditProject = (selectedRow: any) => {
-    setOpen(true)
-    setEditMode(true)
-    setProjectRow(selectedRow)
-  }
+    setOpen(true);
+    setEditMode(true);
+    setProjectRow(selectedRow);
+  };
 
   const handleUploadFiles = (selectedRow: any) => {
-    setUploadFileOpen(true)
-    setProjectRow(selectedRow)
-  }
+    setUploadFileOpen(true);
+    setProjectRow(selectedRow);
+  };
 
   const handleDeleteProject = async (selectedRowID: string) => {
     try {
-      await deleteProject(selectedRowID)
+      await deleteProject(selectedRowID);
     } catch (error) {
-      console.error("Error deleting project", error)
+      message.error(`Error deleting project: ${error}`);
+      console.error("Error deleting project", error);
     }
-    mutate(getProjectUrl)
-  }
+    mutate(getProjectUrl);
+  };
 
-  const handleCompleteProject = async (selectedRow: { name: string; is_complete: boolean }) => {
-    await updateData(`${PROJECT_API}/${selectedRow?.name}`, false, { is_complete: !selectedRow?.is_complete })
-    mutate(getProjectUrl)
-  }
+  const handleCompleteProject = async (selectedRow: {
+    name: string;
+    is_complete: boolean;
+  }) => {
+    await updateData(`${PROJECT_API}/${selectedRow?.name}`, false, {
+      is_complete: !selectedRow?.is_complete,
+    });
+    mutate(getProjectUrl);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -251,7 +283,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
             enterButton
             allowClear
             onChange={(e) => {
-              setSearchQuery(e.target.value)
+              setSearchQuery(e.target.value);
             }}
           />
         </div>
@@ -267,7 +299,12 @@ export default function ProjectList({ userInfo, isComplete }: any) {
             </div>
           </Tooltip>
           {!(isComplete === 1) && (
-            <Button type="primary" icon={<FolderAddOutlined />} iconPosition={"end"} onClick={handleAddProject}>
+            <Button
+              type="primary"
+              icon={<FolderAddOutlined />}
+              iconPosition={"end"}
+              onClick={handleAddProject}
+            >
               Add Project
             </Button>
           )}
@@ -298,5 +335,5 @@ export default function ProjectList({ userInfo, isComplete }: any) {
         userInfo={userInfo}
       />
     </div>
-  )
+  );
 }

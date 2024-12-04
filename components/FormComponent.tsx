@@ -1,21 +1,22 @@
-"use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "antd"
-import { SubmitHandler, useForm } from "react-hook-form"
-import * as zod from "zod"
-import CustomCheckBoxGroup from "components/FormInputs/CustomCheckBoxGroup"
-import CustomDateInput from "components/FormInputs/CustomDate"
-import CustomTextInput from "components/FormInputs/CustomInput"
-import CustomInputNumber from "components/FormInputs/CustomInputNumber"
-import CustomMultiSelect from "components/FormInputs/CustomMultiSelect"
-import CustomOTPInput from "components/FormInputs/CustomOTPInput"
-import CustomPasswordInput from "components/FormInputs/CustomPasswordInput"
-import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import CustomSwitch from "components/FormInputs/CustomSwitch"
-import CustomTreeSelect from "components/FormInputs/CustomTreeSelect"
-import CustomUpload from "components/FormInputs/CustomUpload"
-import CustomDateRangeInput from "./FormInputs/CustomDateRangePicker"
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "antd";
+import { SubmitHandler, useForm } from "react-hook-form";
+import * as zod from "zod";
+
+import CustomDateRangeInput from "./FormInputs/CustomDateRangePicker";
+import CustomCheckBoxGroup from "./FormInputs/CustomCheckBoxGroup";
+import CustomDateInput from "./FormInputs/CustomDate";
+import CustomTextInput from "./FormInputs/CustomInput";
+import CustomInputNumber from "./FormInputs/CustomInputNumber";
+import CustomMultiSelect from "./FormInputs/CustomMultiSelect";
+import CustomOTPInput from "./FormInputs/CustomOTPInput";
+import CustomPasswordInput from "./FormInputs/CustomPasswordInput";
+import CustomRadioSelect from "./FormInputs/CustomRadioSelect";
+import CustomSingleSelect from "./FormInputs/CustomSingleSelect";
+import CustomSwitch from "./FormInputs/CustomSwitch";
+import CustomTreeSelect from "./FormInputs/CustomTreeSelect";
+import CustomUpload from "./FormInputs/CustomUpload";
 
 const customValidationSchema = zod
   .object({
@@ -36,14 +37,22 @@ const customValidationSchema = zod
     password: zod.string(),
     password_confirmation: zod.string(),
   })
-  .refine((fieldsData) => fieldsData.password === fieldsData.password_confirmation, {
-    message: "Passwords don't match",
-    path: ["password_confirmation"],
-  })
-  .refine((fieldsData) => fieldsData.mobile.length === 10 && fieldsData.mobile.match(/^[0-9]+$/) !== null, {
-    message: "Mobile number must be numeric",
-    path: ["mobile"],
-  })
+  .refine(
+    (fieldsData) => fieldsData.password === fieldsData.password_confirmation,
+    {
+      message: "Passwords don't match",
+      path: ["password_confirmation"],
+    }
+  )
+  .refine(
+    (fieldsData) =>
+      fieldsData.mobile.length === 10 &&
+      fieldsData.mobile.match(/^[0-9]+$/) !== null,
+    {
+      message: "Mobile number must be numeric",
+      path: ["mobile"],
+    }
+  );
 
 export default function MyCustomForm() {
   const { control, handleSubmit } = useForm({
@@ -67,20 +76,41 @@ export default function MyCustomForm() {
       treeSelect: [],
     },
     mode: "onBlur",
-  })
-  const onSubmit: SubmitHandler<zod.infer<typeof customValidationSchema>> = (data) => {
-    console.log(data)
-  }
+  });
+  const onSubmit: SubmitHandler<zod.infer<typeof customValidationSchema>> = (
+    data
+  ) => {
+    console.log(data);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-      <CustomTextInput name="name" control={control} label="Add your name" addonBefore="http://" addonAfter=".com" />
-      <CustomTextInput name="email" control={control} label="Email" type="email" />
+      <CustomTextInput
+        name="name"
+        control={control}
+        label="Add your name"
+        addonBefore="http://"
+        addonAfter=".com"
+      />
+      <CustomTextInput
+        name="email"
+        control={control}
+        label="Email"
+        type="email"
+      />
       <CustomPasswordInput name="password" control={control} label="Password" />
-      <CustomPasswordInput name="password_confirmation" control={control} label="Confirm password" />
+      <CustomPasswordInput
+        name="password_confirmation"
+        control={control}
+        label="Confirm password"
+      />
       <CustomInputNumber name="age" control={control} label="Add your age" />
       <CustomDateInput name="date" control={control} label="Date" />
-      <CustomDateRangeInput name="dateRange" control={control} label="Date Range" />
+      <CustomDateRangeInput
+        name="dateRange"
+        control={control}
+        label="Date Range"
+      />
       <CustomTextInput
         name="mobile"
         control={control}
@@ -145,7 +175,11 @@ export default function MyCustomForm() {
           },
         ]}
       />
-      <CustomUpload name="upload" control={control} uploadButtonLabel="Upload" />
+      <CustomUpload
+        name="upload"
+        control={control}
+        uploadButtonLabel="Upload"
+      />
       <CustomCheckBoxGroup
         name="checkboxInput"
         control={control}
@@ -199,9 +233,9 @@ export default function MyCustomForm() {
         ]}
       />
 
-      <Button type="primary"  htmlType="submit">
+      <Button type="primary" htmlType="submit">
         Submit
       </Button>
     </form>
-  )
+  );
 }

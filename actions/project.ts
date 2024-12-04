@@ -1,27 +1,7 @@
 "use server"
 
-import {
-  PROJECT_INFO_API,
-  STATIC_DOCUMENT_API,
-  DESIGN_BASIS_REVISION_HISTORY_API,
-  DESIGN_BASIS_GENERAL_INFO_API,
-  PROJECT_MAIN_PKG_API,
-  MOTOR_PARAMETER_API,
-  MAKE_OF_COMPONENT_API,
-  COMMON_CONFIGURATION,
-  MCC_PANEL,
-  PCC_PANEL,
-  MCC_PCC_PLC_PANEL_1,
-  MCC_PCC_PLC_PANEL_2,
-  CABLE_TRAY_LAYOUT,
-  LAYOUT_EARTHING,
-  PROJECT_PANEL_API,
-  DYNAMIC_DOCUMENT_API,
-  PROJECT_API,
-  APPROVER_EMAIL_NOTIFICATION_API,
-  ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
-  CABLE_SCHEDULE_REVISION_HISTORY_API,
-} from "configs/api-endpoints"
+
+import { PROJECT_API, PROJECT_INFO_API, STATIC_DOCUMENT_API, DESIGN_BASIS_REVISION_HISTORY_API, DESIGN_BASIS_GENERAL_INFO_API, MOTOR_PARAMETER_API, MAKE_OF_COMPONENT_API, COMMON_CONFIGURATION, CABLE_TRAY_LAYOUT, LAYOUT_EARTHING, ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, CABLE_SCHEDULE_REVISION_HISTORY_API, MOTOR_CANOPY_REVISION_HISTORY_API, MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, LBPS_SPECIFICATIONS_REVISION_HISTORY_API, LOCAL_ISOLATOR_REVISION_HISTORY_API, APPROVER_EMAIL_NOTIFICATION_API, PROJECT_MAIN_PKG_API, MCC_PANEL, PCC_PANEL, MCC_PCC_PLC_PANEL_1, MCC_PCC_PLC_PANEL_2, PROJECT_PANEL_API, DYNAMIC_DOCUMENT_API } from "@/configs/api-endpoints"
 import { createData, deleteData, getData } from "./crud-actions"
 
 export const createProject = async (projectData: any, userInfo: any) => {
@@ -44,10 +24,10 @@ export const createProject = async (projectData: any, userInfo: any) => {
 
     await createData(ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, false, { project_id })
     await createData(CABLE_SCHEDULE_REVISION_HISTORY_API, false, { project_id })
-    // await createData(MOTOR_CANOPY_REVISION_HISTORY_API, false, { project_id })
-    // await createData(MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, false, { project_id })
-    // await createData(LBPS_SPECIFICATIONS_REVISION_HISTORY_API, false, { project_id })
-    // await createData(LOCAL_ISOLATOR_REVISION_HISTORY_API, false, { project_id })
+    await createData(MOTOR_CANOPY_REVISION_HISTORY_API, false, { project_id })
+    await createData(MOTOR_SPECIFICATIONS_REVISION_HISTORY_API, false, { project_id })
+    await createData(LBPS_SPECIFICATIONS_REVISION_HISTORY_API, false, { project_id })
+    await createData(LOCAL_ISOLATOR_REVISION_HISTORY_API, false, { project_id })
 
     await createData(APPROVER_EMAIL_NOTIFICATION_API, false, {
       approvar_email: projectData?.approver,
@@ -217,41 +197,41 @@ export const deleteProject = async (project_id: string) => {
       await deleteData(`${CABLE_SCHEDULE_REVISION_HISTORY_API}/${revisionID}`, false)
     }
 
-    // const motorCanopyRevisionHistory = await getData(
-    //   `${MOTOR_CANOPY_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
-    // )
-    // for (const revision of motorCanopyRevisionHistory || []) {
-    //   const revisionID = revision.name
+    const motorCanopyRevisionHistory = await getData(
+      `${MOTOR_CANOPY_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    )
+    for (const revision of motorCanopyRevisionHistory || []) {
+      const revisionID = revision.name
 
-    //   await deleteData(`${MOTOR_CANOPY_REVISION_HISTORY_API}/${revisionID}`, false)
-    // }
+      await deleteData(`${MOTOR_CANOPY_REVISION_HISTORY_API}/${revisionID}`, false)
+    }
 
-    // const motorSpecificationsRevisionHistory = await getData(
-    //   `${MOTOR_SPECIFICATIONS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
-    // )
-    // for (const revision of motorSpecificationsRevisionHistory || []) {
-    //   const revisionID = revision.name
+    const motorSpecificationsRevisionHistory = await getData(
+      `${MOTOR_SPECIFICATIONS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    )
+    for (const revision of motorSpecificationsRevisionHistory || []) {
+      const revisionID = revision.name
 
-    //   await deleteData(`${MOTOR_SPECIFICATIONS_REVISION_HISTORY_API}/${revisionID}`, false)
-    // }
+      await deleteData(`${MOTOR_SPECIFICATIONS_REVISION_HISTORY_API}/${revisionID}`, false)
+    }
 
-    // const lbpsSpecificationsRevisionHistory = await getData(
-    //   `${LBPS_SPECIFICATIONS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
-    // )
-    // for (const revision of lbpsSpecificationsRevisionHistory || []) {
-    //   const revisionID = revision.name
+    const lbpsSpecificationsRevisionHistory = await getData(
+      `${LBPS_SPECIFICATIONS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    )
+    for (const revision of lbpsSpecificationsRevisionHistory || []) {
+      const revisionID = revision.name
 
-    //   await deleteData(`${LBPS_SPECIFICATIONS_REVISION_HISTORY_API}/${revisionID}`, false)
-    // }
+      await deleteData(`${LBPS_SPECIFICATIONS_REVISION_HISTORY_API}/${revisionID}`, false)
+    }
 
-    // const localIsolatorRevisionHistory = await getData(
-    //   `${LOCAL_ISOLATOR_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
-    // )
-    // for (const revision of localIsolatorRevisionHistory || []) {
-    //   const revisionID = revision.name
+    const localIsolatorRevisionHistory = await getData(
+      `${LOCAL_ISOLATOR_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]`
+    )
+    for (const revision of localIsolatorRevisionHistory || []) {
+      const revisionID = revision.name
 
-    //   await deleteData(`${LOCAL_ISOLATOR_REVISION_HISTORY_API}/${revisionID}`, false)
-    // }
+      await deleteData(`${LOCAL_ISOLATOR_REVISION_HISTORY_API}/${revisionID}`, false)
+    }
 
     await deleteData(`${PROJECT_API}/${project_id}`, false)
   } catch (error) {

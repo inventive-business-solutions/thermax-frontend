@@ -1,12 +1,17 @@
-import { getLatestDesignBasisRevision } from "actions/design-basis"
-import MainMCCPCC from "components/Project Management/Design Basis/MCC-PCC/Main"
+import { getLatestDesignBasisRevision } from "@/actions/design-basis";
+import MainMCCPCC from "@/components/Project Management/Design Basis/MCC-PCC/Main";
 
-export default async function MccPccPage({ params }: { params: { project_id: string } }) {
-  const data = await getLatestDesignBasisRevision(params.project_id)
+export default async function MccPccPage({
+  params,
+}: {
+  params: Promise<{ project_id: string }>;
+}) {
+  const project_id = (await params).project_id;
+  const data = await getLatestDesignBasisRevision(project_id);
 
   if (data && data.length > 0) {
-    return <MainMCCPCC revision_id={data[0]?.name} />
+    return <MainMCCPCC revision_id={data[0]?.name} />;
   } else {
-    return null
+    return null;
   }
 }

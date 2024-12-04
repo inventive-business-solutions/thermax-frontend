@@ -1,39 +1,31 @@
-"use client"
+"use client";
+import { getData } from "@/actions/crud-actions";
+import { releaseRevision } from "@/actions/design-basis_revision";
+import { CABLE_SCHEDULE_REVISION_HISTORY_API, ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API } from "@/configs/api-endpoints";
+import { DB_REVISION_STATUS } from "@/configs/constants";
+import { useGetData } from "@/hooks/useCRUD";
+import { useLoading } from "@/hooks/useLoading";
+import { getThermaxDateFormat } from "@/utils/helpers";
 import {
-  BellFilled,
   CloudDownloadOutlined,
-  CopyOutlined,
-  DownloadOutlined,
   ExportOutlined,
   FolderOpenOutlined,
   SyncOutlined,
 } from "@ant-design/icons"
-import { getData } from "actions/crud-actions"
-import { releaseRevision } from "actions/design-basis_revision"
-import { getLatestLoadlistRevision } from "actions/electrical-load-list"
 import { Button, message, Table, TableColumnsType, TableColumnType, Tabs, Tag, Tooltip } from "antd"
-import {
-  CABLE_SCHEDULE_REVISION_HISTORY_API,
-  DESIGN_BASIS_REVISION_HISTORY_API,
-  ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
-} from "configs/api-endpoints"
-import { DB_REVISION_STATUS } from "configs/constants"
-import { useGetData } from "hooks/useCRUD"
-import { useLoading } from "hooks/useLoading"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
-import { getThermaxDateFormat } from "utils/helpers"
 
 interface TableDataType {
-  key: React.Key
-  documentName: React.ReactNode
-  status: string
-  documentRevision: string
-  createdDate: string
-  action: React.ReactNode
-  download: React.ReactNode
-  release: React.ReactNode
+  key: React.Key;
+  documentName: React.ReactNode;
+  status: string;
+  documentRevision: string;
+  createdDate: string;
+  action: React.ReactNode;
+  download: React.ReactNode;
+  release: React.ReactNode;
 }
 
 const columns: TableColumnType<TableDataType>[] = [
@@ -44,17 +36,19 @@ const columns: TableColumnType<TableDataType>[] = [
   { title: "Action", dataIndex: "action" },
   { title: "Download", dataIndex: "download", align: "left" },
   { title: "Release", dataIndex: "release" },
-]
+];
 
 const DownloadTable = ({ dataSource }: { dataSource: TableDataType[] }) => {
-  return <Table columns={columns} dataSource={dataSource} pagination={false} />
-}
+  return <Table columns={columns} dataSource={dataSource} pagination={false} />;
+};
 
 const Download: React.FC = () => {
-  const { setLoading: setModalLoading } = useLoading()
-  const router = useRouter()
-  const [downloadIconSpin, setDownloadIconSpin] = useState(false)
-  const [submitIconSpin, setSubmitIconSpin] = useState(false)
+  const { setLoading: setModalLoading } = useLoading();
+  const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [downloadIconSpin, setDownloadIconSpin] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [submitIconSpin, setSubmitIconSpin] = useState(false);
 
   const params = useParams()
   const project_id = params.project_id as string
@@ -78,25 +72,29 @@ const Download: React.FC = () => {
     }
   }, [revisionHistory])
 
-  console.log(revisionHistory, "revisionHistory")
+  console.log(revisionHistory, "revisionHistory");
 
-  const handleDownload = async (revision_id: string) => {}
+  const handleDownload = async (revision_id: string) => {
+    setDownloadIconSpin(true);
+    console.log(revision_id, "revision_id");
+    setDownloadIconSpin(false);
+  };
 
   const handleRelease = async (revision_id: string) => {
-    setModalLoading(true)
+    setModalLoading(true);
     try {
-      await releaseRevision(project_id, revision_id)
-      mutate(dbLoadlistHistoryUrl)
-      message.success("Load list revision is released and locked")
+      await releaseRevision(project_id, revision_id);
+      mutate(dbLoadlistHistoryUrl);
+      message.success("Load list revision is released and locked");
     } catch (error) {
-      console.error(error)
+      console.error(error);
     } finally {
-      setModalLoading(false)
+      setModalLoading(false);
     }
-  }
+  };
   // const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
-    setModalLoading(false)
+    setModalLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const getColumns = (tab: string) => {
@@ -203,7 +201,10 @@ const Download: React.FC = () => {
       children: (
         <>
           <div className="text-end">
-            <Button icon={<SyncOutlined color="#492971" />} onClick={() => mutate(dbLoadlistHistoryUrl)}>
+            <Button
+              icon={<SyncOutlined color="#492971" />}
+              onClick={() => mutate(dbLoadlistHistoryUrl)}
+            >
               {" "}
               Refresh
             </Button>
@@ -311,7 +312,7 @@ const Download: React.FC = () => {
     <>
       <Tabs onChange={onChange} type="card" items={DownloadTabs} />
     </>
-  )
-}
+  );
+};
 
-export default Download
+export default Download;

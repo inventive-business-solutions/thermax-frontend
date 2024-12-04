@@ -1,4 +1,4 @@
-import { ENVIRO, HEATING } from "configs/constants"
+import { ENVIRO, HEATING } from "@/configs/constants"
 
 export const LoadListcolumns = (division: string) => {
   return [

@@ -29,9 +29,10 @@ export const DESIGN_BASIS_REVISION_HISTORY_API = `/document/Design Basis Revisio
 export const ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API = `/document/Load List Revisions`
 export const CABLE_SCHEDULE_REVISION_HISTORY_API = `/document/Cable Schedule Revisions`
 export const MOTOR_CANOPY_REVISION_HISTORY_API = `/document/Motor Canopy Revisions`
-export const MOTOR_SPECIFICATIONS_REVISION_HISTORY_API = `/document/Motor Specifications Revision History`
-export const LBPS_SPECIFICATIONS_REVISION_HISTORY_API = `/document/LBPS Specifications Revision History`
-export const LOCAL_ISOLATOR_REVISION_HISTORY_API = `/document/Local Isolator Revision History`
+export const MOTOR_SPECIFICATIONS_REVISION_HISTORY_API = `/document/Motor Specification Revisions
+`
+export const LBPS_SPECIFICATIONS_REVISION_HISTORY_API = `/document/LPBS Specification Revisions`
+export const LOCAL_ISOLATOR_REVISION_HISTORY_API = `/document/Local Isolator Revisions`
 
 // Motor Parameters API Endpoints
 export const MOTOR_PARAMETER_API = `/document/Design Basis Motor Parameters`
@@ -96,7 +97,7 @@ export const CONTROL_WIRING_SIZE = `/document/Control Wiring Size`
 export const VDC_24_WIRING_COLOR = `/document/VDC 24 Wiring Color`
 export const VDC_24_WIRING_SIZE = `/document/VDC 24 Wiring Size`
 export const ANALOG_SIGNAL_WIRING_COLOR = `/document/Analog Signal Wiring Color`
-export const ANALOG_SIGNAL_WIRING_LENGTH = `/document/Analog Signal Wiring Size`
+export const ANALOG_SIGNAL_WIRING_SIZE = `/document/Analog Signal Wiring Size`
 export const CT_WIRING_COLOR = `/document/CT Wiring Color`
 export const CT_WIRING_SIZE = `/document/CT Wiring Size`
 export const CABLE_WIRING_PVC = `/document/Cable Insulation PVC`
