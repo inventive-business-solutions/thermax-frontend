@@ -2,7 +2,13 @@
 
 import { DB_REVISION_STATUS, HEATING, LOAD_LIST_REVISION_STATUS } from "configs/constants"
 import { getData } from "./crud-actions"
-import { CABLE_SIZE_HEATING_API, ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, HEATING_SWITCHGEAR_HEATER_API } from "configs/api-endpoints"
+import {
+  CABLE_SCHEDULE_REVISION_HISTORY_API,
+  CABLE_SIZE_HEATING_API,
+  ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
+  HEATING_SWITCHGEAR_HEATER_API,
+  MOTOR_CANOPY_REVISION_HISTORY_API,
+} from "configs/api-endpoints"
 
 export const getCurrentCalculation = async (loadListData: any) => {
   const division = loadListData.divisionName
@@ -65,13 +71,12 @@ export const getCurrentCalculation = async (loadListData: any) => {
 
     return {
       ...item,
-      motorRatedCurrent : current.toFixed(2),
+      motorRatedCurrent: current.toFixed(2),
     }
   })
 
   return calculatedData
 }
-
 
 export const getLatestLoadlistRevision = async (projectId: string) => {
   const dbRevisionData = await getData(
@@ -83,9 +88,17 @@ export const getLatestLoadlistRevision = async (projectId: string) => {
 
 export const getLatestCableScheduleRevision = async (projectId: string) => {
   const dbRevisionData = await getData(
-    `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${projectId}"], ["status", "in", ["${LOAD_LIST_REVISION_STATUS.NotReleased}"]]]&fields=["*"]&order_by=creation desc`
+    `${CABLE_SCHEDULE_REVISION_HISTORY_API}?filters=[["project_id", "=", "${projectId}"], ["status", "in", ["${LOAD_LIST_REVISION_STATUS.NotReleased}"]]]&fields=["*"]&order_by=creation desc`
   )
+  console.log(dbRevisionData)
 
   return dbRevisionData
 }
+export const getLatestMotorCanopyRevision = async (projectId: string) => {
+  const dbRevisionData = await getData(
+    `${MOTOR_CANOPY_REVISION_HISTORY_API}?filters=[["project_id", "=", "${projectId}"], ["status", "in", ["${LOAD_LIST_REVISION_STATUS.NotReleased}"]]]&fields=["*"]&order_by=creation desc`
+  )
+  console.log(dbRevisionData)
 
+  return dbRevisionData
+}

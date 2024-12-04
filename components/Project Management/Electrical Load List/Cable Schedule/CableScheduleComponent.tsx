@@ -239,12 +239,14 @@ import { ValidColumnType } from "../types"
 import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableConfig"
 import { CableSchedulecolumns, multicoreCableConfigColumns } from "../common/ExcelColumns"
 import "./CableScheduleComponent.css"
-import { getData } from "actions/crud-actions"
-import { ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API } from "configs/api-endpoints"
+import { getData, updateData } from "actions/crud-actions"
+import { CABLE_SCHEDULE_REVISION_HISTORY_API, ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API } from "configs/api-endpoints"
 import { useLoading } from "hooks/useLoading"
+import { useParams, useRouter } from "next/navigation"
 
 interface CableScheduleProps {
   loadListLatestRevisionId: string
+  cableScheduleRevisionId: string
 }
 
 const getArrayOfCableScheduleData = (data: any) => {
@@ -280,10 +282,28 @@ const getArrayOfCableScheduleData = (data: any) => {
     "",
   ])
 }
+const motorCanopyPayload = {
+  tag_number: "",
+  service_description: "",
+  qty: 0,
+  motor_rated_current: 0,
+  rpm: 0,
+  motor_mounting_type: "",
+  motor_frame_size: "",
+  motor_location: "",
+  moc: "",
+  canopy_model_number: "",
+  canopy_leg_length: "",
+  canopy_cut_out: "",
+  part_code: "",
+  motor_scope: "",
+  remark: "",
+}
 
-const useDataFetching = (loadListLatestRevisionId: string) => {
+const useDataFetching = (loadListLatestRevisionId: string, cableScheduleRevisionId: string) => {
   const [isLoading, setIsLoading] = useState(true)
   const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
+  const [cableScheduleSavedData, setCableScheduleSavedData] = useState<any[]>([])
   const [loadListData, setLoadListData] = useState<any[]>([])
   const fetchData = useCallback(async () => {
     if (!loadListLatestRevisionId) return
@@ -291,7 +311,10 @@ const useDataFetching = (loadListLatestRevisionId: string) => {
     try {
       setIsLoading(true)
       const loadList = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
+      const savedCableSchedule = await getData(`${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`)
       const formattedData = getArrayOfCableScheduleData(loadList)
+      console.log(savedCableSchedule, "savedCableSchedule")
+
       setLoadListData(loadList?.electrical_load_list_data)
       setCableScheduleData(formattedData)
     } catch (error) {
@@ -310,13 +333,21 @@ const useDataFetching = (loadListLatestRevisionId: string) => {
   return { cableScheduleData, loadListData, isLoading, refetch: fetchData }
 }
 
-const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId }) => {
+const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId, cableScheduleRevisionId }) => {
   const jRef = useRef<HTMLDivElement | null>(null)
   const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
   const { setLoading } = useLoading()
+  const params = useParams()
+  const router = useRouter()
+
+  const project_id = params.project_id as string
+
   const [isMulticoreModalOpen, setIsMulticoreModalOpen] = useState(false)
 
-  const { cableScheduleData, loadListData, isLoading, refetch } = useDataFetching(loadListLatestRevisionId)
+  const { cableScheduleData, loadListData, isLoading, refetch } = useDataFetching(
+    loadListLatestRevisionId,
+    cableScheduleRevisionId
+  )
 
   const typedCableScheduleColumns = useMemo(
     () =>
@@ -377,37 +408,63 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId 
     }
   }, [isLoading, cableScheduleOptions])
 
-  const handleCableScheduleSave = () => {
+  const handleCableScheduleSave = async () => {
     const data = spreadsheetInstance?.getData()
-    let payload = {
-      tag_number: "",
-      service_description: "",
-      working_kw: 0,
-      standby_kw: 0,
-      kva: 0,
-      starter_type: "",
-      supply_voltage: 0,
-      motor_rated_current: 0,
-      cable_material: "",
-      cos_running: 0,
-      cos_starting: 0,
-      resistance_mtr: 0,
-      ractance_mtr: 0,
-      apx_length: 0,
-      vd_running: 0,
-      vd_starting: 0,
-      percent_vd_at_running: 0,
-      percent_vd_at_starting: 0,
-      selected_cable_capacity_amp: 0,
-      derating_factor: 0,
-      final_capacity: 0,
-      no_of_runs: 0,
-      no_of_cores: "",
-      final_cable_size: "",
-      cable_selected_status: "",
-      cable_size_as_per_heating_chart: "",
-    }
+
     console.log(data, "all load list data")
+
+    let payload = {
+      project_id: project_id,
+      status: "Not Released",
+      description: "test",
+      cable_schedule_data: data?.map((row: any) => {
+        return {
+          tag_number: row[0],
+          service_description: row[1],
+          working_kw: Number(row[2]),
+          standby_kw: Number(row[3]),
+          kva: Number(row[4]),
+          starter_type: row[5],
+          supply_voltage: Number(row[6].split(" ")[0]),
+          motor_rated_current: Number(row[7]),
+          cable_material: row[8],
+          cos_running: Number(row[9]),
+          cos_starting: Number(row[10]),
+          resistance_meter: parseFloat(row[11]),
+          reactance_meter: parseFloat(row[12]),
+          apex_length: parseFloat(row[13]),
+          vd_running: parseFloat(row[14]),
+          vd_starting: parseFloat(row[15]),
+          percent_vd_running: parseFloat(row[16]),
+          percent_vd_starting: parseFloat(row[17]),
+          selected_cable_capacity_amp: parseFloat(row[18]),
+          derating_factor: Number(row[19]),
+          final_capacity: Number(row[20]),
+          number_of_runs: Number(row[21]),
+          no_of_cores: row[22],
+          final_cable_size: row[23],
+          cable_selected_status: row[24],
+          cable_size_as_per_heating_chart: row[25],
+        }
+      }),
+    }
+    try {
+      console.log(payload, "cable schedule payload")
+
+      const respose = await updateData(
+        `${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`,
+        false,
+        payload
+      )
+      setLoading(false)
+      message.success("Cable Schedule Saved !")
+
+      console.log(respose, "Cable Schedule response")
+    } catch (error) {
+      message.error("Unable to save Cable Schedule list")
+
+      setLoading(false)
+    }
     // Add your save logic here
   }
 
