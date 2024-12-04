@@ -253,14 +253,14 @@ const CommonConfiguration = ({
     }
   }, [local_push_button_station_is_Selected_controlled, setValue])
 
-  const is_push_button_speed_selected_controllded = watch("is_push_button_speed_selected")
+  // const is_push_button_speed_selected_controllded = watch("is_push_button_speed_selected")
 
-  useEffect(() => {
-    if (is_push_button_speed_selected_controllded === "0") {
-      setValue("speed_increase_pb", "NA")
-      setValue("speed_decrease_pb", "NA")
-    }
-  }, [is_push_button_speed_selected_controllded, setValue])
+  // useEffect(() => {
+  //   if (is_push_button_speed_selected_controllded === 0) {
+  //     setValue("speed_increase_pb", "NA")
+  //     setValue("speed_decrease_pb", "NA")
+  //   }
+  // }, [is_push_button_speed_selected_controllded, setValue])
 
   useEffect(() => {
     if (supply_feeder_standard_controlled === "IS") {
@@ -273,9 +273,9 @@ const CommonConfiguration = ({
   }, [setValue, supply_feeder_standard_controlled])
 
   const is_Ammeter_NA = watch("ammeter")
-  // const control_bus_material_controlled = watch("control_bus_material")
-  // const power_bus_material_controlled = watch("power_bus_material")
-  // const earth_bus_material_controlled = watch("earth_bus_material")
+  const control_bus_material_controlled = watch("control_bus_material")
+  const power_bus_material_controlled = watch("power_bus_material")
+  const earth_bus_material_controlled = watch("earth_bus_material")
 
   useEffect(() => {
     if (is_Ammeter_NA === "NA") {
@@ -284,43 +284,37 @@ const CommonConfiguration = ({
   }, [is_Ammeter_NA, setValue])
 
   // Control Bus (dependancy Logic)
-  // useEffect(() => {
-  //   if (control_bus_material_controlled === "Aluminium") {
-  //     setValue("control_bus_rating_of_busbar", "( Min -1R X 60 mm X 12 mm) for 50 KA")
-  //     setValue("control_bus_current_density", "0.8 A/Sq. mm")
-  //   } else if (control_bus_material_controlled === "Copper") {
-  //     setValue("control_bus_rating_of_busbar", "( Min - 1R X 40 mm X 10 mm )  ")
-  //     setValue("control_bus_current_density", "1.0 A/Sq. mm")
-  //   } else {
-  //     setValue("control_bus_current_density", "1.0 A/Sq. mm")
-  //   }
-  // }, [cb_current_density_options, control_bus_material_controlled, setValue])
+  useEffect(() => {
+    if (control_bus_material_controlled === "Aluminium") {
+      setValue("control_bus_current_density", "0.8 A/Sq. mm")
+    } else if (control_bus_material_controlled === "Copper") {
+      setValue("control_bus_current_density", "1.0 A/Sq. mm")
+    } else {
+      setValue("control_bus_current_density", "1.0 A/Sq. mm")
+    }
+  }, [cb_current_density_options, control_bus_material_controlled, setValue])
 
   // Power Bus (dependency logic)
-  // useEffect(() => {
-  //   if (power_bus_material_controlled === "Aluminium") {
-  //     setValue("power_bus_rating_of_busbar", "( Min -1R X 60 mm X 12 mm) for 50 KA")
-  //     setValue("power_bus_current_density", "0.8 A/Sq. mm")
-  //   } else if (power_bus_material_controlled === "Copper") {
-  //     setValue("power_bus_rating_of_busbar", "( Min - 1R X 40 mm X 10 mm )  ")
-  //     setValue("power_bus_current_density", "1.0 A/Sq. mm")
-  //   } else {
-  //     setValue("power_bus_current_density", "1.0 A/Sq. mm")
-  //   }
-  // }, [pb_current_density_options, power_bus_material_controlled, setValue])
+  useEffect(() => {
+    if (power_bus_material_controlled === "Aluminium") {
+      setValue("power_bus_current_density", "0.8 A/Sq. mm")
+    } else if (power_bus_material_controlled === "Copper") {
+      setValue("power_bus_current_density", "1.0 A/Sq. mm")
+    } else {
+      setValue("power_bus_current_density", "1.0 A/Sq. mm")
+    }
+  }, [pb_current_density_options, power_bus_material_controlled, setValue])
 
   // earth Bus (Dependency logic)
-  // useEffect(() => {
-  //   if (earth_bus_material_controlled === "Aluminium") {
-  //     setValue("earth_bus_rating_of_busbar", "( Min - 1R X 40 mm X 10 mm )")
-  //     setValue("earth_bus_current_density", "0.8 A/Sq. mm")
-  //   } else if (earth_bus_material_controlled === "Copper") {
-  //     setValue("earth_bus_rating_of_busbar", "( Min- 1R X 20 mm X 5 mm )")
-  //     setValue("earth_bus_current_density", "1.0 A/Sq. mm")
-  //   } else {
-  //     setValue("earth_bus_current_density", "1.0 A/Sq. mm")
-  //   }
-  // }, [earth_bus_material_controlled, eb_current_density_options, setValue])
+  useEffect(() => {
+    if (earth_bus_material_controlled === "Aluminium") {
+      setValue("earth_bus_current_density", "0.8 A/Sq. mm")
+    } else if (earth_bus_material_controlled === "Copper") {
+      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+    } else {
+      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+    }
+  }, [earth_bus_material_controlled, eb_current_density_options, setValue])
 
   const handleError = (error: any) => {
     try {
@@ -670,6 +664,8 @@ const CommonConfiguration = ({
               name="is_push_button_speed_selected"
               label="Speed"
               options={[
+                { label: "Yes", value: "1" },
+                { label: "No", value: "0" },
                 { label: "Yes", value: "1" },
                 { label: "No", value: "0" },
               ]}
