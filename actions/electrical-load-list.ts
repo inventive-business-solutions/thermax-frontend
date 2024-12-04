@@ -2,7 +2,12 @@
 
 import { DB_REVISION_STATUS, HEATING, LOAD_LIST_REVISION_STATUS } from "configs/constants"
 import { getData } from "./crud-actions"
-import { CABLE_SIZE_HEATING_API, ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API, HEATING_SWITCHGEAR_HEATER_API } from "configs/api-endpoints"
+import {
+  CABLE_SIZE_HEATING_API,
+  ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
+  HEATING_SWITCHGEAR_HEATER_API,
+  MOTOR_CANOPY_METADATA,
+} from "configs/api-endpoints"
 
 export const getCurrentCalculation = async (loadListData: any) => {
   const division = loadListData.divisionName
@@ -65,13 +70,12 @@ export const getCurrentCalculation = async (loadListData: any) => {
 
     return {
       ...item,
-      motorRatedCurrent : current.toFixed(2),
+      motorRatedCurrent: current.toFixed(2),
     }
   })
 
   return calculatedData
 }
-
 
 export const getLatestLoadlistRevision = async (projectId: string) => {
   const dbRevisionData = await getData(
@@ -81,3 +85,66 @@ export const getLatestLoadlistRevision = async (projectId: string) => {
   return dbRevisionData
 }
 
+export const getFrameSizeCalculation = async () => {
+  const loadListData = {
+    divisionName: "Enviro",
+    data: [
+      {
+        kw: 0.37,
+        speed: 3000,
+        mounting_type: "FLANGE MOUNTED (B5)",
+      },
+    ],
+  }
+  const division = loadListData.divisionName
+  const calcData = loadListData.data
+  const motorCanopyListMetadata = await getData(`${MOTOR_CANOPY_METADATA}?fields=["*"]&limit=1000`)
+  if (division === HEATING) {
+    return calcData
+  } else {
+    const calculatedData = calcData.map((item: any) => {
+      const kw = item.kw
+      const speed = item.speed
+      const moutingType = item.mounting_type
+
+      const filteredFrameSize = motorCanopyListMetadata.filter(
+        (data: any) => data.speed === speed && data.mounting_type === moutingType
+      )
+
+      if (filteredFrameSize.length === 0) {
+        // If no data is available, return empty frameSize
+        return {
+          ...item,
+          frameSize: "",
+        }
+      }
+
+      const filteredKWs = filteredFrameSize.map((data: any) => data.kw).sort((a: any, b: any) => a - b)
+
+      const sameSizeKw = filteredFrameSize.find((data: any) => data.kw === kw)
+      if (sameSizeKw) {
+        return {
+          ...item,
+          frameSize: sameSizeKw.frame_size,
+        }
+      }
+
+      const nextHigherKw = filteredKWs.find((value: number) => value > kw)
+
+      if (nextHigherKw) {
+        // Find the frame size for the next higher `kw`
+        const nextHigherKwFrame = filteredFrameSize.find((data: any) => data.kw === nextHigherKw)
+        return {
+          ...item,
+          frameSize: nextHigherKwFrame ? nextHigherKwFrame.frame_size : "",
+        }
+      }
+
+      return {
+        ...item,
+        frameSize: "",
+      }
+    })
+    return calculatedData
+  }
+}

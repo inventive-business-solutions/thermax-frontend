@@ -26,7 +26,7 @@ import { useProjectPanelData } from "hooks/useProjectPanelData"
 import { useParams, useRouter } from "next/navigation"
 import useMakeOfComponentDropdowns from "components/Project Management/Design Basis/MCC-PCC/MakeOfComponent/MakeDropdowns"
 import { useLoading } from "hooks/useLoading"
-import { getCurrentCalculation } from "actions/electrical-load-list"
+import { getCurrentCalculation, getFrameSizeCalculation } from "actions/electrical-load-list"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import path from "path"
 
@@ -864,6 +864,8 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         }
       }),
     })
+    const getFrameSize = await getFrameSizeCalculation()
+    console.log("getFrameSize", getFrameSize)
     const updatedLoadList: any = loadList?.map((row: any) => {
       const calculationResult = data?.find((item: any) => item.tagNo === row[0])
       if (calculationResult) {
@@ -1029,7 +1031,10 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         <Button type="primary" onClick={handleLoadListSave}>
           Save
         </Button>
-        <Button type="primary" onClick={() => router.push(`/project/${project_id}/electrical-load-list/cable-schedule`)}>
+        <Button
+          type="primary"
+          onClick={() => router.push(`/project/${project_id}/electrical-load-list/cable-schedule`)}
+        >
           Next
         </Button>
       </div>
