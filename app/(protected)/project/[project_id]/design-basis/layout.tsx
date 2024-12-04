@@ -1,35 +1,36 @@
-"use client"
-import { QuestionCircleOutlined } from "@ant-design/icons"
-import { FloatButton } from "antd"
-import { usePathname, useRouter } from "next/navigation"
-import React from "react"
-import { PROJECT_API } from "configs/api-endpoints"
-import { useGetData } from "hooks/useCRUD"
-import { useLoading } from "hooks/useLoading"
-import clsx from "clsx"
+"use client";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { FloatButton } from "antd";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import React from "react";
+import clsx from "clsx";
+import { PROJECT_API } from "@/configs/api-endpoints";
+import { useGetData } from "@/hooks/useCRUD";
+import { useLoading } from "@/hooks/useLoading";
 
 export default function DesignBasisLayout({
   children,
-  params,
 }: {
-  children: React.ReactNode
-  params: { project_id: string }
+  children: React.ReactNode;
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const { setLoading: setModalLoading } = useLoading()
-  const { data: projectData }: any = useGetData(`${PROJECT_API}/${params?.project_id}`)
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useParams();
+  const { setLoading: setModalLoading } = useLoading();
+  const { data: projectData }: any = useGetData(
+    `${PROJECT_API}/${params?.project_id}`
+  );
 
-  const document_revision_path = `/project/${params.project_id}/design-basis/document-revision`
-  const general_info_path = `/project/${params.project_id}/design-basis/general-info`
-  const motor_parameters_path = `/project/${params.project_id}/design-basis/motor-parameters`
-  const mcc_pcc_path = `/project/${params.project_id}/design-basis/mcc-pcc`
-  const layout_path = `/project/${params.project_id}/design-basis/layout`
+  const document_revision_path = `/project/${params.project_id}/design-basis/document-revision`;
+  const general_info_path = `/project/${params.project_id}/design-basis/general-info`;
+  const motor_parameters_path = `/project/${params.project_id}/design-basis/motor-parameters`;
+  const mcc_pcc_path = `/project/${params.project_id}/design-basis/mcc-pcc`;
+  const layout_path = `/project/${params.project_id}/design-basis/layout`;
 
   const handleTabChange = (path: string) => {
-    setModalLoading(true)
-    router.push(path)
-  }
+    setModalLoading(true);
+    router.push(path);
+  };
   return (
     <div className="flex h-full flex-col gap-4 px-4">
       <div className="sticky top-0 z-10 w-full bg-white">
@@ -41,7 +42,9 @@ export default function DesignBasisLayout({
           <div
             className={clsx(
               "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-xs font-bold uppercase tracking-wide text-white",
-              pathname.includes(document_revision_path) ? "bg-green-500" : "bg-blue-500"
+              pathname.includes(document_revision_path)
+                ? "bg-green-500"
+                : "bg-blue-500"
             )}
             onClick={() => handleTabChange(document_revision_path)}
           >
@@ -50,7 +53,9 @@ export default function DesignBasisLayout({
           <div
             className={clsx(
               "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-xs font-bold uppercase tracking-wide text-white",
-              pathname.includes(general_info_path) ? "bg-green-500" : "bg-blue-500"
+              pathname.includes(general_info_path)
+                ? "bg-green-500"
+                : "bg-blue-500"
             )}
             onClick={() => handleTabChange(general_info_path)}
           >
@@ -60,7 +65,9 @@ export default function DesignBasisLayout({
           <div
             className={clsx(
               "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-xs font-bold uppercase tracking-wide text-white",
-              pathname.includes(motor_parameters_path) ? "bg-green-500" : "bg-blue-500"
+              pathname.includes(motor_parameters_path)
+                ? "bg-green-500"
+                : "bg-blue-500"
             )}
             onClick={() => handleTabChange(motor_parameters_path)}
           >
@@ -90,5 +97,5 @@ export default function DesignBasisLayout({
       <main className="flex-1 overflow-y-auto">{children}</main>
       <FloatButton icon={<QuestionCircleOutlined />} />
     </div>
-  )
+  );
 }

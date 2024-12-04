@@ -1,7 +1,12 @@
-import { redirect } from "next/navigation"
+import { redirect } from "next/navigation";
 
-const DefaultPage = async ({ params }: { params: { project_id: string } }) => {
-  redirect(`/project/${params.project_id}/project-information`)
-}
+const DefaultPage = async ({
+  params,
+}: {
+  params: Promise<{ project_id: string }>;
+}) => {
+  const project_id = (await params).project_id;
+  redirect(`/project/${project_id}/project-information`);
+};
 
-export default DefaultPage
+export default DefaultPage;

@@ -1,7 +1,6 @@
 import React from "react";
-import Modal from "components/Modal/Modal";
-import './ValidatePanelLoad.css'
-import { Table } from "antd";
+import "./ValidatePanelLoad.css";
+import { Modal, Table } from "antd";
 
 export interface PanelData {
   panelName: string;
@@ -14,9 +13,12 @@ interface ValidatePanelLoadProps {
   onClose: () => void;
   panelsSumData: PanelData[];
 }
- 
 
-const ValidatePanelLoad: React.FC<ValidatePanelLoadProps> = ({ isOpen, onClose, panelsSumData }) => {
+const ValidatePanelLoad: React.FC<ValidatePanelLoadProps> = ({
+  isOpen,
+  onClose,
+  panelsSumData,
+}) => {
   const columns = [
     {
       title: "Panel Name",
@@ -40,7 +42,7 @@ const ValidatePanelLoad: React.FC<ValidatePanelLoadProps> = ({ isOpen, onClose, 
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="">
+    <Modal open={isOpen} onClose={onClose} className="">
       <div className="m-5 flex flex-col p-5">
         <div className="modal-header mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold">Validate Panel Load</h2>

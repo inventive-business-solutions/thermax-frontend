@@ -1,28 +1,28 @@
-"use client"
-import { QuestionCircleOutlined } from "@ant-design/icons"
-import { FloatButton } from "antd"
-import { useParams, usePathname, useRouter } from "next/navigation"
-import React from "react"
-import { useLoading } from "hooks/useLoading"
-import clsx from "clsx"
+"use client";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { FloatButton } from "antd";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import React from "react";
+import clsx from "clsx";
+import { useLoading } from "@/hooks/useLoading";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-  const params = useParams()
-  const { setLoading: setModalLoading } = useLoading()
-  const pathname = usePathname()
-  const project_information_path = `/project/${params.project_id}/project-information`
-  const design_basis_path = `/project/${params.project_id}/design-basis`
-  const electrical_load_list_path = `/project/${params.project_id}/electrical-load-list`
-  const sld_path = `/project/${params.project_id}/sld`
-  const cable_tray_path = `/project/${params.project_id}/cable-tray`
-  const earthing_path = `/project/${params.project_id}/earthing`
-  const lighting_path = `/project/${params.project_id}/lighting`
+  const router = useRouter();
+  const params = useParams();
+  const { setLoading: setModalLoading } = useLoading();
+  const pathname = usePathname();
+  const project_information_path = `/project/${params.project_id}/project-information`;
+  const design_basis_path = `/project/${params.project_id}/design-basis`;
+  const electrical_load_list_path = `/project/${params.project_id}/electrical-load-list`;
+  const sld_path = `/project/${params.project_id}/sld`;
+  const cable_tray_path = `/project/${params.project_id}/cable-tray`;
+  const earthing_path = `/project/${params.project_id}/earthing`;
+  const lighting_path = `/project/${params.project_id}/lighting`;
 
   const handleTabChange = (path: string) => {
-    setModalLoading(true)
-    router.push(path)
-  }
+    setModalLoading(true);
+    router.push(path);
+  };
   return (
     <>
       <div className="flex h-full flex-col gap-4">
@@ -31,7 +31,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(project_information_path) ? "bg-green-700" : "bg-blue-700"
+                pathname.includes(project_information_path)
+                  ? "bg-green-700"
+                  : "bg-blue-700"
               )}
               onClick={() => handleTabChange(project_information_path)}
             >
@@ -40,7 +42,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(design_basis_path) ? "bg-green-700" : "bg-blue-700"
+                pathname.includes(design_basis_path)
+                  ? "bg-green-700"
+                  : "bg-blue-700"
               )}
               onClick={() => handleTabChange(design_basis_path)}
             >
@@ -49,7 +53,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(electrical_load_list_path) ? "bg-green-700" : "bg-blue-700"
+                pathname.includes(electrical_load_list_path)
+                  ? "bg-green-700"
+                  : "bg-blue-700"
               )}
               onClick={() => handleTabChange(electrical_load_list_path)}
             >
@@ -67,7 +73,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(cable_tray_path) ? "bg-green-700" : "bg-blue-700"
+                pathname.includes(cable_tray_path)
+                  ? "bg-green-700"
+                  : "bg-blue-700"
               )}
               onClick={() => handleTabChange(cable_tray_path)}
             >
@@ -76,7 +84,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(earthing_path) ? "bg-green-700" : "bg-blue-700"
+                pathname.includes(earthing_path)
+                  ? "bg-green-700"
+                  : "bg-blue-700"
               )}
               onClick={() => handleTabChange(earthing_path)}
             >
@@ -85,7 +95,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div
               className={clsx(
                 "white grid flex-auto cursor-pointer place-content-center rounded border p-1 text-sm font-bold uppercase tracking-wide text-white",
-                pathname.includes(lighting_path) ? "bg-green-700" : "bg-blue-700"
+                pathname.includes(lighting_path)
+                  ? "bg-green-700"
+                  : "bg-blue-700"
               )}
               onClick={() => handleTabChange(lighting_path)}
             >
@@ -98,5 +110,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <FloatButton icon={<QuestionCircleOutlined />} />
       </div>
     </>
-  )
+  );
 }

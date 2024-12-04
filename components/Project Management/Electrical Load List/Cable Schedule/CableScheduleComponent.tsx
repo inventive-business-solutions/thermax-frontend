@@ -230,26 +230,35 @@
 // }
 
 // export default CableSchedule
-"use client"
-import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
-import React, { useRef, useEffect, useState, useMemo, useCallback } from "react"
-import "jspreadsheet-ce/dist/jspreadsheet.css"
-import { Button, message, Spin } from "antd"
-import { ValidColumnType } from "../types"
-import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableConfig"
-import { CableSchedulecolumns, multicoreCableConfigColumns } from "../common/ExcelColumns"
-import "./CableScheduleComponent.css"
-import { getData } from "actions/crud-actions"
-import { ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API } from "configs/api-endpoints"
-import { useLoading } from "hooks/useLoading"
+"use client";
+import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+import "jspreadsheet-ce/dist/jspreadsheet.css";
+import { Button, message, Spin } from "antd";
+import { ValidColumnType } from "../types";
+import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableConfig";
+import {
+  CableSchedulecolumns,
+  multicoreCableConfigColumns,
+} from "../common/ExcelColumns";
+import "./CableScheduleComponent.css";
+import { getData } from "@/actions/crud-actions";
+import { ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API } from "@/configs/api-endpoints";
+import { useLoading } from "@/hooks/useLoading";
 
 interface CableScheduleProps {
-  loadListLatestRevisionId: string
+  loadListLatestRevisionId: string;
 }
 
 const getArrayOfCableScheduleData = (data: any) => {
-  if (!data?.electrical_load_list_data) return []
-  console.log(data.electrical_load_list_data, "load list")
+  if (!data?.electrical_load_list_data) return [];
+  console.log(data.electrical_load_list_data, "load list");
 
   return data.electrical_load_list_data.map((item: any) => [
     item.tag_number,
@@ -278,45 +287,52 @@ const getArrayOfCableScheduleData = (data: any) => {
     "",
     "",
     "",
-  ])
-}
+  ]);
+};
 
 const useDataFetching = (loadListLatestRevisionId: string) => {
-  const [isLoading, setIsLoading] = useState(true)
-  const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
-  const [loadListData, setLoadListData] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true);
+  const [cableScheduleData, setCableScheduleData] = useState<any[]>([]);
+  const [loadListData, setLoadListData] = useState<any[]>([]);
   const fetchData = useCallback(async () => {
-    if (!loadListLatestRevisionId) return
+    if (!loadListLatestRevisionId) return;
 
     try {
-      setIsLoading(true)
-      const loadList = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
-      const formattedData = getArrayOfCableScheduleData(loadList)
-      setLoadListData(loadList?.electrical_load_list_data)
-      setCableScheduleData(formattedData)
+      setIsLoading(true);
+      const loadList = await getData(
+        `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`
+      );
+      const formattedData = getArrayOfCableScheduleData(loadList);
+      setLoadListData(loadList?.electrical_load_list_data);
+      setCableScheduleData(formattedData);
     } catch (error) {
-      console.error("Error fetching data:", error)
-      message.error("Failed to load data")
-      setCableScheduleData([])
+      console.error("Error fetching data:", error);
+      message.error("Failed to load data");
+      setCableScheduleData([]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [loadListLatestRevisionId])
+  }, [loadListLatestRevisionId]);
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    fetchData();
+  }, [fetchData]);
 
-  return { cableScheduleData, loadListData, isLoading, refetch: fetchData }
-}
+  return { cableScheduleData, loadListData, isLoading, refetch: fetchData };
+};
 
-const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId }) => {
-  const jRef = useRef<HTMLDivElement | null>(null)
-  const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
-  const { setLoading } = useLoading()
-  const [isMulticoreModalOpen, setIsMulticoreModalOpen] = useState(false)
+const CableSchedule: React.FC<CableScheduleProps> = ({
+  loadListLatestRevisionId,
+}) => {
+  const jRef = useRef<HTMLDivElement | null>(null);
+  const [spreadsheetInstance, setSpreadsheetInstance] =
+    useState<JspreadsheetInstance | null>(null);
+  const { setLoading } = useLoading();
+  const [isMulticoreModalOpen, setIsMulticoreModalOpen] = useState(false);
 
-  const { cableScheduleData, loadListData, isLoading, refetch } = useDataFetching(loadListLatestRevisionId)
+  const { cableScheduleData, loadListData, isLoading } = useDataFetching(
+    loadListLatestRevisionId
+  );
 
   const typedCableScheduleColumns = useMemo(
     () =>
@@ -325,7 +341,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId 
         type: column.type as ValidColumnType,
       })),
     []
-  )
+  );
 
   const typedMulticoreCableConfigColumns = useMemo(
     () =>
@@ -334,7 +350,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId 
         type: column.type as ValidColumnType,
       })),
     []
-  )
+  );
 
   const cableScheduleOptions = useMemo(
     () => ({
@@ -354,39 +370,43 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId 
       rowResize: true,
     }),
     [typedCableScheduleColumns, cableScheduleData]
-  )
+  );
 
   // Initialize or update spreadsheet
   useEffect(() => {
-    if (isLoading || !jRef.current) return
+    if (isLoading || !jRef.current) return;
 
     const initSpreadsheet = () => {
       if (spreadsheetInstance) {
-        spreadsheetInstance.destroy()
+        spreadsheetInstance.destroy();
       }
 
-      const instance = jspreadsheet(jRef.current!, cableScheduleOptions)
-      setSpreadsheetInstance(instance)
-      setLoading(false)
-    }
+      const instance = jspreadsheet(jRef.current!, cableScheduleOptions);
+      setSpreadsheetInstance(instance);
+      setLoading(false);
+    };
 
-    initSpreadsheet()
+    initSpreadsheet();
 
     return () => {
-      spreadsheetInstance?.destroy()
-    }
-  }, [isLoading, cableScheduleOptions])
+      spreadsheetInstance?.destroy();
+    };
+  }, [isLoading, cableScheduleOptions, spreadsheetInstance, setLoading]);
 
   const handleCableScheduleSave = () => {
-    const data = spreadsheetInstance?.getData()
-    console.log(data, "all load list data")
+    const data = spreadsheetInstance?.getData();
+    console.log(data, "all load list data");
     // Add your save logic here
-  }
+  };
 
   return (
     <>
       <div className="mb-4 flex justify-end gap-4">
-        <Button type="primary" onClick={() => setIsMulticoreModalOpen(true)} className="hover:bg-blue-600">
+        <Button
+          type="primary"
+          onClick={() => setIsMulticoreModalOpen(true)}
+          className="hover:bg-blue-600"
+        >
           Multicore Cable Configurator
         </Button>
       </div>
@@ -407,13 +427,17 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId 
         loadListData={loadListData}
         typedMulticoreCableColumns={typedMulticoreCableConfigColumns}
         onConfigurationComplete={(selectedCables: any) => {
-          console.log("Selected cables:", selectedCables)
+          console.log("Selected cables:", selectedCables);
         }}
       />
 
       <div className="flex w-full flex-row justify-end gap-2">
         <Button type="primary">Get Cable Sizing</Button>
-        <Button type="primary" onClick={handleCableScheduleSave} disabled={isLoading}>
+        <Button
+          type="primary"
+          onClick={handleCableScheduleSave}
+          disabled={isLoading}
+        >
           Save
         </Button>
         <Button type="primary" onClick={() => {}} disabled={isLoading}>
@@ -421,7 +445,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId 
         </Button>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default CableSchedule
+export default CableSchedule;

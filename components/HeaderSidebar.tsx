@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   AppstoreAddOutlined,
   CarryOutOutlined,
@@ -6,90 +6,107 @@ import {
   MenuOutlined,
   UnorderedListOutlined,
   UserSwitchOutlined,
-} from "@ant-design/icons"
-import { Drawer, Menu, MenuProps, Tag } from "antd"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import {
-  BTG,
-  COMPLETE_PROJECT_PAGE,
-  DASHBOARD_PAGE,
-  PACKAGE_PAGE,
-  PROJECTS_PAGE,
-  TagColors,
-  USER_MANAGEMENT_PAGE,
-} from "configs/constants"
-import { useCurrentUser } from "hooks/useCurrentUser"
-import { useLoading } from "hooks/useLoading"
-import { UserButton } from "./UserButton"
+} from "@ant-design/icons";
+import { Drawer, Menu, MenuProps, Tag } from "antd";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-type MenuItem = Required<MenuProps>["items"][number]
+import { UserButton } from "./UserButton";
+import {
+  TagColors,
+  DASHBOARD_PAGE,
+  PROJECTS_PAGE,
+  USER_MANAGEMENT_PAGE,
+  PACKAGE_PAGE,
+  COMPLETE_PROJECT_PAGE,
+  BTG,
+} from "@/configs/constants";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useLoading } from "@/hooks/useLoading";
+
+type MenuItem = Required<MenuProps>["items"][number];
 
 export default function HeaderSidebar() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const userInfo: {
-    last_name: string
-    first_name: string
-    division: keyof typeof TagColors
-    is_superuser: boolean
-  } = useCurrentUser()
-  const router = useRouter()
-  const { setLoading } = useLoading()
+    last_name: string;
+    first_name: string;
+    division: keyof typeof TagColors;
+    is_superuser: boolean;
+  } = useCurrentUser();
+  const router = useRouter();
+  const { setLoading } = useLoading();
 
   const handleLinkClick = (path: string) => {
-    setLoading(true)
-    setIsSidebarOpen(false)
-    router.push(path)
-  }
+    setLoading(true);
+    setIsSidebarOpen(false);
+    router.push(path);
+  };
 
   let items: MenuItem[] = [
     {
       key: "1",
-      label: <div onClick={() => handleLinkClick(DASHBOARD_PAGE)}>Dashboard</div>,
+      label: (
+        <div onClick={() => handleLinkClick(DASHBOARD_PAGE)}>Dashboard</div>
+      ),
       icon: <DashboardOutlined />,
     },
     {
       key: "2",
-      label: <div onClick={() => handleLinkClick(PROJECTS_PAGE)}>Project List</div>,
+      label: (
+        <div onClick={() => handleLinkClick(PROJECTS_PAGE)}>Project List</div>
+      ),
       icon: <UnorderedListOutlined />,
     },
     {
       key: "3",
-      label: <div onClick={() => handleLinkClick(USER_MANAGEMENT_PAGE)}>User Management</div>,
+      label: (
+        <div onClick={() => handleLinkClick(USER_MANAGEMENT_PAGE)}>
+          User Management
+        </div>
+      ),
 
       icon: <UserSwitchOutlined />,
     },
     {
       key: "4",
-      label: <div onClick={() => handleLinkClick(PACKAGE_PAGE)}>Package Management</div>,
+      label: (
+        <div onClick={() => handleLinkClick(PACKAGE_PAGE)}>
+          Package Management
+        </div>
+      ),
       icon: <AppstoreAddOutlined />,
     },
     {
       key: "5",
-      label: <div onClick={() => handleLinkClick(COMPLETE_PROJECT_PAGE)}>Complete Project</div>,
+      label: (
+        <div onClick={() => handleLinkClick(COMPLETE_PROJECT_PAGE)}>
+          Complete Project
+        </div>
+      ),
       icon: <CarryOutOutlined />,
     },
-  ]
+  ];
 
   if (!userInfo?.is_superuser) {
-    items = items.filter((item: MenuItem) => item?.key !== "3")
+    items = items.filter((item: MenuItem) => item?.key !== "3");
   }
 
   const visibleItems = items.filter((item: any) => {
     if (userInfo?.division === BTG && item.key === "3") {
-      return true
+      return true;
     }
     if (userInfo?.division !== BTG) {
-      return true
+      return true;
     }
-    return false
-  })
+    return false;
+  });
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
     <div>
@@ -101,7 +118,10 @@ export default function HeaderSidebar() {
           >
             <MenuOutlined />
           </div>
-          <Link href={DASHBOARD_PAGE} className="hidden items-center gap-5 md:flex">
+          <Link
+            href={DASHBOARD_PAGE}
+            className="hidden items-center gap-5 md:flex"
+          >
             <Image
               src={"/eni_max_logo.png"}
               alt="Thermax logo"
@@ -111,7 +131,9 @@ export default function HeaderSidebar() {
               priority
             />
             <div>
-              <Tag color={TagColors[userInfo?.division]}>{userInfo?.division} Division</Tag>
+              <Tag color={TagColors[userInfo?.division]}>
+                {userInfo?.division} Division
+              </Tag>
             </div>
           </Link>
         </div>
@@ -123,9 +145,20 @@ export default function HeaderSidebar() {
         </div>
       </header>
 
-      <Drawer placement="left" title="Thermax" onClose={toggleSidebar} open={isSidebarOpen} closable={false}>
-        <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" items={visibleItems} />
+      <Drawer
+        placement="left"
+        title="Thermax"
+        onClose={toggleSidebar}
+        open={isSidebarOpen}
+        closable={false}
+      >
+        <Menu
+          defaultSelectedKeys={["1"]}
+          defaultOpenKeys={["sub1"]}
+          mode="inline"
+          items={visibleItems}
+        />
       </Drawer>
     </div>
-  )
+  );
 }

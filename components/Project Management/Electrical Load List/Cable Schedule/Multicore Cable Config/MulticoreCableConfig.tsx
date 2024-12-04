@@ -512,29 +512,35 @@
 
 // export default MulticoreCableConfigurator
 
-"use client"
+"use client";
 
-import { JspreadsheetInstance } from "jspreadsheet-ce"
-import React, { useRef, useEffect, useState, useMemo } from "react"
-import jspreadsheet from "jspreadsheet-ce"
-import { Button } from "antd"
-import AlertNotification from "components/AlertNotification"
-import Modal from "components/Modal/Modal"
-import { getData } from "actions/crud-actions"
-import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
-import { multicoreCableConfigColumns, multicoreCableConfigGroupedColumns } from "../../common/ExcelColumns"
-import { ValidColumnType } from "../../types"
-import { useCurrentUser } from "hooks/useCurrentUser"
-import { ENVIRO, HEATING, WWS_IPG, WWS_SPG } from "configs/constants"
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+import jspreadsheet from "jspreadsheet-ce";
+import { getData } from "@/actions/crud-actions";
+import { HEATING_CONTROL_SCHEMES_URI } from "@/configs/api-endpoints";
+import { HEATING, ENVIRO, WWS_SPG, WWS_IPG } from "@/configs/constants";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { Modal } from "antd";
+import {
+  multicoreCableConfigColumns,
+  multicoreCableConfigGroupedColumns,
+} from "../../common/ExcelColumns";
+import { ValidColumnType } from "../../types";
 
 interface MulticoreCableConfigProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
   //   loadListData: any[]
-  loadListData: any[]
+  loadListData: any[];
   // loadListData:,
-  typedMulticoreCableColumns: any[]
-  onConfigurationComplete: (selectedCables: any[]) => void
+  typedMulticoreCableColumns: any[];
+  onConfigurationComplete: (selectedCables: any[]) => void;
 }
 
 const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
@@ -542,30 +548,29 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
   onClose,
   //   loadListData,
   loadListData,
-  typedMulticoreCableColumns,
   onConfigurationComplete,
 }) => {
   // const router = useRouter()
-  const spreadsheetRef = useRef<HTMLDivElement>(null)
-  const groupingRef = useRef<HTMLDivElement>(null)
+  const spreadsheetRef = useRef<HTMLDivElement>(null);
+  const groupingRef = useRef<HTMLDivElement>(null);
   // spreadsheet_grouping
-  const [tble, setTble] = useState<any>(null)
-  const [tbleSelected, setTbleSelected] = useState<any>(null)
-  const [selectedElMulticore, setSelectedElMulticore] = useState<any[][]>([])
-  const [grouping, setGrouping] = useState<any[][]>([])
-  const [groupId, setGroupId] = useState<number>(1)
-  const [insertedElementsLength, setInsertedElementsLength] = useState<number>(0)
-  const [selectedElements, setSelectedElements] = useState<any[]>([])
-  const [selectedPercent, setSelectedPercent] = useState<string | number>("")
-  const [controlSchemes, setControlSchemes] = useState<any[]>([])
+  const [tble, setTble] = useState<any>(null);
+  const [tbleSelected, setTbleSelected] = useState<any>(null);
+  const [selectedElMulticore, setSelectedElMulticore] = useState<any[][]>([]);
+  const [grouping, setGrouping] = useState<any[][]>([]);
+  const [groupId, setGroupId] = useState<number>(1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [insertedElementsLength, setInsertedElementsLength] =
+    useState<number>(0);
+  const [selectedElements, setSelectedElements] = useState<any[]>([]);
+  const [selectedPercent, setSelectedPercent] = useState<string | number>("");
+  const [controlSchemes, setControlSchemes] = useState<any[]>([]);
   const userInfo: {
-    division: string
-  } = useCurrentUser()
-  const userData = { divisionId: 7 }
+    division: string;
+  } = useCurrentUser();
 
-  const sparePercent = [10, 20]
-  const DIDOSpare = ["2C", "3C", "4C", "6C", "8C", "12C", "16C", "24C", "30C", "37C", "1P", "2P", "6P", "12P"]
-  const AIAOSpare: string[] = []
+  const sparePercent = [10, 20];
+
   const typedMulticoreConfigColumns = useMemo(
     () =>
       multicoreCableConfigColumns.map((column) => ({
@@ -573,7 +578,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
         type: column.type as ValidColumnType,
       })),
     []
-  )
+  );
   const typedMulticoreCableConfigGroupedColumns = useMemo(
     () =>
       multicoreCableConfigGroupedColumns.map((column) => ({
@@ -581,80 +586,86 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
         type: column.type as ValidColumnType,
       })),
     []
-  )
+  );
   //fetch control schemes
   useEffect(() => {
-    getData(`${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`).then((res) => {
-      const schemes = res
-        .map((item: any) => [
-          false,
-          item.scheme,
-          item.sub_scheme,
-          item.scheme_title,
-          item.description,
-          item.breaker,
-          item.lpbs,
-          item.lpbs_inc_dec_ind,
-          item.ammeter,
-          item.thermistor_relay,
-          item.motor_space_heater,
-          item.plc_current_signal,
-          item.plc_speed_signal,
-          item.olr,
-          item.phase,
-          item.limit_switch,
-          item.motor_protection_relay,
-          item.field_isolator,
-          item.local_panel,
-          item.field_ess,
-          item.electronic_relay,
-          item.plc1_and_plc2,
-          item.mcc_start_stop,
-          item.input_choke,
-          item.output_choke,
-          item.separate_plc_start_stop,
-          item.di,
-          item.do,
-          item.ai,
-          item.ao,
-        ])
-        .sort((a: any, b: any) => {
-          const [prefixA, numA] = a[2].split("-")
-          const [prefixB, numB] = b[2].split("-")
-          return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
-        })
+    getData(`${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`).then(
+      (res) => {
+        const schemes = res
+          .map((item: any) => [
+            false,
+            item.scheme,
+            item.sub_scheme,
+            item.scheme_title,
+            item.description,
+            item.breaker,
+            item.lpbs,
+            item.lpbs_inc_dec_ind,
+            item.ammeter,
+            item.thermistor_relay,
+            item.motor_space_heater,
+            item.plc_current_signal,
+            item.plc_speed_signal,
+            item.olr,
+            item.phase,
+            item.limit_switch,
+            item.motor_protection_relay,
+            item.field_isolator,
+            item.local_panel,
+            item.field_ess,
+            item.electronic_relay,
+            item.plc1_and_plc2,
+            item.mcc_start_stop,
+            item.input_choke,
+            item.output_choke,
+            item.separate_plc_start_stop,
+            item.di,
+            item.do,
+            item.ai,
+            item.ao,
+          ])
+          .sort((a: any, b: any) => {
+            const [prefixA, numA] = a[2].split("-");
+            const [prefixB, numB] = b[2].split("-");
+            return prefixA === prefixB
+              ? parseInt(numA, 10) - parseInt(numB, 10)
+              : prefixA.localeCompare(prefixB);
+          });
 
-      setControlSchemes(schemes)
-    })
-  }, [])
+        setControlSchemes(schemes);
+      }
+    );
+  }, []);
 
   const spareFormula = (DIDO: number): number => {
-    let calcSpare = 0
-    if (selectedPercent === 10) return DIDO * 1.1
-    else if (selectedPercent === 20) return DIDO * 1.2
-    else return DIDO
-  }
-  const calculateSpare = (input: number, from: string = "DIDO"): number | null => {
-    let spares: number[] = [1, 2, 6, 12]
+    if (selectedPercent === 10) return DIDO * 1.1;
+    else if (selectedPercent === 20) return DIDO * 1.2;
+    else return DIDO;
+  };
+  const calculateSpare = (
+    input: number,
+    from: string = "DIDO"
+  ): number | null => {
+    let spares: number[] = [1, 2, 6, 12];
     if (from == "DIDO") {
-      spares = [2, 3, 4, 6, 8, 12, 16, 24, 30, 37]
+      spares = [2, 3, 4, 6, 8, 12, 16, 24, 30, 37];
     }
     if (from == "AIAO") {
-      spares = [1, 2, 6, 12]
+      spares = [1, 2, 6, 12];
     }
     if (!spares?.length) {
-      return null
+      return null;
     }
 
     for (let i = 0; i < spares.length - 1; i++) {
       if (input == spares[i]) {
-        return spares[i] || 0
+        return spares[i] || 0;
       } else if (input > (spares[i] || 0) && input <= (spares[i + 1] || 0)) {
-        return spares[i + 1] || 0
+        return spares[i + 1] || 0;
       }
     }
-    return null
-  }
+    return null;
+  };
   //   const calculateSpare = (input: number, from: string): number | null => {
   //     const spares = from === "DIDO" ? [2, 3, 4, 6, 8, 12, 16, 24, 30, 37] : [1, 2, 6, 12];
 
@@ -672,53 +683,66 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
   //     return null;
   // }
 
-  const findOtherData = (schemeTitle: string) => {
-    const division = userInfo.division
+  const findOtherData = useCallback(
+    (schemeTitle: string) => {
+      const division = userInfo.division;
 
-    switch (division) {
-      case HEATING:
-        return controlSchemes?.find((item) => item[2] === schemeTitle)
-      case ENVIRO:
-        return [].find((item) => item[1] === schemeTitle)
-      case WWS_SPG:
-        return [].find((item) => String(item[1]).trim() === schemeTitle.trim())
-      case WWS_IPG:
-        return [].find((item) => String(item[1]).trim() === schemeTitle.trim())
-      default:
-        return null
-    }
-  }
+      switch (division) {
+        case HEATING:
+          return controlSchemes?.find((item) => item[2] === schemeTitle);
+        case ENVIRO:
+          return [].find((item) => item[1] === schemeTitle);
+        case WWS_SPG:
+          return [].find(
+            (item) => String(item[1]).trim() === schemeTitle.trim()
+          );
+        case WWS_IPG:
+          return [].find(
+            (item) => String(item[1]).trim() === schemeTitle.trim()
+          );
+        default:
+          return null;
+      }
+    },
+    [controlSchemes, userInfo.division]
+  );
 
-  const initializeMulticoreUi = (data: any) => {
-    if (!spreadsheetRef.current) return
+  const initializeMulticoreUi = useCallback(
+    (data: any) => {
+      if (!spreadsheetRef.current) return;
 
-    const options = {
-      data,
-      license: "39130-64ebc-bd98e-26bc4",
-      columns: typedMulticoreConfigColumns,
-      updateTable: (instance: any, cell: any, col: number, row: number, val: any) => {
-        if (data[row][0] === true && !selectedElMulticore.includes(data[row])) {
-          if (cell.classList.length > 0) {
-            const className = cell.classList
-            if (className[0] !== "readonly") {
-              setSelectedElMulticore((prev: any) => [...prev, data[row]])
-              if (!selectedElements.includes(cell)) {
-                setSelectedElements((prev) => [...prev, cell])
+      const options = {
+        data,
+        license: "39130-64ebc-bd98e-26bc4",
+        columns: typedMulticoreConfigColumns,
+        updateTable: (instance: any, cell: any, col: number, row: number) => {
+          if (
+            data[row][0] === true &&
+            !selectedElMulticore.includes(data[row])
+          ) {
+            if (cell.classList.length > 0) {
+              const className = cell.classList;
+              if (className[0] !== "readonly") {
+                setSelectedElMulticore((prev: any) => [...prev, data[row]]);
+                if (!selectedElements.includes(cell)) {
+                  setSelectedElements((prev) => [...prev, cell]);
+                }
               }
             }
           }
-        }
-      },
-      tableOverflow: true,
-      filters: true,
-      tableWidth: "100%",
-      tableHeight: "600px",
-      freezeColumns: 0,
-    }
+        },
+        tableOverflow: true,
+        filters: true,
+        tableWidth: "100%",
+        tableHeight: "600px",
+        freezeColumns: 0,
+      };
 
-    const newTable = jspreadsheet(spreadsheetRef.current, options)
-    setTble(newTable)
-  }
+      const newTable = jspreadsheet(spreadsheetRef.current, options);
+      setTble(newTable);
+    },
+    [selectedElMulticore, selectedElements, typedMulticoreConfigColumns]
+  );
   // const   selectedControllScheme = (data: any)=> {
   //   // if (groupingRef.current) {
   //   //   this.tbleSelected.setData(data);
@@ -809,140 +833,204 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
   //     );
   //   // }
   // }
-  const initializeGroupingeUi = (data: any) => {
-    if (groupingRef.current) {
-      tbleSelected?.destroy()
-    }
-    if (!groupingRef.current) return
-    // source: DIDOSpare,
-    // autocomplete: true,
-    // multiple: false,
-    const options = {
-      data,
-      license: "39130-64ebc-bd98e-26bc4",
-      columns: typedMulticoreCableConfigGroupedColumns,
+  const initializeGroupingeUi = useCallback(
+    (data: any) => {
+      if (groupingRef.current) {
+        tbleSelected?.destroy();
+      }
+      if (!groupingRef.current) return;
+      // source: DIDOSpare,
+      // autocomplete: true,
+      // multiple: false,
+      const options = {
+        data,
+        license: "39130-64ebc-bd98e-26bc4",
+        columns: typedMulticoreCableConfigGroupedColumns,
 
-      updateTable: (instance: any, cell: any, col: number, row: number, val: any) => {
-        if (data[row][0] === true && !selectedElMulticore.includes(data[row])) {
-          if (cell.classList.length > 0) {
-            const className = cell.classList
-            if (className[0] !== "readonly") {
-              setSelectedElMulticore((prev: any) => [...prev, data[row]])
-              if (!selectedElements.includes(cell)) {
-                setSelectedElements((prev) => [...prev, cell])
+        updateTable: (instance: any, cell: any, col: number, row: number) => {
+          if (
+            data[row][0] === true &&
+            !selectedElMulticore.includes(data[row])
+          ) {
+            if (cell.classList.length > 0) {
+              const className = cell.classList;
+              if (className[0] !== "readonly") {
+                setSelectedElMulticore((prev: any) => [...prev, data[row]]);
+                if (!selectedElements.includes(cell)) {
+                  setSelectedElements((prev) => [...prev, cell]);
+                }
               }
             }
           }
-        }
-      },
-      tableOverflow: true,
-      filters: true,
-      tableWidth: "100%",
-      tableHeight: "300px",
-      freezeColumns: 0,
-    }
+        },
+        tableOverflow: true,
+        filters: true,
+        tableWidth: "100%",
+        tableHeight: "300px",
+        freezeColumns: 0,
+      };
 
-    const newTable = jspreadsheet(groupingRef.current, options)
-    setTbleSelected(newTable)
-  }
+      const newTable = jspreadsheet(groupingRef.current, options);
+      setTbleSelected(newTable);
+    },
+    [
+      selectedElMulticore,
+      selectedElements,
+      tbleSelected,
+      typedMulticoreCableConfigGroupedColumns,
+    ]
+  );
 
   const addGroup = () => {
-    if (selectedElMulticore.length === 0) return
+    if (selectedElMulticore.length === 0) return;
 
-    setGroupId((prev) => prev + 1)
+    setGroupId((prev) => prev + 1);
 
     let DI = 0,
       DO = 0,
       AI = 0,
-      AO = 0
-    let serviceDescription = ""
-    let panelName = ""
+      AO = 0;
+    let serviceDescription = "";
+    let panelName = "";
 
     selectedElMulticore.forEach((el) => {
-      if (el[5] && el[5] !== "-") DI += Number(el[5])
-      if (el[6] && el[6] !== "-") DO += Number(el[6])
-      if (el[7] && el[7] !== "-") AI += Number(el[7])
-      if (el[8] && el[8] !== "-") AO += Number(el[8])
+      if (el[5] && el[5] !== "-") DI += Number(el[5]);
+      if (el[6] && el[6] !== "-") DO += Number(el[6]);
+      if (el[7] && el[7] !== "-") AI += Number(el[7]);
+      if (el[8] && el[8] !== "-") AO += Number(el[8]);
 
-      serviceDescription = serviceDescription ? serviceDescription.concat(", ", el[2]) : el[2]
-      panelName = el[9]
-    })
+      serviceDescription = serviceDescription
+        ? serviceDescription.concat(", ", el[2])
+        : el[2];
+      panelName = el[9];
+    });
 
     // Calculate spares
-    const calcDISpare = Number(spareFormula(DI).toFixed(2))
-    const calDOSpare = Number(spareFormula(DO).toFixed(2))
-    const DISpare = calculateSpare(calcDISpare, "DIDO")
-    const DOSpare = calculateSpare(calDOSpare, "DIDO")
+    const calcDISpare = Number(spareFormula(DI).toFixed(2));
+    const calDOSpare = Number(spareFormula(DO).toFixed(2));
+    const DISpare = calculateSpare(calcDISpare, "DIDO");
+    const DOSpare = calculateSpare(calDOSpare, "DIDO");
 
-    const calcAISpare = Number(spareFormula(AI).toFixed(2))
-    const calcAOSpare = Number(spareFormula(AO).toFixed(2))
-    const AISpare = calculateSpare(calcAISpare, "AIAO")
-    const AOSpare = calculateSpare(calcAOSpare, "AIAO")
+    const calcAISpare = Number(spareFormula(AI).toFixed(2));
+    const calcAOSpare = Number(spareFormula(AO).toFixed(2));
+    const AISpare = calculateSpare(calcAISpare, "AIAO");
+    const AOSpare = calculateSpare(calcAOSpare, "AIAO");
 
     const newGroups = [
-      [groupId, "DI Cable", DI, calcDISpare, `${DISpare}C`, "1", serviceDescription, panelName],
-      [groupId, "DO Cable", DO, calDOSpare, `${DOSpare}C`, "1", serviceDescription, panelName],
-      [groupId, "AI Cable", AI, calcAISpare || "-", AISpare ? `${AISpare}P` : "-", "1", serviceDescription, panelName],
-      [groupId, "AO Cable", AO, calcAOSpare || "-", AOSpare ? `${AOSpare}P` : "-", "1", serviceDescription, panelName],
-    ]
-    console.log(grouping, "grouping")
+      [
+        groupId,
+        "DI Cable",
+        DI,
+        calcDISpare,
+        `${DISpare}C`,
+        "1",
+        serviceDescription,
+        panelName,
+      ],
+      [
+        groupId,
+        "DO Cable",
+        DO,
+        calDOSpare,
+        `${DOSpare}C`,
+        "1",
+        serviceDescription,
+        panelName,
+      ],
+      [
+        groupId,
+        "AI Cable",
+        AI,
+        calcAISpare || "-",
+        AISpare ? `${AISpare}P` : "-",
+        "1",
+        serviceDescription,
+        panelName,
+      ],
+      [
+        groupId,
+        "AO Cable",
+        AO,
+        calcAOSpare || "-",
+        AOSpare ? `${AOSpare}P` : "-",
+        "1",
+        serviceDescription,
+        panelName,
+      ],
+    ];
+    console.log(grouping, "grouping");
 
-    setGrouping((prev) => [...prev, ...newGroups])
-    setSelectedElMulticore([])
-    setInsertedElementsLength((prev) => prev + newGroups.length)
-    initializeGroupingeUi(grouping)
+    setGrouping((prev) => [...prev, ...newGroups]);
+    setSelectedElMulticore([]);
+    setInsertedElementsLength((prev) => prev + newGroups.length);
+    initializeGroupingeUi(grouping);
     selectedElements.forEach((element) => {
-      element.classList.add("readonly")
-      const checkbox = element.querySelector('input[type="checkbox"]')
+      element.classList.add("readonly");
+      const checkbox = element.querySelector('input[type="checkbox"]');
       if (checkbox) {
-        checkbox.classList.add("readonly-checkbox")
-        checkbox.disabled = true
+        checkbox.classList.add("readonly-checkbox");
+        checkbox.disabled = true;
       }
-    })
-  }
+    });
+  };
   useEffect(() => {
-    console.log(grouping, "grouping")
+    console.log(grouping, "grouping");
     if (grouping.length > 0) {
-      initializeGroupingeUi(grouping)
+      initializeGroupingeUi(grouping);
     }
-  }, [grouping])
+  }, [grouping, initializeGroupingeUi]);
   const onConfirm = () => {
-    console.log(grouping, "grouping")
+    console.log(grouping, "grouping");
     if (grouping.length > 0) {
-      onConfigurationComplete(grouping)
-      localStorage.setItem("grouping_of_cables_table", JSON.stringify(grouping))
-      onClose()
+      onConfigurationComplete(grouping);
+      localStorage.setItem(
+        "grouping_of_cables_table",
+        JSON.stringify(grouping)
+      );
+      onClose();
     }
     // router.push("/project/configloadlist")
-  }
+  };
 
   useEffect(() => {
-    localStorage.setItem("load_list_tab", JSON.stringify(2))
+    localStorage.setItem("load_list_tab", JSON.stringify(2));
 
     // const loadList = JSON.parse(localStorage.getItem('loadList'));
-    console.log(loadListData, "loadListData")
+    console.log(loadListData, "loadListData");
 
     const processedData = loadListData?.map((item: any) => {
-      const schemeData = findOtherData(item.control_scheme)
+      const schemeData = findOtherData(item.control_scheme);
       // const divisionId = userData.divisionId // to be populated from dynamic
-      const division = userInfo.division
+      const division = userInfo.division;
 
       const getSchemeIndex = () => {
         switch (division) {
           case HEATING:
-            return 26
+            return 26;
           case ENVIRO:
-            return 6
+            return 6;
           // case 9:
           // case 8:
           //   return 9
           default:
-            return 0
+            return 0;
         }
-      }
-      console.log(item, "loadList item")
+      };
+      console.log(item, "loadList item");
       if (!schemeData) {
-        return [false, item.tag_number, item.service_description, item.control_scheme, "", 0, 0, 0, 0, "", item.panel]
+        return [
+          false,
+          item.tag_number,
+          item.service_description,
+          item.control_scheme,
+          "",
+          0,
+          0,
+          0,
+          0,
+          "",
+          item.panel,
+        ];
       }
 
       return [
@@ -957,36 +1045,44 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
         schemeData[getSchemeIndex() + 3],
         "",
         item.panel,
-      ]
-    })
-    console.log(processedData, "processedData")
+      ];
+    });
+    console.log(processedData, "processedData");
     if (grouping.length > 0) {
-      initializeGroupingeUi(grouping)
+      initializeGroupingeUi(grouping);
     }
-    initializeMulticoreUi(processedData)
-  }, [isOpen])
+    initializeMulticoreUi(processedData);
+  }, [
+    findOtherData,
+    grouping,
+    initializeGroupingeUi,
+    initializeMulticoreUi,
+    isOpen,
+    loadListData,
+    userInfo.division,
+  ]);
   const handleClearSelection = () => {
-    tbleSelected?.destroy()
+    tbleSelected?.destroy();
     console.log(
       tble.getData().map((item: any) => {
-        let arr = [...item]
-        arr[0] = false
-        return arr
+        const arr = [...item];
+        arr[0] = false;
+        return arr;
       })
-    )
+    );
     tble.setData(
       tble.getData().map((item: any) => {
-        let arr = [...item]
-        arr[0] = false
-        return arr
+        const arr = [...item];
+        arr[0] = false;
+        return arr;
       })
-    )
+    );
 
-    setGrouping([])
-    setSelectedPercent("")
-  }
+    setGrouping([]);
+    setSelectedPercent("");
+  };
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="w-42 m-11">
+    <Modal open={isOpen} onClose={onClose} className="w-42 m-11">
       <div className="w-100">
         <div className="flex-col px-36">
           <div className="my-4 flex justify-end gap-4 ">
@@ -1011,10 +1107,17 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
             </button>
           </div>
           <div className="flex justify-center">
-            <div ref={spreadsheetRef} id="spreadsheet_multicore_ui" className="" />
+            <div
+              ref={spreadsheetRef}
+              id="spreadsheet_multicore_ui"
+              className=""
+            />
           </div>
           <div className="my-4 flex justify-end">
-            <button onClick={addGroup} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+            <button
+              onClick={addGroup}
+              className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+            >
               Add Group
             </button>
           </div>
@@ -1023,7 +1126,10 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
           </div>
           {grouping.length > 0 && (
             <div className="my-2 flex justify-end">
-              <button onClick={onConfirm} className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+              <button
+                onClick={onConfirm}
+                className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+              >
                 Confirm
               </button>
             </div>
@@ -1031,7 +1137,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
         </div>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default MulticoreCableConfigurator
+export default MulticoreCableConfigurator;

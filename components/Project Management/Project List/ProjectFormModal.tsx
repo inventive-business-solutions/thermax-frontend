@@ -1,29 +1,35 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, message, Modal } from "antd"
-import { useEffect, useState } from "react"
-import { SubmitHandler, useForm } from "react-hook-form"
-import { mutate } from "swr"
-import * as zod from "zod"
-import { updateData } from "actions/crud-actions"
-import AlertNotification from "components/AlertNotification"
-import CustomAutoComplete from "components/FormInputs/AutocompleteWithCreate"
-import CustomTextInput from "components/FormInputs/CustomInput"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
+import { updateData } from "@/actions/crud-actions";
+import { createProject } from "@/actions/project";
+import AlertNotification from "@/components/AlertNotification";
+import CustomAutoComplete from "@/components/FormInputs/AutocompleteWithCreate";
+import CustomTextInput from "@/components/FormInputs/CustomInput";
+import CustomSingleSelect from "@/components/FormInputs/CustomSingleSelect";
 import {
   CLIENT_NAME_API,
   CONSULTANT_NAME_API,
-  getProjectListUrl,
-  PROJECT_API,
   THERMAX_USER_API,
-} from "configs/api-endpoints"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
-import { createProject } from "actions/project"
+  PROJECT_API,
+  getProjectListUrl,
+} from "@/configs/api-endpoints";
+import { useDropdownOptions } from "@/hooks/useDropdownOptions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, message, Modal } from "antd";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { mutate } from "swr";
+import * as zod from "zod";
 
-const getProjectFormValidationSchema = (project_oc_numbers: string[], editMode: boolean) => {
+const getProjectFormValidationSchema = (
+  project_oc_numbers: string[],
+  editMode: boolean
+) => {
   return zod.object({
-    project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
+    project_name: zod.string({
+      required_error: "Project name is required",
+      message: "Project name is required",
+    }),
     project_oc_number: zod
       .string({
         required_error: "Project OC number is required",
@@ -31,18 +37,24 @@ const getProjectFormValidationSchema = (project_oc_numbers: string[], editMode: 
       })
       .refine(
         (value) => {
-          return editMode || !project_oc_numbers.includes(value)
+          return editMode || !project_oc_numbers.includes(value);
         },
         { message: "Project OC number already exists" }
       ),
-    client_name: zod.string({ required_error: "Client name is required", message: "Client name is required" }),
+    client_name: zod.string({
+      required_error: "Client name is required",
+      message: "Client name is required",
+    }),
     consultant_name: zod.string({
       required_error: "Consultant name is required",
       message: "Consultant name is required",
     }),
-    approver: zod.string({ required_error: "Approver is required", message: "Approver is required" }),
-  })
-}
+    approver: zod.string({
+      required_error: "Approver is required",
+      message: "Approver is required",
+    }),
+  });
+};
 
 const getDefaultValues = (editMode: boolean, values: any) => {
   return {
@@ -51,8 +63,8 @@ const getDefaultValues = (editMode: boolean, values: any) => {
     client_name: editMode ? values?.client_name : null,
     consultant_name: editMode ? values?.consultant_name : null,
     approver: editMode ? values?.approver : null,
-  }
-}
+  };
+};
 
 export default function ProjectFormModal({
   open,
@@ -63,104 +75,130 @@ export default function ProjectFormModal({
   getProjectUrl,
   projectOCNos,
 }: any) {
-  const [infoMessage, setInfoMessage] = useState("")
-  const [status, setStatus] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [infoMessage, setInfoMessage] = useState("");
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const { dropdownOptions: clientNameOptions } = useDropdownOptions(CLIENT_NAME_API, "client_name")
-  const { dropdownOptions: consultantNameOptions } = useDropdownOptions(CONSULTANT_NAME_API, "consultant_name")
+  const { dropdownOptions: clientNameOptions } = useDropdownOptions(
+    CLIENT_NAME_API,
+    "client_name"
+  );
+  const { dropdownOptions: consultantNameOptions } = useDropdownOptions(
+    CONSULTANT_NAME_API,
+    "consultant_name"
+  );
   const { dropdownOptions: approverOptions } = useDropdownOptions(
     `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["email", "!=", "${userInfo?.email}"]]`,
     "name"
-  )
+  );
 
-  const ProjectFormValidationSchema = getProjectFormValidationSchema(projectOCNos, editMode)
+  const ProjectFormValidationSchema = getProjectFormValidationSchema(
+    projectOCNos,
+    editMode
+  );
 
   const { control, handleSubmit, reset, getValues } = useForm({
     resolver: zodResolver(ProjectFormValidationSchema),
     defaultValues: getDefaultValues(editMode, values),
     mode: "onBlur",
-  })
+  });
 
   useEffect(() => {
-    reset(getDefaultValues(editMode, values))
-  }, [editMode, reset, values])
+    reset(getDefaultValues(editMode, values));
+  }, [editMode, reset, values]);
 
   const handleCancel = () => {
-    setOpen(false)
-    reset(getDefaultValues(false, values))
-    setInfoMessage("")
-    setStatus("")
-  }
+    setOpen(false);
+    reset(getDefaultValues(false, values));
+    setInfoMessage("");
+    setStatus("");
+  };
 
   const handleCreateProject = async (projectData: any) => {
     try {
-      await createProject(projectData, userInfo)
-      setOpen(false)
-      message.success("Project created successfully")
+      await createProject(projectData, userInfo);
+      setOpen(false);
+      message.success("Project created successfully");
     } catch (error: any) {
-      throw error
+      throw error;
     } finally {
-      mutate(getProjectUrl)
+      mutate(getProjectUrl);
     }
-  }
+  };
 
   const handleUpdateProject = async (projectData: any) => {
     try {
-      await updateData(`${PROJECT_API}/${values.name}`, false, projectData)
-      setOpen(false)
-      message.success("Project updated successfully")
+      await updateData(`${PROJECT_API}/${values.name}`, false, projectData);
+      setOpen(false);
+      message.success("Project updated successfully");
     } catch (error: any) {
-      throw error
+      throw error;
     } finally {
-      mutate(getProjectUrl)
+      mutate(getProjectUrl);
     }
-  }
+  };
 
   // Helper function for handling errors
   const handleError = (error: any) => {
-    setStatus("error")
+    setStatus("error");
     try {
-      const errorObj = JSON.parse(error?.message) as any
-      setInfoMessage(errorObj?.message)
+      const errorObj = JSON.parse(error?.message) as any;
+      setInfoMessage(errorObj?.message);
     } catch (parseError) {
+      console.error(parseError);
       // If parsing fails, use the raw error message
-      setInfoMessage(error?.message || "An unknown error occurred")
+      setInfoMessage(error?.message || "An unknown error occurred");
     }
-  }
+  };
 
-  const onSubmit: SubmitHandler<zod.infer<typeof ProjectFormValidationSchema>> = async (data: any) => {
-    setLoading(true)
-    data = { ...data, division: userInfo?.division }
+  const onSubmit: SubmitHandler<
+    zod.infer<typeof ProjectFormValidationSchema>
+  > = async (data: any) => {
+    setLoading(true);
+    data = { ...data, division: userInfo?.division };
     try {
       if (editMode) {
-        await handleUpdateProject(data)
+        await handleUpdateProject(data);
       } else {
-        await handleCreateProject(data)
+        await handleCreateProject(data);
       }
     } catch (error: any) {
-      handleError(error)
+      handleError(error);
     } finally {
-      mutate(getProjectListUrl)
-      setLoading(false)
+      mutate(getProjectListUrl);
+      setLoading(false);
       // setOpen(false)
     }
-  }
+  };
 
   return (
     <Modal
       open={open}
-      title={<h1 className="text-center font-bold">{`${editMode ? "Edit" : "Add New"} Project`}</h1>}
+      title={
+        <h1 className="text-center font-bold">{`${
+          editMode ? "Edit" : "Add New"
+        } Project`}</h1>
+      }
       onCancel={handleCancel}
       footer={null}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
         <div className="flex gap-2">
           <div className="flex-1">
-            <CustomTextInput name="project_name" control={control} label="Project Name" type="text" />
+            <CustomTextInput
+              name="project_name"
+              control={control}
+              label="Project Name"
+              type="text"
+            />
           </div>
           <div className="flex-1">
-            <CustomTextInput name="project_oc_number" control={control} label="Project OC NO." type="text" />
+            <CustomTextInput
+              name="project_oc_number"
+              control={control}
+              label="Project OC NO."
+              type="text"
+            />
           </div>
         </div>
         <div className="flex gap-2">
@@ -191,7 +229,12 @@ export default function ProjectFormModal({
         </div>
 
         <div>
-          <CustomSingleSelect name="approver" control={control} label="Approver" options={approverOptions} />
+          <CustomSingleSelect
+            name="approver"
+            control={control}
+            label="Approver"
+            options={approverOptions}
+          />
         </div>
         <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">
@@ -201,5 +244,5 @@ export default function ProjectFormModal({
         </div>
       </form>
     </Modal>
-  )
+  );
 }
