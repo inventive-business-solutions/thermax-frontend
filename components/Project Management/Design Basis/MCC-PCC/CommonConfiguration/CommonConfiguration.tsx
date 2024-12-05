@@ -222,45 +222,37 @@ const CommonConfiguration = ({
     reset(getDefaultValues(commonConfigurationData?.[0]))
   }, [commonConfigurationData, reset])
 
-  const field_motor_isolator_is_selected_controlled = watch("is_field_motor_isolator_selected")
-
-  useEffect(() => {
-    if (field_motor_isolator_is_selected_controlled === "0") {
-      setValue("field_motor_type", "NA")
-      setValue("field_motor_enclosure", "NA")
-      setValue("field_motor_material", "NA")
-      setValue("field_motor_qty", "NA")
-      setValue("field_motor_isolator_color_shade", "NA")
-      setValue("field_motor_cable_entry", "NA")
-      setValue("field_motor_canopy_on_top", "NA")
-    }
-  }, [field_motor_isolator_is_selected_controlled, setValue])
-  const local_push_button_station_is_Selected_controlled = watch("is_local_push_button_station_selected")
-
-  useEffect(() => {
-    if (local_push_button_station_is_Selected_controlled === "0") {
-      setValue("lpbs_type", "NA")
-      setValue("lpbs_enclosure", "NA")
-      setValue("lpbs_material", "NA")
-      setValue("lpbs_qty", "NA")
-      setValue("lpbs_color_shade", "NA")
-      setValue("lpbs_canopy_on_top", "NA")
-      setValue("lpbs_push_button_start_color", "NA")
-      setValue("lpbs_indication_lamp_start_color", "NA")
-      setValue("lpbs_indication_lamp_stop_color", "NA")
-      setValue("lpbs_speed_increase", "NA")
-      setValue("lpbs_speed_decrease", "NA")
-    }
-  }, [local_push_button_station_is_Selected_controlled, setValue])
-
-  // const is_push_button_speed_selected_controllded = watch("is_push_button_speed_selected")
+  // const field_motor_isolator_is_selected_controlled = watch("is_field_motor_isolator_selected")
 
   // useEffect(() => {
-  //   if (is_push_button_speed_selected_controllded === 0) {
-  //     setValue("speed_increase_pb", "NA")
-  //     setValue("speed_decrease_pb", "NA")
+  //   if (field_motor_isolator_is_selected_controlled === "0") {
+  //     setValue("field_motor_type", "NA")
+  //     setValue("field_motor_enclosure", "NA")
+  //     setValue("field_motor_material", "NA")
+  //     setValue("field_motor_qty", "NA")
+  //     setValue("field_motor_isolator_color_shade", "NA")
+  //     setValue("field_motor_cable_entry", "NA")
+  //     setValue("field_motor_canopy_on_top", "NA")
   //   }
-  // }, [is_push_button_speed_selected_controllded, setValue])
+  // }, [field_motor_isolator_is_selected_controlled, setValue])
+
+  // const local_push_button_station_is_Selected_controlled = watch("is_local_push_button_station_selected")
+
+  // useEffect(() => {
+  //   if (local_push_button_station_is_Selected_controlled === "0") {
+  //     setValue("lpbs_type", "NA")
+  //     setValue("lpbs_enclosure", "NA")
+  //     setValue("lpbs_material", "NA")
+  //     setValue("lpbs_qty", "NA")
+  //     setValue("lpbs_color_shade", "NA")
+  //     setValue("lpbs_canopy_on_top", "NA")
+  //     setValue("lpbs_push_button_start_color", "NA")
+  //     setValue("lpbs_indication_lamp_start_color", "NA")
+  //     setValue("lpbs_indication_lamp_stop_color", "NA")
+  //     setValue("lpbs_speed_increase", "NA")
+  //     setValue("lpbs_speed_decrease", "NA")
+  //   }
+  // }, [local_push_button_station_is_Selected_controlled, setValue])
 
   useEffect(() => {
     if (supply_feeder_standard_controlled === "IS") {
@@ -664,8 +656,6 @@ const CommonConfiguration = ({
               name="is_push_button_speed_selected"
               label="Speed"
               options={[
-                { label: "Yes", value: "1" },
-                { label: "No", value: "0" },
                 { label: "Yes", value: "1" },
                 { label: "No", value: "0" },
               ]}

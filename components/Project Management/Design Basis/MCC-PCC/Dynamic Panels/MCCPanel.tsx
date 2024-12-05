@@ -31,7 +31,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     is_lsi_selected: mccPanelData?.is_lsi_selected || "1",
     is_neural_link_with_disconnect_facility_selected:
       mccPanelData?.is_neural_link_with_disconnect_facility_selected || "1",
-    is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected || "1",
+    is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected?.toString() || "1",
     is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected?.toString() || "0",
     is_red_cb_in_service: mccPanelData?.is_red_cb_in_service?.toString() || "0",
     is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected?.toString() || "0",
@@ -433,8 +433,8 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="is_led_type_lamp_selected"
               label="Indication (LED Type Lamp)"
               options={[
-                { label: "ON", value: 1 },
-                { label: "OFF", value: 0 },
+                { label: "ON", value: "1" },
+                { label: "OFF", value: "0" },
               ]}
             />
             <CustomCheckboxInput control={control} name="is_other_selected" label="Other" />

@@ -1,5 +1,7 @@
 import * as zod from "zod"
 export const configItemValidationSchema = zod.object({
+  is_local_push_button_station_selected: zod.string(),
+  is_field_motor_isolator_selected: zod.string(),
   dol_starter: zod.string({ required_error: "DOL Starter is required", message: "DOL Starter is required" }),
   star_delta_starter: zod.string({
     required_error: "Star Delta Starter is required",
