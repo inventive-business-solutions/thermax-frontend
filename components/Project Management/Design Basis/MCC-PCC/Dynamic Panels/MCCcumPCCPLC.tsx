@@ -666,7 +666,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={di_module_density_options}
-                    disabled={watch("is_di_module_density_selected") === "0"}
+                    // disabled={watch("is_di_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -692,7 +692,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={di_module_input_type_options}
-                    disabled={watch("is_di_module_input_type_selected") === "0"}
+                    // disabled={watch("is_di_module_input_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -720,7 +720,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={di_module_interrogation_voltage_options}
-                    disabled={watch("is_interrogation_voltage_selected") === "0"}
+                    // disabled={watch("is_interrogation_voltage_selected") === "0"}
                   />
                 </div>
               </div>
@@ -756,7 +756,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={do_module_density_options}
-                    disabled={watch("is_do_module_density_selected") === "0"}
+                    // disabled={watch("is_do_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -782,7 +782,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={do_module_output_type_options}
-                    disabled={watch("is_do_module_output_type_selected") === "0"}
+                    // disabled={watch("is_do_module_output_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -857,7 +857,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={ai_module_density_options}
-                    disabled={watch("is_ai_module_density_selected") === "0"}
+                    // disabled={watch("is_ai_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -882,7 +882,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="ai_module_output_type"
                     label=""
                     size="small"
-                    disabled={watch("is_ai_module_output_type_selected") === "0"}
+                    // disabled={watch("is_ai_module_output_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -947,7 +947,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={rtd_density_options}
-                    disabled={watch("is_rtd_tc_module_density_selected") === "0" || isRtdModuleSelected === "0"}
+                    disabled={ isRtdModuleSelected === "0"}
                   />
                 </div>
               </div>
@@ -973,7 +973,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={rtd_input_type_options}
-                    disabled={watch("is_rtd_tc_module_input_type_selected") === "0" || isRtdModuleSelected === "0"}
+                    disabled={ isRtdModuleSelected === "0" }
                   />
                 </div>
               </div>
@@ -1032,7 +1032,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={ao_module_density_options}
-                    disabled={watch("is_ao_module_density_selected") === "0"}
+                    // disabled={watch("is_ao_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -1058,7 +1058,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={ao_module_output_type_options}
-                    disabled={watch("is_ao_module_output_type_selected") === "0"}
+                    // disabled={watch("is_ao_module_output_type_selected") === "0"}
                   />
                 </div>
               </div>

@@ -416,21 +416,21 @@ const CommonConfiguration = ({
               size="small"
             />
           </div> */}
-          {/* {userInfo?.division === WWS_SPG && ( */}
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="switchgear_combination"
-              label="Switchgear Combination"
-              disabled={
-                watch("mcc_switchgear_type") === "Type II Coordination-Fuse" ||
-                watch("mcc_switchgear_type") === "Type II Coordination-Fuse-One Size Higher"
-              }
-              options={switchgear_combination_options || []}
-              size="small"
-            />
-          </div>
-          {/* )} */}
+          {userInfo?.division === WWS_SPG && (
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="switchgear_combination"
+                label="Switchgear Combination"
+                disabled={
+                  watch("mcc_switchgear_type") === "Type II Coordination-Fuse" ||
+                  watch("mcc_switchgear_type") === "Type II Coordination-Fuse-One Size Higher"
+                }
+                options={switchgear_combination_options || []}
+                size="small"
+              />
+            </div>
+          )}
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Supply Feeder</span>
