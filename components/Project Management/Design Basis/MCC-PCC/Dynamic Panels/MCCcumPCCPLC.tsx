@@ -181,56 +181,56 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
   const isClientOrThermaxScopeisSelected = watch("ups_scope")
   const isRtdModuleSelected = watch("is_rtd_tc_moduule_selected")
 
-  const is_third_party_communication_protocol_selected_controlled = watch(
-    "is_third_party_communication_protocol_selected"
-  )
-  const is_client_system_communication_selected_controlled = watch("is_client_system_communication_selected")
-  const is_cpu_redundancy_selected_controlled = watch("is_cpu_redundancy_selected")
-  const is_plc_and_ups_marshalling_cabinet_selected_controlled = watch("is_plc_and_ups_marshalling_cabinet_selected")
-  const is_no_of_contact_selected_controlled = watch("is_no_of_contact_selected")
-  const is_plc_spare_io_count_selected_controlled = watch("is_plc_spare_io_count_selected")
-  const is_plc_spare_memory_selected_controlled = watch("is_plc_spare_memory_selected")
-  const is_rtd_tc_moduule_selected_controlled = watch("is_rtd_tc_moduule_selected")
+  // const is_third_party_communication_protocol_selected_controlled = watch(
+  //   "is_third_party_communication_protocol_selected"
+  // )
+  // const is_client_system_communication_selected_controlled = watch("is_client_system_communication_selected")
+  // const is_cpu_redundancy_selected_controlled = watch("is_cpu_redundancy_selected")
+  // const is_plc_and_ups_marshalling_cabinet_selected_controlled = watch("is_plc_and_ups_marshalling_cabinet_selected")
+  // const is_no_of_contact_selected_controlled = watch("is_no_of_contact_selected")
+  // const is_plc_spare_io_count_selected_controlled = watch("is_plc_spare_io_count_selected")
+  // const is_plc_spare_memory_selected_controlled = watch("is_plc_spare_memory_selected")
+  // const is_rtd_tc_moduule_selected_controlled = watch("is_rtd_tc_moduule_selected")
 
-  useEffect(() => {
-    if (is_third_party_communication_protocol_selected_controlled === "0") {
-      setValue("third_party_communication_protocol", "NA")
-    }
-    if (is_client_system_communication_selected_controlled === "0") {
-      setValue("client_system_communication", "NA")
-    }
-    if (is_cpu_redundancy_selected_controlled === "0") {
-      setValue("cpu_redundancy", "NA")
-    }
-    if (is_plc_and_ups_marshalling_cabinet_selected_controlled === "0") {
-      setValue("marshalling_cabinet_for_plc_and_ups", "NA")
-    }
-    if (is_no_of_contact_selected_controlled === "0") {
-      setValue("do_module_no_of_contact", "NA")
-    }
-    if (is_plc_spare_io_count_selected_controlled === "0") {
-      setValue("plc_spare_io_count", "NA")
-    }
-    if (is_plc_spare_memory_selected_controlled === "0") {
-      setValue("plc_spare_memory", "NA")
-    }
-    if (is_rtd_tc_moduule_selected_controlled === "0") {
-      setValue("rtd_tc_module_density", "NA")
-      setValue("rtd_tc_module_input_type", "NA")
-      setValue("rtd_tc_module_scan_time", "NA")
-      setValue("is_rtd_tc_module_hart_protocol_support_selected", 0)
-    }
-  }, [
-    is_third_party_communication_protocol_selected_controlled,
-    is_client_system_communication_selected_controlled,
-    is_cpu_redundancy_selected_controlled,
-    is_plc_and_ups_marshalling_cabinet_selected_controlled,
-    is_no_of_contact_selected_controlled,
-    is_plc_spare_io_count_selected_controlled,
-    is_plc_spare_memory_selected_controlled,
-    is_rtd_tc_moduule_selected_controlled,
-    setValue,
-  ])
+  // useEffect(() => {
+    // if (is_third_party_communication_protocol_selected_controlled === "0") {
+    //   setValue("third_party_communication_protocol", "NA")
+    // }
+    // if (is_client_system_communication_selected_controlled === "0") {
+    //   setValue("client_system_communication", "NA")
+    // }
+    // if (is_cpu_redundancy_selected_controlled === "0") {
+    //   setValue("cpu_redundancy", "NA")
+    // }
+    // if (is_plc_and_ups_marshalling_cabinet_selected_controlled === "0") {
+    //   setValue("marshalling_cabinet_for_plc_and_ups", "NA")
+    // }
+    // if (is_no_of_contact_selected_controlled === "0") {
+    //   setValue("do_module_no_of_contact", "NA")
+    // }
+    // if (is_plc_spare_io_count_selected_controlled === "0") {
+    //   setValue("plc_spare_io_count", "NA")
+    // }
+    // if (is_plc_spare_memory_selected_controlled === "0") {
+    //   setValue("plc_spare_memory", "NA")
+    // }
+    // if (is_rtd_tc_moduule_selected_controlled === "0") {
+    //   setValue("rtd_tc_module_density", "NA")
+    //   setValue("rtd_tc_module_input_type", "NA")
+    //   setValue("rtd_tc_module_scan_time", "NA")
+    //   setValue("is_rtd_tc_module_hart_protocol_support_selected", 0)
+    // }
+  // }, [
+  //   is_third_party_communication_protocol_selected_controlled,
+  //   is_client_system_communication_selected_controlled,
+  //   is_cpu_redundancy_selected_controlled,
+  //   is_plc_and_ups_marshalling_cabinet_selected_controlled,
+  //   is_no_of_contact_selected_controlled,
+  //   is_plc_spare_io_count_selected_controlled,
+  //   is_plc_spare_memory_selected_controlled,
+  //   is_rtd_tc_moduule_selected_controlled,
+  //   setValue,
+  // ])
 
   useEffect(() => {
     reset(getDefaultValues(plcPanelData?.[0]))

@@ -17,6 +17,7 @@ import { useParams } from "next/navigation"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 
 const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: any) => {
+  console.log(mccPanelData?.is_blue_cb_spring_charge_selected, "Data")
   return {
     incomer_ampere: mccPanelData?.incomer_ampere || "1000",
     led_type_other_input: mccPanelData?.led_type_other_input || "NA",
@@ -25,10 +26,10 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     incomer_above_ampere: mccPanelData?.incomer_above_ampere || "1001",
     incomer_above_pole: mccPanelData?.incomer_above_pole || "4",
     incomer_above_type: mccPanelData?.incomer_above_type || "SFU",
-    is_under_or_over_voltage_selected: mccPanelData?.is_under_or_over_voltage_selected || 1,
-    is_other_selected: mccPanelData?.is_other_selected || 1,
-    is_lsig_selected: mccPanelData?.is_lsig_selected || 1,
-    is_lsi_selected: mccPanelData?.is_lsi_selected || 1,
+    is_under_or_over_voltage_selected: mccPanelData?.is_under_or_over_voltage_selected || 0,
+    is_other_selected: mccPanelData?.is_other_selected || 0,
+    is_lsig_selected: mccPanelData?.is_lsig_selected || 0,
+    is_lsi_selected: mccPanelData?.is_lsi_selected || 0,
     is_neural_link_with_disconnect_facility_selected:
       mccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
     is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected?.toString() || "1",
