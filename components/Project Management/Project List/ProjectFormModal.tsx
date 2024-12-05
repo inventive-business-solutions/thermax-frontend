@@ -6,26 +6,16 @@ import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { mutate } from "swr"
 import * as zod from "zod"
-import { createData, updateData } from "actions/crud-actions"
+import { updateData } from "actions/crud-actions"
 import AlertNotification from "components/AlertNotification"
 import CustomAutoComplete from "components/FormInputs/AutocompleteWithCreate"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import {
-  APPROVER_EMAIL_NOTIFICATION_API,
-  CABLE_TRAY_LAYOUT,
   CLIENT_NAME_API,
-  COMMON_CONFIGURATION,
   CONSULTANT_NAME_API,
-  DESIGN_BASIS_GENERAL_INFO_API,
-  DESIGN_BASIS_REVISION_HISTORY_API,
   getProjectListUrl,
-  LAYOUT_EARTHING,
-  MAKE_OF_COMPONENT_API,
-  MOTOR_PARAMETER_API,
   PROJECT_API,
-  PROJECT_INFO_API,
-  STATIC_DOCUMENT_API,
   THERMAX_USER_API,
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"

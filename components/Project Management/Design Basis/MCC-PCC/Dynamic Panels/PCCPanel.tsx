@@ -33,9 +33,9 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     is_neural_link_with_disconnect_facility_selected:
       pccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
     is_led_type_lamp_selected: pccPanelData?.is_led_type_lamp_selected || "ON",
-    is_blue_cb_spring_charge_selected: pccPanelData?.is_blue_cb_spring_charge_selected || 0,
-    is_red_cb_in_service: pccPanelData?.is_red_cb_in_service || 0,
-    is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || 0,
+    is_blue_cb_spring_charge_selected: pccPanelData?.is_blue_cb_spring_charge_selected?.toString() || "0",
+    is_red_cb_in_service: pccPanelData?.is_red_cb_in_service?.toString() || "0",
+    is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected?.toString() || "0",
     alarm_annunciator: pccPanelData?.alarm_annunciator || "Applicable",
     control_transformer_coating: pccPanelData?.control_transformer_coating || "Cast Resin",
     control_transformer_configuration: pccPanelData?.control_transformer_configuration || "Single",
@@ -69,7 +69,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     ppc_base_frame_paint_shade: pccPanelData?.ppc_base_frame_paint_shade || "Black",
     ppc_minimum_coating_thickness: pccPanelData?.ppc_minimum_coating_thickness || "As per Client Specification",
     ppc_pretreatment_panel_standard: pccPanelData?.ppc_pretreatment_panel_standard || "OEM Standard for pretreatment",
-    is_punching_details_for_boiler_selected: pccPanelData?.is_punching_details_for_boiler_selected || 0,
+    is_punching_details_for_boiler_selected: pccPanelData?.is_punching_details_for_boiler_selected?.toString() || "0",
     boiler_model: pccPanelData?.boiler_model || "NA",
     boiler_fuel: pccPanelData?.boiler_fuel || "NA",
     boiler_year: pccPanelData?.boiler_year || "NA",
@@ -83,7 +83,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     boiler_output: pccPanelData?.boiler_output || "NA",
     boiler_connected_load: pccPanelData?.boiler_connected_load || "NA",
     boiler_design_pressure: pccPanelData?.boiler_design_pressure || "NA",
-    is_punching_details_for_heater_selected: pccPanelData?.is_punching_details_for_heater_selected || 0,
+    is_punching_details_for_heater_selected: pccPanelData?.is_punching_details_for_heater_selected?.toString() || "0",
     heater_model: pccPanelData?.heater_model || "NA",
     heater_fuel: pccPanelData?.heater_fuel || "NA",
     heater_year: pccPanelData?.heater_year || "NA",
@@ -103,7 +103,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     spg_name_plate_weight: pccPanelData?.spg_name_plate_weight || "NA",
     spg_name_plate_oc_number: pccPanelData?.spg_name_plate_oc_number || projectMetadata?.project_oc_number,
     spg_name_plate_part_code: pccPanelData?.spg_name_plate_part_code || "NA",
-    is_spg_applicable: pccPanelData?.is_spg_applicable || 0,
+    is_spg_applicable: pccPanelData?.is_spg_applicable?.toString() || "0",
   }
 }
 
@@ -774,8 +774,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="is_punching_details_for_boiler_selected"
                   label=""
                   options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
+                    { label: "Yes", value: "1" },
+                    { label: "No", value: "0" },
                   ]}
                 />
               </div>
@@ -786,7 +786,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="boiler_model"
                   label="Model"
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -794,7 +794,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="boiler_fuel"
                   label="Fuel"
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -802,7 +802,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="boiler_year"
                   label="Year"
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
             </div>
@@ -813,7 +813,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_power_supply_vac"
                   label="Power Supply"
                   addonAfter={"VAC"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -822,7 +822,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_power_supply_phase"
                   label="Power Supply"
                   addonAfter={"Phase"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -831,7 +831,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_power_supply_frequency"
                   label="Power Supply"
                   addonAfter={"Hz"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
             </div>
@@ -842,7 +842,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_control_supply_vac"
                   label="Control Supply"
                   addonAfter={"VAC"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -851,7 +851,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_control_supply_phase"
                   label="Control Supply"
                   addonAfter={"Phase"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -860,7 +860,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_control_supply_frequency"
                   label="Control Supply"
                   addonAfter={"Hz"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
             </div>
@@ -871,7 +871,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_evaporation"
                   label="Evaporation"
                   addonAfter={"Kg/Hr"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -880,7 +880,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_output"
                   label="Output"
                   addonAfter={"MW"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -889,7 +889,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_connected_load"
                   label="Connected Load"
                   addonAfter={"KW"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -898,7 +898,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="boiler_design_pressure"
                   label="Design Pressure"
                   addonAfter={"Kg/cm2(g)/Bar"}
-                  disabled={watch("is_punching_details_for_boiler_selected") === 0}
+                  disabled={watch("is_punching_details_for_boiler_selected") === "0"}
                 />
               </div>
             </div>
@@ -911,8 +911,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="is_punching_details_for_heater_selected"
                   label=""
                   options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
+                    { label: "Yes", value: "1" },
+                    { label: "No", value: "0" },
                   ]}
                 />
               </div>
@@ -923,7 +923,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="heater_model"
                   label="Model"
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -931,7 +931,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="heater_fuel"
                   label="Fuel"
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -939,7 +939,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="heater_year"
                   label="Year"
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
             </div>
@@ -950,7 +950,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_power_supply_vac"
                   label="Power Supply"
                   addonAfter={"VAC"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -959,7 +959,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_power_supply_phase"
                   label="Power Supply"
                   addonAfter={"Phase"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -968,7 +968,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_power_supply_frequency"
                   label="Power Supply"
                   addonAfter={"Hz"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
             </div>
@@ -979,7 +979,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_control_supply_vac"
                   label="Control Supply"
                   addonAfter={"VAC"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -988,7 +988,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_control_supply_phase"
                   label="Control Supply"
                   addonAfter={"Phase"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -997,7 +997,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_control_supply_frequency"
                   label="Control Supply"
                   addonAfter={"Hz"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
             </div>
@@ -1008,7 +1008,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_evaporation"
                   label="Evaporation"
                   addonAfter={"Kcal/Hr"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1017,7 +1017,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_output"
                   label="Output"
                   addonAfter={"MW"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1026,7 +1026,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_connected_load"
                   label="Connected Load"
                   addonAfter={"KW"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1035,7 +1035,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="heater_temperature"
                   label="Temperature"
                   addonAfter={"Deg C"}
-                  disabled={watch("is_punching_details_for_heater_selected") === 0}
+                  disabled={watch("is_punching_details_for_heater_selected") === "0"}
                 />
               </div>
             </div>
@@ -1051,8 +1051,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   name="is_spg_applicable"
                   label=""
                   options={[
-                    { label: "Yes", value: 1 },
-                    { label: "No", value: 0 },
+                    { label: "Yes", value: "1" },
+                    { label: "No", value: "0" },
                   ]}
                 />
               </div>
@@ -1063,7 +1063,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_unit_name"
                   label="Unit Name"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1071,7 +1071,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_capacity"
                   label="Capacity"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1079,7 +1079,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_manufacturing_year"
                   label="Year of Manufacturing"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
             </div>
@@ -1089,7 +1089,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_weight"
                   label="Weight"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1097,7 +1097,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_oc_number"
                   label="OC No."
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
               <div className="flex-1">
@@ -1105,7 +1105,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                   control={control}
                   name="spg_name_plate_part_code"
                   label="Part Code"
-                  disabled={watch("is_spg_applicable") === 0}
+                  disabled={watch("is_spg_applicable") === "0"}
                 />
               </div>
             </div>

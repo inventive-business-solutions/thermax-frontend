@@ -18,8 +18,8 @@ import { WWS_SPG } from "configs/constants"
 
 const getDefaultValues = (commonConfigData: any) => {
   return {
-    field_motor_isolator_is_Selected: commonConfigData?.field_motor_isolator_is_Selected || 1,
-    local_push_button_station_is_Selected: commonConfigData?.local_push_button_station_is_Selected || 1,
+    is_field_motor_isolator_selected: commonConfigData?.is_field_motor_isolator_selected?.toString() || "1",
+    is_local_push_button_station_selected: commonConfigData?.is_local_push_button_station_selected?.toString() || "1",
     dol_starter: commonConfigData?.dol_starter || "0.37",
     star_delta_starter: commonConfigData?.star_delta_starter || "0.55",
     ammeter: commonConfigData?.ammeter || "0.37",
@@ -49,7 +49,7 @@ const getDefaultValues = (commonConfigData: any) => {
     push_button_start: commonConfigData?.push_button_start || "Green",
     push_button_stop: commonConfigData?.push_button_stop || "Green",
     push_button_ess: commonConfigData?.push_button_ess || "Stayput (RED)",
-    is_push_button_speed_selected: commonConfigData?.is_push_button_speed_selected || 1,
+    is_push_button_speed_selected: commonConfigData?.is_push_button_speed_selected?.toString() || "1",
     speed_increase_pb: commonConfigData?.speed_increase_pb || "Yellow",
     speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
     alarm_acknowledge_and_lamp_test: commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
@@ -222,10 +222,10 @@ const CommonConfiguration = ({
     reset(getDefaultValues(commonConfigurationData?.[0]))
   }, [commonConfigurationData, reset])
 
-  const field_motor_isolator_is_selected_controlled = watch("field_motor_isolator_is_Selected")
+  const field_motor_isolator_is_selected_controlled = watch("is_field_motor_isolator_selected")
 
   useEffect(() => {
-    if (field_motor_isolator_is_selected_controlled === 0) {
+    if (field_motor_isolator_is_selected_controlled === "0") {
       setValue("field_motor_type", "NA")
       setValue("field_motor_enclosure", "NA")
       setValue("field_motor_material", "NA")
@@ -235,10 +235,10 @@ const CommonConfiguration = ({
       setValue("field_motor_canopy_on_top", "NA")
     }
   }, [field_motor_isolator_is_selected_controlled, setValue])
-  const local_push_button_station_is_Selected_controlled = watch("local_push_button_station_is_Selected")
+  const local_push_button_station_is_Selected_controlled = watch("is_local_push_button_station_selected")
 
   useEffect(() => {
-    if (local_push_button_station_is_Selected_controlled === 0) {
+    if (local_push_button_station_is_Selected_controlled === "0") {
       setValue("lpbs_type", "NA")
       setValue("lpbs_enclosure", "NA")
       setValue("lpbs_material", "NA")
@@ -256,7 +256,7 @@ const CommonConfiguration = ({
   const is_push_button_speed_selected_controllded = watch("is_push_button_speed_selected")
 
   useEffect(() => {
-    if (is_push_button_speed_selected_controllded === 0) {
+    if (is_push_button_speed_selected_controllded === "0") {
       setValue("speed_increase_pb", "NA")
       setValue("speed_decrease_pb", "NA")
     }
@@ -670,8 +670,8 @@ const CommonConfiguration = ({
               name="is_push_button_speed_selected"
               label="Speed"
               options={[
-                { label: "Yes", value: 1 },
-                { label: "No", value: 0 },
+                { label: "Yes", value: "1" },
+                { label: "No", value: "0" },
               ]}
             />
           </div>
@@ -681,7 +681,7 @@ const CommonConfiguration = ({
               name="speed_increase_pb"
               label="Speed Increase PB"
               options={speed_increase_pb_options || []}
-              disabled={watch("is_push_button_speed_selected") === 0}
+              disabled={watch("is_push_button_speed_selected") === "0"}
               size="small"
             />
           </div>
@@ -691,7 +691,7 @@ const CommonConfiguration = ({
               name="speed_decrease_pb"
               label="Speed Decrease PB"
               options={speed_decrease_pb_options || []}
-              disabled={watch("is_push_button_speed_selected") === 0}
+              disabled={watch("is_push_button_speed_selected") === "0"}
               size="small"
             />
           </div>
@@ -775,11 +775,11 @@ const CommonConfiguration = ({
           <div>
             <CustomRadioSelect
               control={control}
-              name="field_motor_isolator_is_Selected"
+              name="is_field_motor_isolator_selected"
               label=""
               options={[
-                { label: "Yes", value: 1 },
-                { label: "No", value: 0 },
+                { label: "Yes", value: "1" },
+                { label: "No", value: "0" },
               ]}
             />
           </div>
@@ -791,7 +791,7 @@ const CommonConfiguration = ({
               name="field_motor_type"
               label="Type"
               options={field_motor_type_options || []}
-              disabled={watch("field_motor_isolator_is_Selected") === 0}
+              disabled={watch("is_field_motor_isolator_selected") === "0"}
               size="small"
             />
           </div>
@@ -802,7 +802,7 @@ const CommonConfiguration = ({
               label="Enclosure"
               options={field_motor_enclosure_options || []}
               size="small"
-              disabled={watch("field_motor_isolator_is_Selected") === 0}
+              disabled={watch("is_field_motor_isolator_selected") === "0"}
             />
           </div>
           <div className="flex-1">
@@ -812,7 +812,7 @@ const CommonConfiguration = ({
               label="Material"
               options={field_motor_material_options || []}
               size="small"
-              disabled={watch("field_motor_isolator_is_Selected") === 0}
+              disabled={watch("is_field_motor_isolator_selected") === "0"}
             />
           </div>
         </div>
@@ -824,7 +824,7 @@ const CommonConfiguration = ({
               label="Qty"
               options={field_motor_qty_options || []}
               size="small"
-              disabled={watch("field_motor_isolator_is_Selected") === 0}
+              disabled={watch("is_field_motor_isolator_selected") === "0"}
             />
           </div>
           <div className="flex-1">
@@ -834,7 +834,7 @@ const CommonConfiguration = ({
               label="Isolator Color Shade"
               options={field_motor_color_shade_options || []}
               size="small"
-              disabled={watch("field_motor_isolator_is_Selected") === 0}
+              disabled={watch("is_field_motor_isolator_selected") === "0"}
             />
           </div>
           <div className="flex-1">
@@ -844,7 +844,7 @@ const CommonConfiguration = ({
               label="Cable Entry"
               options={field_motor_cable_entry_options || []}
               size="small"
-              disabled={watch("field_motor_isolator_is_Selected") === 0}
+              disabled={watch("is_field_motor_isolator_selected") === "0"}
             />
           </div>
         </div>
@@ -855,7 +855,7 @@ const CommonConfiguration = ({
             label="Canopy on Top"
             options={field_motor_canopy_on_top_options || []}
             size="small"
-            disabled={watch("field_motor_isolator_is_Selected") === 0}
+            disabled={watch("is_field_motor_isolator_selected") === "0"}
           />
         </div>
         <Divider>
@@ -863,11 +863,11 @@ const CommonConfiguration = ({
           <div>
             <CustomRadioSelect
               control={control}
-              name="local_push_button_station_is_Selected"
+              name="is_local_push_button_station_selected"
               label=""
               options={[
-                { label: "Yes", value: 1 },
-                { label: "No", value: 0 },
+                { label: "Yes", value: "1" },
+                { label: "No", value: "0" },
               ]}
             />
           </div>
@@ -879,7 +879,7 @@ const CommonConfiguration = ({
               name="lpbs_type"
               label="Type"
               options={field_motor_type_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -889,7 +889,7 @@ const CommonConfiguration = ({
               name="lpbs_enclosure"
               label="Enclosure"
               options={field_motor_enclosure_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -899,7 +899,7 @@ const CommonConfiguration = ({
               name="lpbs_material"
               label="Material"
               options={field_motor_material_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -911,7 +911,7 @@ const CommonConfiguration = ({
               name="lpbs_qty"
               label="Qty"
               options={field_motor_qty_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -921,7 +921,7 @@ const CommonConfiguration = ({
               name="lpbs_color_shade"
               label="LPBS Color Shade"
               options={lpbs_color_shade_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -931,7 +931,7 @@ const CommonConfiguration = ({
               name="lpbs_canopy_on_top"
               label="Canopy On top"
               options={lpbs_canopy_on_top_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -943,7 +943,7 @@ const CommonConfiguration = ({
               name="lpbs_push_button_start_color"
               label="Start Push Button Color"
               options={lpbs_indicator_on_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -953,7 +953,7 @@ const CommonConfiguration = ({
               name="lpbs_indication_lamp_start_color"
               label="Start / ON Indication Lamp Color"
               options={lpbs_indicator_on_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -963,7 +963,7 @@ const CommonConfiguration = ({
               name="lpbs_indication_lamp_stop_color"
               label="Stop / OFF Indication Lamp Color"
               options={lpbs_indiacator_off_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -975,7 +975,7 @@ const CommonConfiguration = ({
               name="lpbs_speed_increase"
               label="Speed Increase Push Button"
               options={lpbs_speed_increase_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>
@@ -985,7 +985,7 @@ const CommonConfiguration = ({
               name="lpbs_speed_decrease"
               label="Speed Decrease Push Button"
               options={lpbs_speed_decrease_options || []}
-              disabled={watch("local_push_button_station_is_Selected") === 0}
+              disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"
             />
           </div>

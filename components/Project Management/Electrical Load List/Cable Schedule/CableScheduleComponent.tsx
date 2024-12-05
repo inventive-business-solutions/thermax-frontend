@@ -497,6 +497,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId,
       />
 
       <div className="flex w-full flex-row justify-end gap-2">
+        <Button type="primary">Download Voltage Drop Calculations</Button>
         <Button type="primary">Get Cable Sizing</Button>
         <Button type="primary" onClick={handleCableScheduleSave} disabled={isLoading}>
           Save

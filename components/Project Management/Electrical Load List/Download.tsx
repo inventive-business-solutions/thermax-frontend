@@ -16,6 +16,7 @@ import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
   DESIGN_BASIS_REVISION_HISTORY_API,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
+  MOTOR_CANOPY_REVISION_HISTORY_API,
 } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
@@ -99,6 +100,9 @@ const Download: React.FC = () => {
     setModalLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  useEffect(() => {
+    console.log(dataSource)
+  }, [dataSource])
   const getColumns = (tab: string) => {
     const columns: TableColumnsType = [
       {
@@ -210,7 +214,7 @@ const Download: React.FC = () => {
           </div>
 
           <div className="mt-2">
-            <Table columns={getColumns('load-list')} dataSource={dataSource} size="small" />
+            <Table columns={getColumns("load-list")} dataSource={dataSource} size="small" />
           </div>
         </>
       ),
@@ -228,7 +232,7 @@ const Download: React.FC = () => {
           </div>
 
           <div className="mt-2">
-            <Table columns={getColumns('cable-schedule')} dataSource={dataSource} size="small" />
+            <Table columns={getColumns("cable-schedule")} dataSource={dataSource} size="small" />
           </div>
         </>
       ),
@@ -236,7 +240,20 @@ const Download: React.FC = () => {
     {
       label: `DOWNLOAD MOTOR CANOPY LIST`,
       key: "3",
-      children: <DownloadTable dataSource={dataSource} />,
+      children: (
+        <>
+          <div className="text-end">
+            <Button icon={<SyncOutlined color="#492971" />} onClick={() => mutate(dbLoadlistHistoryUrl)}>
+              {" "}
+              Refresh
+            </Button>
+          </div>
+
+          <div className="mt-2">
+            <Table columns={getColumns("motor-canopy")} dataSource={dataSource} size="small" />
+          </div>
+        </>
+      ),
     },
     {
       label: `DOWNLOAD MOTOR SPEC. & LIST`,
@@ -262,7 +279,7 @@ const Download: React.FC = () => {
       case "2":
         return `${CABLE_SCHEDULE_REVISION_HISTORY_API}${baseUrl}`
       case "3":
-        return `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/motor-canopy${baseUrl}`
+        return `${MOTOR_CANOPY_REVISION_HISTORY_API}${baseUrl}`
       case "4":
         return `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/motor-spec${baseUrl}`
       case "5":
@@ -274,6 +291,7 @@ const Download: React.FC = () => {
     }
   }
   const onChange = async (key: string) => {
+    console.log(key)
     console.log(getApiEndpoint(key))
     const getName = (key: any) => {
       switch (key) {
@@ -295,6 +313,8 @@ const Download: React.FC = () => {
     }
     try {
       const data = await getData(getApiEndpoint(key))
+      console.log(data);
+      
       const dataSource = data?.map((item: any, index: number) => ({
         key: item.name,
         documentName: getName(key),
@@ -302,6 +322,8 @@ const Download: React.FC = () => {
         documentRevision: `R${index}`,
         createdDate: item.creation,
       }))
+      console.log(dataSource);
+      
       setDataSource(dataSource)
       console.log(data)
     } catch (error) {}

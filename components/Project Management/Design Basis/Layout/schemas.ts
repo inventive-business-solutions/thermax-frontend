@@ -29,10 +29,6 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Motor voltage drop during running is required",
     message: "Motor voltage drop during running is required",
   }),
-  conductor: zod.string({
-    required_error: "Conductor is required",
-    message: "Conductor is required",
-  }),
   cable_installation: zod.string({
     required_error: "Cable installation is required",
     message: "Cable installation is required",
@@ -81,7 +77,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Horizontal distance is required",
     message: "Horizontal distance is required",
   }),
-  is_dry_area_selected: zod.number({
+  is_dry_area_selected: zod.string({
     required_error: "Dry area is required",
     message: "Dry area is required",
   }),
@@ -89,7 +85,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Dry area is required",
     message: "Dry area is required",
   }),
-  is_wet_area_selected: zod.number({
+  is_wet_area_selected: zod.string({
     required_error: "Wet area is required",
     message: "Wet area is required",
   }),
@@ -97,7 +93,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Wet area is required",
     message: "Wet area is required",
   }),
-  is_pct_perforated_type_selected: zod.number({
+  is_pct_perforated_type_selected: zod.string({
     required_error: "Perforated type is required",
     message: "Perforated type is required",
   }),
@@ -113,7 +109,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Thickness is required",
     message: "Thickness is required",
   }),
-  is_pct_ladder_type_selected: zod.number({
+  is_pct_ladder_type_selected: zod.string({
     required_error: "Ladder type is required",
     message: "Ladder type is required",
   }),
@@ -129,7 +125,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Thickness is required",
     message: "Thickness is required",
   }),
-  is_pct_mesh_type_selected: zod.number({
+  is_pct_mesh_type_selected: zod.string({
     required_error: "Mesh type is required",
     message: "Mesh type is required",
   }),
@@ -145,7 +141,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Thickness is required",
     message: "Thickness is required",
   }),
-  is_pct_conduit_selected: zod.number({
+  is_pct_conduit_selected: zod.string({
     required_error: "Conduit is required",
     message: "Conduit is required",
   }),
@@ -157,7 +153,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Size is required",
     message: "Size is required",
   }),
-  is_cct_perforated_type_selected: zod.number({
+  is_cct_perforated_type_selected: zod.string({
     required_error: "Perforated type is required",
     message: "Perforated type is required",
   }),
@@ -173,7 +169,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Thickness is required",
     message: "Thickness is required",
   }),
-  is_cct_ladder_type_selected: zod.number({
+  is_cct_ladder_type_selected: zod.string({
     required_error: "Ladder type is required",
     message: "Ladder type is required",
   }),
@@ -189,7 +185,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Thickness is required",
     message: "Thickness is required",
   }),
-  is_cct_mesh_type_selected: zod.number({
+  is_cct_mesh_type_selected: zod.string({
     required_error: "Mesh type is required",
     message: "Mesh type is required",
   }),
@@ -205,7 +201,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Thickness is required",
     message: "Thickness is required",
   }),
-  is_cct_conduit_selected: zod.number({
+  is_cct_conduit_selected: zod.string({
     required_error: "Conduit is required",
     message: "Conduit is required",
   }),
@@ -217,7 +213,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Size is required",
     message: "Size is required",
   }),
-  is_sct_perforated_type_selected: zod.number({
+  is_sct_perforated_type_selected: zod.string({
     required_error: "Perforated type is required",
     message: "Perforated type is required",
   }),
@@ -233,7 +229,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Thickness is required",
     message: "Thickness is required",
   }),
-  is_sct_ladder_type_selected: zod.number({
+  is_sct_ladder_type_selected: zod.string({
     required_error: "Ladder type is required",
     message: "Ladder type is required",
   }),
@@ -249,7 +245,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Thickness is required",
     message: "Thickness is required",
   }),
-  is_sct_mesh_type_selected: zod.number({
+  is_sct_mesh_type_selected: zod.string({
     required_error: "Mesh type is required",
     message: "Mesh type is required",
   }),
@@ -265,7 +261,7 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Thickness is required",
     message: "Thickness is required",
   }),
-  is_sct_conduit_selected: zod.number({
+  is_sct_conduit_selected: zod.string({
     required_error: "Conduit is required",
     message: "Conduit is required",
   }),

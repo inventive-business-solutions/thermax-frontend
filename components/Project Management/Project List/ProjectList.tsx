@@ -7,7 +7,7 @@ import {
   SyncOutlined,
   UploadOutlined,
 } from "@ant-design/icons"
-import { Button, Input, Popconfirm, Table, Tag, Tooltip } from "antd"
+import { Button, Input, message, Popconfirm, Table, Tag, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -55,8 +55,6 @@ export default function ProjectList({ userInfo, isComplete }: any) {
     getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   }
   let { data: projectList, isLoading } = useGetData(getProjectUrl)
-
-  console.log("projectList", projectList)
 
   if (projectList) {
     projectList.sort((a: any, b: any) => {
@@ -229,6 +227,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
     try {
       await deleteProject(selectedRowID)
     } catch (error) {
+      message.error(`Error deleting project: ${error}`)
       console.error("Error deleting project", error)
     }
     mutate(getProjectUrl)
