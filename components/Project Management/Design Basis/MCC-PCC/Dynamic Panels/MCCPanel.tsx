@@ -17,7 +17,6 @@ import { useParams } from "next/navigation"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 
 const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: any) => {
-  console.log(mccPanelData?.is_blue_cb_spring_charge_selected, "Data")
   return {
     incomer_ampere: mccPanelData?.incomer_ampere || "1000",
     led_type_other_input: mccPanelData?.led_type_other_input || "NA",
