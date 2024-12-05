@@ -95,7 +95,7 @@ export default function DocumentRevision() {
     const superuserEmail = await getSuperuserEmail(projectCreator?.division)
     const superuser = await getData(`${THERMAX_USER_API}/${superuserEmail}`)
     const documentRevisions = await getData(
-      `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation desc`
+      `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
     )
     const generalInfo = await getData(
       `${DESIGN_BASIS_GENERAL_INFO_API}/?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
