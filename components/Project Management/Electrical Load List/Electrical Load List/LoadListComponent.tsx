@@ -26,9 +26,10 @@ import { useProjectPanelData } from "hooks/useProjectPanelData"
 import { useParams, useRouter } from "next/navigation"
 import useMakeOfComponentDropdowns from "components/Project Management/Design Basis/MCC-PCC/MakeOfComponent/MakeDropdowns"
 import { useLoading } from "hooks/useLoading"
-import { getCurrentCalculation } from "actions/electrical-load-list"
+import { getCurrentCalculation, getFrameSizeCalculation } from "actions/electrical-load-list"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import path from "path"
+import { ENVIRO, WWS_SPG } from "configs/constants"
 
 // Types definition
 type ValidColumnType =
@@ -252,7 +253,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       console.log(data, "load list data")
     }
     if (colIndex == "21") {
-      if ((data[rowIndex][21] === "NA" || newValue === "NA")) {
+      if (data[rowIndex][21] === "NA" || newValue === "NA") {
         data[rowIndex][22] = "NA"
         data[rowIndex][23] = "NA"
         data[rowIndex][24] = "NA"
@@ -841,10 +842,10 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         console.log(projectInfo?.main_supply_lv, "supply voltage")
         console.log(motorParameters, "upload sheet")
         if (!item[2]) {
-          item[2] = "0" 
+          item[2] = "0"
         }
         if (!item[3]) {
-          item[3] = "0" 
+          item[3] = "0"
         }
         if (!item[6]) {
           item[6] = projectInfo?.main_supply_lv || "" // main supply lv
@@ -910,7 +911,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
   const handleCurrentCalculation = async () => {
     setLoading(true)
     const loadList = spreadsheetRef?.current?.getData()
-    const data = await getCurrentCalculation({
+    const currentCalculations = await getCurrentCalculation({
       divisionName: "Heating",
       data: loadList?.map((row: any) => {
         return {
@@ -926,15 +927,38 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         }
       }),
     })
+    const getFrameSize = await getFrameSizeCalculation({
+      divisionName: WWS_SPG,
+      data: loadList?.map((row: any) => {
+        return {
+          kw: getStandByKw(row[2], row[3]),
+          // supplyVoltage: Number(row[6].split(" ")[0]),
+          // phase: row[7],
+          // powerFactor: Number(row[34]),
+          // motorFrameSize: "",
+          // motorPartCode: "",
+          // motorRatedCurrent: "",
+          tagNo: row[0],
+          // starterType: row[5],
+
+          speed: Number(row[14]),
+          mounting_type: row[15],
+        }
+      }),
+    })
+    console.log("getFrameSize", getFrameSize)
     const updatedLoadList: any = loadList?.map((row: any) => {
-      const calculationResult = data?.find((item: any) => item.tagNo === row[0])
+      const calculationResult = currentCalculations?.find((item: any) => item.tagNo === row[0])
+      const frameSizeResult = getFrameSize?.find((item: any) => item.tagNo === row[0])
       if (calculationResult) {
         const updatedRow = [...row]
         updatedRow[42] = calculationResult.motorRatedCurrent
+        updatedRow[16] = frameSizeResult.frameSize
         return updatedRow
       }
       return row
     })
+    console.log("updated calc", updatedLoadList)
 
     spreadsheetRef?.current?.setData(updatedLoadList)
     setLoading(false)
