@@ -2492,7 +2492,7 @@ export const mockExcel = [
 export const controlSchemeColumnsForHeating = [
   {
     type: "checkbox",
-    title: "Select",
+    title: "SELECT",
     width: "80",
   },
   {
@@ -2539,7 +2539,7 @@ export const controlSchemeColumnsForHeating = [
     name: "starter",
     source: ["No", "Yes"],
     title: "LPBS - INC./DEC./IND.",
-    width: "160",
+    width: "150",
   },
   {
     type: "dropdown",
@@ -2553,7 +2553,7 @@ export const controlSchemeColumnsForHeating = [
     source: ["No", "Yes"],
     name: "thermistorRelay",
     title: "THERMISTOR RELAY",
-    width: "160",
+    width: "110",
   },
   {
     type: "dropdown",
@@ -2588,7 +2588,7 @@ export const controlSchemeColumnsForHeating = [
     source: ["3 Phase", "1 Phase"],
     name: "phase",
     title: "PHASE",
-    width: "60",
+    width: "80",
   },
   {
     type: "dropdown",
@@ -2602,14 +2602,14 @@ export const controlSchemeColumnsForHeating = [
     source: ["No", "Yes"],
     name: "motorProtectionRelay",
     title: "MOTOR PROTECTION RELAY",
-    width: "90",
+    width: "100",
   },
   {
     type: "dropdown",
     source: ["No", "Yes"],
     name: "fieldIsolator",
     title: "FIELD ISOLATOR",
-    width: "70",
+    width: "80",
   },
   {
     type: "dropdown",
@@ -2630,7 +2630,7 @@ export const controlSchemeColumnsForHeating = [
     source: ["No", "Yes"],
     name: "electronicRelay",
     title: "ELECTRONIC RELAY",
-    width: "90",
+    width: "100",
   },
   {
     type: "dropdown",
@@ -2694,7 +2694,7 @@ export const controlSchemeColumnsForHeating = [
   {
     type: "text",
     name: "breaker",
-    title: "Control Cable",
+    title: "CONTROL CABLE",
     width: "90",
   },
 ]
@@ -2702,63 +2702,62 @@ export const controlSchemeColumnsForHeating = [
 export const lpbsColumns = [
   {
     type: "checkbox",
-    title: "Select",
+    title: "SELECT",
     width: "80",
   },
   {
     type: "text",
     name: "typeOdlpbs", 
-    title: "Type of LPBS",
+    title: "TYPE OF LPBS",
     width: "110",
     height: "100",
   },
   {
     type: "text",
     name: "startbtn",
-    title: "Start Push Button ",
+    title: "START PUSH BUTTON",
     width: "100",
   },
-
   {
     type: "text",
     name: "emergencyStopPushbtn",
-    title: "Emergency Stop Push Button ",
+    title: "EMERGENCY STOP PUSH BUTTON",
     width: "225",
   },
   {
     type: "text",
     name: "startonIndicationLamp",
-    title: "Start / ON Indication Lamp",
+    title: "START / ON INDICATION LAMP",
     width: "150",
   },
   {
     type: "text",
     name: "stopodffIndicationLamp",
-    title: "Stop / OFF Indication Lamp",
+    title: "STOP / OFF INDICATION LAMP",
     width: "130",
   },
   {
     type: "text",
     name: "localRemoteSelectorSwitch",
-    title: "Local/Remote Selector Switch",
+    title: "LOCAL/REMOTE SELECTOR SWITCH",
     width: "130",
   },
   {
     type: "text",
     name: "speedincreaseDecreaseBtn",
-    title: "Speed increase &  decrease Push Button",
+    title: "SPEED INCREASE & DECREASE PUSH BUTTON",
     width: "130",
   },
   {
     type: "text",
     name: "analogueAmmeter",
-    title: "Analogue Ammeter",
+    title: "ANALOGUE AMMETER",
     width: "130",
   },
   {
     type: "text",
     name: "analogueRpmMeter",
-    title: "Analogue RPM Meter",
+    title: "ANALOGUE RPM METER",
     width: "90",
   },
   {
@@ -2785,4 +2784,4 @@ export const lpbsColumns = [
     title: "LCS (AMMETER)",
     width: "110",
   },
-]
+];

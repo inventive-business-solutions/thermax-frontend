@@ -1,3 +1,5 @@
+import { ENVIRO, HEATING } from "configs/constants"
+
 export const LoadListcolumns = (division: string) => {
   return [
     {
@@ -30,7 +32,7 @@ export const LoadListcolumns = (division: string) => {
       title: "KVA",
       width: "70",
       // readOnly: true,
-      readOnly: division == "Enviro" ? false : true,
+      readOnly: division == ENVIRO ? false : true,
     },
     {
       type: "dropdown",
@@ -65,7 +67,7 @@ export const LoadListcolumns = (division: string) => {
     {
       type: "dropdown",
       name: "phase",
-      source: ["3 Phase", "1 Phase", ...(division === "Heating" ? ["Control Transformer"] : [])],
+      source: ["3 Phase", "1 Phase", ...(division === ENVIRO ? ["Control Transformer"] : [])],
       title: "PHASE",
       width: "90",
     },
@@ -74,7 +76,7 @@ export const LoadListcolumns = (division: string) => {
       name: "startingTime",
       source: ["10 Sec", "30 Sec", "60 Sec", "NA"],
       title: "STARTING TIME",
-      readOnly: division === "Heating" ? false : true,
+      readOnly: division === HEATING ? false : true,
 
       width: "140",
     },
@@ -112,7 +114,7 @@ export const LoadListcolumns = (division: string) => {
       name: "busSegregation",
       source: ["A", "B", "C", "NA"],
       title: "BUS  SEGREGATION",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
       width: "120",
     },
     {
@@ -120,22 +122,22 @@ export const LoadListcolumns = (division: string) => {
       name: "motorRpm",
       source: ["0", "750", "1000", "1500", "3000"],
       title: "MOTOR  RPM",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
       width: "70",
     },
     {
       type: "dropdown",
       name: "typeMotorMounting",
       source: [
-        "Foot Mounted (B3)",
-        "Flange Mounted (B5)",
-        "Foot & Flange Mounted (B35)",
-        "Vertical Flange Mounted (V1)",
+        "FLANGE MOUNTED (B3)",
+        "FLANGE MOUNTED (B5)",
+        "FOOT & FLANGE MOUNTED (B35)",
+        "VERTICAL FLANGE MOUNTED (V1)",
         "NA",
       ],
       title: "TYPE OF  MOTOR MOUNTING",
       width: "150",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
     },
     {
       type: "dropdown",
@@ -164,7 +166,7 @@ export const LoadListcolumns = (division: string) => {
         "NA",
       ],
       name: "motorFrameSize",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
 
       title: "MOTOR  FRAME SIZE",
       width: "150",
@@ -172,25 +174,25 @@ export const LoadListcolumns = (division: string) => {
     {
       type: "text",
       name: "motorGD2",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
       title: "MOTOR GD 2",
       width: "150",
     },
     {
       type: "text",
       name: "drivenEqGD2",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
 
       title: "DRIVEN  EQUIPMENT GD2",
       width: "150",
     },
-    { type: "text", name: "bkw", readOnly: division === "Heating" ? true : false, title: "BKW", width: "150" },
+    { type: "text", name: "bkw", readOnly: division === HEATING ? true : false, title: "BKW", width: "150" },
     {
       type: "dropdown",
       name: "typeOfCoupling",
       source: ["V-Belt", "Direct", "NA"],
       title: "TYPE OF  COUPLING",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
 
       width: "150",
     },
@@ -287,7 +289,7 @@ export const LoadListcolumns = (division: string) => {
       name: "typeOfBearing",
       source: ["Roller", "Insulated", "Roller and Insulated", "NA"],
       title: "TYPE OF  BEARING",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
 
       width: "150",
     },
@@ -333,7 +335,7 @@ export const LoadListcolumns = (division: string) => {
       ],
       name: "motorMake",
       title: "MOTOR MAKE",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
 
       width: "150",
     },
@@ -356,7 +358,7 @@ export const LoadListcolumns = (division: string) => {
       type: "text",
       name: "partcode",
       title: "MOTOR PART CODE",
-      readOnly: division === "Heating" ? true : false,
+      readOnly: division === HEATING ? true : false,
 
       width: "200",
     },
@@ -704,5 +706,102 @@ export const multicoreCableConfigGroupedColumns = [
     name: "panelName",
     title: "Panel Name",
     width: "220",
+  },
+]
+export const motorCanopyColumns = [
+  {
+      type: "text",
+      name: "tagNo",
+      title: "TAG NO.",
+      width: "115",
+      readOnly: true,
+  },
+  {
+      readOnly: true,
+      type: "text",
+      name: "description",
+      title: "DESCRIPTION",
+      width: "225",
+  },
+
+  {
+      type: "text",
+      name: "qty-nos",
+      title: "QUANTITY (NOS.)",
+      width: "80",
+  },
+  {
+      type: "text",
+      name: "motorRating",
+      title: "MOTOR RATING (KW)",
+      width: "110",
+  },
+
+  {
+      type: "text",
+      name: "rpm",
+      title: "RPM",
+      width: "70",
+  },
+  {
+      type: "text",
+      name: "typeOfMounting",
+      title: "TYPE OF MOUNTING",
+      width: "150",
+  },
+  {
+      type: "text",
+      name: "motorFrameSize",
+      title: "MOTOR FRAME SIZE",
+      width: "110",
+  },
+  {
+      type: "text",
+      name: "location",
+      title: "LOCATION",
+      width: "90",
+  },
+  {
+      type: "dropdown",
+      source: ["FRP", "GI", "SS"],
+      name: "moc",
+      title: "MOC",
+      width: "90",
+  },
+  {
+      type: "text",
+      name: "canopyModelNo",
+      title: " CANOPY MODEL NO.",
+      width: "140",
+  },
+  {
+      type: "text",
+      name: "canopyLegLength",
+      title: " CANOPY LEG LENGTH",
+      width: "100",
+  },
+  {
+      type: "text",
+      name: "canopyCutOut",
+      title: " CANOPY CUT OUT",
+      width: "100",
+  },
+  {
+      type: "text",
+      name: "partcode",
+      title: "PART CODE",
+      width: "150",
+  },
+  {
+      type: "text",
+      name: "motorScopr",
+      title: "MOTOR SCOPE",
+      width: "130",
+  },
+  {
+      type: "text",
+      name: "remark",
+      title: "REMARK",
+      width: "150",
   },
 ]

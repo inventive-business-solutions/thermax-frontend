@@ -294,5 +294,6 @@ export const REVIEW_APPROVAL_EMAIL_API = "/method/db_revision.trigger_review_app
 
 // Load List
 export const CABLE_SIZE_HEATING_API = `/document/Cable Size Heating`
+export const MOTOR_CANOPY_METADATA = `/document/Motor Canopy List Metadata`
 
 export const HEATING_SWITCHGEAR_HEATER_API = `/document/Heating Switchgear Combination Heaters`
