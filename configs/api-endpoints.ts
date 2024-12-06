@@ -29,8 +29,7 @@ export const DESIGN_BASIS_REVISION_HISTORY_API = `/document/Design Basis Revisio
 export const ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API = `/document/Load List Revisions`
 export const CABLE_SCHEDULE_REVISION_HISTORY_API = `/document/Cable Schedule Revisions`
 export const MOTOR_CANOPY_REVISION_HISTORY_API = `/document/Motor Canopy Revisions`
-export const MOTOR_SPECIFICATIONS_REVISION_HISTORY_API = `/document/Motor Specification Revisions
-`
+export const MOTOR_SPECIFICATIONS_REVISION_HISTORY_API = `/document/Motor Specification Revisions`
 export const LBPS_SPECIFICATIONS_REVISION_HISTORY_API = `/document/LPBS Specification Revisions`
 export const LOCAL_ISOLATOR_REVISION_HISTORY_API = `/document/Local Isolator Revisions`
 
