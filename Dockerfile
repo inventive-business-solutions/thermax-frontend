@@ -14,50 +14,13 @@ RUN corepack enable && corepack prepare yarn@4.5.0 --activate
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+COPY package.json yarn.lock* ./
 
-RUN \
-  if [ -f yarn.lock ]; then \
-    echo "Using Yarn"; \
-    yarn install --immutable; \
-  elif [ -f package-lock.json ]; then \
-    echo "Using NPM"; \
-    npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then \
-    echo "Using PNPM"; \
-    pnpm install --frozen-lockfile; \
-  else \
-    echo "Lockfile not found. Exiting."; \
-    exit 1; \
-  fi
+RUN echo "Using Yarn"; \
+    yarn install --immutable;
 
-# Accept build arguments
-ARG FRAPPE_ADMIN_AUTH_SECRET
-ARG AWS_S3_BUCKET_BASE_FOLDER
-ARG AWS_S3_BUCKET_NAME
-ARG AWS_SECRET_ACCESS_KEY
-ARG AWS_ACCESS_KEY_ID
-ARG AWS_S3_REGION
-ARG NEXT_PUBLIC_BASE_URL
-ARG FRAPPE_BASE_URL
-ARG NEXT_PUBLIC_FRAPPE_DOMAIN_NAME
-ARG NODE_ENV
-ARG AUTH_SECRET
-ARG FRAPPE_ADMIN_AUTH_KEY
-
-# Set environment variables
-ENV FRAPPE_ADMIN_AUTH_SECRET=$FRAPPE_ADMIN_AUTH_SECRET
-ENV AWS_S3_BUCKET_BASE_FOLDER=$AWS_S3_BUCKET_BASE_FOLDER
-ENV AWS_S3_BUCKET_NAME=$AWS_S3_BUCKET_NAME
-ENV AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-ENV AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-ENV AWS_S3_REGION=$AWS_S3_REGION
-ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
-ENV FRAPPE_BASE_URL=$FRAPPE_BASE_URL
-ENV NEXT_PUBLIC_FRAPPE_DOMAIN_NAME=$NEXT_PUBLIC_FRAPPE_DOMAIN_NAME
-ENV NODE_ENV=$NODE_ENV
-ENV AUTH_SECRET=$AUTH_SECRET
-ENV FRAPPE_ADMIN_AUTH_KEY=$FRAPPE_ADMIN_AUTH_KEY
+# List contents for debugging
+RUN ls -la /app
 
 # Build stage
 FROM base AS builder
@@ -74,21 +37,6 @@ RUN yarn build
 # Production image
 FROM base AS runner
 WORKDIR /app
-
-# Set environment variables for production
-ENV NODE_ENV=production
-ENV HOSTNAME="0.0.0.0"
-ENV FRAPPE_ADMIN_AUTH_SECRET=$FRAPPE_ADMIN_AUTH_SECRET
-ENV AWS_S3_BUCKET_BASE_FOLDER=$AWS_S3_BUCKET_BASE_FOLDER
-ENV AWS_S3_BUCKET_NAME=$AWS_S3_BUCKET_NAME
-ENV AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-ENV AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-ENV AWS_S3_REGION=$AWS_S3_REGION
-ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
-ENV FRAPPE_BASE_URL=$FRAPPE_BASE_URL
-ENV NEXT_PUBLIC_FRAPPE_DOMAIN_NAME=$NEXT_PUBLIC_FRAPPE_DOMAIN_NAME
-ENV AUTH_SECRET=$AUTH_SECRET
-ENV FRAPPE_ADMIN_AUTH_KEY=$FRAPPE_ADMIN_AUTH_KEY
 
 # Create a non-root user for security
 RUN addgroup --system --gid 1001 nodejs
