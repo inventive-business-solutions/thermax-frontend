@@ -276,8 +276,8 @@ const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any) => {
       item.supply_voltage + ` VAC`,
       item.motor_rated_current,
       cableScheduleData?.cable_material || "Copper",
-      cableScheduleData?.cos_running,
-      cableScheduleData?.cos_starting,
+      cableScheduleData?.cos_running ? cableScheduleData?.cos_running : 0.8,
+      cableScheduleData?.cos_starting ? cableScheduleData?.cos_starting : 0.3,
       cableScheduleData?.resistance_meter,
       cableScheduleData?.reactance_meter,
       cableScheduleData?.apex_length,
@@ -288,8 +288,20 @@ const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any) => {
       cableScheduleData?.selected_cable_capacity_amp,
       cableScheduleData?.derating_factor,
       cableScheduleData?.final_capacity,
-      cableScheduleData?.number_of_runs,
-      cableScheduleData?.no_of_cores,
+      cableScheduleData?.number_of_runs
+        ? cableScheduleData?.number_of_runs
+        : item.starter_type === "STAR-DELTA"
+        ? 2
+        : 1,
+      cableScheduleData?.no_of_cores
+        ? cableScheduleData?.no_of_cores
+        : item.starter_type === "DOL STARTER"
+        ? "3C"
+        : item.starter_type === "VFD"
+        ? "3.5C"
+        : item.starter_type === "SUPPLY FEEDER"
+        ? "4C"
+        : "",
       cableScheduleData?.final_cable_size,
       cableScheduleData?.cable_selected_status,
       cableScheduleData?.cable_size_as_per_heating_chart,
@@ -320,6 +332,7 @@ const useDataFetching = (
   cableScheduleRevisionId: string
 ) => {
   const [isLoading, setIsLoading] = useState(true)
+  const { setLoading } = useLoading()
   const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
   const [cableScheduleSavedData, setCableScheduleSavedData] = useState<any[]>([])
   const [loadListData, setLoadListData] = useState<any[]>([])
@@ -347,6 +360,7 @@ const useDataFetching = (
       setCableScheduleData([])
     } finally {
       setIsLoading(false)
+      setLoading(false)
     }
   }, [loadListLatestRevisionId])
 
