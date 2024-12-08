@@ -31,6 +31,13 @@ import { useCurrentUser } from "hooks/useCurrentUser"
 import path from "path"
 import { ENVIRO, WWS_SPG } from "configs/constants"
 
+export const getStandByKw = (item2: any, item3: any) => {
+  if (item2 == 0) {
+    return Number(item3)
+  } else {
+    return Number(item2)
+  }
+}
 // Types definition
 type ValidColumnType =
   | "text"
@@ -687,13 +694,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     return isDuplicate
   }
 
-  const getStandByKw = (item2: any, item3: any) => {
-    if (item2 == 0) {
-      return Number(item3)
-    } else {
-      return Number(item2)
-    }
-  }
+ 
   const validateLoadValues = () => {
     let rows = spreadsheetRef?.current?.getData() || []
     let isInvalid = false
@@ -810,6 +811,8 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
 
       console.log(respose, "load list response")
     } catch (error) {
+      console.log(error)
+
       message.error("Unable to save electrical load list")
 
       setLoading(false)
@@ -912,7 +915,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     setLoading(true)
     const loadList = spreadsheetRef?.current?.getData()
     const currentCalculations = await getCurrentCalculation({
-      divisionName: "Heating",
+      divisionName: userInfo.division,
       data: loadList?.map((row: any) => {
         return {
           kw: getStandByKw(row[2], row[3]),
