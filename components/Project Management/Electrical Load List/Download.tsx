@@ -9,7 +9,7 @@ import {
   SaveTwoTone,
   SyncOutlined,
 } from "@ant-design/icons"
-import { getData, updateData } from "actions/crud-actions"
+import { downloadFile, getData, updateData } from "actions/crud-actions"
 import { releaseRevision } from "actions/design-basis_revision"
 import { Button, message, Table, TableColumnsType, TableColumnType, Tabs, Tag, Tooltip } from "antd"
 import {
