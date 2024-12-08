@@ -26,16 +26,12 @@ export const getCurrentCalculation = async (loadListData: any) => {
     let current = 0
 
     if (division === HEATING) {
-      if (starterType === "DOL STARTER") {
-        if (supplyVoltage === 415) {
-          const standardCurrent = heatingSwitchgearHeaterData.find((data: any) => data.kw === kw)
-          if (standardCurrent) {
-            current = standardCurrent.fla
-          } else {
-            current = (kw * 1000) / (Math.sqrt(3) * supplyVoltage)
-          }
+      if (starterType === "DOL-HTR" && supplyVoltage === 415 && phase === "3 Phase") {
+        const standardCurrent = heatingSwitchgearHeaterData.find((data: any) => data.kw === kw)
+        if (standardCurrent) {
+          current = standardCurrent.fla
         } else {
-          current = (kw * 1000) / (Math.sqrt(3) * supplyVoltage)
+          current = (kw * 1000) / (Math.sqrt(3) * supplyVoltage * powerFactor)
         }
       } else if (supplyVoltage === 415 && phase === "3 Phase") {
         const standardCurrent = cableSizingHeatingData.find(
@@ -52,18 +48,15 @@ export const getCurrentCalculation = async (loadListData: any) => {
         current = (kw * 1000) / (supplyVoltage * powerFactor)
       }
     } else {
-      if (starterType === "DOL STARTER") {
-        if (supplyVoltage === 415) {
-          const standardCurrent = heatingSwitchgearHeaterData.find((data: any) => data.kw === kw)
-          if (standardCurrent) {
-            current = standardCurrent.fla
-          } else {
-            current = (kw * 1000) / (Math.sqrt(3) * supplyVoltage)
-          }
+      if (starterType === "DOL-HTR" && supplyVoltage === 415) {
+        const standardCurrent = heatingSwitchgearHeaterData.find((data: any) => data.kw === kw)
+        if (standardCurrent) {
+          current = standardCurrent.fla
         } else {
-          current = (kw * 1000) / (Math.sqrt(3) * supplyVoltage)
+          current = (kw * 1000) / (Math.sqrt(3) * supplyVoltage * powerFactor)
         }
       } else if (phase === "3 Phase") {
+        // current = (kw * 1000) / (Math.sqrt(3) * supplyVoltage * powerFactor)
         current = (kw * 1000) / (Math.sqrt(3) * supplyVoltage * powerFactor)
       } else if (phase === "1 Phase") {
         current = (kw * 1000) / (supplyVoltage * powerFactor)
@@ -91,7 +84,6 @@ export const getLatestCableScheduleRevision = async (projectId: string) => {
   const dbRevisionData = await getData(
     `${CABLE_SCHEDULE_REVISION_HISTORY_API}?filters=[["project_id", "=", "${projectId}"], ["status", "in", ["${LOAD_LIST_REVISION_STATUS.NotReleased}"]]]&fields=["*"]&order_by=creation desc`
   )
-  console.log(dbRevisionData)
 
   return dbRevisionData
 }
@@ -99,16 +91,13 @@ export const getLatestMotorCanopyRevision = async (projectId: string) => {
   const dbRevisionData = await getData(
     `${MOTOR_CANOPY_REVISION_HISTORY_API}?filters=[["project_id", "=", "${projectId}"], ["status", "in", ["${LOAD_LIST_REVISION_STATUS.NotReleased}"]]]&fields=["*"]&order_by=creation desc`
   )
-  console.log(dbRevisionData)
 
   return dbRevisionData
 }
-export const getFrameSizeCalculation = async (loadListData:any) => {
- 
+export const getFrameSizeCalculation = async (loadListData: any) => {
   const division = loadListData.divisionName
   const calcData = loadListData.data
-  console.log(calcData,"calcData");
-  
+
   const motorCanopyListMetadata = await getData(`${MOTOR_CANOPY_METADATA}?fields=["*"]&limit=1000`)
   if (division === HEATING) {
     return calcData
@@ -117,7 +106,7 @@ export const getFrameSizeCalculation = async (loadListData:any) => {
       const kw = item.kw
       const speed = item.speed
       const moutingType = item.mounting_type
-      
+
       const filteredFrameSize = motorCanopyListMetadata.filter(
         (data: any) => data.speed === speed && data.mounting_type === moutingType
       )
@@ -161,25 +150,62 @@ export const getFrameSizeCalculation = async (loadListData:any) => {
 }
 
 export const motorCanopyCalculation = async (loadListData: any) => {
-  const calculatedData = loadListData.map((item: any) => {
+  const motorCanopyListMetadata = await getData(`${MOTOR_CANOPY_METADATA}?fields=["*"]&limit=1000`)
+  const calculatedData = loadListData.data.map((item: any) => {
     const kw = item.kw
-    const speed = item.speed
+    const speed = item.rpm
     const moutingType = item.mounting_type
-    const frameSize = item.frame_size
 
-    // Hit motor canopy doctype api and get all the values
+    const filteredFrameSize = motorCanopyListMetadata.filter(
+      (data: any) => data.speed === speed && data.mounting_type === moutingType
+    )
 
-    // Filter the data based on the speed, kw, mounting type and frame size
+    if (filteredFrameSize.length === 0) {
+      return {
+        ...item,
+        canopy_model_number: "",
+        canopy_leg_length: "",
+        canopy_cut_out: "",
+        part_code: "",
+      }
+    }
 
-    // If the data is found, return the data
+    const filteredKWs = filteredFrameSize.map((data: any) => data.kw).sort((a: any, b: any) => a - b)
 
-    // If the data is not found, return empty object
+    const sameSizeKw = filteredFrameSize.find((data: any) => data.kw === kw)
+    if (sameSizeKw) {
+      return {
+        ...item,
+        canopy_model_number: sameSizeKw.model,
+        canopy_leg_length: sameSizeKw.leg_length,
+        canopy_cut_out: sameSizeKw.cut_out,
+        part_code: sameSizeKw.canopy_model_number,
+      }
+    }
+
+    const nextHigherKw = filteredKWs.find((value: number) => value > kw)
+
+    if (nextHigherKw) {
+      // Find the frame size for the next higher `kw`
+      const nextHigherKwFrame = filteredFrameSize.find((data: any) => data.kw === nextHigherKw)
+      return {
+        ...item,
+        canopy_model_number: nextHigherKwFrame.model,
+        canopy_leg_length: nextHigherKwFrame.leg_length,
+        canopy_cut_out: nextHigherKwFrame.cut_out,
+        part_code: nextHigherKwFrame.canopy_model_number,
+      }
+    }
 
     return {
       ...item,
-      frameSize: "",
+      canopy_model_number: "",
+      canopy_leg_length: "",
+      canopy_cut_out: "",
+      part_code: "",
     }
   })
+ 
 
   return calculatedData
 }
@@ -188,7 +214,7 @@ export const getCableSizingCalculation = async (loadListData: any) => {
   const division = loadListData.divisionName
   const calcData = loadListData.data
   // Get the cable sizing data
-  // e.g. const cableSizingData = await getData(`${CABLE_SIZE_API}?fields=["*"]&limit=1000`)
+  //  const cableAsPerHeatingChart = await getData(`${CABLE_SIZE_API}?fields=["*"]&limit=1000`)
 
   // Get data from design basis via latest revision id
   // const perc_voltage_drop_running = designBasisData.perc_voltage_drop_running

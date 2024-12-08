@@ -747,7 +747,7 @@ export const motorCanopyColumns = [
       type: "text",
       name: "typeOfMounting",
       title: "TYPE OF MOUNTING",
-      width: "150",
+      width: "270",
   },
   {
       type: "text",
