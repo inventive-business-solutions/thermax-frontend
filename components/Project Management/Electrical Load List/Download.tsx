@@ -1,12 +1,23 @@
 "use client"
-import { CloudDownloadOutlined, FolderOpenOutlined, SyncOutlined } from "@ant-design/icons"
-import { downloadFile, getData } from "actions/crud-actions"
+import {
+  BellFilled,
+  CloudDownloadOutlined,
+  CopyOutlined,
+  DownloadOutlined,
+  ExportOutlined,
+  FolderOpenOutlined,
+  SaveTwoTone,
+  SyncOutlined,
+} from "@ant-design/icons"
+import { getData, updateData } from "actions/crud-actions"
 import { releaseRevision } from "actions/design-basis_revision"
 import { Button, message, Table, TableColumnsType, TableColumnType, Tabs, Tag, Tooltip } from "antd"
 import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
+  COMMON_CONFIGURATION,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
   GET_LOAD_LIST_EXCEL_API,
+  LOCAL_ISOLATOR_REVISION_HISTORY_API,
   MOTOR_CANOPY_REVISION_HISTORY_API,
 } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
@@ -41,8 +52,12 @@ const columns: TableColumnType<TableDataType>[] = [
 const DownloadTable = ({ dataSource }: { dataSource: TableDataType[] }) => {
   return <Table columns={columns} dataSource={dataSource} pagination={false} />
 }
+interface Props {
+  designBasisRevisionId: string
+  loadListLatestRevisionId: string
+}
 
-const Download: React.FC = () => {
+const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisionId }) => {
   const { setLoading: setModalLoading } = useLoading()
   const router = useRouter()
   const [downloadIconSpin, setDownloadIconSpin] = useState(false)
@@ -53,6 +68,8 @@ const Download: React.FC = () => {
   const dbLoadlistHistoryUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
   const { data: revisionHistory } = useGetData(dbLoadlistHistoryUrl)
   const [dataSource, setDataSource] = useState<any[]>([])
+  const [commonConfigData, setCommonConfigData] = useState<any[]>([])
+  const [loadListData, setLoadListData] = useState<any[]>([])
   // const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
 
   console.log(revisionHistory, "revisionHistory")
@@ -210,9 +227,175 @@ const Download: React.FC = () => {
         },
       },
     ]
+    const saveElement = {
+      title: () => <div className="text-center">Save</div>,
+      dataIndex: "download",
+      render(text: any, record: any) {
+        return (
+          <div className="flex flex-row justify-center gap-2 hover:cursor-pointer">
+            <div>
+              <Tooltip title={"Save"}>
+                <Button
+                  type="link"
+                  shape="circle"
+                  icon={
+                    <SaveTwoTone
+                      style={{
+                        fontSize: "1rem",
+                        color: "green",
+                      }}
+                    />
+                  }
+                  onClick={() => handleSave(record?.key, tab)}
+                />
+              </Tooltip>
+            </div>
+          </div>
+        )
+      },
+    }
+    if (tab === "local-isolator") {
+      let position = columns.length - 2
+
+      // Insert the element at the calculated position
+      columns.splice(position, 0, saveElement)
+    }
     return columns
   }
+  // const getColumns = (tab: string) => {
+  //   const columns: TableColumnsType = [
+  //     {
+  //       title: () => 'Document Name',
+  //       dataIndex: "documentName",
+  //       align: "center",
+  //       render: (text, record) => (
+  //         <Button
+  //           onClick={() => {
+  //             setModalLoading(true)
+  //             router.push(`/project/${project_id}/electrical-load-list/${tab}`)
+  //           }}
+  //           icon={}
+  //           disabled={record.status === DB_REVISION_STATUS.Released}
+  //         >
+  //           {text}
+  //         </Button>
+  //       ),
+  //     },
+  //     {
+  //       title: () => 'Status',
+  //       dataIndex: "status",
+  //       render: (text) => (
+  //         <span>{text}</span>
+  //       ),
+  //     },
+  //     {
+  //       title: () => 'Document Revision',
+  //       dataIndex: "documentRevision",
+  //       render: (text) => <span>{text}</span>,
+  //     },
+  //     {
+  //       title: () => 'Created Date',
+  //       dataIndex: "createdDate",
+  //       render: (text) => {
+  //         const date = new Date(text)
+  //         const stringDate = getThermaxDateFormat(date)
+  //         return stringDate
+  //       },
+  //     }
+  //   ];
 
+  //   // Add Save field if tab is local-isolator
+  //   if (tab === 'local-isolator') {
+  //     columns.push({
+  //       title: () => 'Save',
+  //       dataIndex: 'save',
+  //       render: (text, record) => (
+  //         <Button
+  //           onClick={() => handleSave(record.key)}
+  //         >
+  //           Save
+  //         </Button>
+  //       ),
+  //     });
+  //   }
+
+  //   // Add remaining columns
+  //   columns.push(
+  //     {
+  //       title: () => 'Download',
+  //       dataIndex: "download",
+  //       render(text, record) {
+  //         return (
+  //           <Button
+  //             onClick={() => handleDownload(record?.key)}
+  //           />
+  //         )
+  //       },
+  //     },
+  //     {
+  //       title: () => 'Release',
+  //       dataIndex: "release",
+  //       render: (text, record) => {
+  //         return (
+  //           <Button onClick={() => handleRelease(record.key)}>
+  //             Release
+  //           </Button>
+  //         )
+  //       },
+  //     }
+  //   );
+
+  //   return columns
+  // }
+
+  const getSaveEndPoint = (id: any, tab: any) => {
+    switch (tab) {
+      case "local-isolator":
+        return `${LOCAL_ISOLATOR_REVISION_HISTORY_API}${id}`
+
+      default:
+        return ""
+    }
+  }
+
+  const handleSave = async (key: any, tab: any) => {
+    if (tab === "local-isolator") {
+      console.log(commonConfigData)
+      console.log(loadListData)
+
+      const payload = {
+        project_id: project_id,
+        status: "Not Released",
+        description: "test",
+        local_isolator_data: [
+          {
+            fmi_type: "",
+            fmi_inclosure: "",
+            fmi_material: "",
+            fmi_qty: "",
+            ifm_isolator_color_shade: "",
+            ifm_cable_entry: "",
+            canopy_on_top: "",
+          },
+        ],
+        local_isolator_motor_details_data: [
+          {
+            serial_number: "",
+            tag_number: "",
+            service_description: "",
+            working_kw: "",
+            motor_rated_current: "",
+            local_isolator: "",
+            motor_location: "",
+          },
+        ],
+      }
+      // const respose = await updateData(getSaveEndPoint(key, tab), false, payload)
+
+      // console.log(respose)
+    }
+    console.log(key, tab)
+  }
   const DownloadTabs = [
     {
       label: `DOWNLOAD ELECTRICAL LOAD LIST`,
@@ -281,7 +464,20 @@ const Download: React.FC = () => {
     {
       label: `LOCAL ISOLATOR SPECIFICATIONS LIST`,
       key: "6",
-      children: <DownloadTable dataSource={dataSource} />,
+      children: (
+        <>
+          <div className="text-end">
+            <Button icon={<SyncOutlined color="#492971" />} onClick={() => mutate(dbLoadlistHistoryUrl)}>
+              {" "}
+              Refresh
+            </Button>
+          </div>
+
+          <div className="mt-2">
+            <Table columns={getColumns("local-isolator")} dataSource={dataSource} size="small" />
+          </div>
+        </>
+      ),
     },
   ]
   const getApiEndpoint = (key: any) => {
@@ -298,12 +494,32 @@ const Download: React.FC = () => {
       case "5":
         return `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/lbps${baseUrl}`
       case "6":
-        return `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/local-isolator${baseUrl}`
+        return `${LOCAL_ISOLATOR_REVISION_HISTORY_API}${baseUrl}`
       default:
         return ""
     }
   }
+  const getIsolatorData = async () => {
+    console.log(designBasisRevisionId)
+
+    try {
+      const commonConfigData = await getData(
+        `${COMMON_CONFIGURATION}?fields=["field_motor_type","field_motor_enclosure","field_motor_material", "field_motor_qty", "field_motor_isolator_color_shade", "field_motor_cable_entry","field_motor_canopy_on_top"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      )
+      const loadListData = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
+      setLoadListData(loadListData)
+      setCommonConfigData(commonConfigData?.[0])
+      console.log(loadListData, "loadlist")
+      console.log(commonConfigData, "commonConfigData")
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setModalLoading(false)
+    }
+  }
   const onChange = async (key: string) => {
+    setModalLoading(true)
+
     console.log(key)
     console.log(getApiEndpoint(key))
     const getName = (key: any) => {
@@ -335,11 +551,17 @@ const Download: React.FC = () => {
         documentRevision: `R${index}`,
         createdDate: item.creation,
       }))
+      if (key === "6") {
+        await getIsolatorData()
+      }
       console.log(dataSource)
 
       setDataSource(dataSource)
       console.log(data)
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setModalLoading(false)
+    }
   }
 
   return (

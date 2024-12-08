@@ -129,7 +129,7 @@ export const LoadListcolumns = (division: string) => {
       type: "dropdown",
       name: "typeMotorMounting",
       source: [
-        "FLANGE MOUNTED (B3)",
+        "FOOT MOUNTED (B3)",
         "FLANGE MOUNTED (B5)",
         "FOOT & FLANGE MOUNTED (B35)",
         "VERTICAL FLANGE MOUNTED (V1)",
@@ -747,7 +747,7 @@ export const motorCanopyColumns = [
       type: "text",
       name: "typeOfMounting",
       title: "TYPE OF MOUNTING",
-      width: "150",
+      width: "270",
   },
   {
       type: "text",

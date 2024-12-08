@@ -59,14 +59,14 @@ const ElectricalLoadList = ({
               <div className="">
                 {/* Tab Content */}
                 <div className={openTab === 1 ? "block" : "hidden"} id="link1">
-                  <Download />
+                  {/* <Download /> */}
                 </div>
 
                 <div className={openTab === 2 ? "block" : "hidden"} id="link2">
-                  <LoadList
+                  {/* <LoadList
                     designBasisRevisionId={revision_id}
                     loadListLatestRevisionId={loadListLatestRevisionId}
-                  />{" "}
+                  />{" "} */}
                 </div>
 
                 <div className={openTab === 3 ? "block" : "hidden"} id="link3">

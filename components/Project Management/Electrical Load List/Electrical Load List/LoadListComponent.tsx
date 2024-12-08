@@ -31,6 +31,13 @@ import { useCurrentUser } from "hooks/useCurrentUser"
 import path from "path"
 import { ENVIRO, WWS_SPG } from "configs/constants"
 
+export const getStandByKw = (item2: any, item3: any) => {
+  if (item2 == 0) {
+    return Number(item3)
+  } else {
+    return Number(item2)
+  }
+}
 // Types definition
 type ValidColumnType =
   | "text"
@@ -58,7 +65,7 @@ interface ProjectInfo {
 
 interface LoadListProps {
   // onNext: () => void
-
+  revision: number
   designBasisRevisionId: string
   loadListLatestRevisionId: any
 }
@@ -74,7 +81,12 @@ interface DataFetchResult<T> {
   isLoading: boolean
 }
 
-const useDataFetching = (designBasisRevisionId: string, loadListLatestRevisionId: string, project_id: string) => {
+const useDataFetching = (
+  designBasisRevisionId: string,
+  loadListLatestRevisionId: string,
+  project_id: string,
+  revision: number
+) => {
   const [isLoading, setIsLoading] = useState(true)
   const [loadListData, setLoadListData] = useState<any>(null)
   const [motorParameters, setMotorParameters] = useState<any[]>([])
@@ -110,6 +122,8 @@ const useDataFetching = (designBasisRevisionId: string, loadListLatestRevisionId
       setLoadListData(loadList)
       setMotorParameters(motorParams)
       setCommonConfigurationData(commonConfig)
+      console.log(makeOfComponent, "makeOfComponent")
+
       setMakeOfComponent(makeComponent)
       // setProjectPanelData(panelData);
       setProjectInfo(projInfo[0])
@@ -140,7 +154,7 @@ const useDataFetching = (designBasisRevisionId: string, loadListLatestRevisionId
     refetch: fetchAllData,
   }
 }
-const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLatestRevisionId }) => {
+const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLatestRevisionId, revision }) => {
   const jRef = useRef<HTMLDivElement | null>(null)
   const spreadsheetRef = useRef<JspreadsheetInstance | null>(null)
   const params = useParams()
@@ -152,13 +166,14 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     isLoading,
     loadListData,
     motorParameters,
+    makeOfComponent,
     commonConfigurationData,
     projectPanelData,
     projectInfo,
     mainSupplyLV,
     subPackages,
-  } = useDataFetching(designBasisRevisionId, loadListLatestRevisionId, project_id)
-  console.log(mainSupplyLV, "panelList")
+  } = useDataFetching(designBasisRevisionId, loadListLatestRevisionId, project_id, revision)
+  console.log(makeOfComponent, "makeOfComponent")
 
   // Memo for panel list
   const panelList = useMemo(() => projectPanelData?.map((item: any) => item.panel_name) || [], [projectPanelData])
@@ -261,7 +276,13 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         data[rowIndex][26] = "NA"
       }
     }
-    console.log(colIndex)
+    if (colIndex == "14") {
+      if (newValue === "0") {
+        data[rowIndex][15] = "NA"
+        data[rowIndex][16] = "NA"
+      }
+    }
+    console.log(typeof colIndex)
 
     if (colIndex === "5") {
       console.log(newValue)
@@ -278,23 +299,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         data[rowIndex][30] = "No"
         data[rowIndex][31] = "No"
       } else {
-        console.log("else if")
-        console.log(
-          getStandByKw(data[rowIndex][2], data[rowIndex][3]) >= Number(motorParameters[0]?.safe_area_space_heater)
-            ? "Yes"
-            : "No"
-        )
-        console.log(
-          getStandByKw(data[rowIndex][2], data[rowIndex][3]) >= Number(motorParameters[0]?.safe_area_bearing_rtd)
-            ? "Yes"
-            : "No"
-        )
-        console.log(
-          getStandByKw(data[rowIndex][2], data[rowIndex][3]) >= Number(motorParameters[0]?.safe_area_winding_rtd)
-            ? "Yes"
-            : "No"
-        )
-
         data[rowIndex][29] =
           getStandByKw(data[rowIndex][2], data[rowIndex][3]) >= Number(motorParameters[0]?.safe_area_space_heater)
             ? "Yes"
@@ -323,7 +327,9 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       })),
     []
   )
-  const getArrayOfLoadListData = (data: any) => {
+  const getArrayOfLoadListData = (data: any, revision?: any) => {
+    console.log(data, "load list")
+
     return data?.electrical_load_list_data?.map((item: any) => [
       item.tag_number,
       item.service_description,
@@ -340,8 +346,8 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       item.panel,
       item.bus_segregation,
       item.motor_rpm,
-      item.motor_mounting_type,
-      item.motor_frame_size,
+      item.motor_rpm != 0 ? item.motor_mounting_type : "NA",
+      item.motor_rpm != 0 ? item.motor_frame_size : "NA",
       item.motor_gd2,
       item.motor_driven_equipment_gd2,
       item.bkw,
@@ -353,10 +359,10 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       item.gas_group,
       item.temperature_class,
       item.remark,
-      item.rev,
+      revision,
       item.space_heater,
       item.bearing_rtd,
-      item.winding_rtd,
+      item.wiring_rtd,
       item.thermistor,
       item.bearing_rtd,
       item.power_factor,
@@ -374,7 +380,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
   // Memoized spreadsheet options
   const loadListOptions = useMemo(
     () => ({
-      data: getArrayOfLoadListData(loadListData),
+      data: getArrayOfLoadListData(loadListData, revision),
       columns: typedLoadListColumns,
       columnSorting: true,
       columnDrag: true,
@@ -456,7 +462,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       if (jRef.current) {
         const instance = jspreadsheet(jRef.current, {
           ...loadListOptions,
-          data: getArrayOfLoadListData(loadListData),
+          data: getArrayOfLoadListData(loadListData, revision),
           columns: updatedColumns,
         })
         spreadsheetRef.current = instance
@@ -687,13 +693,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     return isDuplicate
   }
 
-  const getStandByKw = (item2: any, item3: any) => {
-    if (item2 == 0) {
-      return Number(item3)
-    } else {
-      return Number(item2)
-    }
-  }
   const validateLoadValues = () => {
     let rows = spreadsheetRef?.current?.getData() || []
     let isInvalid = false
@@ -782,7 +781,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
           rev: row[28],
           space_heater: row[29],
           bearing_rtd: row[30],
-          winding_rtd: row[31],
+          wiring_rtd: row[31],
           thermistor: row[32],
           bearing_type: row[33],
           power_factor: row[34],
@@ -810,6 +809,8 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
 
       console.log(respose, "load list response")
     } catch (error) {
+      console.log(error)
+
       message.error("Unable to save electrical load list")
 
       setLoading(false)
@@ -856,6 +857,10 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         if (!item[9]) {
           item[9] = "No" // EOCR
         }
+        if (item[14] == 0) {
+            item[15] = "NA"
+            item[16] = "NA"
+        }
         if (!item[29]) {
           item[29] = getStandByKw(item[2], item[3]) >= Number(motorParameters[0]?.safe_area_space_heater) ? "Yes" : "No" // space heater criteria
         }
@@ -881,13 +886,16 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         if (!item[36]) {
           item[36] = "No" // local isolator
         }
-        console.log(commonConfigurationData)
+        console.log(makeOfComponent, "makeOfComponent")
 
         // }
         if (getStandByKw(item[2], item[3]) >= Number(commonConfigurationData[0]?.ammeter)) {
           if (!item[37]) {
             item[37] = commonConfigurationData[0]?.ammeter_configuration //ametter config selection
           }
+        }
+        if (!item[38]) {
+          item[38] = makeOfComponent[0]?.preferred_motor
         }
         if (getStandByKw(item[2], item[3]) <= Number(commonConfigurationData[0]?.dol_starter)) {
           if (!item[5]) {
@@ -912,7 +920,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     setLoading(true)
     const loadList = spreadsheetRef?.current?.getData()
     const currentCalculations = await getCurrentCalculation({
-      divisionName: "Heating",
+      divisionName: userInfo.division,
       data: loadList?.map((row: any) => {
         return {
           kw: getStandByKw(row[2], row[3]),
@@ -1117,7 +1125,10 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         </Button>
         <Button
           type="primary"
-          onClick={() => router.push(`/project/${project_id}/electrical-load-list/cable-schedule`)}
+          onClick={() => {
+            setLoading(true)
+            router.push(`/project/${project_id}/electrical-load-list/cable-schedule`)}}
+
         >
           Next
         </Button>

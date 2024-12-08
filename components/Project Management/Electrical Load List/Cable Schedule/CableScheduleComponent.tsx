@@ -240,47 +240,73 @@ import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableC
 import { CableSchedulecolumns, multicoreCableConfigColumns } from "../common/ExcelColumns"
 import "./CableScheduleComponent.css"
 import { getData, updateData } from "actions/crud-actions"
-import { CABLE_SCHEDULE_REVISION_HISTORY_API, ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API } from "configs/api-endpoints"
+import {
+  CABLE_SCHEDULE_REVISION_HISTORY_API,
+  CABLE_TRAY_LAYOUT,
+  ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
+} from "configs/api-endpoints"
 import { useLoading } from "hooks/useLoading"
 import { useParams, useRouter } from "next/navigation"
+import { getCableSizingCalculation } from "actions/electrical-load-list"
+import { useCurrentUser } from "hooks/useCurrentUser"
 
 interface CableScheduleProps {
   loadListLatestRevisionId: string
   cableScheduleRevisionId: string
+  designBasisRevisionId: string
 }
 
-const getArrayOfCableScheduleData = (data: any) => {
+const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any) => {
   if (!data?.electrical_load_list_data) return []
   console.log(data.electrical_load_list_data, "load list")
+  console.log(savedCableSchedule?.cable_schedule_data, "load list cable")
 
-  return data.electrical_load_list_data.map((item: any) => [
-    item.tag_number,
-    item.service_description,
-    item.working_kw,
-    item.standby_kw,
-    item.kva,
-    item.starter_type,
-    item.supply_voltage + ` VAC`,
-    item.motor_rated_current,
-    "Copper",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  ])
+  return data.electrical_load_list_data.map((item: any) => {
+    const cableScheduleData = savedCableSchedule?.cable_schedule_data?.find(
+      (row: any) => row.tag_number === item.tag_number
+    )
+
+    return [
+      item.tag_number,
+      item.service_description,
+      item.working_kw,
+      item.standby_kw,
+      item.kva,
+      item.starter_type,
+      item.supply_voltage + ` VAC`,
+      item.motor_rated_current,
+      cableScheduleData?.cable_material || "Copper",
+      cableScheduleData?.cos_running ? cableScheduleData?.cos_running : 0.8,
+      cableScheduleData?.cos_starting ? cableScheduleData?.cos_starting : 0.3,
+      cableScheduleData?.resistance_meter,
+      cableScheduleData?.reactance_meter,
+      cableScheduleData?.apex_length,
+      cableScheduleData?.vd_running,
+      cableScheduleData?.vd_starting,
+      cableScheduleData?.percent_vd_running,
+      cableScheduleData?.percent_vd_starting,
+      cableScheduleData?.selected_cable_capacity_amp,
+      cableScheduleData?.derating_factor,
+      cableScheduleData?.final_capacity,
+      cableScheduleData?.number_of_runs
+        ? cableScheduleData?.number_of_runs
+        : item.starter_type === "STAR-DELTA"
+        ? 2
+        : 1,
+      cableScheduleData?.no_of_cores
+        ? cableScheduleData?.no_of_cores
+        : item.starter_type === "DOL STARTER"
+        ? "3C"
+        : item.starter_type === "VFD"
+        ? "3.5C"
+        : item.starter_type === "SUPPLY FEEDER"
+        ? "4C"
+        : "",
+      cableScheduleData?.final_cable_size,
+      cableScheduleData?.cable_selected_status,
+      cableScheduleData?.cable_size_as_per_heating_chart,
+    ]
+  })
 }
 const motorCanopyPayload = {
   tag_number: "",
@@ -300,11 +326,17 @@ const motorCanopyPayload = {
   remark: "",
 }
 
-const useDataFetching = (loadListLatestRevisionId: string, cableScheduleRevisionId: string) => {
+const useDataFetching = (
+  designBasisRevisionId: string,
+  loadListLatestRevisionId: string,
+  cableScheduleRevisionId: string
+) => {
   const [isLoading, setIsLoading] = useState(true)
+  const { setLoading } = useLoading()
   const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
   const [cableScheduleSavedData, setCableScheduleSavedData] = useState<any[]>([])
   const [loadListData, setLoadListData] = useState<any[]>([])
+  const [cableTrayData, setCableTrayData] = useState<any[]>([])
   const fetchData = useCallback(async () => {
     if (!loadListLatestRevisionId) return
 
@@ -312,9 +344,14 @@ const useDataFetching = (loadListLatestRevisionId: string, cableScheduleRevision
       setIsLoading(true)
       const loadList = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
       const savedCableSchedule = await getData(`${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`)
-      const formattedData = getArrayOfCableScheduleData(loadList)
+      const cableTrayData = await getData(
+        `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      )
+      const formattedData = getArrayOfCableScheduleData(loadList, savedCableSchedule)
       console.log(savedCableSchedule, "savedCableSchedule")
-
+      console.log(cableTrayData, "cableTrayData")
+      setCableTrayData(cableTrayData[0])
+      setCableScheduleSavedData(savedCableSchedule)
       setLoadListData(loadList?.electrical_load_list_data)
       setCableScheduleData(formattedData)
     } catch (error) {
@@ -323,6 +360,7 @@ const useDataFetching = (loadListLatestRevisionId: string, cableScheduleRevision
       setCableScheduleData([])
     } finally {
       setIsLoading(false)
+      setLoading(false)
     }
   }, [loadListLatestRevisionId])
 
@@ -330,24 +368,29 @@ const useDataFetching = (loadListLatestRevisionId: string, cableScheduleRevision
     fetchData()
   }, [fetchData])
 
-  return { cableScheduleData, loadListData, isLoading, refetch: fetchData }
+  return { cableScheduleSavedData, cableTrayData, cableScheduleData, loadListData, isLoading, refetch: fetchData }
 }
 
-const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId, cableScheduleRevisionId }) => {
+const CableSchedule: React.FC<CableScheduleProps> = ({
+  loadListLatestRevisionId,
+  cableScheduleRevisionId,
+  designBasisRevisionId,
+}) => {
   const jRef = useRef<HTMLDivElement | null>(null)
   const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
   const { setLoading } = useLoading()
   const params = useParams()
   const router = useRouter()
+  const userInfo: {
+    division: string
+  } = useCurrentUser()
 
   const project_id = params.project_id as string
 
   const [isMulticoreModalOpen, setIsMulticoreModalOpen] = useState(false)
 
-  const { cableScheduleData, loadListData, isLoading, refetch } = useDataFetching(
-    loadListLatestRevisionId,
-    cableScheduleRevisionId
-  )
+  const { cableScheduleSavedData, cableTrayData, cableScheduleData, loadListData, isLoading, refetch } =
+    useDataFetching(designBasisRevisionId, loadListLatestRevisionId, cableScheduleRevisionId)
 
   const typedCableScheduleColumns = useMemo(
     () =>
@@ -467,6 +510,59 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId,
     }
     // Add your save logic here
   }
+  const getStandByKw = (item2: any, item3: any) => {
+    if (item2 == 0) {
+      return Number(item3)
+    } else {
+      return Number(item2)
+    }
+  }
+  const getCableSizing = async () => {
+    setLoading(true)
+    const cableScheduleData = spreadsheetInstance?.getData()
+    const cableSizeCalc = await getCableSizingCalculation({
+      divisionName: userInfo.division,
+      data: cableScheduleData?.map((row: any) => {
+        return {
+          tagNo: row[0],
+          kw: getStandByKw(row[2], row[3]),
+          starterType: row[5],
+          supplyVoltage: Number(row[6].split(" ")[0]),
+          phase: row[7],
+          powerFactor: Number(row[34]),
+          motorRatedCurrent: Number(row[7]),
+          startingCos: Number(row[10]),
+          runningCos: Number(row[9]),
+          numberOfRuns: Number(row[22]),
+          numberOfCores: Number(row[23]),
+          deratingFactor: Number(row[20]),
+          appx_length: Number(row[14]),
+          voltage_drop_percent_running: "",
+          voltage_drop_percent_starting: "",
+          conductor_copper: "",
+          conductor_aluminium: "",
+        }
+      }),
+    })
+
+    const updatedCableSchedule: any = cableScheduleData?.map((row: any) => {
+      const calculationResult = cableSizeCalc?.find((item: any) => item.tagNo === row[0])
+      // const frameSizeResult = cableSizeCalc?.find((item: any) => item.tagNo === row[0])
+      if (calculationResult) {
+        const updatedRow = [...row]
+        // updatedRow[42] = calculationResult.motorRatedCurrent
+        // updatedRow[16] = frameSizeResult.frameSize
+        return updatedRow
+      }
+      return row
+    })
+    console.log("updated calc", updatedCableSchedule)
+
+    spreadsheetInstance?.setData(updatedCableSchedule)
+    setLoading(false)
+
+    // setLoadListData(updatedLoadList)
+  }
 
   return (
     <>
@@ -498,7 +594,9 @@ const CableSchedule: React.FC<CableScheduleProps> = ({ loadListLatestRevisionId,
 
       <div className="flex w-full flex-row justify-end gap-2">
         <Button type="primary">Download Voltage Drop Calculations</Button>
-        <Button type="primary">Get Cable Sizing</Button>
+        <Button type="primary" onClick={getCableSizing}>
+          Get Cable Sizing
+        </Button>
         <Button type="primary" onClick={handleCableScheduleSave} disabled={isLoading}>
           Save
         </Button>
