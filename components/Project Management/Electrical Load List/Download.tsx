@@ -11,13 +11,12 @@ import {
 } from "@ant-design/icons"
 import { getData, updateData } from "actions/crud-actions"
 import { releaseRevision } from "actions/design-basis_revision"
-import { getLatestLoadlistRevision } from "actions/electrical-load-list"
 import { Button, message, Table, TableColumnsType, TableColumnType, Tabs, Tag, Tooltip } from "antd"
 import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
   COMMON_CONFIGURATION,
-  DESIGN_BASIS_REVISION_HISTORY_API,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
+  GET_LOAD_LIST_EXCEL_API,
   LOCAL_ISOLATOR_REVISION_HISTORY_API,
   MOTOR_CANOPY_REVISION_HISTORY_API,
 } from "configs/api-endpoints"
@@ -90,7 +89,29 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
 
   console.log(revisionHistory, "revisionHistory")
 
-  const handleDownload = async (revision_id: string) => {}
+  const handleDownload = async (revision_id: string) => {
+    setDownloadIconSpin(true)
+    const result = await downloadFile(GET_LOAD_LIST_EXCEL_API, true, {
+      revision_id,
+    })
+    const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
+    const excelBlob = new Blob([byteArray.buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    })
+    const url = window.URL.createObjectURL(excelBlob)
+    const link = document.createElement("a")
+    link.href = url
+    link.setAttribute("download", `Electrical Load List.xlsx`) // Filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    try {
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setDownloadIconSpin(false)
+    }
+  }
 
   const handleRelease = async (revision_id: string) => {
     setModalLoading(true)
@@ -339,9 +360,9 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
 
   const handleSave = async (key: any, tab: any) => {
     if (tab === "local-isolator") {
-      console.log(commonConfigData);
-      console.log(loadListData);
-      
+      console.log(commonConfigData)
+      console.log(loadListData)
+
       const payload = {
         project_id: project_id,
         status: "Not Released",
@@ -365,7 +386,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
             working_kw: "",
             motor_rated_current: "",
             local_isolator: "",
-            motor_location: ""
+            motor_location: "",
           },
         ],
       }
