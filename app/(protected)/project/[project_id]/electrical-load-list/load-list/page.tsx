@@ -13,6 +13,7 @@ export default async function Loadlist({ params }: { params: { project_id: strin
         //   onNext={() => setOpenTab((tab) => tab + 1)}
         designBasisRevisionId={designbasisData[0]?.name}
         loadListLatestRevisionId={loadListRevisionData[0]?.name}
+        revision={loadListRevisionData?.length - 1}
       />
     )
   } else {
