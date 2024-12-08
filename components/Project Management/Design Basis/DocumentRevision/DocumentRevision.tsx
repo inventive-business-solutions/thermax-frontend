@@ -15,6 +15,7 @@ import {
   COMMON_CONFIGURATION,
   DESIGN_BASIS_GENERAL_INFO_API,
   DESIGN_BASIS_REVISION_HISTORY_API,
+  GET_DESIGN_BASIS_EXCEL_API,
   LAYOUT_EARTHING,
   MAKE_OF_COMPONENT_API,
   MCC_PANEL,
@@ -185,7 +186,7 @@ export default function DocumentRevision() {
     )
 
     try {
-      const result = await downloadFile("/method/db_revision.get_design_basis_excel", true, {
+      const result = await downloadFile(GET_DESIGN_BASIS_EXCEL_API, true, {
         metadata: {
           prepared_by_initials: projectCreator?.initials,
           checked_by_initials: projectApprover?.initials,
@@ -299,7 +300,7 @@ export default function DocumentRevision() {
     {
       title: () => <div className="text-center">Created Date</div>,
       dataIndex: "createdDate",
-      align:"center",
+      align: "center",
       render: (text) => {
         const date = new Date(text)
         const stringDate = getThermaxDateFormat(date)
