@@ -915,7 +915,7 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="lpbs_canopy_on_top"
-              label="Canopy On top"
+              label="Canopy on Top"
               options={lpbs_canopy_on_top_options || []}
               disabled={watch("is_local_push_button_station_selected") === "0"}
               size="small"

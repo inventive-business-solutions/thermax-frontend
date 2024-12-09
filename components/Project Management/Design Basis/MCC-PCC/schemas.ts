@@ -299,6 +299,7 @@ export const configItemValidationSchema = zod.object({
 
 export const mccPanelValidationSchema = zod
   .object({
+    is_spg_applicable: zod.string().optional(),
     incomer_ampere: zod.string({ required_error: "Incomer Ampere is required", message: "Incomer Ampere is required" }),
     special_note: zod.string().optional(),
     incomer_pole: zod.string({ required_error: "Incomer Pole is required", message: "Incomer Pole is required" }),
@@ -315,7 +316,7 @@ export const mccPanelValidationSchema = zod
       required_error: "Control Transformer Configuration is required",
       message: "Control Transformer Configuration is required",
     }),
-    is_other_selected: zod.string({ required_error: "This field is required", message: "This field is required" }),
+    is_other_selected: zod.number().optional(),
     led_type_other_input: zod.string().optional(),
     incomer_above_pole: zod.string({
       required_error: "Incomer Above Pole is required",
@@ -571,9 +572,10 @@ export const mccPanelValidationSchema = zod
 
 export const pccPanelValidationSchema = zod
   .object({
+    is_spg_applicable: zod.string().optional(),
     incomer_ampere: zod.string({ required_error: "Incomer Ampere is required", message: "Incomer Ampere is required" }),
     special_note: zod.string().optional(),
-    is_other_selected: zod.string({ required_error: "This field is required", message: "This field is required" }),
+    is_other_selected: zod.number().optional(),
     incomer_pole: zod.string({ required_error: "Incomer Pole is required", message: "Incomer Pole is required" }),
     incomer_type: zod.string({ required_error: "Incomer Type is required", message: "Incomer Type is required" }),
     incomer_above_ampere: zod.string({
