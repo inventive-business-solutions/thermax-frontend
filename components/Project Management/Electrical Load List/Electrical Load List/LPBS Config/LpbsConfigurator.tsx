@@ -11,6 +11,7 @@ import { LPBS_SCHEMES_URI } from "configs/api-endpoints"
 // import { HEATING, TagColors } from "configs/constants"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { useLoading } from "hooks/useLoading"
+import { SERVICES, WWS_SPG } from "configs/constants"
 
 interface LpbsConfiguratorProps {
   isOpen: boolean
@@ -99,8 +100,9 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = React.memo(
       setLoading(true)
       const fetchSchemes = async () => {
         try {
+          const division = userInfo?.division === WWS_SPG || userInfo?.division === SERVICES ?  WWS_SPG : userInfo?.division
           const response = await getData(
-            `${LPBS_SCHEMES_URI}?filters=[["division_name", "=", "${userInfo?.division}"]]&fields=["*"]`
+            `${LPBS_SCHEMES_URI}?filters=[["division_name", "=", "${division}"]]&fields=["*"]`
           )
           console.log(response, "lpbs schemes")
 
@@ -109,7 +111,8 @@ const LpbsConfigurator: React.FC<LpbsConfiguratorProps> = React.memo(
             const [prefixB, numB] = b[1].split("-")
             return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
           })
-
+          console.log(transformedSchemes,"transformedSchemes");
+          
           setLpbsSchemes(transformedSchemes)
           setLoading(false)
         } catch (error) {

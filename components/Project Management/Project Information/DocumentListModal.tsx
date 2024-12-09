@@ -23,7 +23,7 @@ const fieldObject: any = {
   earthing_layout: "Earthing Layout",
   earthing_calculation_input_sheet_will_be_provided: "Earthing Calculation (Input Sheet will be provided)",
   earthing_material_bom: "Earthing Material BOM",
-  motor_canopy_list_and_specifications: "Motor Canopy List and Specifications",
+  motor_canopy_list_and_specification: "Motor Canopy List and Specifications",
   motor_specification: "Motor Specification",
   motor_location_layout: "Motor Location Layout",
   illumination_layout_and_sld: "Illumination Layout and SLD",
