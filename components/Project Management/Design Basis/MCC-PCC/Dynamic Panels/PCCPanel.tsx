@@ -27,9 +27,9 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     incomer_above_pole: pccPanelData?.incomer_above_pole || "4",
     incomer_above_type: pccPanelData?.incomer_above_type || "SFU",
     is_under_or_over_voltage_selected: pccPanelData?.is_under_or_over_voltage_selected || 1,
-    is_other_selected: pccPanelData?.is_other_selected || 1,
-    is_lsig_selected: pccPanelData?.is_lsig_selected || 1,
-    is_lsi_selected: pccPanelData?.is_lsi_selected || 1,
+    is_other_selected: pccPanelData?.is_other_selected || 0,
+    is_lsig_selected: pccPanelData?.is_lsig_selected || 0,
+    is_lsi_selected: pccPanelData?.is_lsi_selected || 0,
     is_neural_link_with_disconnect_facility_selected:
       pccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
     is_led_type_lamp_selected: pccPanelData?.is_led_type_lamp_selected?.toString() || "1",
