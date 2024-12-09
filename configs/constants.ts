@@ -17,7 +17,7 @@ export const USER_MANAGEMENT_PAGE = "/user-management"
 export const BTG = "BTG"
 export const ENVIRO = "Enviro"
 export const HEATING = "Heating"
-export const SERVICES = "Services"
+export const SERVICES = "WWS Services"
 export const WWS_IPG = "WWS IPG"
 export const WWS_SPG = "WWS SPG"
 

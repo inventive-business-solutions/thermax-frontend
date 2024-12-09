@@ -316,7 +316,7 @@ export const LoadListcolumns = (division: string) => {
     {
       type: "dropdown",
       name: "pannelAmmeter",
-      source: ["All Phase With CT", "Y-Phase With CT", "Y-Phase-Direct", "All Phase-Direct", "NA"],
+      source: ["All Phase With CT", "Y-Phase with CT", "Y-Phase-Direct", "All Phase-Direct", "NA"],
       title: "PANEL AMMETER",
       width: "150",
     },

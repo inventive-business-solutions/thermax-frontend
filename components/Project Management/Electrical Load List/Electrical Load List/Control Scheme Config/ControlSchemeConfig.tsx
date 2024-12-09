@@ -5,11 +5,13 @@ import jspreadsheet from "jspreadsheet-ce"
 import { Button } from "antd"
 import AlertNotification from "components/AlertNotification"
 import Modal from "components/Modal/Modal"
-import { controlSchemeColumnsForHeating } from "app/Data"
+import { columnsForWwsSPG, controlSchemeColumnsForHeating, WWS_SPG_DATA } from "app/Data"
 import { ValidColumnType } from "../../types"
 import { useLoading } from "hooks/useLoading"
 import { getData } from "actions/crud-actions"
-import { HEATING_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
+import { HEATING_CONTROL_SCHEMES_URI, SPG_SERVICES_CONTROL_SCHEMES_URI } from "configs/api-endpoints"
+import { HEATING, SERVICES, WWS_SPG } from "configs/constants"
+import { useCurrentUser } from "hooks/useCurrentUser"
 
 interface ControlSchemeConfiguratorProps {
   isOpen: boolean
@@ -32,64 +34,163 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   const [selectedSchemeInstance, setSelectedSchemeInstance] = useState<JspreadsheetInstance | null>(null)
   const [controlSchemes, setControlSchemes] = useState<any[]>([])
   const { setLoading } = useLoading()
+  const userInfo: { division: string } = useCurrentUser()
   const [controlSchemesSelected, setControlSchemesSelected] = useState<any[]>([])
   const [isControlSchemeEmpty, setIsControlSchemeEmpty] = useState(false)
+
+  const getColumnsForDivision = () => {
+    switch (userInfo.division) {
+      case HEATING:
+        return controlSchemeColumnsForHeating
+      case WWS_SPG:
+        return columnsForWwsSPG
+      case SERVICES:
+        return columnsForWwsSPG
+
+      default:
+        return []
+    }
+  }
   const typedControlSchemeColumns = useMemo(
     () =>
-      controlSchemeColumnsForHeating.map((column) => ({
+      getColumnsForDivision().map((column) => ({
         ...column,
         type: column.type as ValidColumnType,
       })),
     []
   )
+  const getApiEndpoint = (division: string) => {
+    switch (division) {
+      case HEATING:
+        return `${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+      case WWS_SPG:
+        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+      case SERVICES:
+        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+
+      default:
+        return ""
+    }
+  }
+  const getControlSchemeFields = (item: any, divison: string) => {
+    if (divison === HEATING) {
+      return [
+        false,
+        item.scheme,
+        item.sub_scheme,
+        item.scheme_title,
+        item.description,
+        item.breaker,
+        item.lpbs,
+        item.lpbs_inc_dec_ind,
+        item.ammeter,
+        item.thermistor_relay,
+        item.motor_space_heater,
+        item.plc_current_signal,
+        item.plc_speed_signal,
+        item.olr,
+        item.phase,
+        item.limit_switch,
+        item.motor_protection_relay,
+        item.field_isolator,
+        item.local_panel,
+        item.field_ess,
+        item.electronic_relay,
+        item.plc1_and_plc2,
+        item.mcc_start_stop,
+        item.input_choke,
+        item.output_choke,
+        item.separate_plc_start_stop,
+        item.di,
+        item.do,
+        item.ai,
+        item.ao,
+      ]
+    }
+    if (divison === SERVICES || divison === WWS_SPG) {
+      // {
+      //   "name": "01uugsat91",
+      //   "owner": "Administrator",
+      //   "creation": "2024-11-11 16:03:36.513071",
+      //   "modified": "2024-11-11 16:03:36.513071",
+      //   "modified_by": "Administrator",
+      //   "docstatus": 0,
+      //   "idx": 0,
+      //   "scheme": "S/D-A-N-9",
+      //   "starter_type": "Star/Delta ",
+      //   "sub_type_filter": "SFU + Contactor + OLR+PLC",
+      //   "description": "Typical Control schematics for Star Delta feeder",
+      //   "type": "Distribution Board STP",
+      //   "switchgear_combination": "SFU + Contactor + OLR",
+      //   "selector_switch": "Auto / Manual",
+      //   "lbps": "N",
+      //   "indication": "On, Off, Trip",
+      //   "di": 3,
+      //   "do": 1,
+      //   "ao": 0,
+      //   "ai": 0,
+      //   "plc_feedback": "Run, Trip & Remote selection",
+      //   "plc_dcs_cmd": "On / Off Common CMD"
+      // }
+      return [
+        false,
+        item.scheme,
+        item.sub_scheme,
+        item.scheme_title,
+        item.description,
+        item.breaker,
+        item.lpbs,
+        item.lpbs_inc_dec_ind,
+        item.ammeter,
+        item.thermistor_relay,
+        item.motor_space_heater,
+        item.plc_current_signal,
+        item.plc_speed_signal,
+        item.olr,
+        item.phase,
+        item.limit_switch,
+        item.motor_protection_relay,
+        item.field_isolator,
+        item.local_panel,
+        item.field_ess,
+        item.electronic_relay,
+        item.plc1_and_plc2,
+        item.mcc_start_stop,
+        item.input_choke,
+        item.output_choke,
+        item.separate_plc_start_stop,
+        item.di,
+        item.do,
+        item.ai,
+        item.ao,
+      ]
+    }
+  }
   // Fetch control schemes
   useEffect(() => {
     setLoading(true)
     // fetchProjectInfo()
 
     if (controlSchemes.length) return
+    console.log(userInfo.division)
 
-    getData(`${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`).then((res) => {
-      const sortedSchemes = res
-        .map((item: any) => [
-          false,
-          item.scheme,
-          item.sub_scheme,
-          item.scheme_title,
-          item.description,
-          item.breaker,
-          item.lpbs,
-          item.lpbs_inc_dec_ind,
-          item.ammeter,
-          item.thermistor_relay,
-          item.motor_space_heater,
-          item.plc_current_signal,
-          item.plc_speed_signal,
-          item.olr,
-          item.phase,
-          item.limit_switch,
-          item.motor_protection_relay,
-          item.field_isolator,
-          item.local_panel,
-          item.field_ess,
-          item.electronic_relay,
-          item.plc1_and_plc2,
-          item.mcc_start_stop,
-          item.input_choke,
-          item.output_choke,
-          item.separate_plc_start_stop,
-          item.di,
-          item.do,
-          item.ai,
-          item.ao,
-        ])
-        .sort((a: any, b: any) => {
-          const [prefixA, numA] = a[2].split("-")
-          const [prefixB, numB] = b[2].split("-")
-          return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
-        })
+    getData(getApiEndpoint(userInfo?.division)).then((res) => {
+      console.log(res)
+      let sortedSchemes
+      if (userInfo.division === SERVICES || userInfo.division === WWS_SPG) {
+        sortedSchemes = WWS_SPG_DATA
+      } else {
+        sortedSchemes = res.map((item: any) => getControlSchemeFields(item, userInfo.division))
+      }
+      // .sort((a: any, b: any) => {
+      //   const [prefixA, numA] = a[2].split("-")
+      //   const [prefixB, numB] = b[2].split("-")
+      //   return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
+      // })
 
       // setLpbsSchemes(sortedSchemes)
+      console.log(sortedSchemes, "control schemes sorted")
+
       setControlSchemes(sortedSchemes)
       setLoading(false)
     })
@@ -197,7 +298,20 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   }
 
   const handleConfirm = () => {
-    const selectedSchemes = controlSchemesSelected.map((item) => item[2])
+    const selectedSchemes = controlSchemesSelected.map((item) => {
+      switch (userInfo.division) {
+        case HEATING:
+          return item[2]
+
+        case WWS_SPG:
+          return item[1]
+        case SERVICES:
+          return item[1]
+
+        default:
+          return item[2]
+      }
+    })
     // localStorage.setItem("selected_control_scheme", JSON.stringify([...selectedSchemes, "NA"]))
     onConfigurationComplete([...selectedSchemes, "NA"])
     onClose()

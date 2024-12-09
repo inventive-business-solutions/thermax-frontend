@@ -22,6 +22,7 @@ import {
 } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
+import "./DownloadComponent.css"
 import { useLoading } from "hooks/useLoading"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -565,9 +566,9 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
   }
 
   return (
-    <>
-      <Tabs onChange={onChange} type="card" items={DownloadTabs} />
-    </>
+    <div className="">
+      <Tabs onChange={onChange} type="card" style={{fontSize:"12px"}}  items={DownloadTabs} />
+    </div>
   )
 }
 
