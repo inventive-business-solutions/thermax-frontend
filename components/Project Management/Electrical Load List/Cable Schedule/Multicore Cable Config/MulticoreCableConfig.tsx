@@ -116,8 +116,8 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
 
   const spareFormula = (DIDO: number): number => {
     let calcSpare = 0
-    if (selectedPercent === 10) return DIDO * 1.1
-    else if (selectedPercent === 20) return DIDO * 1.2
+    if (selectedPercent === "10") return DIDO * 1.1
+    else if (selectedPercent === "20") return DIDO * 1.2
     else return DIDO
   }
   const calculateSpare = (input: number, from: string = "DIDO"): number | null => {
@@ -141,22 +141,6 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
     }
     return null
   }
-  //   const calculateSpare = (input: number, from: string): number | null => {
-  //     const spares = from === "DIDO" ? [2, 3, 4, 6, 8, 12, 16, 24, 30, 37] : [1, 2, 6, 12];
-
-  //     // Check if input is larger than the last element
-  //     if (input > spares[spares?.length - 1]) {
-  //         return null;
-  //     }
-
-  //     for (let i = 0; i < spares.length - 1; i++) {
-  //         if (input === spares[i]) return spares[i];
-  //         if (input > spares[i] && input <= spares[i + 1]) return spares[i + 1];
-  //     }
-
-  //     // Explicitly return null as fallback
-  //     return null;
-  // }
 
   const findOtherData = (schemeTitle: string) => {
     const division = userInfo.division
@@ -205,96 +189,7 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
     const newTable = jspreadsheet(spreadsheetRef.current, options)
     setTble(newTable)
   }
-  // const   selectedControllScheme = (data: any)=> {
-  //   // if (groupingRef.current) {
-  //   //   this.tbleSelected.setData(data);
-  //   // } else {
-  //   if()
-  //     this.tbleSelected = jspreadsheet(
-  //       groupingRef.current
 
-  //       {
-  //         data: data,
-  //         license: "39130-64ebc-bd98e-26bc4",
-  //         columns: [
-  //           {
-  //             type: "text",
-  //             name: "tag",
-  //             title: "Group No.",
-  //             width: "80",
-  //             height: "100",
-  //           },
-  //           {
-  //             type: "text",
-  //             name: "tag",
-  //             title: "Type Of Cable",
-  //             width: "100",
-  //             height: "100",
-  //           },
-  //           {
-  //             type: "text",
-  //             name: "tag",
-  //             title: "Total Number of cores",
-  //             width: "170",
-  //             height: "100",
-  //           },
-  //           {
-  //             type: "text",
-  //             name: "tag",
-  //             title: "Total Number of cores with spare",
-  //             width: "240",
-  //             height: "100",
-  //           },
-  //           {
-  //             type: "dropdown",
-  //             name: "tag",
-  //             title: "Multicore/Pair Cable Selected",
-  //             width: "220",
-  //             height: "100",
-  //             source: DIDOSpare,
-  //             autocomplete: true,
-  //             multiple: false,
-  //           },
-  //           {
-  //             type: "text",
-  //             name: "tag",
-  //             title: "No. Of cables",
-  //             width: "100",
-  //             height: "100",
-  //           },
-  //           {
-  //             type: "text",
-  //             name: "tag",
-  //             title: "Service Description",
-  //             width: "220",
-  //             height: "100",
-  //           },
-  //           {
-  //             type: "text",
-  //             name: "panelName",
-  //             title: "Panel Name",
-  //             width: "220",
-  //             height: "100",
-  //           },
-  //         ],
-  //         // onchange: (instance, cell, col, row, val) => {
-  //         //   // this.data[row][col] = val;
-  //         //   if (col == 0) {
-  //         //     if (!val) {
-  //         //       // this.grouping.splice(row, 1);
-  //         //       // this.selectedControllScheme(this.grouping);
-  //         //     }
-  //         //   }
-  //         // },
-  //         tableOverflow: true,
-  //         filters: true,
-  //         tableWidth: "100%",
-  //         tableHeight: "auto",
-  //         freezeColumns: 0,
-  //       }
-  //     );
-  //   // }
-  // }
   const initializeGroupingeUi = (data: any) => {
     if (groupingRef.current) {
       tbleSelected?.destroy()
@@ -345,17 +240,22 @@ const MulticoreCableConfigurator: React.FC<MulticoreCableConfigProps> = ({
     let panelName = ""
 
     selectedElMulticore.forEach((el) => {
-      if (el[5] && el[5] !== "-") DI += Number(el[5])
-      if (el[6] && el[6] !== "-") DO += Number(el[6])
+      if (el[5] && el[5] !== "-") DI += Number(el[5]) * 2
+      if (el[6] && el[6] !== "-") DO += Number(el[6]) * 2
       if (el[7] && el[7] !== "-") AI += Number(el[7])
       if (el[8] && el[8] !== "-") AO += Number(el[8])
 
       serviceDescription = serviceDescription ? serviceDescription.concat(", ", el[2]) : el[2]
-      panelName = el[9]
+      panelName = el[10]
     })
 
     // Calculate spares
     const calcDISpare = Number(spareFormula(DI).toFixed(2))
+    console.log(DI)
+    console.log(DI * 1.2)
+    console.log(selectedPercent)
+    console.log(calcDISpare)
+
     const calDOSpare = Number(spareFormula(DO).toFixed(2))
     const DISpare = calculateSpare(calcDISpare, "DIDO")
     const DOSpare = calculateSpare(calDOSpare, "DIDO")

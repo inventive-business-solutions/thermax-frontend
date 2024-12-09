@@ -19,6 +19,7 @@ import {
   GET_LOAD_LIST_EXCEL_API,
   LOCAL_ISOLATOR_REVISION_HISTORY_API,
   MOTOR_CANOPY_REVISION_HISTORY_API,
+  STATIC_DOCUMENT_API,
 } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
@@ -66,11 +67,20 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
 
   const params = useParams()
   const project_id = params.project_id as string
+  // const staticData = await getData(
+  //   `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${project_id}"]]`
+  // )
+  const { data: documentList } = useGetData(
+    `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${project_id}"]]`
+  )
+  // console.log(documentList,"");
+
   const dbLoadlistHistoryUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
   const { data: revisionHistory } = useGetData(dbLoadlistHistoryUrl)
   const [dataSource, setDataSource] = useState<any[]>([])
   const [commonConfigData, setCommonConfigData] = useState<any[]>([])
   const [loadListData, setLoadListData] = useState<any[]>([])
+  const [tabKey, setTabKey] = useState("1")
   // const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
 
   console.log(revisionHistory, "revisionHistory")
@@ -79,7 +89,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
     if (revisionHistory?.length) {
       const dataSource = revisionHistory?.map((item: any, index: number) => ({
         key: item.name,
-        documentName: "Load List",
+        documentName: documentList[0]?.electrical_load_list,
         status: item.status,
         documentRevision: `R${index}`,
         createdDate: item.creation,
@@ -88,7 +98,6 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
     }
   }, [revisionHistory])
 
-  console.log(revisionHistory, "revisionHistory")
 
   const handleDownload = async (revision_id: string) => {
     setDownloadIconSpin(true)
@@ -102,7 +111,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
     const url = window.URL.createObjectURL(excelBlob)
     const link = document.createElement("a")
     link.href = url
-    link.setAttribute("download", `Electrical Load List.xlsx`) // Filename
+    link.setAttribute("download", `${getName(tabKey)}.xlsx`) // Filename
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -263,91 +272,6 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
     }
     return columns
   }
-  // const getColumns = (tab: string) => {
-  //   const columns: TableColumnsType = [
-  //     {
-  //       title: () => 'Document Name',
-  //       dataIndex: "documentName",
-  //       align: "center",
-  //       render: (text, record) => (
-  //         <Button
-  //           onClick={() => {
-  //             setModalLoading(true)
-  //             router.push(`/project/${project_id}/electrical-load-list/${tab}`)
-  //           }}
-  //           icon={}
-  //           disabled={record.status === DB_REVISION_STATUS.Released}
-  //         >
-  //           {text}
-  //         </Button>
-  //       ),
-  //     },
-  //     {
-  //       title: () => 'Status',
-  //       dataIndex: "status",
-  //       render: (text) => (
-  //         <span>{text}</span>
-  //       ),
-  //     },
-  //     {
-  //       title: () => 'Document Revision',
-  //       dataIndex: "documentRevision",
-  //       render: (text) => <span>{text}</span>,
-  //     },
-  //     {
-  //       title: () => 'Created Date',
-  //       dataIndex: "createdDate",
-  //       render: (text) => {
-  //         const date = new Date(text)
-  //         const stringDate = getThermaxDateFormat(date)
-  //         return stringDate
-  //       },
-  //     }
-  //   ];
-
-  //   // Add Save field if tab is local-isolator
-  //   if (tab === 'local-isolator') {
-  //     columns.push({
-  //       title: () => 'Save',
-  //       dataIndex: 'save',
-  //       render: (text, record) => (
-  //         <Button
-  //           onClick={() => handleSave(record.key)}
-  //         >
-  //           Save
-  //         </Button>
-  //       ),
-  //     });
-  //   }
-
-  //   // Add remaining columns
-  //   columns.push(
-  //     {
-  //       title: () => 'Download',
-  //       dataIndex: "download",
-  //       render(text, record) {
-  //         return (
-  //           <Button
-  //             onClick={() => handleDownload(record?.key)}
-  //           />
-  //         )
-  //       },
-  //     },
-  //     {
-  //       title: () => 'Release',
-  //       dataIndex: "release",
-  //       render: (text, record) => {
-  //         return (
-  //           <Button onClick={() => handleRelease(record.key)}>
-  //             Release
-  //           </Button>
-  //         )
-  //       },
-  //     }
-  //   );
-
-  //   return columns
-  // }
 
   const getSaveEndPoint = (id: any, tab: any) => {
     switch (tab) {
@@ -518,30 +442,36 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
       setModalLoading(false)
     }
   }
+  const getName = (key: any) => {
+    switch (key) {
+      case "1":
+        return documentList[0]?.electrical_load_list
+      case "2":
+        return documentList[0]?.cable_specification_and_bom
+      case "3":
+        return documentList[0]?.motor_canopy_list_and_specification
+      case "4":
+        return "Motor Specification"
+      case "5":
+        return "LPBS Specification"
+      case "6":
+        return "Local Isolator Specification"
+      default:
+        return ""
+    }
+  }
   const onChange = async (key: string) => {
     setModalLoading(true)
 
     console.log(key)
+    console.log(documentList)
     console.log(getApiEndpoint(key))
-    const getName = (key: any) => {
-      switch (key) {
-        case "1":
-          return "Load List"
-        case "2":
-          return "Cable Schedule"
-        case "3":
-          return "Motor Canopy"
-        case "4":
-          return "Motor Specification"
-        case "5":
-          return "LPBS Specification"
-        case "6":
-          return "Local Isolator Specification"
-        default:
-          return ""
-      }
-    }
+
     try {
+      // const documentList = await getData()
+
+      // console.log(staticData,"staticData");
+
       const data = await getData(getApiEndpoint(key))
       console.log(data)
 
@@ -563,11 +493,12 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
     } finally {
       setModalLoading(false)
     }
+    setTabKey(key)
   }
 
   return (
     <div className="">
-      <Tabs onChange={onChange} type="card" style={{fontSize:"12px"}}  items={DownloadTabs} />
+      <Tabs onChange={onChange} type="card" style={{ fontSize: "12px" }} items={DownloadTabs} />
     </div>
   )
 }

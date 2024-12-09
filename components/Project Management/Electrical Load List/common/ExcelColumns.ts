@@ -501,31 +501,31 @@ export const CableSchedulecolumns = () => {
     {
       type: "text",
       name: "percentVdAtRunning",
-      title: " % VD at Running ",
+      title: " % VD AT RUNNING ",
       width: "100",
     },
     {
       type: "text",
       name: "percentVdAtStart",
-      title: " % VD at Start ",
+      title: " % VD AT STARTING ",
       width: "100",
     },
     {
       type: "text",
       name: "selectedCableCarryCapacity",
-      title: "Selected cable Current carrying capacity (Amp)",
+      title: "SELECTED CABLE CURRENT CARRYING CAPACITY (Amp)",
       width: "220",
     },
     {
       type: "text",
       name: "deratingFactor",
-      title: "Derating Factor",
+      title: "DERATING FACTOR",
       width: "200",
     },
     {
       type: "text",
       name: "finalCurrentCarryCapacity",
-      title: "Final Current carrying capacity (Amp)",
+      title: "FINAL CURRENT CARRYING CAPACITY (Amp)",
       width: "160",
     },
     {
@@ -582,7 +582,7 @@ export const CableSchedulecolumns = () => {
     {
       type: "text",
       name: "cableAsPerFl",
-      title: "Cable Size As Per Heating Chart",
+      title: "CABLE SIZE AS PER HEATING CHART ",
       width: "150",
     },
   ]
@@ -591,13 +591,13 @@ export const CableSchedulecolumns = () => {
 export const multicoreCableConfigColumns = [
   {
     type: "checkbox",
-    title: "Select",
+    title: "SELECT",
     width: "80",
   },
   {
     type: "text",
     name: "tag",
-    title: "Feeder Tag",
+    title: "TAG NO.",
     width: "110",
   },
   {
@@ -645,13 +645,13 @@ export const multicoreCableConfigColumns = [
   {
     type: "text",
     name: "rev",
-    title: "Additional Control Cable",
+    title: "ADDITIONAL CONTROL CABLE",
     width: "200",
   },
   {
     type: "text",
     name: "panelName",
-    title: "Panel Name",
+    title: "PANEL NAME",
     width: "90",
   },
 ]
@@ -659,31 +659,31 @@ export const multicoreCableConfigGroupedColumns = [
   {
     type: "text",
     name: "tag",
-    title: "Group No.",
+    title: "GROUP NO.",
     width: "80",
   },
   {
     type: "text",
     name: "tag",
-    title: "Type Of Cable",
+    title: "TYPE OF CABLE",
     width: "100",
   },
   {
     type: "text",
     name: "tag",
-    title: "Total Number of cores",
+    title: "TOTAL NO. OF CORES",
     width: "170",
   },
   {
     type: "text",
     name: "tag",
-    title: "Total Number of cores with spare",
+    title: "TOTAL NO. OF CORES WITH SPARE",
     width: "240",
   },
   {
     type: "dropdown",
     name: "tag",
-    title: "Multicore/Pair Cable Selected",
+    title: "MULTICORE/PAIR CABLE SELECTED",
     autocomplete: true,
     source: ["2C", "3C", "4C", "6C", "8C", "12C", "16C", "24C", "30C", "37C", "1P", "2P", "6P", "12P"],
     multiple: false,
@@ -692,19 +692,19 @@ export const multicoreCableConfigGroupedColumns = [
   {
     type: "text",
     name: "tag",
-    title: "No. Of cables",
+    title: "NO. OF CABLE",
     width: "100",
   },
   {
     type: "text",
     name: "tag",
-    title: "Service Description",
+    title: "SERVICE DESCRIPTION",
     width: "270",
   },
   {
     type: "text",
     name: "panelName",
-    title: "Panel Name",
+    title: "PANEL NAME",
     width: "220",
   },
 ]
