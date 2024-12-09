@@ -518,6 +518,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
     }
   }
   const getCableSizing = async () => {
+    console.log(cableTrayData, "cableTrayData")
+
     setLoading(true)
     const cableScheduleData = spreadsheetInstance?.getData()
     const cableSizeCalc = await getCableSizingCalculation({
@@ -531,10 +533,11 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           phase: row[7],
           powerFactor: Number(row[34]),
           motorRatedCurrent: Number(row[7]),
+          cableMaterial: row[8],
           startingCos: Number(row[10]),
           runningCos: Number(row[9]),
           numberOfRuns: Number(row[22]),
-          numberOfCores: Number(row[23]),
+          numberOfCores: row[23],
           deratingFactor: Number(row[20]),
           appx_length: Number(row[14]),
           voltage_drop_percent_running: "",

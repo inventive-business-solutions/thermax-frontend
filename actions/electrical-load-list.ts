@@ -214,7 +214,7 @@ export const getCableSizingCalculation = async (loadListData: any) => {
   const division = loadListData.divisionName
   const calcData = loadListData.data
   // Get the cable sizing data
-  //  const cableAsPerHeatingChart = await getData(`${CABLE_SIZE_API}?fields=["*"]&limit=1000`)
+   const cableAsPerHeatingChart = await getData(`${CABLE_SIZE_HEATING_API}?fields=["*"]&limit=1000`)
 
   // Get data from design basis via latest revision id
   // const perc_voltage_drop_running = designBasisData.perc_voltage_drop_running
@@ -223,6 +223,22 @@ export const getCableSizingCalculation = async (loadListData: any) => {
   // const aluminium_conductor = designBasisData.aluminium_conductor
 
   if (division === HEATING) {
+      console.log(cableAsPerHeatingChart,"cableAsPerHeatingChart");
+      const calculations = calcData?.map((row:any)=>{
+        const kw = row.kw
+        const appx_length = row.appx_length
+        const supplyVoltage = row.supplyVoltage
+        const phase = row.phase
+        const starterType = row.starterType
+        const cableMaterial = row.cableMaterial
+        const numberOfCores = row.numberOfCores
+
+        // const itemFound = cableAsPerHeatingChart?.
+        return {
+          
+        }
+      })
+      
     return calcData
   }
 }
