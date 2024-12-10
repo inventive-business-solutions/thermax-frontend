@@ -17,8 +17,10 @@ import {
   COMMON_CONFIGURATION,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
   GET_LOAD_LIST_EXCEL_API,
+  LBPS_SPECIFICATIONS_REVISION_HISTORY_API,
   LOCAL_ISOLATOR_REVISION_HISTORY_API,
   MOTOR_CANOPY_REVISION_HISTORY_API,
+  MOTOR_SPECIFICATIONS_REVISION_HISTORY_API,
   STATIC_DOCUMENT_API,
 } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
@@ -67,13 +69,10 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
 
   const params = useParams()
   const project_id = params.project_id as string
-  // const staticData = await getData(
-  //   `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${project_id}"]]`
-  // )
+
   const { data: documentList } = useGetData(
     `${STATIC_DOCUMENT_API}?fields=["*"]&filters=[["project_id", "=", "${project_id}"]]`
   )
-  // console.log(documentList,"");
 
   const dbLoadlistHistoryUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
   const { data: revisionHistory } = useGetData(dbLoadlistHistoryUrl)
@@ -81,7 +80,6 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
   const [commonConfigData, setCommonConfigData] = useState<any[]>([])
   const [loadListData, setLoadListData] = useState<any[]>([])
   const [tabKey, setTabKey] = useState("1")
-  // const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
 
   console.log(revisionHistory, "revisionHistory")
 
@@ -97,7 +95,6 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
       setDataSource(dataSource)
     }
   }, [revisionHistory])
-
 
   const handleDownload = async (revision_id: string) => {
     setDownloadIconSpin(true)
@@ -155,8 +152,10 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
               type="link"
               iconPosition="start"
               onClick={() => {
-                setModalLoading(true)
-                router.push(`/project/${project_id}/electrical-load-list/${tab}`)
+                if (tab !== "motor-specs" && tab !== "lpbs-specs" && tab !== "local-isolator") {
+                  setModalLoading(true)
+                  router.push(`/project/${project_id}/electrical-load-list/${tab}`)
+                }
               }}
               icon={<FolderOpenOutlined style={{ color: "#fef65b", fontSize: "1.2rem" }} />}
               disabled={record.status === DB_REVISION_STATUS.Released}
@@ -264,7 +263,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
         )
       },
     }
-    if (tab === "local-isolator") {
+    if (tab === "local-isolator" || tab === "motor-specs" || tab === "lpbs-specs" ) {
       let position = columns.length - 2
 
       // Insert the element at the calculated position
@@ -379,12 +378,38 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
     {
       label: `DOWNLOAD MOTOR SPEC. & LIST`,
       key: "4",
-      children: <DownloadTable dataSource={dataSource} />,
+      children: (
+        <>
+          <div className="text-end">
+            <Button icon={<SyncOutlined color="#492971" />} onClick={() => mutate(dbLoadlistHistoryUrl)}>
+              {" "}
+              Refresh
+            </Button>
+          </div>
+
+          <div className="mt-2">
+            <Table columns={getColumns("motor-specs")} dataSource={dataSource} size="small" />
+          </div>
+        </>
+      ),
     },
     {
       label: `LBPS SPECIFICATIONS & LIST`,
       key: "5",
-      children: <DownloadTable dataSource={dataSource} />,
+      children: (
+        <>
+          <div className="text-end">
+            <Button icon={<SyncOutlined color="#492971" />} onClick={() => mutate(dbLoadlistHistoryUrl)}>
+              {" "}
+              Refresh
+            </Button>
+          </div>
+
+          <div className="mt-2">
+            <Table columns={getColumns("lpbs-specs")} dataSource={dataSource} size="small" />
+          </div>
+        </>
+      ),
     },
     {
       label: `LOCAL ISOLATOR SPECIFICATIONS LIST`,
@@ -415,9 +440,9 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
       case "3":
         return `${MOTOR_CANOPY_REVISION_HISTORY_API}${baseUrl}`
       case "4":
-        return `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/motor-spec${baseUrl}`
+        return `${MOTOR_SPECIFICATIONS_REVISION_HISTORY_API}${baseUrl}`
       case "5":
-        return `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/lbps${baseUrl}`
+        return `${LBPS_SPECIFICATIONS_REVISION_HISTORY_API}${baseUrl}`
       case "6":
         return `${LOCAL_ISOLATOR_REVISION_HISTORY_API}${baseUrl}`
       default:
@@ -447,15 +472,15 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
       case "1":
         return documentList[0]?.electrical_load_list
       case "2":
-        return documentList[0]?.cable_specification_and_bom
+        return documentList[0]?.electrical_cable_schedule
       case "3":
         return documentList[0]?.motor_canopy_list_and_specification
       case "4":
-        return "Motor Specification"
+        return documentList[0]?.motor_specification
       case "5":
-        return "LPBS Specification"
+        return documentList[0]?.lpbs_specifications_and_list
       case "6":
-        return "Local Isolator Specification"
+        return documentList[0]?.local_isolator_specifications_and_list
       default:
         return ""
     }
