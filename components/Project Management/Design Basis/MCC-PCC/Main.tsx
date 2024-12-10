@@ -20,16 +20,14 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
   }, [])
 
   const { data: projectPanelData } = useGetData(
-    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]&order_by=creation asc`
   )
 
   const TabMCC = [
     {
       label: "Make",
       key: "Make",
-      children: (
-        <MakeOfComponent revision_id={revision_id} setActiveKey={setActiveKey} />
-      ),
+      children: <MakeOfComponent revision_id={revision_id} setActiveKey={setActiveKey} />,
     },
     {
       label: "Common Configuration",

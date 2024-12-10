@@ -105,6 +105,9 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
     const existingDesignBasis = await getData(
       `${DESIGN_BASIS_GENERAL_INFO_API}?filters=[["revision_id", "=", "${revision_id}"]]`
     )
+    const motorParameters = await getData(
+      `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+    )
     if (existingDesignBasis && existingDesignBasis.length > 0) {
       await updateData(`${DESIGN_BASIS_GENERAL_INFO_API}/${existingDesignBasis[0].name}`, false, {
         is_package_selection_enabled: generalInfoData?.is_package_selection_enabled,
@@ -155,10 +158,6 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
         })
       }
 
-      const motorParameters = await getData(
-        `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-      )
-
       const isHazardousAreaPresent = hasHazardousArea ? true : false
 
       if (motorParameters && motorParameters.length > 0) {
@@ -173,6 +172,10 @@ const GeneralInfo = ({ revision_id }: { revision_id: string }) => {
           is_hazardous_area_present: isHazardousAreaPresent,
         })
       }
+    } else {
+      await updateData(`${MOTOR_PARAMETER_API}/${motorParameters[0].name}`, false, {
+        is_hazardous_area_present: true,
+      })
     }
     setSaveLoading(false)
     message.success("Design Basis General Info saved successfully")

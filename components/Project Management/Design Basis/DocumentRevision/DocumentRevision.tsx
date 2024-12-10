@@ -218,6 +218,7 @@ export default function DocumentRevision() {
       link.click()
       document.body.removeChild(link)
     } catch (error) {
+      message.error("Error processing Excel file")
       console.error("Error processing Excel file:", error)
     }
 
