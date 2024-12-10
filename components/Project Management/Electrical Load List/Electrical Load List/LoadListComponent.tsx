@@ -12,7 +12,7 @@ import {
   PROJECT_INFO_API,
   PROJECT_MAIN_PKG_LIST_API,
 } from "configs/api-endpoints"
-import { createData, downloadFile, getData, updateData } from "actions/crud-actions"
+import { createData, downloadFile, downloadFrappeCloudFile, getData, updateData } from "actions/crud-actions"
 import * as XLSX from "xlsx"
 
 import { LoadListcolumns } from "../common/ExcelColumns"
@@ -829,10 +829,8 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     // setLoadListData(updatedLoadList)
   }
   const handleTemplateDownload = async () => {
-    const result = await downloadFile(
-      `${process.env.NEXT_PUBLIC_FRAPPE_URL}/files/Final_Motor_Details_Template.xlsx`,
-      true,
-      {}
+    const result = await downloadFrappeCloudFile(
+      `${process.env.NEXT_PUBLIC_FRAPPE_URL}/files/Final_Motor_Details_Template.xlsx`
     )
     const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
     const excelBlob = new Blob([byteArray.buffer], {
