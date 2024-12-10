@@ -484,7 +484,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           derating_factor: Number(row[19]),
           final_capacity: Number(row[20]),
           number_of_runs: Number(row[21]),
-          no_of_cores: row[22],
+          number_of_cores: row[22],
           final_cable_size: row[23],
           cable_selected_status: row[24],
           cable_size_as_per_heating_chart: row[25],
@@ -537,7 +537,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           runningCos: Number(row[9]),
           numberOfRuns: Number(row[21]),
           numberOfCores: row[22],
-          deratingFactor: Number(row[20]),
+          deratingFactor: Number(row[19]),
           appx_length: Number(row[13]),
           voltage_drop_percent_running: "",
           voltage_drop_percent_starting: "",
@@ -546,13 +546,24 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         }
       }),
     })
-
+    console.log(cableSizeCalc,"cableSizeCalc");
+    
     const updatedCableSchedule: any = cableScheduleData?.map((row: any) => {
       const calculationResult = cableSizeCalc?.find((item: any) => item.tagNo === row[0])
       // const frameSizeResult = cableSizeCalc?.find((item: any) => item.tagNo === row[0])
       if (calculationResult) {
         const updatedRow = [...row]
-        // updatedRow[42] = calculationResult.motorRatedCurrent
+
+        updatedRow[8] = calculationResult.moc
+        updatedRow[11] = calculationResult.dbl_r
+        updatedRow[12] = calculationResult.dbl_x
+        updatedRow[14] = calculationResult.vd_run
+        updatedRow[15] = calculationResult.vd_start
+        updatedRow[16] = calculationResult.vd_run_percentage
+        updatedRow[17] = calculationResult.vd_start_percentage
+        updatedRow[20] = calculationResult.final_current_carrying_capacity
+        updatedRow[23] = calculationResult.sizes
+
         // updatedRow[16] = frameSizeResult.frameSize
         return updatedRow
       }
