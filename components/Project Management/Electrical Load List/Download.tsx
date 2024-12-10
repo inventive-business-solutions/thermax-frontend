@@ -498,7 +498,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
 
   return (
     <div className="">
-      <Tabs onChange={onChange} type="card" style={{ fontSize: "12px" }} items={DownloadTabs} />
+      <Tabs onChange={onChange} type="card" style={{ fontSize: "11px !important" }} items={DownloadTabs} />
     </div>
   )
 }
