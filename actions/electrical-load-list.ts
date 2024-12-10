@@ -5,6 +5,8 @@ import { getData } from "./crud-actions"
 import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
   CABLE_SIZE_HEATING_API,
+  CABLE_SIZING_DATA_API,
+  CABLE_TRAY_LAYOUT,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
   HEATING_SWITCHGEAR_HEATER_API,
   MOTOR_CANOPY_METADATA,
@@ -205,40 +207,182 @@ export const motorCanopyCalculation = async (loadListData: any) => {
       part_code: "",
     }
   })
- 
 
   return calculatedData
 }
 
-export const getCableSizingCalculation = async (loadListData: any) => {
-  const division = loadListData.divisionName
-  const calcData = loadListData.data
-  // Get the cable sizing data
-   const cableAsPerHeatingChart = await getData(`${CABLE_SIZE_HEATING_API}?fields=["*"]&limit=1000`)
+const findCable = (
+  cableSizeData: any,
+  motorRatedCurrent: number,
+  numberOfCores: number,
+  appxLength: number,
+  cosPhiRunning: number,
+  sinPhiRunning: number,
+  numberOfRuns: number,
+  motorStartingCurrent: number,
+  cosPhiStarting: any,
+  sinPhiStarting: any,
+  supplyVoltage: number,
+  perc_voltage_drop_running: number,
+  perc_voltage_drop_starting: number
+) => {
+  let finalCable = {}
+  for (let cable of cableSizeData) {
+    if (cable.current_air >= motorRatedCurrent && cable.number_of_core === numberOfCores) {
+      const dbl_x = +parseFloat(cable.dbl_x).toFixed(2)
+      const dbl_r = +parseFloat(cable.dbl_r).toFixed(2)
 
-  // Get data from design basis via latest revision id
-  // const perc_voltage_drop_running = designBasisData.perc_voltage_drop_running
-  // const perc_voltage_drop_starting = designBasisData.perc_voltage_drop_starting
-  // const copper_conductor = designBasisData.copper_conductor
-  // const aluminium_conductor = designBasisData.aluminium_conductor
+      const vd_run = +(
+        (1.732 * motorRatedCurrent * appxLength * (cosPhiRunning * dbl_r + sinPhiRunning * dbl_x)) /
+        numberOfRuns /
+        1000
+      ).toFixed(2)
+      const vd_start = +(
+        (1.732 * motorStartingCurrent * appxLength * (cosPhiStarting * dbl_r + sinPhiStarting * dbl_x)) /
+        numberOfRuns /
+        1000
+      ).toFixed(2)
 
-  if (division === HEATING) {
-      console.log(cableAsPerHeatingChart,"cableAsPerHeatingChart");
-      const calculations = calcData?.map((row:any)=>{
-        const kw = row.kw
-        const appx_length = row.appx_length
-        const supplyVoltage = row.supplyVoltage
-        const phase = row.phase
-        const starterType = row.starterType
-        const cableMaterial = row.cableMaterial
-        const numberOfCores = row.numberOfCores
+      const vd_run_percentage = +((vd_run / supplyVoltage) * 100).toFixed(2)
+      const vd_start_percentage = +((vd_start / supplyVoltage) * 100).toFixed(2)
 
-        // const itemFound = cableAsPerHeatingChart?.
-        return {
-          
-        }
-      })
-      
-    return calcData
+      if (vd_run_percentage <= perc_voltage_drop_running && vd_start_percentage <= perc_voltage_drop_starting) {
+        finalCable = { ...cable }
+        break // Stop iterating once a suitable cable is found.
+      }
+    }
   }
+  return finalCable
+}
+
+export const getCableSizingCalculation = async (cableScheduleData: any) => {
+  const division = cableScheduleData.divisionName
+  const cableScheduleRows = cableScheduleData.data
+  const revisionId = "no270rl748"
+  // Get the cable sizing data
+  const cableAsPerHeatingChart = await getData(`${CABLE_SIZE_HEATING_API}?fields=["*"]&limit=1000`)
+  const cableSizingData = await getData(`${CABLE_SIZING_DATA_API}?fields=["*"]&limit=1000`)
+
+  const copperCableSize = cableSizingData
+    .filter((data: any) => data.moc === "Copper")
+    .sort((a: any, b: any) => a.current_air - b.current_air)
+  const aluminiumCableSize = cableSizingData
+    .filter((data: any) => data.moc === "Aluminium")
+    .sort((a: any, b: any) => a.current_air - b.current_air)
+
+  const cableTrays = await getData(`${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revisionId}"]]`)
+  const layoutCableTray = cableTrays[0]
+
+  const perc_voltage_drop_running = +parseFloat(layoutCableTray.motor_voltage_drop_during_running).toFixed(2)
+  const perc_voltage_drop_starting = +parseFloat(layoutCableTray.motor_voltage_drop_during_starting).toFixed(2)
+  const copper_conductor = +parseFloat(layoutCableTray.copper_conductor).toFixed(2)
+  const aluminium_conductor = +parseFloat(layoutCableTray.aluminium_conductor).toFixed(2)
+
+  const calculatedData = cableScheduleRows?.map((row: any) => {
+    const kw: number = +parseFloat(row.kw).toFixed(2)
+    const supplyVoltage: number = row.supplyVoltage
+    const appxLength: number = +parseFloat(row.appx_length).toFixed(2)
+    const phase = row.phase
+    const starterType = row.starterType
+    const cableMaterial = row.cableMaterial
+    const numberOfCores = parseInt(row.numberOfCores.replace(/\D/g, ""), 10)
+    const numberOfRuns = parseInt(row.numberOfRuns)
+    const efficiency = 0.86
+    const cosPhiRunning: number = row.runningCos
+    const sinPhiRunning = +Math.sqrt(1 - cosPhiRunning ** 2).toFixed(2)
+    const cosPhiStarting: number = row.startingCos
+    const sinPhiStarting = +Math.sqrt(1 - cosPhiStarting ** 2).toFixed(2)
+    const motorRatedCurrent: number = +parseFloat(row.motorRatedCurrent).toFixed(2)
+    let motorStartingCurrent = 0
+
+    if (starterType === "DOL") {
+      motorStartingCurrent = +(motorRatedCurrent * 7.5).toFixed(2)
+    } else if (starterType === "Supply Feeder") {
+      motorStartingCurrent = motorRatedCurrent
+    } else {
+      motorStartingCurrent = +(motorRatedCurrent * 3).toFixed(2)
+    }
+
+    let finalCable: any = {}
+
+    if (copper_conductor <= 4) {
+      finalCable = findCable(
+        copperCableSize,
+        motorRatedCurrent,
+        numberOfCores,
+        appxLength,
+        cosPhiRunning,
+        sinPhiRunning,
+        numberOfRuns,
+        motorStartingCurrent,
+        cosPhiStarting,
+        sinPhiStarting,
+        supplyVoltage,
+        perc_voltage_drop_running,
+        perc_voltage_drop_starting
+      )
+
+      if (Object.keys(finalCable).length > 0) {
+        let size = finalCable.sizes
+        // Handle cases with slash-separated values
+        if (size.includes("/")) {
+          size = size.split("/")[0] // Take the first part before the slash
+        }
+
+        // Convert to a number
+        const sizeNumber = +parseFloat(size).toFixed(2)
+        if (sizeNumber <= copper_conductor) {
+          finalCable = finalCable
+        } else {
+          finalCable = findCable(
+            aluminiumCableSize,
+            motorRatedCurrent,
+            numberOfCores,
+            appxLength,
+            cosPhiRunning,
+            sinPhiRunning,
+            numberOfRuns,
+            motorStartingCurrent,
+            cosPhiStarting,
+            sinPhiStarting,
+            supplyVoltage,
+            perc_voltage_drop_running,
+            perc_voltage_drop_starting
+          )
+        }
+      }
+    } else {
+      finalCable = findCable(
+        aluminiumCableSize,
+        motorRatedCurrent,
+        numberOfCores,
+        appxLength,
+        cosPhiRunning,
+        sinPhiRunning,
+        numberOfRuns,
+        motorStartingCurrent,
+        cosPhiStarting,
+        sinPhiStarting,
+        supplyVoltage,
+        perc_voltage_drop_running,
+        perc_voltage_drop_starting
+      )
+    }
+
+    // calculate MOC
+    // Go in design basis layout and get copper conductor and aluminium conductor
+    // Fetch cable size data from doctype
+    // find such cable where current_air from number of cores from UI as well as copper MOC only is greater than motor rated current and take it out
+    // get DBL_x and DBL_r and Sizes
+    // put it against resistance DBL_r and reactance DBL_x
+    // calcualte vd run and vd start from excel also percentage
+    // Again go to desgin basis layout cable tray. Find Motor Voltage Drop During Running (%) and Motor Voltage Drop During Starting (%) that is your heighest limit
+    // if vd run % and vd start % is greater than acceptable limit then go to next cable size and rerun the loop until you get the cable size with acceptable limit
+    // then fill the MOC and cable size (numberOfRuns from UI X number of Cores from UI X Calculated Cable Size)
+
+    // const itemFound = cableAsPerHeatingChart?.
+    return {}
+  })
+
+  return calculatedData
 }

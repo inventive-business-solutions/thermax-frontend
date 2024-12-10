@@ -12,7 +12,7 @@ import {
   PROJECT_INFO_API,
   PROJECT_MAIN_PKG_LIST_API,
 } from "configs/api-endpoints"
-import { createData, getData, updateData } from "actions/crud-actions"
+import { createData, downloadFile, downloadFrappeCloudFile, getData, updateData } from "actions/crud-actions"
 import * as XLSX from "xlsx"
 
 import { LoadListcolumns } from "../common/ExcelColumns"
@@ -858,8 +858,8 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
           item[9] = "No" // EOCR
         }
         if (item[14] == 0) {
-            item[15] = "NA"
-            item[16] = "NA"
+          item[15] = "NA"
+          item[16] = "NA"
         }
         if (!item[29]) {
           item[29] = getStandByKw(item[2], item[3]) >= Number(motorParameters[0]?.safe_area_space_heater) ? "Yes" : "No" // space heater criteria
@@ -973,21 +973,21 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
 
     // setLoadListData(updatedLoadList)
   }
-  const handleTemplateDownload = () => {
-    const filePath = "./Motor_Details_Template.xlsx"
-    const fileName = "Motor_Details_Template.xlsx"
-
-    // Create a temporary anchor element
+  const handleTemplateDownload = async () => {
+    const result = await downloadFrappeCloudFile(
+      `${process.env.NEXT_PUBLIC_FRAPPE_URL}/files/Final_Motor_Details_Template.xlsx`
+    )
+    const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
+    const excelBlob = new Blob([byteArray.buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    })
+    const url = window.URL.createObjectURL(excelBlob)
     const link = document.createElement("a")
-    link.href = path.join(filePath)
-    link.setAttribute("download", fileName)
+    link.href = url
+    link.setAttribute("download", `Motor Details Template.xlsx`) // Filename
     document.body.appendChild(link)
-
-    // Trigger the download
     link.click()
-
-    // Clean up the temporary anchor element
-    link?.parentNode?.removeChild(link)
+    document.body.removeChild(link)
   }
   const handleValidatePanelLoad = () => {
     if (spreadsheetRef?.current) {
@@ -1127,8 +1127,8 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
           type="primary"
           onClick={() => {
             setLoading(true)
-            router.push(`/project/${project_id}/electrical-load-list/cable-schedule`)}}
-
+            router.push(`/project/${project_id}/electrical-load-list/cable-schedule`)
+          }}
         >
           Next
         </Button>
