@@ -73,6 +73,7 @@ const useDataFetching = (loadListLatestRevisionId: string, motorCanopyRevisionId
   const [isLoading, setIsLoading] = useState(true)
   const [motorCanopyData, setMotorCanopyData] = useState<any[]>([])
   const [motorCanopySavedData, setMotorCanopySavedData] = useState<any[]>([])
+  // const {setLoading} = useLoading();
   const [loadListData, setLoadListData] = useState<any[]>([])
   const fetchData = useCallback(async () => {
     if (!loadListLatestRevisionId) return
