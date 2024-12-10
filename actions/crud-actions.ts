@@ -96,13 +96,12 @@ export const downloadFile = async (url: string, useAdminClient: boolean, data: a
   }
 }
 
-
 export const downloadFrappeCloudFile = async (url: string) => {
   try {
     const response = await adminApiClient.get(url, {
       responseType: "arraybuffer",
     })
- 
+
     // Return binary data and headers
     return {
       data: response.data, // Binary content
