@@ -400,8 +400,11 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
       setIsControlSchemeEmpty(true)
       return
     }
-
-    setControlSchemesSelected(selected)
+    console.log(controlSchemesSelected)
+    console.log(selected)
+    setControlSchemesSelected((prev) =>
+      Array.from(new Map([...prev, ...selected].map((item) => [userInfo.division === HEATING ? item[2] : item[1], item])).values())
+    )
     setIsControlSchemeEmpty(false)
   }
 
@@ -430,24 +433,23 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="w-100">
+    <Modal isOpen={isOpen} onClose={onClose} className="w-100 max-h-screen overflow-auto">
       <div className="m-2 flex flex-col">
         <h2 className="mb-4 text-2xl font-bold">Control Scheme Configurator</h2>
         <div className="w-1/4 py-1">
-          {userInfo.division === ENVIRO ||
-            (userInfo.division === WWS_IPG && (
-              <select
-                value={selectedFilter}
-                onChange={(e) => setSelectedFilter(e.target.value)}
-                className="rounded border p-2"
-              >
-                {options.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            ))}
+          {(userInfo.division === ENVIRO || userInfo.division === WWS_IPG) && (
+            <select
+              value={selectedFilter}
+              onChange={(e) => setSelectedFilter(e.target.value)}
+              className="rounded border p-2"
+            >
+              {options.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
         {isControlSchemeEmpty && <AlertNotification message="Please select control scheme!" status="error" />}
         <div ref={controlSchemeSheetRef} />

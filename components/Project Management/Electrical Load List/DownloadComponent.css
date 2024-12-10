@@ -1,3 +1,15 @@
 .container {
   /* font-size: 12px !important; */
 }
+
+.ant-tabs-tab {
+  font-size: 13px !important;
+  margin-bottom: 5px !important;
+  /* letter-spacing: 1px !important; */
+}
+.ant-tabs-nav-wrap {
+  white-space: unset !important;
+}
+.ant-tabs-nav-list {
+  display: block !important;
+}
