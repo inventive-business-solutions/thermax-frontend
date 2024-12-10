@@ -603,7 +603,14 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         <Button type="primary" onClick={handleCableScheduleSave} disabled={isLoading}>
           Save
         </Button>
-        <Button type="primary" onClick={() => {}} disabled={isLoading}>
+        <Button
+          type="primary"
+          onClick={() => {
+            setLoading(true)
+            router.push(`/project/${project_id}/electrical-load-list/motor-canopy`)
+          }}
+          disabled={isLoading}
+        >
           Next
         </Button>
       </div>
