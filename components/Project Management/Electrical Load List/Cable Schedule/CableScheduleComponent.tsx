@@ -256,7 +256,7 @@ interface CableScheduleProps {
   designBasisRevisionId: string
 }
 
-const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any) => {
+const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any, cableTrayData: any) => {
   if (!data?.electrical_load_list_data) return []
   console.log(data.electrical_load_list_data, "load list")
   console.log(savedCableSchedule?.cable_schedule_data, "load list cable")
@@ -286,7 +286,7 @@ const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any) => {
       cableScheduleData?.percent_vd_running,
       cableScheduleData?.percent_vd_starting,
       cableScheduleData?.selected_cable_capacity_amp,
-      cableScheduleData?.derating_factor,
+      cableScheduleData?.derating_factor ? cableScheduleData.derating_factor : cableTrayData[0]?.derating_factor_air,
       cableScheduleData?.final_capacity,
       cableScheduleData?.number_of_runs
         ? cableScheduleData?.number_of_runs
@@ -347,7 +347,7 @@ const useDataFetching = (
       const cableTrayData = await getData(
         `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
-      const formattedData = getArrayOfCableScheduleData(loadList, savedCableSchedule)
+      const formattedData = getArrayOfCableScheduleData(loadList, savedCableSchedule, cableTrayData)
       console.log(savedCableSchedule, "savedCableSchedule")
       console.log(cableTrayData, "cableTrayData")
       setCableTrayData(cableTrayData[0])

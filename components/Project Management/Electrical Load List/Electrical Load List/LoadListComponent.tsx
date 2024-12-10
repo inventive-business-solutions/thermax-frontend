@@ -173,25 +173,9 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     mainSupplyLV,
     subPackages,
   } = useDataFetching(designBasisRevisionId, loadListLatestRevisionId, project_id, revision)
-  console.log(makeOfComponent, "makeOfComponent")
 
-  // Memo for panel list
   const panelList = useMemo(() => projectPanelData?.map((item: any) => item.panel_name) || [], [projectPanelData])
-  console.log(panelList, "panelList")
 
-  // Effect to initialize spreadsheet
-
-  // console.log(loadListLatestRevisionId, "loadListLatestRevisionId")
-
-  // const jRef = useRef<HTMLDivElement | null>(null)
-  // const spreadsheetRef = useRef<JspreadsheetInstance | null>(null)
-
-  // // const [loadListData, setLoadListData] = useState<any[]>([])
-  // const [controlSchemes, setControlSchemes] = useState<any[]>([])
-  // const [subPackages, setSubPackages] = useState<any[]>([])
-  // const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([])
-  // const [panelList, setPanelList] = useState<string[]>([])
-  // const [projectInfo, setProjectInfo] = useState<ProjectInfo>()
   const [panelsSumData, setPanelsSumData] = useState<PanelSumData[]>([])
 
   // // Modal states
@@ -201,31 +185,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
   const userInfo: {
     division: string
   } = useCurrentUser()
-  // const params = useParams()
-  // const project_id = params.project_id
   const { setLoading } = useLoading()
-  // // Data hooks
-
-  // const gerLoadListUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`
-  // const getLoadListUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?fields=["*"]&filters=[["revision_id", "=", "${loadListLatestRevisionId}"]]`
-
-  // const { data: loadListData }: any = useGetData(gerLoadListUrl)
-  // console.log(loadListData, "getLoadListUrl")
-  // const { data: motorParameters } = useGetData(
-  //   `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-  // )
-  // const { data: commonConfigurationData } = useGetData(
-  //   `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-  // )
-
-  // const { data: makeOfComponent } = useGetData(
-  //   `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-  // )
-  // const { motors_make_options } = useMakeOfComponentDropdowns()
-  // console.log(makeOfComponent, motors_make_options, "motors_make_options")
-
-  // const { data: projectPanelData, isLoading } = useProjectPanelData(designBasisRevisionId)
-  // console.log(loadListLatestRevisionId, "load list rev")
 
   const handleCellChange = (
     element: JspreadsheetInstanceElement,
@@ -359,12 +319,12 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       item.gas_group,
       item.temperature_class,
       item.remark,
-      revision,
+      "R" + revision,
       item.space_heater,
       item.bearing_rtd,
       item.wiring_rtd,
       item.thermistor,
-      item.bearing_rtd,
+      item.bearing_type,
       item.power_factor,
       item.motor_efficiency,
       item.local_isolator,
@@ -398,56 +358,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     }),
     [typedLoadListColumns, loadListData]
   )
-
-  // Fetch and update functions with useCallback
-  // const fetchProjectInfo = useCallback(async () => {
-  //   try {
-  //     const projectInfo = await getData(
-  //       `${PROJECT_INFO_API}?fields=["main_supply_lv"]&filters=[["project_id", "=", "${project_id}"]]`
-  //     )
-  //     const MAIN_SUPPLY_LV = await getData(`${MAIN_SUPPLY_LV_API}?fields=["voltage"]`)
-
-  //     if (MAIN_SUPPLY_LV.length) {
-  //       typedLoadListColumns.forEach((column) => {
-  //         if (column.name === "supplyVoltage") {
-  //           column.source = ["110 VAC", "230 VAC", ...MAIN_SUPPLY_LV.map((item: any) => item.voltage)]
-  //         }
-  //       })
-  //     }
-
-  //     console.log(MAIN_SUPPLY_LV, "projectInfo")
-
-  //     setProjectInfo(projectInfo[0])
-  //   } catch (error) {
-  //     console.error("Error fetching project info:", error)
-  //   }
-  // }, [project_id])
-
-  // const fetchSubPackageOptions = useCallback(async () => {
-  //   try {
-  //     const mainPkgData = await getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${designBasisRevisionId}`)
-  //     console.log(mainPkgData, "main package")
-
-  //     if (mainPkgData?.length) {
-  //       typedLoadListColumns.forEach((column) => {
-  //         if (column.name === "pkg") {
-  //           column.source = [
-  //             ...mainPkgData
-  //               ?.map((pkg: any) => pkg.sub_packages)
-  //               .flat()
-  //               .map((item: any) => item.sub_package_name),
-  //             "NA",
-  //           ]
-  //         }
-  //       })
-  //       console.log(mainPkgData, "main package")
-
-  //       setSubPackages(mainPkgData)
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching sub-package options:", error)
-  //   }
-  // }, [designBasisRevisionId, typedLoadListColumns])
 
   // Spreadsheet data update function
   const updateSpreadsheetColumns = useCallback(
@@ -486,14 +396,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       return []
     }
   }
-
-  // Initialization effects
-  // useEffect(() => {
-  //   // fetchProjectInfo()
-  //   if (designBasisRevisionId) {
-  //     fetchSubPackageOptions()
-  //   }
-  // }, [fetchProjectInfo, fetchSubPackageOptions, designBasisRevisionId])
 
   useEffect(() => {
     console.log(loadListData, "getSchemes")
@@ -588,43 +490,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       </div>
     )
   }
-
-  // Update panel dropdown
-  // useEffect(() => {
-  //   if (projectPanelData && !isLoading) {
-  //     const updatedColumns = typedLoadListColumns.map((column) => {
-  //       if (column.name === "panelList") {
-  //         return { ...column, source: projectPanelData.map((item: any) => item.panel_name) }
-  //       }
-  //       return column
-  //     })
-
-  //     updateSpreadsheetColumns(updatedColumns)
-  //     setPanelList(projectPanelData.map((item: any) => item.panel_name))
-  //   }
-  // }, [projectPanelData, isLoading, typedLoadListColumns, updateSpreadsheetColumns])
-
-  // Utility function to update spreadsheet data
-  // const updateSheetData = useCallback(
-  //   (newData: any[], options?: { columns?: any[] }) => {
-  //     setLoadListData(newData)
-
-  //     if (spreadsheetRef.current) {
-  //       spreadsheetRef.current.destroy()
-  //     }
-
-  //     if (jRef.current) {
-  //       const columns = options?.columns || typedLoadListColumns
-  //       const instance = jspreadsheet(jRef.current, {
-  //         ...loadListOptions,
-  //         data: newData,
-  //         columns: columns,
-  //       })
-  //       spreadsheetRef.current = instance
-  //     }
-  //   },
-  //   [typedLoadListColumns, loadListOptions]
-  // )
 
   const handleControlSchemeComplete = (selectedSchemes: string[]) => {
     console.log(selectedSchemes)
@@ -886,7 +751,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
         if (!item[36]) {
           item[36] = "No" // local isolator
         }
-        console.log(makeOfComponent, "makeOfComponent")
 
         // }
         if (getStandByKw(item[2], item[3]) >= Number(commonConfigurationData[0]?.ammeter)) {
@@ -908,7 +772,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
           }
         }
       })
-      console.log(newArray)
 
       spreadsheetRef?.current?.setData(newArray)
     }
@@ -940,15 +803,7 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       data: loadList?.map((row: any) => {
         return {
           kw: getStandByKw(row[2], row[3]),
-          // supplyVoltage: Number(row[6].split(" ")[0]),
-          // phase: row[7],
-          // powerFactor: Number(row[34]),
-          // motorFrameSize: "",
-          // motorPartCode: "",
-          // motorRatedCurrent: "",
           tagNo: row[0],
-          // starterType: row[5],
-
           speed: Number(row[14]),
           mounting_type: row[15],
         }
@@ -1138,100 +993,3 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
 }
 
 export default LoadList
-
-// "use client"
-
-// import React, { useRef, useEffect, useMemo, useState } from "react"
-// import Jspreadsheet, { CellValue, JspreadsheetRefElement, JSpreadsheetOptions } from "jspreadsheet-ce"
-// import { JspreadsheetRef } from "jspreadsheet-ce"
-
-// import "jspreadsheet-ce/dist/jspreadsheet.css"
-// import { LoadListcolumns } from "../common/ExcelColumns"
-// import { ValidColumnType } from "../types"
-
-// // Extend the Window interface to include Jspreadsheet
-// declare global {
-//   interface Window {
-//     jspreadsheet: typeof Jspreadsheet
-//   }
-// }
-
-// const SpreadsheetComponent: React.FC = () => {
-//   // const spreadsheetRef = useRef<JspreadsheetRef | null>(null)
-//   const [spreadsheetRef, setspreadsheetRef] = useState<JspreadsheetRef | null>(null)
-
-//   const containerRef = useRef<HTMLDivElement | null>(null)
-//   const [loadListColumns, setloadListColumns] = useState<any[]>(
-//     LoadListcolumns(7).map((column) => ({
-//       ...column,
-//       type: column.type as ValidColumnType,
-//     }))
-//   )
-//   useEffect(() => {
-//     console.log(loadListColumns, "loadListColumns")
-//   }, [loadListColumns])
-
-//   const handleSheetChange = (
-//     element: JspreadsheetRefElement,
-//     cell: HTMLTableCellElement,
-//     colIndex: string | number,
-//     rowIndex: string | number,
-//     newValue: CellValue,
-//     oldValue: CellValue
-//   ) => {
-//     console.log("Cell changed:", {
-//       newValue: newValue,
-//     })
-
-//     // Example of more complex change handling
-//     try {
-//       const sheetData = spreadsheetRef?.getData()
-//       if (!sheetData)
-//         if (rowIndex === 2 && newValue !== "") {
-//         }
-//     } catch (error) {
-//       console.error("Error in sheet change handler:", error)
-//     }
-//   }
-
-//   useEffect(() => {
-//     if (containerRef.current && !spreadsheetRef) {
-//       // Jspreadsheet configuration with TypeScript-friendly options
-//       const options: JSpreadsheetOptions = {
-//         data: [
-//           ["", "", "", ""],
-//           ["", "", "", ""],
-//           ["", "", "", ""],
-//         ],
-//         columns: loadListColumns,
-//         onchange: handleSheetChange,
-//         allowRenameColumn: true,
-//         columnSorting: true,
-//       }
-
-//       // Initialize Jspreadsheet
-
-//       const instance = Jspreadsheet(containerRef.current, options) as JspreadsheetRef
-//       setspreadsheetRef(instance)
-//       // spreadsheetRef.current =
-//     }
-
-//     // Cleanup function
-//     return () => {
-//       if (spreadsheetRef) {
-//         spreadsheetRef?.destroy()
-//         // spreadsheetRef = null
-//         setspreadsheetRef(null)
-//       }
-//     }
-//   }, [])
-
-//   return (
-//     <div className="p-4 overflow-x-auto">
-//       <h2 className="mb-4 text-xl">Jspreadsheet TypeScript Example</h2>
-//       <div ref={containerRef} />
-//     </div>
-//   )
-// }
-
-// export default SpreadsheetComponent
