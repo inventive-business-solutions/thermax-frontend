@@ -43,7 +43,7 @@ const ValidatePanelLoad: React.FC<ValidatePanelLoadProps> = ({ isOpen, onClose, 
     <Modal isOpen={isOpen} onClose={onClose} className="">
       <div className="m-5 flex flex-col p-5">
         <div className="modal-header mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Validate Panel Load</h2>
+          <h2 className="text-2xl">Validate Panel Load</h2>
         </div>
         <div className="modal-body">
           <Table
