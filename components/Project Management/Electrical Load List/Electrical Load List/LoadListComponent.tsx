@@ -245,13 +245,10 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     console.log(typeof colIndex)
 
     if (colIndex === "5") {
-      console.log(newValue)
-      console.log(data[rowIndex][29])
-      console.log(data[rowIndex][30])
-      console.log(data[rowIndex][31])
-      console.log(data[rowIndex][2])
-      console.log(data[rowIndex][3])
-
+     
+      if (newValue === "DOL-HTR") {
+        data[rowIndex][34] = "1"
+      }
       if (newValue === "SUPPLY FEEDER" || newValue === "DOL-HTR") {
         console.log("inside if")
 
@@ -416,15 +413,18 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       typedLoadListColumns.forEach((column) => {
         if (column.name === "controlScheme") {
           console.log(
-            [...new Set(selectedControlSchemeItems.filter((item: any) => item != "NA")), "NA"],
+            [...new Set(selectedControlSchemeItems.filter((item: any) => item != "NA" && item != "")), "NA"],
             "selectedLpbsItems"
           )
-          column.source = [...new Set(selectedControlSchemeItems.filter((item: any) => item != "NA")), "NA"]
+          column.source = [
+            ...new Set(selectedControlSchemeItems.filter((item: any) => item != "NA" && item != "")),
+            "NA",
+          ]
         }
         if (column.name === "lbpsType") {
           console.log([...new Set(selectedLpbsItems), "NA"], "selectedLpbsItems")
 
-          column.source = [...new Set(selectedLpbsItems.filter((item: any) => item != "NA")), "NA"]
+          column.source = [...new Set(selectedLpbsItems.filter((item: any) => item != "NA" && item != "")), "NA"]
         }
       })
       // updateSheetData(loadListData)
@@ -742,7 +742,9 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
               ? "Yes"
               : "No" // thermistor criteria
         }
-        if (!item[34]) {
+        if (!item[34] && item[5] === "DOL-HTR") {
+          item[34] = "1" // power factor
+        } else if (!item[34]) {
           item[34] = "0.8" // power factor
         }
         if (!item[35]) {
@@ -854,12 +856,10 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     }
   }
   const calculatePanelSum = (electricalLoadListData: any) => {
-    // Transform panelList to string array
     const workingPanelList: string[] = panelList
       .map((p: any) => (typeof p === "object" && p !== null && "name" in p ? p.name : String(p)))
       .filter(Boolean)
 
-    // Initialize panelsSumData object
     const panelsSumData: Record<string, PanelSumData> = Object.fromEntries(
       workingPanelList.map((panelType) => [
         panelType,
@@ -880,13 +880,11 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       const standbyLoad = parseFloat(String(row[3] || "0"))
       const current = parseFloat(String(row[42] || "0"))
 
-      // Type guard to ensure panel exists
       if (!panelType || !(panelType in panelsSumData)) {
         return
       }
 
       if (!isNaN(workingLoad) && !isNaN(standbyLoad)) {
-        // TypeScript now knows panel must exist
         const panel = panelsSumData[panelType] as PanelSumData
         panel.workingLoadSum += workingLoad
         panel.standbyLoadSum += standbyLoad
@@ -898,13 +896,11 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       }
     })
 
-    // Filter out panels with zero current
     const filteredPanelData = Object.values(panelsSumData).filter((item) => item.totalCurrent !== 0)
 
+    
     setPanelsSumData(filteredPanelData)
-    // return Object.values(panelsSumData).filter((item) => item.totalCurrent !== 0)
   }
-  // console.log(panelsSumData, "panelsSumData")
 
   return (
     <>
