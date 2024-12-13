@@ -12,11 +12,23 @@ import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
   CABLE_TRAY_LAYOUT,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
+  HEATING_CONTROL_SCHEMES_URI,
+  LPBS_SCHEMES_URI,
+  SPG_SERVICES_CONTROL_SCHEMES_URI,
 } from "configs/api-endpoints"
 import { useLoading } from "hooks/useLoading"
 import { useParams, useRouter } from "next/navigation"
 import { getCableSizingCalculation } from "actions/electrical-load-list"
 import { useCurrentUser } from "hooks/useCurrentUser"
+import { ENVIRO, HEATING, SERVICES, WWS_IPG, WWS_SPG } from "configs/constants"
+import {
+  Enviro_ControlSchemeDataDol,
+  Enviro_ControlSchemeDataSD,
+  Enviro_ControlSchemeDataVFD,
+  lcs_od_gland_data,
+  WWS_IPG_data,
+  WWS_SPG_DATA,
+} from "app/Data"
 
 interface CableScheduleProps {
   loadListLatestRevisionId: string
@@ -71,7 +83,7 @@ const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any, cableTr
         ? "4C"
         : "",
       cableScheduleData?.final_cable_size,
-      cableScheduleData?.cable_selected_status,
+      cableScheduleData?.cable_selected_status ? cableScheduleData?.cable_selected_status : "Safe",
       cableScheduleData?.cable_size_as_per_heating_chart,
     ]
   })
@@ -97,19 +109,46 @@ const motorCanopyPayload = {
 const useDataFetching = (
   designBasisRevisionId: string,
   loadListLatestRevisionId: string,
-  cableScheduleRevisionId: string
+  cableScheduleRevisionId: string,
+  userInfo: any
 ) => {
   const [isLoading, setIsLoading] = useState(true)
   const { setLoading } = useLoading()
   const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
   const [cableScheduleSavedData, setCableScheduleSavedData] = useState<any[]>([])
+  const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([])
+  const [controlSchemes, setControlSchemes] = useState<any[]>([])
+
   const [loadListData, setLoadListData] = useState<any[]>([])
   const [cableTrayData, setCableTrayData] = useState<any[]>([])
+  const getApiEndpoint = (division: string) => {
+    switch (division) {
+      case HEATING:
+        return `${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+      case WWS_SPG:
+        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+      case SERVICES:
+        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+      case ENVIRO:
+        return `${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+      case WWS_IPG:
+        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+
+      default:
+        return ""
+    }
+  }
   const fetchData = useCallback(async () => {
     if (!loadListLatestRevisionId) return
 
     try {
       setIsLoading(true)
+
+      const division = userInfo?.division === WWS_SPG || userInfo?.division === SERVICES ? WWS_SPG : userInfo?.division
+      const lpbsResponse = await getData(
+        `${LPBS_SCHEMES_URI}?filters=[["division_name", "=", "${division}"]]&fields=["*"]`
+      )
+
       const loadList = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
       const savedCableSchedule = await getData(`${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`)
       const cableTrayData = await getData(
@@ -118,6 +157,29 @@ const useDataFetching = (
       const formattedData = getArrayOfCableScheduleData(loadList, savedCableSchedule, cableTrayData)
       console.log(savedCableSchedule, "savedCableSchedule")
       console.log(cableTrayData, "cableTrayData")
+      getData(getApiEndpoint(userInfo?.division)).then((res) => {
+        console.log(res)
+        let sortedSchemes
+        if (userInfo.division === SERVICES || userInfo.division === WWS_SPG) {
+          sortedSchemes = WWS_SPG_DATA
+        } else if (userInfo.division === ENVIRO) {
+          sortedSchemes = [
+            ...Enviro_ControlSchemeDataDol,
+            ...Enviro_ControlSchemeDataSD,
+            ...Enviro_ControlSchemeDataVFD,
+          ]
+        } else if (userInfo.division === WWS_IPG) {
+          sortedSchemes = WWS_IPG_data
+        } else {
+          sortedSchemes = res
+        }
+
+        console.log(sortedSchemes, "control schemes sorted")
+
+        setControlSchemes(sortedSchemes)
+        setLoading(false)
+      })
+      setLpbsSchemes(lpbsResponse)
       setCableTrayData(cableTrayData[0])
       setCableScheduleSavedData(savedCableSchedule)
       setLoadListData(loadList?.electrical_load_list_data)
@@ -136,7 +198,16 @@ const useDataFetching = (
     fetchData()
   }, [fetchData])
 
-  return { cableScheduleSavedData, cableTrayData, cableScheduleData, loadListData, isLoading, refetch: fetchData }
+  return {
+    controlSchemes,
+    lpbsSchemes,
+    cableScheduleSavedData,
+    cableTrayData,
+    cableScheduleData,
+    loadListData,
+    isLoading,
+    refetch: fetchData,
+  }
 }
 
 const CableSchedule: React.FC<CableScheduleProps> = ({
@@ -148,6 +219,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
   const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
   const { setLoading } = useLoading()
   const params = useParams()
+  const [cableSizeCalcData, setCableSizeCalcData] = useState<any[]>([])
   const router = useRouter()
   const userInfo: {
     division: string
@@ -157,8 +229,16 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
 
   const [isMulticoreModalOpen, setIsMulticoreModalOpen] = useState(false)
 
-  const { cableScheduleSavedData, cableTrayData, cableScheduleData, loadListData, isLoading, refetch } =
-    useDataFetching(designBasisRevisionId, loadListLatestRevisionId, cableScheduleRevisionId)
+  const {
+    lpbsSchemes,
+    controlSchemes,
+    cableScheduleSavedData,
+    cableTrayData,
+    cableScheduleData,
+    loadListData,
+    isLoading,
+    refetch,
+  } = useDataFetching(designBasisRevisionId, loadListLatestRevisionId, cableScheduleRevisionId, userInfo)
 
   const typedCableScheduleColumns = useMemo(
     () =>
@@ -198,7 +278,6 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
     [typedCableScheduleColumns, cableScheduleData]
   )
 
-  // Initialize or update spreadsheet
   useEffect(() => {
     if (isLoading || !jRef.current) return
 
@@ -218,64 +297,438 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       spreadsheetInstance?.destroy()
     }
   }, [isLoading, cableScheduleOptions])
-
+  const getCableType = (tag_number: any) => {
+    let feeder = cableSizeCalcData?.find((item: any) => item.tag_number == tag_number)
+    return feeder ? feeder.type : ""
+  }
+  const getCableOd = (tag_number: any) => {
+    let feeder = cableSizeCalcData?.find((item) => item.tagNo == tag_number)
+    return feeder ? feeder.cableOd : ""
+  }
+  const getCableGlandSize = (tag_number: any) => {
+    let feeder = cableSizeCalcData?.find((item) => item.tagNo == tag_number)
+    return feeder ? feeder.gladSize : ""
+  }
+  const getOdLcs = (core: any, size: any) => {
+    let od = lcs_od_gland_data.find((item) => item[0] == core && item[3] == size)
+    return od ? od[1] : []
+  }
+  const getGladSizeLcs = (core: any, size: any) => {
+    let od = lcs_od_gland_data.find((item) => item[0] == core && item[3] == size)
+    return od ? od[2] : []
+  }
   const handleCableScheduleSave = async () => {
     const data = spreadsheetInstance?.getData()
+    console.log(data, "Cable schedule data")
+    console.log("Load list data", loadListData)
+    const payload = data?.map((row: any) => {
+      const division = userInfo?.division
+      const loadListItem = loadListData.find((item: any) => item.tag_number === row[0])
 
-    console.log(data, "all load list data")
-
-    let payload = {
-      project_id: project_id,
-      status: "Not Released",
-      description: "test",
-      cable_schedule_data: data?.map((row: any) => {
-        return {
-          tag_number: row[0],
-          service_description: row[1],
-          working_kw: Number(row[2]),
-          standby_kw: Number(row[3]),
-          kva: Number(row[4]),
-          starter_type: row[5],
-          supply_voltage: Number(row[6].split(" ")[0]),
-          motor_rated_current: Number(row[7]),
-          cable_material: row[8],
-          cos_running: Number(row[9]),
-          cos_starting: Number(row[10]),
-          resistance_meter: parseFloat(row[11]),
-          reactance_meter: parseFloat(row[12]),
-          apex_length: parseFloat(row[13]),
-          vd_running: parseFloat(row[14]),
-          vd_starting: parseFloat(row[15]),
-          percent_vd_running: parseFloat(row[16]),
-          percent_vd_starting: parseFloat(row[17]),
-          selected_cable_capacity_amp: parseFloat(row[18]),
-          derating_factor: Number(row[19]),
-          final_capacity: Number(row[20]),
-          number_of_runs: Number(row[21]),
-          number_of_cores: row[22],
-          final_cable_size: row[23],
-          cable_selected_status: row[24],
-          cable_size_as_per_heating_chart: row[25],
-        }
-      }),
-    }
-    try {
-      console.log(payload, "cable schedule payload")
-
-      const respose = await updateData(
-        `${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`,
-        false,
-        payload
+      const lpbsScheme = lpbsSchemes?.find((item) => item.lpbs_type === loadListItem.lpbs_type)
+      const controlScheme = controlSchemes?.find((item) =>
+        division === HEATING
+          ? loadListItem.control_scheme === item.sub_scheme
+          : loadListItem.control_scheme === item.control_scheme
       )
-      setLoading(false)
-      message.success("Cable Schedule Saved !")
+      console.log(lpbsScheme, "selected lpbsScheme")
+      console.log(controlScheme, "selected controlScheme")
+      const isPresentInGrouping = false
+      const isSpaceHeater = loadListItem.space_heater === "Yes"
+      const isThermister = loadListItem.thermistor === "Yes"
+      console.log("Payload load list item", loadListItem)
+      console.log("Payload spaceheater", isSpaceHeater)
+      console.log("Payload thermistor", isThermister)
+      const cables = []
+      const motorCable = {
+        panel_name: loadListItem?.panel,
+        starter_type: loadListItem?.starter_type,
+        name: row[0] + " MOTOR",
+        voltage: division === HEATING ? row[6] : null,
+        kw: getStandByKw(row[2], row[3]),
+        type_of_cable: `${`Power - ${getCableType(row[0])}`}`,
+        scope: "",
+        number_of_runs: row[21],
+        pair_core: row[22],
+        sizemm2: row[23],
+        cable_material: row[8],
+        type_of_insulation: "XLPE",
+        appx_length: row[13],
+        cable_od: getCableOd(row[0]),
+        gland_size: getCableGlandSize(row[0]),
+        gland_qty: (Number(row[21]) * 2).toString(),
+        comment: "POWER TO MOTOR",
+      }
+      cables.push(motorCable)
 
-      console.log(respose, "Cable Schedule response")
-    } catch (error) {
-      message.error("Unable to save Cable Schedule list")
+      if (isSpaceHeater) {
+        const spaceheaterCable = {
+          panel_name: "",
+          starter_type: "",
+          name: row[1] + " SPACE HEATER",
+          voltage: "",
+          kw: "",
+          type_of_cable: "Power - 2XFY",
+          scope: "",
+          number_of_runs: "1",
+          pair_core: "3C",
+          sizemm2: "2.5",
+          cable_material: "CU",
+          type_of_insulation: "XLPE",
+          appx_length: row[13],
+          cable_od: "8.0 - 13mm",
+          gland_size: "3/4″",
+          gland_qty: "2",
+          comment: "POWER TO SPACE HEATER",
+        }
+        cables.push(spaceheaterCable)
+      }
+      if (lpbsScheme?.lcs) {
+        const lcsCable = {
+          panel_name: "",
+          starter_type: "",
+          name: row[1] + " LCS",
+          voltage: "",
+          kw: "",
+          type_of_cable: "Control - 2XWY",
+          scope: "",
+          number_of_runs: "1",
+          pair_core: lpbsScheme.lcs,
+          sizemm2: "1.5",
+          cable_material: "CU",
+          type_of_insulation: "XLPE",
+          appx_length: row[13],
+          cable_od: getOdLcs(lpbsScheme.lcs, "1.5"),
+          gland_size: getGladSizeLcs(lpbsScheme.lcs, "1.5"),
+          gland_qty: "2",
+          comment: "START & STOP COMMAND FROM LCS",
+        }
+        cables.push(lcsCable)
+      }
+      if (lpbsScheme?.lcs_inc_dec) {
+        const lcsIncDecCable = {
+          panel_name: "",
+          starter_type: "",
+          name: row[1] + " LCS (INC/DEC)",
+          voltage: "",
+          kw: "",
+          type_of_cable: "Control - 2XWY",
+          scope: "",
+          number_of_runs: "1",
+          pair_core: lpbsScheme.lcs_inc_dec,
+          sizemm2: "0.5",
+          cable_material: "CU",
+          type_of_insulation: "XLPE",
+          appx_length: row[13],
+          cable_od: getOdLcs(lpbsScheme.lcs_inc_dec, "1.5"),
+          gland_size: getGladSizeLcs(lpbsScheme.lcs_inc_dec, "1.5"),
+          gland_qty: "2",
+          comment: "START & STOP COMMAND FROM LCS (INC/DEC)",
+        }
+        cables.push(lcsIncDecCable)
+      }
+      if (lpbsScheme?.lcs_rpm) {
+        const lcsRpmCable = {
+          panel_name: "",
+          starter_type: "",
+          name: row[1] + " LCS (RPM)",
+          voltage: "",
+          kw: "",
+          type_of_cable: "Control - 2XWY",
+          scope: "",
+          number_of_runs: "1",
+          pair_core: lpbsScheme.lcs_rpm,
+          sizemm2: "0.5",
+          cable_material: "CU",
+          type_of_insulation: "XLPE",
+          appx_length: row[13],
+          cable_od: "8.0 - 13mm",
+          gland_size: "3/4″",
+          gland_qty: "2",
+          comment: "START & STOP COMMAND FROM LCS (RPM)",
+        }
+        cables.push(lcsRpmCable)
+      }
+      if (!isPresentInGrouping && controlScheme?.di) {
+        const diCable = {
+          panel_name: "",
+          starter_type: "",
+          name: "PLC (DI)",
+          voltage: "",
+          kw: "",
+          type_of_cable: "Control - 2XWY",
+          scope: "",
+          number_of_runs: "1",
+          pair_core: controlScheme.di * 2 + "C",
+          sizemm2: "0.5",
+          cable_material: "CU",
+          type_of_insulation: "XLPE",
+          appx_length: row[13],
+          cable_od: getOdLcs(controlScheme.di * 2 + "C", "0.5"),
+          gland_size: getGladSizeLcs(controlScheme.di * 2 + "C", "0.5"),
+          gland_qty: "2",
+          comment: "RUN TRIP & L/R FEEDBACK",
+        }
+        cables.push(diCable)
+      }
+      if (!isPresentInGrouping && controlScheme?.do) {
+        const doCable = {
+          panel_name: "",
+          starter_type: "",
+          name: "PLC (DO)",
+          voltage: "",
+          kw: "",
+          type_of_cable: "Control - 2XWY",
+          scope: "",
+          number_of_runs: "1",
+          pair_core: controlScheme.do * 2 + "C",
+          sizemm2: "1.5",
+          cable_material: "CU",
+          type_of_insulation: "XLPE",
+          appx_length: row[13],
+          cable_od: getOdLcs(controlScheme.do * 2 + "C", "0.5"),
+          gland_size: getGladSizeLcs(controlScheme.do * 2 + "C", "0.5"),
+          gland_qty: "2",
+          comment: "START/STOP COMMAND FROM PLC",
+        }
+        cables.push(doCable)
+      }
+      if (!isPresentInGrouping && controlScheme?.ai) {
+        const aiCable = {
+          panel_name: "",
+          starter_type: "",
+          name: "PLC (AI)",
+          voltage: "",
+          kw: "",
+          type_of_cable: "Signal - 2XWY",
+          scope: "",
+          number_of_runs: "1",
+          pair_core: controlScheme.ai + "P",
+          sizemm2: "0.5",
+          cable_material: "CU",
+          type_of_insulation: "XLPE",
+          appx_length: row[13],
+          cable_od: "8.0 - 13mm",
+          gland_size: "3/4″",
+          gland_qty: "2",
+          comment: "SPEED REFERANCE",
+        }
+        cables.push(aiCable)
+      }
+      if (!isPresentInGrouping && controlScheme?.ao) {
+        const aoCable = {
+          panel_name: "",
+          starter_type: "",
+          name: "PLC (AO)",
+          voltage: "",
+          kw: "",
+          type_of_cable: "Signal - 2XWY",
+          scope: "",
+          number_of_runs: "1",
+          pair_core: controlScheme.ao + "P",
+          sizemm2: "0.5",
+          cable_material: "CU",
+          type_of_insulation: "XLPE",
+          appx_length: row[13],
+          cable_od: "8.0 - 13mm",
+          gland_size: "3/4″",
+          gland_qty: "2",
+          comment: "SPEED FEEDBACK",
+        }
+        cables.push(aoCable)
+      }
+      if (isThermister) {
+        const thermisterCable = {
+          panel_name: "",
+          starter_type: "",
+          name: row[1] + " THERMISTER CABLE",
+          voltage: "",
+          kw: "",
+          type_of_cable: "Control - 2XWY",
+          scope: "",
+          number_of_runs: "1",
+          pair_core: division === HEATING ? "1P" : division === ENVIRO ? "3C" : "", // question for javed sir
+          sizemm2: division === HEATING ? "0.5" : division === ENVIRO ? "1.5" : "",
+          cable_material: "CU",
+          type_of_insulation: "XLPE",
+          appx_length: row[13],
+          cable_od: "8.0 - 13mm",
+          gland_size: "3/4″",
+          gland_qty: "2",
+          comment: "THERMISTER CABLE",
+        }
+        cables.push(thermisterCable)
+      }
 
-      setLoading(false)
+      return {
+        motor_name: row[1] + ` (${row[0]}) `,
+        cables: cables,
+      }
+    })
+
+    const grouping: any = JSON.parse(localStorage.getItem("grouping_of_cables_table") as string)
+    let groupPayload = []
+    if (grouping) {
+      for (let i = 0; i < grouping.length; i++) {
+        const cableSchedule: any = data?.filter((el) => el[1] == grouping[i][6].split(",")[0])[0]
+        let Di = grouping[i][4]
+        let Do = grouping[i++][4]
+        let Ai = grouping[i++][4]
+        let Ao = grouping[i++][4]
+        i + 4
+
+        let cables: any[] = []
+        console.log(Di, Do, Ai, Ao, "DIDOAIAO")
+        if (Di !== "-") {
+          const diCable = {
+            panel_name: grouping[i][7],
+            starter_type: "",
+            name: "PLC (DI)",
+            voltage: "",
+            kw: "",
+            type_of_cable: "Control - 2XWY",
+            scope: "",
+            number_of_runs: "1",
+            pair_core: Di + "C",
+            sizemm2: "0.5",
+            cable_material: "CU",
+            type_of_insulation: "XLPE",
+            appx_length: cableSchedule[13],
+            cable_od: getOdLcs(Di, "0.5"),
+            gland_size: getGladSizeLcs(Di, "0.5"),
+            gland_qty: "2",
+            comment: "RUN TRIP & L/R FEEDBACK",
+          }
+          cables.push(diCable)
+        }
+        if (Do !== "-") {
+          const doCable = {
+            panel_name: grouping[i][7],
+            starter_type: "",
+            name: "PLC (DO)",
+            voltage: "",
+            kw: "",
+            type_of_cable: "Control - 2XWY",
+            scope: "",
+            number_of_runs: "1",
+            pair_core: Do + "C",
+            sizemm2: "1.5",
+            cable_material: "CU",
+            type_of_insulation: "XLPE",
+            appx_length: cableSchedule[13],
+            cable_od: getOdLcs(Do, "0.5"),
+            gland_size: getGladSizeLcs(Do, "0.5"),
+            gland_qty: "2",
+            comment: "START/STOP COMMAND FROM PLC",
+          }
+          cables.push(doCable)
+        }
+        if (Ai !== "-") {
+          const aiCable = {
+            panel_name: grouping[i][7],
+            starter_type: "",
+            name: "PLC (AI)",
+            voltage: "",
+            kw: "",
+            type_of_cable: "Signal - 2XWY",
+            scope: "",
+            number_of_runs: "1",
+            pair_core: Ai + "P",
+            sizemm2: "0.5",
+            cable_material: "CU",
+            type_of_insulation: "XLPE",
+            appx_length: cableSchedule[13],
+            cable_od: "8.0 - 13mm",
+            gland_size: "3/4″",
+            gland_qty: "2",
+            comment: "SPEED REFERANCE",
+          }
+          cables.push(aiCable)
+        }
+        if (Ao !== "-") {
+          const aoCable = {
+            panel_name: grouping[i][7],
+            starter_type: "",
+            name: "PLC (AO)",
+            voltage: "",
+            kw: "",
+            type_of_cable: "Signal - 2XWY",
+            scope: "",
+            number_of_runs: "1",
+            pair_core: Ao + "P",
+            sizemm2: "0.5",
+            cable_material: "CU",
+            type_of_insulation: "XLPE",
+            appx_length: cableSchedule[13],
+            cable_od: "8.0 - 13mm",
+            gland_size: "3/4″",
+            gland_qty: "2",
+            comment: "SPEED FEEDBACK",
+          }
+          cables.push(aoCable)
+        }
+        groupPayload.push({
+          motor_name: grouping[i][6],
+          cables: cables,
+        })
+      }
     }
+    console.log(payload, "final payload")
+    console.log(groupPayload, "final payload group")
+
+    // let payload = {
+    //   project_id: project_id,
+    //   status: "Not Released",
+    //   description: "test",
+    //   cable_schedule_data: data?.map((row: any) => {
+    //     return {
+    //       tag_number: row[0],
+    //       service_description: row[1],
+    //       working_kw: Number(row[2]),
+    //       standby_kw: Number(row[3]),
+    //       kva: Number(row[4]),
+    //       starter_type: row[5],
+    //       supply_voltage: Number(row[6].split(" ")[0]),
+    //       motor_rated_current: Number(row[7]),
+    //       cable_material: row[8],
+    //       cos_running: Number(row[9]),
+    //       cos_starting: Number(row[10]),
+    //       resistance_meter: parseFloat(row[11]),
+    //       reactance_meter: parseFloat(row[12]),
+    //       apex_length: parseFloat(row[13]),
+    //       vd_running: parseFloat(row[14]),
+    //       vd_starting: parseFloat(row[15]),
+    //       percent_vd_running: parseFloat(row[16]),
+    //       percent_vd_starting: parseFloat(row[17]),
+    //       selected_cable_capacity_amp: parseFloat(row[18]),
+    //       derating_factor: Number(row[19]),
+    //       final_capacity: Number(row[20]),
+    //       number_of_runs: Number(row[21]),
+    //       number_of_cores: row[22],
+    //       final_cable_size: row[23],
+    //       cable_selected_status: row[24],
+    //       cable_size_as_per_heating_chart: row[25],
+    //     }
+    //   }),
+    //   excel_payload: ""
+    // }
+    // try {
+    //   console.log(payload, "cable schedule payload")
+
+    //   const respose = await updateData(
+    //     `${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`,
+    //     false,
+    //     payload
+    //   )
+    //   setLoading(false)
+    //   message.success("Cable Schedule Saved !")
+
+    //   console.log(respose, "Cable Schedule response")
+    // } catch (error) {
+    //   message.error("Unable to save Cable Schedule list")
+
+    //   setLoading(false)
+    // }
     // Add your save logic here
   }
   const getStandByKw = (item2: any, item3: any) => {
@@ -317,10 +770,10 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       }),
     })
     console.log(cableSizeCalc, "cableSizeCalc")
+    const sizingCalcData: any = []
 
     const updatedCableSchedule: any = cableScheduleData?.map((row: any) => {
       const calculationResult = cableSizeCalc?.find((item: any) => item.tagNo === row[0])
-      // const frameSizeResult = cableSizeCalc?.find((item: any) => item.tagNo === row[0])
       if (calculationResult) {
         const updatedRow = [...row]
 
@@ -335,14 +788,23 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         updatedRow[23] = calculationResult.sizes.includes("/")
           ? calculationResult.sizes
           : parseFloat(calculationResult.sizes).toFixed(1)
-        updatedRow[25] = "25" //cable size as per heating value
+        updatedRow[25] = "" //cable size as per heating value
+        sizingCalcData.push({
+          tag_number: calculationResult.tagNo,
+          cableOd: calculationResult.od,
+          gladSize: "ET″",
+          type: calculationResult.cable_type,
+        })
+
         return updatedRow
       }
+
       return row
     })
     console.log("updated calc", updatedCableSchedule)
 
     spreadsheetInstance?.setData(updatedCableSchedule)
+    setCableSizeCalcData(sizingCalcData)
     setLoading(false)
 
     // setLoadListData(updatedLoadList)
