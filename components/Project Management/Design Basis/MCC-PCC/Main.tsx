@@ -10,6 +10,7 @@ import MakeOfComponent from "./MakeOfComponent/MakeOfComponent"
 import MCCcumPCCPanel from "./Dynamic Panels/MCCcumPCC"
 import MCCPanel from "./Dynamic Panels/MCCPanel"
 import PCCPanel from "./Dynamic Panels/PCCPanel"
+import { sortDatewise } from "utils/helpers"
 
 const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
   const [activeKey, setActiveKey] = useState<string>("Make") // Default active tab
@@ -35,8 +36,8 @@ const MainMCCPCC = ({ revision_id }: { revision_id: string }) => {
       children: <CommonConfiguration revision_id={revision_id} setActiveKey={setActiveKey} />,
     },
   ]
-
-  projectPanelData?.forEach((panel: any) => {
+  const sortedProjectPanelData = sortDatewise(projectPanelData)
+  sortedProjectPanelData?.forEach((panel: any) => {
     if (panel.panel_main_type === MCC_PANEL_TYPE) {
       TabMCC.push({
         label: panel?.panel_name,

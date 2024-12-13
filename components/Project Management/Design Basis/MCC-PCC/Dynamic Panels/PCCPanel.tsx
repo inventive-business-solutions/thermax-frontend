@@ -560,6 +560,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="ga_pcc_construction_drawout_type"
               label="PCC Drawout Type"
               options={ga_mcc_construction_drawout_type_options}
+              disabled={watch("ga_pcc_compartmental").includes("Non ")}
               size="small"
             />
           </div>
@@ -574,7 +575,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           </div>
         </div>
         <div className="mt-2 flex items-center gap-4">
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomRadioSelect
               control={control}
               name="busbar_material_of_construction"
@@ -597,7 +598,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               }
               size="small"
             />
-          </div>
+          </div> */}
           <div className="flex-1">
             <CustomSingleSelect
               control={control}

@@ -114,7 +114,12 @@ export const configItemValidationSchema = zod.object({
     required_error: "Alarm Acknoowledgement and Lamp Test is required",
     message: "Alarm Acknowledgement and Lamp Test is required",
   }),
+  lamp_test_push_button: zod.string({
+    required_error: "Lamp Test Push Button is required",
+    message: "Lamp Test Push Button is required",
+  }),
   test_reset: zod.string({ required_error: "Test Reset is required", message: "Test Reset is required" }),
+  test_reset2: zod.string({ required_error: "Test Reset is required", message: "Test Reset is required" }),
   // Selector Switch
   selector_switch_applicable: zod.string({
     required_error: "Selector Switch Applicable is required",

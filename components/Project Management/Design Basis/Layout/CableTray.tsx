@@ -429,7 +429,7 @@ const CableTray = ({
         <span className="font-bold text-slate-700">Gland Details</span>
       </Divider>
       <div className="flex gap-4">
-        <div className="flex-1">
+        {/* <div className="flex-1">
           <CustomSingleSelect
             control={control}
             name="gland_make"
@@ -437,7 +437,7 @@ const CableTray = ({
             options={gland_make_options}
             size="small"
           />
-        </div>
+        </div> */}
         <div className="flex-1">
           <CustomSingleSelect control={control} name="moc" label="MOC" options={gland_moc_options} size="small" />
         </div>
@@ -610,7 +610,7 @@ const CableTray = ({
             <CustomSingleSelect
               control={control}
               name="pct_perforated_type_max_width"
-              label="Max. Width"
+              label="Min. Width"
               options={cable_tray_width_options}
               size="small"
               disabled={watch("is_pct_perforated_type_selected") === "0"}
@@ -827,7 +827,7 @@ const CableTray = ({
             <CustomSingleSelect
               control={control}
               name="cct_perforated_type_max_width"
-              label="Max. Width"
+              label="Min. Width"
               options={cable_tray_width_options}
               size="small"
               disabled={watch("is_cct_perforated_type_selected") === "0"}
@@ -1044,7 +1044,7 @@ const CableTray = ({
             <CustomSingleSelect
               control={control}
               name="sct_perforated_type_max_width"
-              label="Max. Width"
+              label="Min. Width"
               options={cable_tray_width_options}
               size="small"
               disabled={watch("is_sct_perforated_type_selected") === "0"}

@@ -104,7 +104,9 @@ export const FERRULE = `/document/Ferrule`
 export const SPARE_TERMINAL = `/document/Spare Terminal`
 
 export const TEST_RESET = `/document/Test Reset`
+export const TEST_RESET2 = `/document/Test Reset 2`
 export const ALARM_ACKNOWLEDGE_AND_LAMP_TEST = `/document/Alarm Acknowledge and Lamp Test`
+export const ALARM_ACKNOWLEDGE_AND_LAMP_TEST2 = `/document/Alarm Acknowledge and Lamp Test2`
 export const SPEED_DECREASE_PB = `/document/Speed Decrease PB`
 export const SPEED_INCREASE_PB = `/document/Speed Increase PB`
 export const PUSH_BUTTON_ESS = `/document/Push Button ESS`

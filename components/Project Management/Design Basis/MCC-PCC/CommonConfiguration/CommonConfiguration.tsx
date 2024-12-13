@@ -53,7 +53,9 @@ const getDefaultValues = (commonConfigData: any) => {
     speed_increase_pb: commonConfigData?.speed_increase_pb || "Yellow",
     speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
     alarm_acknowledge_and_lamp_test: commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
-    test_reset: commonConfigData?.test_reset || "Black",
+    lamp_test_push_button: commonConfigData?.lamp_test_push_button || "Yellow",
+    test_reset: commonConfigData?.test_reset || "Yellow",
+    test_reset2: commonConfigData?.test_reset2 || "Black",
     selector_switch_applicable: commonConfigData?.selector_switch_applicable || "Not Applicable",
     selector_switch_lockable: commonConfigData?.selector_switch_lockable || "Lockable",
     running_open: commonConfigData?.running_open || "Green",
@@ -154,7 +156,9 @@ const CommonConfiguration = ({
     speed_increase_pb_options,
     speed_decrease_pb_options,
     test_reset_options,
+    test_reset2_options,
     alarm_acknowledge_and_lamp_test_options,
+    alarm_acknowledge_and_lamp_test2_options,
     running_open_options,
     stopped_closed_options,
     trip_options,
@@ -221,38 +225,6 @@ const CommonConfiguration = ({
   useEffect(() => {
     reset(getDefaultValues(commonConfigurationData?.[0]))
   }, [commonConfigurationData, reset])
-
-  // const field_motor_isolator_is_selected_controlled = watch("is_field_motor_isolator_selected")
-
-  // useEffect(() => {
-  //   if (field_motor_isolator_is_selected_controlled === "0") {
-  //     setValue("field_motor_type", "NA")
-  //     setValue("field_motor_enclosure", "NA")
-  //     setValue("field_motor_material", "NA")
-  //     setValue("field_motor_qty", "NA")
-  //     setValue("field_motor_isolator_color_shade", "NA")
-  //     setValue("field_motor_cable_entry", "NA")
-  //     setValue("field_motor_canopy_on_top", "NA")
-  //   }
-  // }, [field_motor_isolator_is_selected_controlled, setValue])
-
-  // const local_push_button_station_is_Selected_controlled = watch("is_local_push_button_station_selected")
-
-  // useEffect(() => {
-  //   if (local_push_button_station_is_Selected_controlled === "0") {
-  //     setValue("lpbs_type", "NA")
-  //     setValue("lpbs_enclosure", "NA")
-  //     setValue("lpbs_material", "NA")
-  //     setValue("lpbs_qty", "NA")
-  //     setValue("lpbs_color_shade", "NA")
-  //     setValue("lpbs_canopy_on_top", "NA")
-  //     setValue("lpbs_push_button_start_color", "NA")
-  //     setValue("lpbs_indication_lamp_start_color", "NA")
-  //     setValue("lpbs_indication_lamp_stop_color", "NA")
-  //     setValue("lpbs_speed_increase", "NA")
-  //     setValue("lpbs_speed_decrease", "NA")
-  //   }
-  // }, [local_push_button_station_is_Selected_controlled, setValue])
 
   useEffect(() => {
     if (supply_feeder_standard_controlled === "IS") {
@@ -383,6 +355,15 @@ const CommonConfiguration = ({
                 </>
               }
               options={ammeter_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="metering_for_feeders"
+              label="Metering for Feeder"
+              options={metering_for_feeder_options || []}
               size="small"
             />
           </div>
@@ -687,7 +668,7 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="alarm_acknowledge_and_lamp_test"
-              label="Alarm Acknowledge and Lamp Test"
+              label="Alarm Acknowledge Push Button"
               options={alarm_acknowledge_and_lamp_test_options || []}
               size="small"
             />
@@ -695,9 +676,29 @@ const CommonConfiguration = ({
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
+              name="lamp_test_push_button"
+              label="Lamp Test Push Button"
+              options={alarm_acknowledge_and_lamp_test2_options || []}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+        <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
               name="test_reset"
-              label="Test Reset"
+              label="Test"
               options={test_reset_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="test_reset2"
+              label="Reset"
+              options={test_reset2_options || []}
               size="small"
             />
           </div>
@@ -1155,18 +1156,12 @@ const CommonConfiguration = ({
             />
           </div>
         </div>
-        <Divider>
+        {/* <Divider>
           <span className="font-bold text-slate-700">Metering for Feeder</span>
         </Divider>
         <div className="w-1/3 flex-1">
-          <CustomSingleSelect
-            control={control}
-            name="metering_for_feeders"
-            label="Metering for Feeder"
-            options={metering_for_feeder_options || []}
-            size="small"
-          />
-        </div>
+
+        </div> */}
         <Divider>
           <span className="font-bold text-slate-700">Others</span>
         </Divider>
@@ -1193,7 +1188,7 @@ const CommonConfiguration = ({
               ]}
             />
           </div>
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomRadioSelect
               control={control}
               name="alarm_annunciator"
@@ -1203,7 +1198,7 @@ const CommonConfiguration = ({
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
             />
-          </div>
+          </div> */}
           {/* <div className="flex-1">
             <CustomRadioSelect
               control={control}

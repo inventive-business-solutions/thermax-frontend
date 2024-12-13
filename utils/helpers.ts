@@ -78,7 +78,7 @@ export function sortDatewise(data: any[]): any[] {
     data.sort((a: any, b: any) => {
       const dateA = new Date(a.creation)
       const dateB = new Date(b.creation)
-      return dateB.getTime() - dateA.getTime()
+      return dateA.getTime() - dateB.getTime()
     })
   }
 
