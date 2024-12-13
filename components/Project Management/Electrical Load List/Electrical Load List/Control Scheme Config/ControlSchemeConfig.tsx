@@ -290,13 +290,7 @@ const ControlSchemeConfigurator: React.FC<ControlSchemeConfiguratorProps> = ({
             return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
           })
       }
-      // .sort((a: any, b: any) => {
-      //   const [prefixA, numA] = a[2].split("-")
-      //   const [prefixB, numB] = b[2].split("-")
-      //   return prefixA === prefixB ? parseInt(numA, 10) - parseInt(numB, 10) : prefixA.localeCompare(prefixB)
-      // })
-
-      // setLpbsSchemes(sortedSchemes)
+     
       console.log(sortedSchemes, "control schemes sorted")
 
       setControlSchemes(sortedSchemes)
