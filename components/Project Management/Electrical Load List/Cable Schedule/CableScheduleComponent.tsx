@@ -321,7 +321,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
     const data = spreadsheetInstance?.getData()
     console.log(data, "Cable schedule data")
     console.log("Load list data", loadListData)
-    const payload = data?.map((row: any) => {
+    const individualFeeders: any = data?.map((row: any) => {
       const division = userInfo?.division
       const loadListItem = loadListData.find((item: any) => item.tag_number === row[0])
 
@@ -673,63 +673,62 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         })
       }
     }
-    console.log(payload, "final payload")
+    console.log(individualFeeders, "final payload")
     console.log(groupPayload, "final payload group")
 
-    // let payload = {
-    //   project_id: project_id,
-    //   status: "Not Released",
-    //   description: "test",
-    //   cable_schedule_data: data?.map((row: any) => {
-    //     return {
-    //       tag_number: row[0],
-    //       service_description: row[1],
-    //       working_kw: Number(row[2]),
-    //       standby_kw: Number(row[3]),
-    //       kva: Number(row[4]),
-    //       starter_type: row[5],
-    //       supply_voltage: Number(row[6].split(" ")[0]),
-    //       motor_rated_current: Number(row[7]),
-    //       cable_material: row[8],
-    //       cos_running: Number(row[9]),
-    //       cos_starting: Number(row[10]),
-    //       resistance_meter: parseFloat(row[11]),
-    //       reactance_meter: parseFloat(row[12]),
-    //       apex_length: parseFloat(row[13]),
-    //       vd_running: parseFloat(row[14]),
-    //       vd_starting: parseFloat(row[15]),
-    //       percent_vd_running: parseFloat(row[16]),
-    //       percent_vd_starting: parseFloat(row[17]),
-    //       selected_cable_capacity_amp: parseFloat(row[18]),
-    //       derating_factor: Number(row[19]),
-    //       final_capacity: Number(row[20]),
-    //       number_of_runs: Number(row[21]),
-    //       number_of_cores: row[22],
-    //       final_cable_size: row[23],
-    //       cable_selected_status: row[24],
-    //       cable_size_as_per_heating_chart: row[25],
-    //     }
-    //   }),
-    //   excel_payload: ""
-    // }
-    // try {
-    //   console.log(payload, "cable schedule payload")
+    let payload = {
+      project_id: project_id,
+      status: "Not Released",
+      description: "test",
+      cable_schedule_data: data?.map((row: any) => {
+        return {
+          tag_number: row[0],
+          service_description: row[1],
+          working_kw: Number(row[2]),
+          standby_kw: Number(row[3]),
+          kva: Number(row[4]),
+          starter_type: row[5],
+          supply_voltage: Number(row[6].split(" ")[0]),
+          motor_rated_current: Number(row[7]),
+          cable_material: row[8],
+          cos_running: Number(row[9]),
+          cos_starting: Number(row[10]),
+          resistance_meter: parseFloat(row[11]),
+          reactance_meter: parseFloat(row[12]),
+          apex_length: parseFloat(row[13]),
+          vd_running: parseFloat(row[14]),
+          vd_starting: parseFloat(row[15]),
+          percent_vd_running: parseFloat(row[16]),
+          percent_vd_starting: parseFloat(row[17]),
+          selected_cable_capacity_amp: parseFloat(row[18]),
+          derating_factor: Number(row[19]),
+          final_capacity: Number(row[20]),
+          number_of_runs: Number(row[21]),
+          number_of_cores: row[22],
+          final_cable_size: row[23],
+          cable_selected_status: row[24],
+          cable_size_as_per_heating_chart: row[25],
+        }
+      }),
+      excel_payload: { ...individualFeeders, ...groupPayload },
+    }
+    try {
+      console.log(payload, "cable schedule payload")
 
-    //   const respose = await updateData(
-    //     `${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`,
-    //     false,
-    //     payload
-    //   )
-    //   setLoading(false)
-    //   message.success("Cable Schedule Saved !")
+      const respose = await updateData(
+        `${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`,
+        false,
+        payload
+      )
+      setLoading(false)
+      message.success("Cable Schedule Saved !")
 
-    //   console.log(respose, "Cable Schedule response")
-    // } catch (error) {
-    //   message.error("Unable to save Cable Schedule list")
+      console.log(respose, "Cable Schedule response")
+    } catch (error) {
+      message.error("Unable to save Cable Schedule list")
 
-    //   setLoading(false)
-    // }
-    // Add your save logic here
+      setLoading(false)
+    }
   }
   const getStandByKw = (item2: any, item3: any) => {
     if (item2 == 0) {
