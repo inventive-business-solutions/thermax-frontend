@@ -120,7 +120,7 @@ const useDataFetching = (
   const [controlSchemes, setControlSchemes] = useState<any[]>([])
 
   const [loadListData, setLoadListData] = useState<any[]>([])
-  const [cableTrayData, setCableTrayData] = useState<any[]>([])
+  const [cableTrayData, setCableTrayData] = useState<any>()
   const getApiEndpoint = (division: string) => {
     switch (division) {
       case HEATING:
@@ -744,10 +744,10 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
     const cableSizeCalc = await getCableSizingCalculation({
       divisionName: userInfo.division,
       layoutCableTray: {
-        motor_voltage_drop_during_running: cableTrayData[0]?.motor_voltage_drop_during_running,
-        motor_voltage_drop_during_starting: cableTrayData[0]?.motor_voltage_drop_during_starting,
-        copper_conductor: cableTrayData[0]?.copper_conductor,
-        aluminium_conductor: cableTrayData[0]?.aluminium_conductor,
+        motor_voltage_drop_during_running: cableTrayData?.motor_voltage_drop_during_running,
+        motor_voltage_drop_during_starting: cableTrayData?.motor_voltage_drop_during_starting,
+        copper_conductor: cableTrayData?.copper_conductor,
+        aluminium_conductor: cableTrayData?.aluminium_conductor,
       },
       data: cableScheduleData?.map((row: any) => {
         return {
