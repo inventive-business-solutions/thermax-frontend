@@ -233,7 +233,7 @@ const findCable = (
     if (cable.current_air >= motorRatedCurrent && cable.number_of_core === numberOfCores) {
       const dbl_x = +parseFloat(cable.dbl_x).toFixed(2)
       const dbl_r = +parseFloat(cable.dbl_r).toFixed(2)
- 
+
       const vd_run = +(
         (1.732 * motorRatedCurrent * appxLength * (cosPhiRunning * dbl_r + sinPhiRunning * dbl_x)) /
         numberOfRuns /
@@ -244,11 +244,11 @@ const findCable = (
         numberOfRuns /
         1000
       ).toFixed(2)
- 
+
       const vd_run_percentage = +((vd_run / supplyVoltage) * 100).toFixed(2)
       const vd_start_percentage = +((vd_start / supplyVoltage) * 100).toFixed(2)
       const final_current_carrying_capacity = +(cable.current_air * deratingFactor * numberOfRuns).toFixed(2)
- 
+
       if (vd_run_percentage <= perc_voltage_drop_running && vd_start_percentage <= perc_voltage_drop_starting) {
         finalCable = {
           ...cable,
@@ -257,7 +257,7 @@ const findCable = (
           vd_run_percentage,
           vd_start_percentage,
           final_current_carrying_capacity,
-          tagNo
+          tagNo,
         }
         break // Stop iterating once a suitable cable is found.
       }
@@ -400,7 +400,7 @@ const findCable = (
 export const getCableSizingCalculation = async (cableScheduleData: any) => {
   const division = cableScheduleData.divisionName
   const cableScheduleRows = cableScheduleData.data
-  const revisionId = "no270rl748"
+  const layoutCableTray = cableScheduleData.layoutCableTray
   // Get the cable sizing data
   const cableAsPerHeatingChart = await getData(`${CABLE_SIZE_HEATING_API}?fields=["*"]&limit=1000`)
   const cableSizingData = await getData(`${CABLE_SIZING_DATA_API}?fields=["*"]&limit=1000`)
@@ -411,9 +411,6 @@ export const getCableSizingCalculation = async (cableScheduleData: any) => {
   const aluminiumCableSize = cableSizingData
     .filter((data: any) => data.moc === "Aluminium")
     .sort((a: any, b: any) => a.current_air - b.current_air)
-
-  const cableTrays = await getData(`${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revisionId}"]]`)
-  const layoutCableTray = cableTrays[0]
 
   const perc_voltage_drop_running = +parseFloat(layoutCableTray.motor_voltage_drop_during_running).toFixed(2)
   const perc_voltage_drop_starting = +parseFloat(layoutCableTray.motor_voltage_drop_during_starting).toFixed(2)
@@ -427,7 +424,7 @@ export const getCableSizingCalculation = async (cableScheduleData: any) => {
     const phase = row.phase
     const starterType = row.starterType
     const cableMaterial = row.cableMaterial
-    const numberOfCores = parseFloat(row.numberOfCores.replace(/[^\d.]/g, ""));
+    const numberOfCores = parseFloat(row.numberOfCores.replace(/[^\d.]/g, ""))
     const numberOfRuns = parseInt(row.numberOfRuns)
     const efficiency = 0.86
     const cosPhiRunning: number = row.runningCos
@@ -436,7 +433,7 @@ export const getCableSizingCalculation = async (cableScheduleData: any) => {
     const sinPhiStarting = +Math.sqrt(1 - cosPhiStarting ** 2).toFixed(2)
     const motorRatedCurrent: number = +parseFloat(row.motorRatedCurrent).toFixed(2)
     const deratingFactor: number = +parseFloat(row.deratingFactor).toFixed(2)
-    const tagNo = row.tagNo 
+    const tagNo = row.tagNo
     let motorStartingCurrent = 0
 
     if (starterType === "DOL") {
