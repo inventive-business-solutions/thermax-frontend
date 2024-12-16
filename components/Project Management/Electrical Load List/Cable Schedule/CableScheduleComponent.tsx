@@ -73,8 +73,8 @@ const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any, cableTr
         : item.starter_type === "STAR-DELTA"
         ? 2
         : 1,
-      cableScheduleData?.no_of_cores
-        ? cableScheduleData?.no_of_cores
+      cableScheduleData?.number_of_cores
+        ? cableScheduleData?.number_of_cores
         : item.starter_type === "DOL STARTER"
         ? "3C"
         : item.starter_type === "VFD"
@@ -783,6 +783,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         updatedRow[15] = calculationResult.vd_start
         updatedRow[16] = calculationResult.vd_run_percentage
         updatedRow[17] = calculationResult.vd_start_percentage
+        updatedRow[18] = calculationResult.current_air
         updatedRow[20] = calculationResult.final_current_carrying_capacity
         updatedRow[23] = calculationResult.sizes.includes("/")
           ? calculationResult.sizes
