@@ -17,6 +17,8 @@ import CustomMultiSelect from "components/FormInputs/CustomMultiSelect"
 
 // Define Zod schema for validation
 const makeOfComponentSchema = zod.object({
+  gland_make: zod.array(zod.string(), { required_error: "Gland Make is required", message: "Gland Make is required" }),
+  preferred_gland_make: zod.string({ required_error: "Preferred Gland Make is required", message: "Preferred Gland Make is required" }),
   motor: zod.array(zod.string(), { required_error: "Motor is required", message: "Motor is required" }),
   preferred_motor: zod.string({
     required_error: "Preferred Motor is required",
@@ -77,6 +79,8 @@ const parseToArray = (value: any) => {
 
 const getDefaultValues = (data: any) => {
   return {
+    gland_make: parseToArray(data?.gland_make || "Comet"),
+    preferred_gland_make: data?.preferred_gland_make || "NA",
     motor: parseToArray(data?.motor || "NA"),
     preferred_motor: data?.preferred_motor || "NA",
     cable: parseToArray(data?.cable || "Gemscab"),
@@ -109,6 +113,7 @@ const MakeOfComponent = ({
   )
 
   const {
+    gland_make_options,
     motors_make_options,
     plc_make_options,
     soft_starter_options,
@@ -129,6 +134,7 @@ const MakeOfComponent = ({
     mode: "onSubmit",
   })
 
+  const gland_make = watch("gland_make") as string[]
   const motor = watch("motor") as string[]
   const cable = watch("cable") as string[]
   const lv_switchgear = watch("lv_switchgear") as string[]
@@ -138,6 +144,7 @@ const MakeOfComponent = ({
   const plc = watch("plc") as string[]
 
   useEffect(() => {
+    setValue("preferred_gland_make", gland_make[0])
     setValue("preferred_motor", motor[0])
     setValue("preferred_cable", cable[0])
     setValue("preferred_lv_switchgear", lv_switchgear[0])
@@ -145,7 +152,7 @@ const MakeOfComponent = ({
     setValue("preferred_vfdvsd", vfd_vsd[0])
     setValue("preferred_soft_starter", soft_starter[0])
     setValue("preferred_plc", plc[0])
-  }, [cable, lv_switchgear, motor, panel_enclosure, plc, setValue, soft_starter, vfd_vsd])
+  }, [gland_make, cable, lv_switchgear, motor, panel_enclosure, plc, setValue, soft_starter, vfd_vsd])
 
   useEffect(() => {
     reset(getDefaultValues(makeOfComponent?.[0]))
@@ -163,6 +170,7 @@ const MakeOfComponent = ({
   const onSubmit = async (data: any) => {
     setLoading(true)
     const fieldsToStringify = [
+      "gland_make",
       "motor",
       "cable",
       "lv_switchgear",
@@ -328,6 +336,14 @@ const MakeOfComponent = ({
         </div>
         <div className="w-1/5">
           <CustomTextInput control={control} name="preferred_plc" readOnly label="Preferred PLC" size="small" />
+        </div>
+      </div>
+      <div className="flex flex-1 items-center gap-4">
+        <div className="w-4/5">
+          <CustomMultiSelect control={control} name="gland_make" label="Gland Make" options={gland_make_options || []} size="small" />
+        </div>
+        <div className="w-1/5">
+          <CustomTextInput control={control} name="preferred_gland_make" readOnly label="Preferred Gland Make" size="small" />
         </div>
       </div>
 

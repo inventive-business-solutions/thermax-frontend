@@ -54,6 +54,7 @@
 "use client"
 
 import {
+  GLAND_MAKE,
   MAKE_CABLE,
   MAKE_LV_SWITCHGEAR,
   MAKE_MOTORS,
@@ -85,6 +86,7 @@ const moveNAtoEnd = (options: DropdownOption[]): DropdownOption[] => {
 // Main hook to fetch dropdown options for different components
 export default function useMakeOfComponentDropdowns() {
   // Fetch dropdown options for each component manually
+  const glandMakeOptions = useDropdownOptions(`${GLAND_MAKE}?fields=["*"]`, "gland_make")
   const motorsOptions = useDropdownOptions(`${MAKE_MOTORS}?fields=["*"]`, "motors")
   const cableOptions = useDropdownOptions(`${MAKE_CABLE}?fields=["*"]`, "cable")
   const lvSwitchgearOptions = useDropdownOptions(`${MAKE_LV_SWITCHGEAR}?fields=["*"]`, "lv_switchgear")
@@ -95,6 +97,7 @@ export default function useMakeOfComponentDropdowns() {
 
   // Object to hold dropdown options for each component
   const dropdownOptions: Record<string, DropdownOption[]> = {
+    gland_make_options: moveNAtoEnd(glandMakeOptions.dropdownOptions),
     motors_make_options: moveNAtoEnd(motorsOptions.dropdownOptions),
     cable_make_options: moveNAtoEnd(cableOptions.dropdownOptions),
     lv_switchgear_options: moveNAtoEnd(lvSwitchgearOptions.dropdownOptions),

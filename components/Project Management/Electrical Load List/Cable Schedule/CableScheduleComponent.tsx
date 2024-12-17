@@ -570,12 +570,12 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
     let groupPayload = []
     if (grouping) {
       for (let i = 0; i < grouping.length; i++) {
-        const cableSchedule: any = data?.filter((el) => el[1] == grouping[i][6].split(",")[0])[0]
+        const cableSchedule: any = data?.filter((el) => el[1] === grouping[i][6].split(",")[0])[0]
         let Di = grouping[i][4]
         let Do = grouping[i++][4]
         let Ai = grouping[i++][4]
         let Ao = grouping[i++][4]
-        i + 4
+        i = i + 4
 
         let cables: any[] = []
         console.log(Di, Do, Ai, Ao, "DIDOAIAO")
@@ -788,7 +788,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         updatedRow[23] = calculationResult.sizes.includes("/")
           ? calculationResult.sizes
           : parseFloat(calculationResult.sizes).toFixed(1)
-        updatedRow[25] = "" //cable size as per heating value
+        updatedRow[25] = calculationResult.heating_chart_cable_size //cable size as per heating value
         sizingCalcData.push({
           tag_number: calculationResult.tagNo,
           cableOd: calculationResult.od,

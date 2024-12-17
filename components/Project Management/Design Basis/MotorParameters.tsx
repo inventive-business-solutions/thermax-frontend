@@ -198,8 +198,8 @@ const getDefaultValues = (defaultData: any, projectInfoData: any) => {
     safe_area_min_temperature: projectInfoData?.ambient_temperature_min || defaultData?.safe_area_min_temperature,
     hazardous_area_min_temperature:
       projectInfoData?.ambient_temperature_min || defaultData?.hazardous_area_min_temperature,
-    safe_area_altitude: defaultData?.safe_area_altitude || "7.5",
-    hazardous_area_altitude: defaultData?.hazardous_area_altitude || "7.5",
+    safe_area_altitude: projectInfoData?.altitude || defaultData?.safe_area_altitude,
+    hazardous_area_altitude: projectInfoData?.altitude ||defaultData?.hazardous_area_altitude,
     safe_area_terminal_box_ip_rating: defaultData?.safe_area_terminal_box_ip_rating || "IP55",
     hazardous_area_terminal_box_ip_rating: defaultData?.hazardous_area_terminal_box_ip_rating || "IP55",
     safe_area_thermister: defaultData?.safe_area_thermister || "110",
@@ -477,6 +477,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
               name="safe_area_altitude"
               label=""
               variant="borderless"
+              disabled={true}
               placeholder="Enter safe area altitude"
             />
           </div>
@@ -487,7 +488,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
               label=""
               placeholder="Enter hazardous area altitude"
               variant={isHazardous ? "borderless" : "filled"}
-              disabled={!isHazardous}
+              disabled={true}
             />
           </div>
         </div>

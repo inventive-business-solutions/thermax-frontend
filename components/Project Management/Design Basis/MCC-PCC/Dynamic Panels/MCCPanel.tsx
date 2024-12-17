@@ -30,7 +30,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     is_lsig_selected: mccPanelData?.is_lsig_selected || 0,
     is_lsi_selected: mccPanelData?.is_lsi_selected || 0,
     is_neural_link_with_disconnect_facility_selected:
-      mccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
+      mccPanelData?.is_neural_link_with_disconnect_facility_selected || 0,
     is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected?.toString() || "1",
     is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected || 0,
     is_red_cb_in_service: mccPanelData?.is_red_cb_in_service || 0,
@@ -54,10 +54,10 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     ga_current_density: mccPanelData?.ga_current_density || "0.8 A/Sq. mm",
     ga_panel_mounting_frame: mccPanelData?.ga_panel_mounting_frame || "Base Frame",
     ga_panel_mounting_height: mccPanelData?.ga_panel_mounting_height || "100",
-    is_marshalling_section_selected: mccPanelData?.is_marshalling_section_selected || "1",
-    is_cable_alley_section_selected: mccPanelData?.is_cable_alley_section_selected || "1",
-    is_power_and_bus_separation_section_selected: mccPanelData?.is_power_and_bus_separation_section_selected || "1",
-    is_both_side_extension_section_selected: mccPanelData?.is_both_side_extension_section_selected || "1",
+    is_marshalling_section_selected: mccPanelData?.is_marshalling_section_selected || 1,
+    is_cable_alley_section_selected: mccPanelData?.is_cable_alley_section_selected || 1,
+    is_power_and_bus_separation_section_selected: mccPanelData?.is_power_and_bus_separation_section_selected || 1,
+    is_both_side_extension_section_selected: mccPanelData?.is_both_side_extension_section_selected || 1,
     ga_gland_plate_3mm_drill_type: mccPanelData?.ga_gland_plate_3mm_drill_type || "Drilled",
     ga_gland_plate_3mm_attachment_type: mccPanelData?.ga_gland_plate_3mm_attachment_type || "Detachable",
     ga_busbar_chamber_position: mccPanelData?.ga_busbar_chamber_position || "Top",
@@ -324,7 +324,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   return (
     <>
       <Divider>
-        <span className="font-bold text-slate-700">Selection Details</span>
+        <span className="font-bold text-slate-700">Incomer Selection</span>
       </Divider>
       <form onSubmit={onSubmit} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-4">
@@ -418,32 +418,22 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
         </div>
         <div className="mt-2 flex items-center gap-4">
           <div className="flex-1">
-            {/* <CustomRadioSelect
-              control={control}
-              name="is_led_type_lamp_selected"
-              label="Indication (LED Type Lamp)"
-              options={[
-                { label: "ON", value: "ON" },
-                { label: "OFF", value: "OFF" },
-                { label: "Other", value: "Other" },
-              ]}
-            /> */}
             <CustomRadioSelect
               control={control}
               name="is_led_type_lamp_selected"
               label="Indication (LED Type Lamp)"
               options={[
                 { label: "ON", value: "1" },
-                { label: "OFF", value: "0" },
+                { label: "OFF", value: "0" }
               ]}
             />
             <CustomCheckboxInput control={control} name="is_other_selected" label="Other" />
           </div>
-          {watch("is_other_selected") && (
+          {(Boolean)(watch("is_other_selected")) &&
             <div className="flex-1">
               <CustomTextInput control={control} name="led_type_other_input" label="" />
             </div>
-          )}
+          }
           <div className="flex-1">
             <CustomCheckboxInput
               control={control}
@@ -605,6 +595,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="ga_mcc_construction_drawout_type"
               label="MCC Drawout Type"
               options={ga_mcc_construction_drawout_type_options}
+              disabled={watch("ga_mcc_compartmental").includes("Non ")}
               size="small"
             />
           </div>
@@ -619,7 +610,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           </div>
         </div>
         <div className="mt-2 flex items-center gap-4">
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomRadioSelect
               control={control}
               name="busbar_material_of_construction"
@@ -642,7 +633,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               }
               size="small"
             />
-          </div>
+          </div> */}
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -780,7 +771,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ppc_minimum_coating_thickness"
-              label="Minimum Coating Thickness"
+              label="Minimum Paint Thickness"
               options={ppc_minimum_coating_thickness_options}
               size="small"
             />
@@ -812,7 +803,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           <CustomRadioSelect
             control={control}
             name="vfd_auto_manual_selection"
-            label="VFD Auto / Manual Selection"
+            label="VFD Auto / Manual Selector Switch"
             options={[
               { label: "Applicable", value: "Applicable" },
               { label: "Not Applicable", value: "Not Applicable" },

@@ -26,12 +26,12 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     incomer_above_ampere: pccPanelData?.incomer_above_ampere || "1001",
     incomer_above_pole: pccPanelData?.incomer_above_pole || "4",
     incomer_above_type: pccPanelData?.incomer_above_type || "SFU",
-    is_under_or_over_voltage_selected: pccPanelData?.is_under_or_over_voltage_selected || 1,
+    is_under_or_over_voltage_selected: pccPanelData?.is_under_or_over_voltage_selected || 0,
     is_other_selected: pccPanelData?.is_other_selected || 0,
     is_lsig_selected: pccPanelData?.is_lsig_selected || 0,
     is_lsi_selected: pccPanelData?.is_lsi_selected || 0,
     is_neural_link_with_disconnect_facility_selected:
-      pccPanelData?.is_neural_link_with_disconnect_facility_selected || 1,
+      pccPanelData?.is_neural_link_with_disconnect_facility_selected || 0,
     is_led_type_lamp_selected: pccPanelData?.is_led_type_lamp_selected?.toString() || "1",
     is_blue_cb_spring_charge_selected: pccPanelData?.is_blue_cb_spring_charge_selected || 0,
     is_red_cb_in_service: pccPanelData?.is_red_cb_in_service || 0,
@@ -298,7 +298,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   return (
     <>
       <Divider>
-        <span className="font-bold text-slate-700">Selection Details</span>
+        <span className="font-bold text-slate-700">Incomer Selection</span>
       </Divider>
       <form onSubmit={onSubmit} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-4">
@@ -405,7 +405,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomCheckboxInput control={control} name="is_other_selected" label="Other" />
           </div>
 
-          {watch("is_other_selected") && (
+          {(Boolean)(watch("is_other_selected")) && (
             <div className="flex-1">
               <CustomTextInput control={control} name="led_type_other_input" label="" />
             </div>
@@ -560,6 +560,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="ga_pcc_construction_drawout_type"
               label="PCC Drawout Type"
               options={ga_mcc_construction_drawout_type_options}
+              disabled={watch("ga_pcc_compartmental").includes("Non ")}
               size="small"
             />
           </div>
@@ -574,7 +575,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           </div>
         </div>
         <div className="mt-2 flex items-center gap-4">
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomRadioSelect
               control={control}
               name="busbar_material_of_construction"
@@ -597,7 +598,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               }
               size="small"
             />
-          </div>
+          </div> */}
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -735,7 +736,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ppc_minimum_coating_thickness"
-              label="Minimum Coating Thickness"
+              label="Minimum Paint Thickness"
               options={ppc_minimum_coating_thickness_options}
               size="small"
             />

@@ -21,6 +21,7 @@ import { UploadProjectFilesModal } from "./UploadProjectFilesModal"
 import { getThermaxDateFormat } from "utils/helpers"
 import { deleteProject } from "actions/project"
 import { TagColors } from "configs/constants"
+import AlertNotification from "components/AlertNotification"
 
 interface DataType {
   key: string
@@ -43,6 +44,8 @@ const changeNameToKey = (projectList: any[]) => {
 }
 
 export default function ProjectList({ userInfo, isComplete }: any) {
+  const [infoMessage, setInfoMessage] = useState("")
+  const [status, setStatus] = useState("")
   const [open, setOpen] = useState(false)
   const [uploadFileOpen, setUploadFileOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
@@ -55,6 +58,8 @@ export default function ProjectList({ userInfo, isComplete }: any) {
     getProjectUrl = `${PROJECT_API}?fields=["*"]&limit=1000&filters=[["is_complete", "=", "${isComplete}"]]&order_by=creation desc`
   }
   let { data: projectList, isLoading } = useGetData(getProjectUrl)
+
+  console.log('projectList', projectList)
 
   if (projectList) {
     projectList.sort((a: any, b: any) => {
@@ -226,6 +231,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   const handleDeleteProject = async (selectedRowID: string) => {
     try {
       await deleteProject(selectedRowID)
+      message.success("Project Deleted Successfully")
     } catch (error) {
       message.error(`Error deleting project: ${error}`)
       console.error("Error deleting project", error)
@@ -240,6 +246,8 @@ export default function ProjectList({ userInfo, isComplete }: any) {
 
   return (
     <div className="flex flex-col gap-4">
+      <AlertNotification message={infoMessage} status={status} />
+
       <div className="flex items-center justify-between gap-2">
         <div className="text-lg font-bold tracking-wide">
           {isComplete === 1 ? "Completed Project Console" : "Project Console"}

@@ -104,7 +104,9 @@ export const FERRULE = `/document/Ferrule`
 export const SPARE_TERMINAL = `/document/Spare Terminal`
 
 export const TEST_RESET = `/document/Test Reset`
+export const TEST_RESET2 = `/document/Test Reset 2`
 export const ALARM_ACKNOWLEDGE_AND_LAMP_TEST = `/document/Alarm Acknowledge and Lamp Test`
+export const ALARM_ACKNOWLEDGE_AND_LAMP_TEST2 = `/document/Alarm Acknowledge and Lamp Test2`
 export const SPEED_DECREASE_PB = `/document/Speed Decrease PB`
 export const SPEED_INCREASE_PB = `/document/Speed Increase PB`
 export const PUSH_BUTTON_ESS = `/document/Push Button ESS`
@@ -118,13 +120,17 @@ export const RUNNING_OPEN = `/document/Indicating Lamp Running Open`
 export const STOPPED_CLOSED = `/document/Indicating Lamp Stopped Closed`
 export const TRIP = `/document/Indicating Lamp Trip`
 
+export const HAZARDOUS_AREA_TYPE = `/document/Hazardous Area Type Isolator and Lpbs`
+
 export const FIELD_MOTOR_TYPE = `/document/Field Motor Isolator General Type`
 export const FIELD_MOTOR_ENCLOSURE = `/document/Field Motor Isolator General Enclosure`
 export const FIELD_MOTOR_MATERIAL = `/document/Field Motor Isolator General Material`
+export const FIELD_MOTOR_THICKNESS = `/document/Field Motor Thickness`
 export const FIELD_MOTOR_QTY = `/document/Field Motor Isolator General QTY`
 export const FIELD_MOTOR_COLOUR_SHADE = `/document/Field Motor Isolator Color Shade`
 export const FIELD_MOTOR_CABLE_ENTRY = `/document/Field Motor Isolator General Cable Entry`
 export const FIELD_MOTOR_CANOPY_ON_TOP = `/document/Field Motor Isolator Canopy On Top`
+export const FIELD_MOTOR_CANOPY_TYPE = `/document/Field Motor Isolator Canopy Type`
 
 export const LPBS_TYPE = `/document/Local Push Button Station Type`
 export const LPBS_ENCLOSURE = `/document/Local Push Button Station Enclosure`

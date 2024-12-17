@@ -73,7 +73,7 @@ export default function DesignBasisLayout({
             )}
             onClick={() => handleTabChange(mcc_pcc_path)}
           >
-            MCC / PCC
+            Panels
           </div>
           <div
             className={clsx(
