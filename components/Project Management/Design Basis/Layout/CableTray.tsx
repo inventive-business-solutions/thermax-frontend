@@ -518,7 +518,7 @@ const CableTray = ({
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <h4 className="text-sm font-bold text-blue-500">Material Construction</h4>
+          <h4 className="text-sm font-bold text-blue-500">Cable Tray MOC</h4>
           <div className="flex gap-4">
             <div className="flex flex-1 items-center gap-2">
               <div className="flex items-center gap-4">
@@ -640,7 +640,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -698,7 +698,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -857,7 +857,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -915,7 +915,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -1074,7 +1074,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -1132,7 +1132,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}

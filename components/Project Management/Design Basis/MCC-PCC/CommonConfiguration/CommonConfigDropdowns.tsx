@@ -23,11 +23,14 @@ import {
   FERRULE,
   FIELD_MOTOR_CABLE_ENTRY,
   FIELD_MOTOR_CANOPY_ON_TOP,
+  FIELD_MOTOR_CANOPY_TYPE,
   FIELD_MOTOR_COLOUR_SHADE,
   FIELD_MOTOR_ENCLOSURE,
   FIELD_MOTOR_MATERIAL,
   FIELD_MOTOR_QTY,
+  FIELD_MOTOR_THICKNESS,
   FIELD_MOTOR_TYPE,
+  HAZARDOUS_AREA_TYPE,
   LPBS_CANOPY_ON_TOP,
   LPBS_COLOR_SHADE,
   LPBS_ENCLOSURE,
@@ -191,6 +194,8 @@ export default function useCommonConfigDropdowns() {
   const { dropdownOptions: stopped_closed_options } = useDropdownOptions(`${STOPPED_CLOSED}?fields=["*"]`, "name")
   const { dropdownOptions: trip_options } = useDropdownOptions(`${TRIP}?fields=["*"]`, "trip")
 
+  let { dropdownOptions: hazardous_area_type_options } = useDropdownOptions(`${HAZARDOUS_AREA_TYPE}?fields=["*"]`, "type")
+  hazardous_area_type_options = moveNAtoEnd(hazardous_area_type_options)
   let { dropdownOptions: field_motor_type_options } = useDropdownOptions(`${FIELD_MOTOR_TYPE}?fields=["*"]`, "type")
   field_motor_type_options = moveNAtoEnd(field_motor_type_options)
   let { dropdownOptions: field_motor_enclosure_options } = useDropdownOptions(
@@ -203,6 +208,13 @@ export default function useCommonConfigDropdowns() {
     "name"
   )
   field_motor_material_options = moveNAtoEnd(field_motor_material_options)
+
+  let { dropdownOptions: field_motor_thickness_options } = useDropdownOptions(
+    `${FIELD_MOTOR_THICKNESS}?fields=["*"]`,
+    "name"
+  )
+  field_motor_thickness_options = moveNAtoEnd(field_motor_thickness_options)
+
   let { dropdownOptions: field_motor_qty_options } = useDropdownOptions(`${FIELD_MOTOR_QTY}?fields=["*"]`, "name")
   field_motor_qty_options = moveNAtoEnd(field_motor_qty_options)
   let { dropdownOptions: field_motor_color_shade_options } = useDropdownOptions(
@@ -220,6 +232,12 @@ export default function useCommonConfigDropdowns() {
     "name"
   )
   field_motor_canopy_on_top_options = moveNAtoEnd(field_motor_canopy_on_top_options)
+
+  let { dropdownOptions: field_motor_canopy_type_options } = useDropdownOptions(
+    `${FIELD_MOTOR_CANOPY_TYPE}?fields=["*"]`,
+    "name"
+  )
+  field_motor_canopy_type_options = moveNAtoEnd(field_motor_canopy_type_options)
 
   let { dropdownOptions: lpbs_type_options } = useDropdownOptions(`${LPBS_TYPE}?fields=["*"]`, "name")
   lpbs_type_options = moveNAtoEnd(lpbs_type_options)
@@ -322,12 +340,14 @@ export default function useCommonConfigDropdowns() {
     eb_current_density_options,
     apfc_relay_options,
     field_motor_type_options,
+    hazardous_area_type_options,
     field_motor_enclosure_options,
     field_motor_material_options,
     field_motor_qty_options,
     field_motor_color_shade_options,
     field_motor_cable_entry_options,
     field_motor_canopy_on_top_options,
+    field_motor_canopy_type_options,
     running_open_options,
     stopped_closed_options,
     trip_options,
@@ -375,5 +395,6 @@ export default function useCommonConfigDropdowns() {
     lpbs_indiacator_off_options,
     lpbs_speed_increase_options,
     lpbs_speed_decrease_options,
+    field_motor_thickness_options,
   }
 }

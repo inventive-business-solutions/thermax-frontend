@@ -2,6 +2,10 @@ import * as zod from "zod"
 export const configItemValidationSchema = zod.object({
   is_local_push_button_station_selected: zod.string(),
   is_field_motor_isolator_selected: zod.string(),
+  is_safe_area_isolator_selected: zod.string(),
+  is_hazardous_area_isolator_selected: zod.string(),
+  is_safe_lpbs_selected: zod.string(),
+  is_hazardous_lpbs_selected: zod.string(),
   dol_starter: zod.string({ required_error: "DOL Starter is required", message: "DOL Starter is required" }),
   star_delta_starter: zod.string({
     required_error: "Star Delta Starter is required",
@@ -19,6 +23,10 @@ export const configItemValidationSchema = zod.object({
   switchgear_combination: zod.string({
     required_error: "Switchgear Combination is required",
     message: "Switchgear Combination is required",
+  }),
+  field_motor_thickness: zod.string({
+    required_error: "Field Motor Thickness is required",
+    message: "Field Motor Thickness is required",
   }),
   // SUPPLY FEEDER
   pole: zod.string({ required_error: "Pole is required", message: "Pole is required" }),
@@ -140,59 +148,142 @@ export const configItemValidationSchema = zod.object({
   }),
   trip: zod.string({ required_error: "Trip field is required", message: "Trip field is required" }),
   // Field Motor Isolator (General Specification)
-  field_motor_type: zod.string({
+
+  // safe area
+  safe_field_motor_type: zod.string({
     required_error: "Field Motor Isolator type is required",
     message: "Field Motor Isolator Type is required",
   }),
-  field_motor_enclosure: zod.string({
+  safe_field_motor_enclosure: zod.string({
     required_error: "Field Motor Isolator Enclosure is required",
     message: "Field Motor Isolator Enclosure is required",
   }),
-  field_motor_material: zod.string({
+  safe_field_motor_material: zod.string({
     required_error: "Field Motor Isolator Material is required",
     message: "Field Motor Isolator Material is required",
   }),
-  field_motor_qty: zod.string({
+  safe_field_motor_qty: zod.string({
     required_error: "Field Motor Isolator Qty is required",
     message: "Field Motor Isolator Qty is required",
   }),
-  field_motor_isolator_color_shade: zod.string({
+  safe_field_motor_isolator_color_shade: zod.string({
     required_error: "Field Motor Isolator Color Shade is required",
     message: "Field Motor Isolator Color Shade is required",
   }),
-  field_motor_cable_entry: zod.string({
+  safe_field_motor_cable_entry: zod.string({
     required_error: "Field Motor Isolator Cable Entry is required",
     message: "Field Motor Isolator Cable Entry is required",
   }),
-  field_motor_canopy_on_top: zod.string({
+  safe_field_motor_canopy: zod.string({
     required_error: "Field Motor Isolator Canopy On Top is Required",
     message: "Field Motor Isolator Canopy On Top is Required",
   }),
+
+  // hazardous area
+  hazardous_field_motor_type: zod.string({
+    required_error: "Field Motor Isolator type is required",
+    message: "Field Motor Isolator Type is required",
+  }),
+  hazardous_field_motor_enclosure: zod.string({
+    required_error: "Field Motor Isolator Enclosure is required",
+    message: "Field Motor Isolator Enclosure is required",
+  }),
+  hazardous_field_motor_material: zod.string({
+    required_error: "Field Motor Isolator Material is required",
+    message: "Field Motor Isolator Material is required",
+  }),
+  hazardous_field_motor_qty: zod.string({
+    required_error: "Field Motor Isolator Qty is required",
+    message: "Field Motor Isolator Qty is required",
+  }),
+  hazardous_field_motor_isolator_color_shade: zod.string({
+    required_error: "Field Motor Isolator Color Shade is required",
+    message: "Field Motor Isolator Color Shade is required",
+  }),
+  hazardous_field_motor_cable_entry: zod.string({
+    required_error: "Field Motor Isolator Cable Entry is required",
+    message: "Field Motor Isolator Cable Entry is required",
+  }),
+  hazardous_field_motor_canopy: zod.string({
+    required_error: "Field Motor Isolator Canopy On Top is Required",
+    message: "Field Motor Isolator Canopy On Top is Required",
+  }),
+
+
   // Local Push Button Station (General Specification)
-  lpbs_type: zod.string({
+
+  // SAFE LPBS
+  safe_lpbs_type: zod.string({
     required_error: "Local Push Button Station Type is required",
     message: "Local Push Button Station Type is required",
   }),
-  lpbs_enclosure: zod.string({
+  safe_lpbs_enclosure: zod.string({
     required_error: "Local Push Button Station Enclosure is required",
     message: "Local Push Button Station is required",
   }),
-  lpbs_material: zod.string({
+  safe_lpbs_material: zod.string({
     required_error: "Local Push Button Station Material is required",
     message: "Local Push Button Station is required",
   }),
-  lpbs_qty: zod.string({
+  safe_lpbs_thickness: zod.string({
+    required_error: "Local Push Button Station Thickness is required",
+    message: "Local Push Button Station is required",
+  }),
+  safe_lpbs_qty: zod.string({
     required_error: "Local Push Button Station Quantity is required",
     message: "Local Push Button Station is required",
   }),
-  lpbs_color_shade: zod.string({
+  safe_lpbs_color_shade: zod.string({
     required_error: "Local Push Button Station Color Shade is required",
     message: "Local Push Button Station is required",
   }),
-  lpbs_canopy_on_top: zod.string({
+  safe_lpbs_canopy: zod.string({
     required_error: "Local Push Button Station Canopy On Top is required",
     message: "Local Push Button Station is required",
   }),
+  safe_lpbs_canopy_type: zod.string({
+    required_error: "Local Push Button Station Canopy On Top is required",
+    message: "Local Push Button Station is required",
+  }),
+
+  // HAZARDOUS LPBS
+  hazardous_lpbs_type: zod.string({
+    required_error: "Local Push Button Station Type is required",
+    message: "Local Push Button Station Type is required",
+  }),
+  hazardous_lpbs_enclosure: zod.string({
+    required_error: "Local Push Button Station Enclosure is required",
+    message: "Local Push Button Station is required",
+  }),
+  hazardous_lpbs_material: zod.string({
+    required_error: "Local Push Button Station Material is required",
+    message: "Local Push Button Station is required",
+  }),
+  hazardous_lpbs_thickness: zod.string({
+    required_error: "Local Push Button Station Thickness is required",
+    message: "Local Push Button Station is required",
+  }),
+  hazardous_lpbs_qty: zod.string({
+    required_error: "Local Push Button Station Quantity is required",
+    message: "Local Push Button Station is required",
+  }),
+  hazardous_lpbs_color_shade: zod.string({
+    required_error: "Local Push Button Station Color Shade is required",
+    message: "Local Push Button Station is required",
+  }),
+  hazardous_lpbs_canopy: zod.string({
+    required_error: "Local Push Button Station Canopy On Top is required",
+    message: "Local Push Button Station is required",
+  }),
+  hazardous_lpbs_canopy_type: zod.string({
+    required_error: "Local Push Button Station Canopy On Top is required",
+    message: "Local Push Button Station is required",
+  }),
+
+
+
+
+
   lpbs_push_button_start_color: zod.string({
     required_error: "Local Push Button Station Color is required",
     message: "Local Push Button Station is required",
@@ -401,10 +492,10 @@ export const mccPanelValidationSchema = zod
       required_error: "Panel Mounting Height is required",
       message: "Panel Mounting Height is required",
     }),
-    is_marshalling_section_selected: zod.string().optional(),
-    is_cable_alley_section_selected: zod.string().optional(),
-    is_power_and_bus_separation_section_selected: zod.string().optional(),
-    is_both_side_extension_section_selected: zod.string().optional(),
+    is_marshalling_section_selected: zod.number().optional(),
+    is_cable_alley_section_selected: zod.number().optional(),
+    is_power_and_bus_separation_section_selected: zod.number().optional(),
+    is_both_side_extension_section_selected: zod.number().optional(),
     ga_gland_plate_3mm_drill_type: zod.string({
       required_error: "Gland Plate Drill Type is required",
       message: "Gland Plate Drill Type is required",
@@ -665,10 +756,10 @@ export const pccPanelValidationSchema = zod
       required_error: "Panel Mounting Height is required",
       message: "Panel Mounting Height is required",
     }),
-    is_marshalling_section_selected: zod.string().optional(),
-    is_cable_alley_section_selected: zod.string().optional(),
-    is_power_and_bus_separation_section_selected: zod.string().optional(),
-    is_both_side_extension_section_selected: zod.string().optional(),
+    is_marshalling_section_selected: zod.number().optional(),
+    is_cable_alley_section_selected: zod.number().optional(),
+    is_power_and_bus_separation_section_selected: zod.number().optional(),
+    is_both_side_extension_section_selected: zod.number().optional(),
     ga_gland_plate_3mm_drill_type: zod.string({
       required_error: "Gland Plate Drill Type is required",
       message: "Gland Plate Drill Type is required",
