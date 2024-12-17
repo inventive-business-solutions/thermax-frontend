@@ -322,7 +322,7 @@ export default function DocumentRevision() {
                   icon={
                     <CloudDownloadOutlined
                       style={{
-                        fontSize: "1rem",
+                        fontSize: "1.3rem",
                         color: "green",
                       }}
                       spin={downloadIconSpin}
