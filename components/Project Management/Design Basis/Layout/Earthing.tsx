@@ -97,7 +97,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
             <CustomSingleSelect
               control={control}
               name="earthing_system"
-              label="Earthing System"
+              label="Earthing Connection as Per"
               options={earthing_system_options}
               size="small"
             />
@@ -106,7 +106,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
             <CustomSingleSelect
               control={control}
               name="earth_strip"
-              label="Earth Strip"
+              label="Earth Strip MOC"
               options={earth_strip_options}
               size="small"
             />
@@ -117,7 +117,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
             <CustomSingleSelect
               control={control}
               name="earth_pit"
-              label="Earth Pit"
+              label="Earth Pit MOC"
               options={earthing_pit_options}
               size="small"
             />

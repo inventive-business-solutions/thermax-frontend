@@ -19,7 +19,11 @@ import { WWS_SPG } from "configs/constants"
 const getDefaultValues = (commonConfigData: any) => {
   return {
     is_field_motor_isolator_selected: commonConfigData?.is_field_motor_isolator_selected?.toString() || "1",
+    is_safe_area_isolator_selected: commonConfigData?.is_safe_area_isolator_selected?.toString() || "1",
+    is_hazardous_area_isolator_selected: commonConfigData?.is_hazardous_area_isolator_selected?.toString() || "1",
     is_local_push_button_station_selected: commonConfigData?.is_local_push_button_station_selected?.toString() || "1",
+    is_safe_lpbs_selected: commonConfigData?.is_safe_lpbs_selected?.toString() || "1",
+    is_hazardous_lpbs_selected: commonConfigData?.is_hazardous_lpbs_selected?.toString() || "1",
     dol_starter: commonConfigData?.dol_starter || "0.37",
     star_delta_starter: commonConfigData?.star_delta_starter || "0.55",
     ammeter: commonConfigData?.ammeter || "0.37",
@@ -53,43 +57,70 @@ const getDefaultValues = (commonConfigData: any) => {
     speed_increase_pb: commonConfigData?.speed_increase_pb || "Yellow",
     speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
     alarm_acknowledge_and_lamp_test: commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
-    test_reset: commonConfigData?.test_reset || "Black",
+    lamp_test_push_button: commonConfigData?.lamp_test_push_button || "Yellow",
+    test_reset: commonConfigData?.test_reset || "Yellow",
+    test_reset2: commonConfigData?.test_reset2 || "Black",
     selector_switch_applicable: commonConfigData?.selector_switch_applicable || "Not Applicable",
     selector_switch_lockable: commonConfigData?.selector_switch_lockable || "Lockable",
     running_open: commonConfigData?.running_open || "Green",
     stopped_closed: commonConfigData?.stopped_closed || "Red",
     trip: commonConfigData?.trip || "Amber",
-    field_motor_type: commonConfigData?.type || "Exd",
-    field_motor_enclosure: commonConfigData?.enclosure || "IP 65",
-    field_motor_material: commonConfigData?.material || "SS 316",
-    field_motor_qty: commonConfigData?.qty || "As Mentioned in Electrical Load List",
-    field_motor_isolator_color_shade: commonConfigData?.field_motor_isolator_color_shade || "RAL 7035",
-    field_motor_cable_entry: commonConfigData?.cable_entry || "Side",
-    field_motor_canopy_on_top: commonConfigData?.canopy_on_top || "All",
-    lpbs_type: commonConfigData?.lpbs_type || "Exd",
-    lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
-    lpbs_material: commonConfigData?.lpbs_material || "CRCA",
-    lpbs_qty: commonConfigData?.lpbs_qty || "As mentioned in Electrical Load List",
-    lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
-    lpbs_canopy_on_top: commonConfigData?.lpbs_canopy_on_top || "All",
+    safe_field_motor_type: commonConfigData?.type || "Weather Proof Enclosure",
+    safe_field_motor_enclosure: commonConfigData?.enclosure || "IP 65",
+    safe_field_motor_material: commonConfigData?.material || "SS 316",
+    safe_field_motor_thickness: commonConfigData?.thickness || "1.6 mm",
+    safe_field_motor_qty: commonConfigData?.qty || "As Mentioned in Electrical Load List",
+    safe_field_motor_isolator_color_shade: commonConfigData?.field_motor_isolator_color_shade || "RAL 7035",
+    safe_field_motor_cable_entry: commonConfigData?.cable_entry || "Bottom",
+    safe_field_motor_canopy: commonConfigData?.canopy_on_top || "All",
+    safe_field_motor_canopy_type: commonConfigData?.type || "On Top",
+    hazardous_field_motor_type: commonConfigData?.type || "IS",
+    hazardous_field_motor_enclosure: commonConfigData?.enclosure || "IP 65",
+    hazardous_field_motor_material: commonConfigData?.material || "SS 316",
+    hazardous_field_motor_thickness: commonConfigData?.thickness || "1.6 mm",
+    hazardous_field_motor_qty: commonConfigData?.qty || "As Mentioned in Electrical Load List",
+    hazardous_field_motor_isolator_color_shade: commonConfigData?.field_motor_isolator_color_shade || "RAL 7035",
+    hazardous_field_motor_cable_entry: commonConfigData?.cable_entry || "Bottom",
+    hazardous_field_motor_canopy: commonConfigData?.canopy_on_top || "All",
+    hazardous_field_motor_canopy_type: commonConfigData?.type || "On Top",
+
+    safe_lpbs_type: commonConfigData?.lpbs_type || "Weather Proof Enclosure",
+    safe_lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
+    safe_lpbs_material: commonConfigData?.lpbs_material || "CRCA",
+    safe_lpbs_thickness: commonConfigData?.thickness || "1.6 mm",
+    safe_lpbs_qty: commonConfigData?.lpbs_qty || "As mentioned in Electrical Load List",
+    safe_lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
+    safe_lpbs_canopy: commonConfigData?.lpbs_canopy_on_top || "All",
+    safe_lpbs_canopy_type: commonConfigData?.type || "On Top",
+
+    hazardous_lpbs_type: commonConfigData?.lpbs_type || "IS",
+    hazardous_lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
+    hazardous_lpbs_material: commonConfigData?.lpbs_material || "CRCA",
+    hazardous_lpbs_thickness: commonConfigData?.thickness || "1.6 mm",
+    hazardous_lpbs_qty: commonConfigData?.lpbs_qty || "As mentioned in Electrical Load List",
+    hazardous_lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
+    hazardous_lpbs_canopy: commonConfigData?.lpbs_canopy_on_top || "All",
+    hazardous_lpbs_canopy_type: commonConfigData?.type || "On Top",
+
+
     lpbs_push_button_start_color: commonConfigData?.lpbs_push_button_start_color || "Green",
     lpbs_indication_lamp_start_color: commonConfigData?.lpbs_indication_lamp_start_color || "Green",
     lpbs_indication_lamp_stop_color: commonConfigData?.lpbs_indication_lamp_stop_color || "Red",
     lpbs_speed_increase: commonConfigData?.lpbs_speed_increase || "Yellow",
     lpbs_speed_decrease: commonConfigData?.lpbs_speed_decrease || "Black",
     apfc_relay: commonConfigData?.apfc_relay || "4",
-    power_bus_main_busbar_selection: commonConfigData?.power_bus_main_busbar_selection || "As per IS",
+    power_bus_main_busbar_selection: commonConfigData?.power_bus_main_busbar_selection || "As per IS8623",
     power_bus_heat_pvc_sleeve: commonConfigData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
     power_bus_material: commonConfigData?.power_bus_material || "Aluminium",
     power_bus_current_density: commonConfigData?.power_bus_current_density || "0.8 A/Sq. mm",
     power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "( Min -1R X 60 mm X 12 mm) for 50 KA",
-    control_bus_main_busbar_selection: commonConfigData?.control_bus_main_busbar_selection || "As per IS",
+    control_bus_main_busbar_selection: commonConfigData?.control_bus_main_busbar_selection || "As per IS8623",
     control_bus_heat_pvc_sleeve: commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Black",
     control_bus_material: commonConfigData?.control_bus_material || "Aluminium",
     control_bus_current_density: commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
     control_bus_rating_of_busbar:
       commonConfigData?.control_bus_rating_of_busbar || "( Min -1R X 60 mm X 12 mm) for 50 KA",
-    earth_bus_main_busbar_selection: commonConfigData?.earth_bus_main_busbar_selection || "As per IS",
+    earth_bus_main_busbar_selection: commonConfigData?.earth_bus_main_busbar_selection || "As per IS8623",
     earth_bus_busbar_position: commonConfigData?.earth_bus_busbar_position || "Top",
     earth_bus_material: commonConfigData?.earth_bus_material || "Aluminium",
     earth_bus_current_density: commonConfigData?.earth_bus_current_density || "0.8 A/Sq. mm",
@@ -152,19 +183,24 @@ const CommonConfiguration = ({
     // alarm_acknowledge_and_lamp_test_options,
     ess_options,
     speed_increase_pb_options,
+    field_motor_thickness_options,
     speed_decrease_pb_options,
     test_reset_options,
+    test_reset2_options,
     alarm_acknowledge_and_lamp_test_options,
+    alarm_acknowledge_and_lamp_test2_options,
     running_open_options,
     stopped_closed_options,
     trip_options,
     field_motor_type_options,
+    hazardous_area_type_options,
     field_motor_enclosure_options,
     field_motor_material_options,
     field_motor_qty_options,
     field_motor_color_shade_options,
     field_motor_cable_entry_options,
     field_motor_canopy_on_top_options,
+    field_motor_canopy_type_options,
     lpbs_color_shade_options,
     lpbs_canopy_on_top_options,
     lpbs_indicator_on_options,
@@ -222,38 +258,6 @@ const CommonConfiguration = ({
     reset(getDefaultValues(commonConfigurationData?.[0]))
   }, [commonConfigurationData, reset])
 
-  // const field_motor_isolator_is_selected_controlled = watch("is_field_motor_isolator_selected")
-
-  // useEffect(() => {
-  //   if (field_motor_isolator_is_selected_controlled === "0") {
-  //     setValue("field_motor_type", "NA")
-  //     setValue("field_motor_enclosure", "NA")
-  //     setValue("field_motor_material", "NA")
-  //     setValue("field_motor_qty", "NA")
-  //     setValue("field_motor_isolator_color_shade", "NA")
-  //     setValue("field_motor_cable_entry", "NA")
-  //     setValue("field_motor_canopy_on_top", "NA")
-  //   }
-  // }, [field_motor_isolator_is_selected_controlled, setValue])
-
-  // const local_push_button_station_is_Selected_controlled = watch("is_local_push_button_station_selected")
-
-  // useEffect(() => {
-  //   if (local_push_button_station_is_Selected_controlled === "0") {
-  //     setValue("lpbs_type", "NA")
-  //     setValue("lpbs_enclosure", "NA")
-  //     setValue("lpbs_material", "NA")
-  //     setValue("lpbs_qty", "NA")
-  //     setValue("lpbs_color_shade", "NA")
-  //     setValue("lpbs_canopy_on_top", "NA")
-  //     setValue("lpbs_push_button_start_color", "NA")
-  //     setValue("lpbs_indication_lamp_start_color", "NA")
-  //     setValue("lpbs_indication_lamp_stop_color", "NA")
-  //     setValue("lpbs_speed_increase", "NA")
-  //     setValue("lpbs_speed_decrease", "NA")
-  //   }
-  // }, [local_push_button_station_is_Selected_controlled, setValue])
-
   useEffect(() => {
     if (supply_feeder_standard_controlled === "IS") {
       setValue("dm_standard", "IS 8623")
@@ -268,12 +272,44 @@ const CommonConfiguration = ({
   const control_bus_material_controlled = watch("control_bus_material")
   const power_bus_material_controlled = watch("power_bus_material")
   const earth_bus_material_controlled = watch("earth_bus_material")
+  const safe_field_motor_controlled = watch("safe_field_motor_material")
+  const hazardous_field_motor_controlled = watch("hazardous_field_motor_material")
+  const safe_lpbs_material_controlled = watch("safe_lpbs_material")
+  const hazardous_lpbs_material_controlled = watch("hazardous_lpbs_material")
+  const hazardous__field_motor_type_controlled = watch("hazardous_field_motor_type")
+  const hazardous_lpbs_type_controlled = watch("hazardous_lpbs_type")
 
   useEffect(() => {
     if (is_Ammeter_NA === "NA") {
       setValue("ammeter_configuration", "NA")
     }
-  }, [is_Ammeter_NA, setValue])
+
+    if (safe_field_motor_controlled !== "SS 316" && safe_field_motor_controlled !== "SS 304" && safe_field_motor_controlled !== "CRCA") {
+      setValue("safe_field_motor_thickness", "NA")
+    }
+    if (hazardous_field_motor_controlled !== "SS 316" && hazardous_field_motor_controlled !== "SS 304" && hazardous_field_motor_controlled !== "CRCA") {
+      setValue("hazardous_field_motor_thickness", "NA")
+    }
+    if (safe_lpbs_material_controlled !== "SS 316" && safe_lpbs_material_controlled !== "SS 304" && safe_lpbs_material_controlled !== "CRCA") {
+      setValue("safe_lpbs_thickness", "NA")
+    }
+    if (hazardous_lpbs_material_controlled !== "SS 316" && hazardous_lpbs_material_controlled !== "SS 304" && hazardous_lpbs_material_controlled !== "CRCA") {
+      setValue("hazardous_lpbs_thickness", "NA")
+    }
+    if (hazardous__field_motor_type_controlled === "IEC Exd") {
+      setValue("hazardous_field_motor_material", "Diecast Aluminium")
+    }
+    if (hazardous__field_motor_type_controlled === "IEC Exe") {
+      setValue("hazardous_field_motor_material", "SS 316")
+    }
+    if (hazardous_lpbs_type_controlled === "IEC Exd") {
+      setValue("hazardous_lpbs_material", "Diecast Aluminium")
+    }
+    if (hazardous_lpbs_type_controlled === "IEC Exe") {
+      setValue("hazardous_lpbs_material", "SS 316")
+    }
+
+  }, [is_Ammeter_NA, safe_lpbs_material_controlled, hazardous_lpbs_material_controlled, hazardous__field_motor_type_controlled, hazardous_lpbs_type_controlled, safe_field_motor_controlled, hazardous_field_motor_controlled, setValue])
 
   // Control Bus (dependancy Logic)
   useEffect(() => {
@@ -344,6 +380,9 @@ const CommonConfiguration = ({
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
+        <Divider>
+          <span className="font-bold text-slate-700">Outgoing Feeders</span>
+        </Divider>
         <div className="flex items-center gap-8">
           <div className="flex-1">
             <CustomSingleSelect
@@ -383,6 +422,15 @@ const CommonConfiguration = ({
                 </>
               }
               options={ammeter_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="metering_for_feeders"
+              label="Ammeter Type"
+              options={metering_for_feeder_options || []}
               size="small"
             />
           </div>
@@ -687,7 +735,7 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="alarm_acknowledge_and_lamp_test"
-              label="Alarm Acknowledge and Lamp Test"
+              label="Alarm Acknowledge Push Button"
               options={alarm_acknowledge_and_lamp_test_options || []}
               size="small"
             />
@@ -695,9 +743,29 @@ const CommonConfiguration = ({
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
+              name="lamp_test_push_button"
+              label="Lamp Test Push Button"
+              options={alarm_acknowledge_and_lamp_test2_options || []}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
               name="test_reset"
-              label="Test Reset"
+              label="Test"
               options={test_reset_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="test_reset2"
+              label="Reset"
+              options={test_reset2_options || []}
               size="small"
             />
           </div>
@@ -770,35 +838,59 @@ const CommonConfiguration = ({
             />
           </div>
         </Divider>
+        {/* SAFE AREA for ISOLATOR */}
+        <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
+          <div>Safe Area</div>
+          <CustomRadioSelect
+            control={control}
+            name="is_safe_area_isolator_selected"
+            label=""
+            options={[
+              { label: "Yes", value: "1" },
+              { label: "No", value: "0" },
+            ]}
+            disabled={watch("is_field_motor_isolator_selected") === "0"}
+          />
+        </div>
         <div className="flex gap-4">
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="field_motor_type"
+              name="safe_field_motor_type"
               label="Type"
               options={field_motor_type_options || []}
-              disabled={watch("is_field_motor_isolator_selected") === "0"}
+              disabled={true}
               size="small"
             />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="field_motor_enclosure"
-              label="Enclosure"
+              name="safe_field_motor_enclosure"
+              label="IP Protection"
               options={field_motor_enclosure_options || []}
               size="small"
-              disabled={watch("is_field_motor_isolator_selected") === "0"}
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"}
             />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="field_motor_material"
-              label="Material"
+              name="safe_field_motor_material"
+              label="MOC"
               options={field_motor_material_options || []}
               size="small"
-              disabled={watch("is_field_motor_isolator_selected") === "0"}
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"}
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_field_motor_thickness"
+              label="Thickness"
+              options={field_motor_thickness_options || []}
+              size="small"
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"}
             />
           </div>
         </div>
@@ -806,43 +898,164 @@ const CommonConfiguration = ({
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="field_motor_qty"
+              name="safe_field_motor_qty"
               label="Qty"
               options={field_motor_qty_options || []}
               size="small"
-              disabled={watch("is_field_motor_isolator_selected") === "0"}
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"}
             />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="field_motor_isolator_color_shade"
+              name="safe_field_motor_isolator_color_shade"
               label="Isolator Color Shade"
               options={field_motor_color_shade_options || []}
               size="small"
-              disabled={watch("is_field_motor_isolator_selected") === "0"}
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"}
+            />
+          </div>
+          {/* <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_field_motor_cable_entry"
+              label="Cable Entry"
+              options={field_motor_cable_entry_options || []}
+              size="small"
+              disabled={true}
+            />
+          </div> */}
+
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_field_motor_canopy"
+              label="Canopy"
+              options={field_motor_canopy_on_top_options || []}
+              size="small"
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"}
             />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="field_motor_cable_entry"
-              label="Cable Entry"
-              options={field_motor_cable_entry_options || []}
+              name="safe_field_motor_canopy_type"
+              label="Canopy Type"
+              options={field_motor_canopy_type_options || []}
               size="small"
-              disabled={watch("is_field_motor_isolator_selected") === "0"}
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"}
             />
           </div>
         </div>
-        <div className="w-1/3">
-          <CustomSingleSelect
+
+
+        {/*Hazardous area for (ISOLATOR)  */}
+        <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
+          <div>Hazardous Area</div>
+          <CustomRadioSelect
             control={control}
-            name="field_motor_canopy_on_top"
-            label="Canopy on Top"
-            options={field_motor_canopy_on_top_options || []}
-            size="small"
+            name="is_hazardous_area_isolator_selected"
+            label=""
+            options={[
+              { label: "Yes", value: "1" },
+              { label: "No", value: "0" },
+            ]}
             disabled={watch("is_field_motor_isolator_selected") === "0"}
           />
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_field_motor_type"
+              label="Type"
+              options={hazardous_area_type_options || []}
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_field_motor_enclosure"
+              label="IP Protection"
+              options={field_motor_enclosure_options || []}
+              size="small"
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_field_motor_material"
+              label="MOC"
+              options={field_motor_material_options || []}
+              size="small"
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_field_motor_thickness"
+              label="Thickness"
+              options={field_motor_thickness_options || []}
+              size="small"
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_field_motor_qty"
+              label="Qty"
+              options={field_motor_qty_options || []}
+              size="small"
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_field_motor_isolator_color_shade"
+              label="Isolator Color Shade"
+              options={field_motor_color_shade_options || []}
+              size="small"
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
+            />
+          </div>
+          {/* <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_field_motor_cable_entry"
+              label="Cable Entry"
+              options={field_motor_cable_entry_options || []}
+              size="small"
+              disabled={true}
+            />
+          </div> */}
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_field_motor_canopy"
+              label="Canopy"
+              options={field_motor_canopy_on_top_options || []}
+              size="small"
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_field_motor_canopy_type"
+              label="Canopy Type"
+              options={field_motor_canopy_type_options || []}
+              size="small"
+              disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
+            />
+          </div>
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Local Push Button Station (General Specification)</span>
@@ -858,70 +1071,7 @@ const CommonConfiguration = ({
             />
           </div>
         </Divider>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="lpbs_type"
-              label="Type"
-              options={field_motor_type_options || []}
-              disabled={watch("is_local_push_button_station_selected") === "0"}
-              size="small"
-            />
-          </div>
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="lpbs_enclosure"
-              label="Enclosure"
-              options={field_motor_enclosure_options || []}
-              disabled={watch("is_local_push_button_station_selected") === "0"}
-              size="small"
-            />
-          </div>
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="lpbs_material"
-              label="Material"
-              options={field_motor_material_options || []}
-              disabled={watch("is_local_push_button_station_selected") === "0"}
-              size="small"
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="lpbs_qty"
-              label="Qty"
-              options={field_motor_qty_options || []}
-              disabled={watch("is_local_push_button_station_selected") === "0"}
-              size="small"
-            />
-          </div>
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="lpbs_color_shade"
-              label="LPBS Color Shade"
-              options={lpbs_color_shade_options || []}
-              disabled={watch("is_local_push_button_station_selected") === "0"}
-              size="small"
-            />
-          </div>
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="lpbs_canopy_on_top"
-              label="Canopy on Top"
-              options={lpbs_canopy_on_top_options || []}
-              disabled={watch("is_local_push_button_station_selected") === "0"}
-              size="small"
-            />
-          </div>
-        </div>
+
         <div className="flex gap-4">
           <div className="flex-1">
             <CustomSingleSelect
@@ -976,6 +1126,207 @@ const CommonConfiguration = ({
             />
           </div>
         </div>
+
+        {/* SAFE AREA for (LPBS) */}
+        <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
+          <div>Safe Area</div>
+          <CustomRadioSelect
+            control={control}
+            name="is_safe_lpbs_selected"
+            label=""
+            options={[
+              { label: "Yes", value: "1" },
+              { label: "No", value: "0" },
+            ]}
+            disabled={watch("is_local_push_button_station_selected") === "0"}
+          />
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_lpbs_type"
+              label="Type"
+              options={field_motor_type_options || []}
+              disabled={true}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_lpbs_enclosure"
+              label="IP Protection"
+              options={field_motor_enclosure_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_lpbs_material"
+              label="MOC"
+              options={field_motor_material_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_lpbs_thickness"
+              label="Thickness"
+              options={field_motor_thickness_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_lpbs_qty"
+              label="Qty"
+              options={field_motor_qty_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_lpbs_color_shade"
+              label="LPBS Color Shade"
+              options={lpbs_color_shade_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_lpbs_canopy"
+              label="Canopy"
+              options={lpbs_canopy_on_top_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="safe_lpbs_canopy_type"
+              label="Canopy Type"
+              options={field_motor_canopy_type_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+        </div>
+
+        {/* Hazardous AREA for (LPBS) */}
+
+        <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
+          <div>Hazardous Area</div>
+          <CustomRadioSelect
+            control={control}
+            name="is_hazardous_lpbs_selected"
+            label=""
+            options={[
+              { label: "Yes", value: "1" },
+              { label: "No", value: "0" },
+            ]}
+            disabled={watch("is_local_push_button_station_selected") === "0"}
+          />
+        </div>
+
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_lpbs_type"
+              label="Type"
+              options={hazardous_area_type_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_lpbs_enclosure"
+              label="IP Protection"
+              options={field_motor_enclosure_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_lpbs_material"
+              label="MOC"
+              options={field_motor_material_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_lpbs_thickness"
+              label="Thickness"
+              options={field_motor_thickness_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_lpbs_qty"
+              label="Qty"
+              options={field_motor_qty_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_lpbs_color_shade"
+              label="LPBS Color Shade"
+              options={lpbs_color_shade_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_lpbs_canopy"
+              label="Canopy"
+              options={lpbs_canopy_on_top_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="hazardous_lpbs_canopy_type"
+              label="Canopy Type"
+              options={field_motor_canopy_type_options || []}
+              disabled={watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"}
+              size="small"
+            />
+          </div>
+        </div>
+
         <Divider>
           <span className="font-bold text-slate-700">APFC</span>
         </Divider>
@@ -1155,18 +1506,12 @@ const CommonConfiguration = ({
             />
           </div>
         </div>
-        <Divider>
+        {/* <Divider>
           <span className="font-bold text-slate-700">Metering for Feeder</span>
         </Divider>
         <div className="w-1/3 flex-1">
-          <CustomSingleSelect
-            control={control}
-            name="metering_for_feeders"
-            label="Metering for Feeder"
-            options={metering_for_feeder_options || []}
-            size="small"
-          />
-        </div>
+
+        </div> */}
         <Divider>
           <span className="font-bold text-slate-700">Others</span>
         </Divider>
@@ -1193,7 +1538,7 @@ const CommonConfiguration = ({
               ]}
             />
           </div>
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomRadioSelect
               control={control}
               name="alarm_annunciator"
@@ -1203,7 +1548,7 @@ const CommonConfiguration = ({
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
             />
-          </div>
+          </div> */}
           {/* <div className="flex-1">
             <CustomRadioSelect
               control={control}
