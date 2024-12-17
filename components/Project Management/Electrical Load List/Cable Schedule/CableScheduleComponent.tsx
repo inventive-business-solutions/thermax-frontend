@@ -788,7 +788,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         updatedRow[23] = calculationResult.sizes.includes("/")
           ? calculationResult.sizes
           : parseFloat(calculationResult.sizes).toFixed(1)
-        updatedRow[25] = "" //cable size as per heating value
+        updatedRow[25] = calculationResult.heating_chart_cable_size //cable size as per heating value
         sizingCalcData.push({
           tag_number: calculationResult.tagNo,
           cableOd: calculationResult.od,
