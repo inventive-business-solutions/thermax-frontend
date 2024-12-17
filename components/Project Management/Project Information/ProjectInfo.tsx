@@ -19,6 +19,11 @@ import useProjectInfoDropdowns from "./ProjectInfoDropdowns"
 
 const ProjectInfoSchema = zod.object({
   project_name: zod.string({ required_error: "Project name is required", message: "Project name is required" }),
+  altitude: zod.string({ required_error: "Altitude is required", message: "Altitude is required" }),
+  min_humidity: zod.string({ required_error: "Minimum Humidity is required", message: "Humidity is required" }),
+  max_humidity: zod.string({ required_error: "Maximum Humidity is required", message: "Humidity is required" }),
+  avg_humidity: zod.string({ required_error: "Average Humidity is required", message: "Humidity is required" }),
+  performance_humidity: zod.string({ required_error: "Performance Humidity is required", message: "Humidity is required" }),
   project_oc_number: zod.string({
     required_error: "Project OC number is required",
     message: "Project OC number is required",
@@ -88,6 +93,11 @@ const ProjectInfoSchema = zod.object({
 const getDefaultValues = (isEdit: boolean, projectData: any) => {
   return {
     project_name: projectData?.project_name,
+    altitude: projectData?.altitude || "1",
+    min_humidity: projectData?.min_humidity || "1",
+    max_humidity: projectData?.max_humidity || "1",
+    avg_humidity: projectData?.avg_humidity || "1",
+    performance_humidity: projectData?.performance_humidity || "1",
     project_oc_number: projectData?.project_oc_number,
     client_name: projectData?.client_name,
     project_location: projectData?.project_location,
@@ -165,7 +175,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
 
   useEffect(() => {
-    if(main_supply_mvControlled === "NA"){
+    if (main_supply_mvControlled === "NA") {
       setValue("main_supply_mv_variation", "NA")
       setValue("main_supply_mv_phase", "NA")
     }
@@ -539,11 +549,78 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
             />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect
+            <CustomTextInput
               name="seismic_zone"
               control={control}
               label="Seismic Zone"
-              options={seismicZoneOptions}
+              size="small"
+            />
+          </div>
+        </div>
+
+        <div className="w-2/3">
+          <div className="flex-1">
+            <CustomTextInput
+              name="altitude"
+              control={control}
+              label="Altitude"
+              size="small"
+            />
+          </div>
+        </div>
+
+        {/* Humidity Part */}
+        <div className="text-sm font-semibold text-slate-00">Humidity</div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomTextInput
+              name="min_humidity"
+              control={control}
+              label="Minimum"
+              suffix={
+                <>
+                  <p className="text-lg font-semibold text-blue-500">%</p>
+                </>
+              }
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomTextInput
+              name="max_humidity"
+              control={control}
+              label="Maximum"
+              suffix={
+                <>
+                  <p className="text-lg font-semibold text-blue-500">%</p>
+                </>
+              }
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomTextInput
+              name="avg_humidity"
+              control={control}
+              label="Average"
+              suffix={
+                <>
+                  <p className="text-lg font-semibold text-blue-500">%</p>
+                </>
+              }
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomTextInput
+              name="performance_humidity"
+              control={control}
+              label="Performance"
+              suffix={
+                <>
+                  <p className="text-lg font-semibold text-blue-500">%</p>
+                </>
+              }
               size="small"
             />
           </div>

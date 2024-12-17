@@ -429,7 +429,7 @@ const CableTray = ({
         <span className="font-bold text-slate-700">Gland Details</span>
       </Divider>
       <div className="flex gap-4">
-        <div className="flex-1">
+        {/* <div className="flex-1">
           <CustomSingleSelect
             control={control}
             name="gland_make"
@@ -437,7 +437,7 @@ const CableTray = ({
             options={gland_make_options}
             size="small"
           />
-        </div>
+        </div> */}
         <div className="flex-1">
           <CustomSingleSelect control={control} name="moc" label="MOC" options={gland_moc_options} size="small" />
         </div>
@@ -518,7 +518,7 @@ const CableTray = ({
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <h4 className="text-sm font-bold text-blue-500">Material Construction</h4>
+          <h4 className="text-sm font-bold text-blue-500">Cable Tray MOC</h4>
           <div className="flex gap-4">
             <div className="flex flex-1 items-center gap-2">
               <div className="flex items-center gap-4">
@@ -610,7 +610,7 @@ const CableTray = ({
             <CustomSingleSelect
               control={control}
               name="pct_perforated_type_max_width"
-              label="Max. Width"
+              label="Min. Width"
               options={cable_tray_width_options}
               size="small"
               disabled={watch("is_pct_perforated_type_selected") === "0"}
@@ -640,7 +640,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -698,7 +698,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -827,7 +827,7 @@ const CableTray = ({
             <CustomSingleSelect
               control={control}
               name="cct_perforated_type_max_width"
-              label="Max. Width"
+              label="Min. Width"
               options={cable_tray_width_options}
               size="small"
               disabled={watch("is_cct_perforated_type_selected") === "0"}
@@ -857,7 +857,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -915,7 +915,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -1044,7 +1044,7 @@ const CableTray = ({
             <CustomSingleSelect
               control={control}
               name="sct_perforated_type_max_width"
-              label="Max. Width"
+              label="Min. Width"
               options={cable_tray_width_options}
               size="small"
               disabled={watch("is_sct_perforated_type_selected") === "0"}
@@ -1074,7 +1074,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Ladder Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
@@ -1132,7 +1132,7 @@ const CableTray = ({
         <div className="flex gap-4">
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-2">
-              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto an above)</h4>
+              <h4 className="col-span-2 text-sm font-semibold text-slate-700">Mesh Type (upto and above)</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
