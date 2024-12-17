@@ -307,3 +307,4 @@ export const HEATING_SWITCHGEAR_HEATER_API = `/document/Heating Switchgear Combi
 // Get excels
 export const GET_DESIGN_BASIS_EXCEL_API = `/method/db_revision.get_design_basis_excel`
 export const GET_LOAD_LIST_EXCEL_API = `/method/load_list_revisions.get_load_list_excel`
+export const GET_CABLE_SCHEDULE_HEATING_EXCEL_API = `/method/cable_schedule_revisions.get_cable_schedule_excel`

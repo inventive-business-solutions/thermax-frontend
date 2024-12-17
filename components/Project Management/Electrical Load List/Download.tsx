@@ -16,6 +16,7 @@ import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
   COMMON_CONFIGURATION,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
+  GET_CABLE_SCHEDULE_HEATING_EXCEL_API,
   GET_LOAD_LIST_EXCEL_API,
   LBPS_SPECIFICATIONS_REVISION_HISTORY_API,
   LOCAL_ISOLATOR_REVISION_HISTORY_API,
@@ -23,7 +24,7 @@ import {
   MOTOR_SPECIFICATIONS_REVISION_HISTORY_API,
   STATIC_DOCUMENT_API,
 } from "configs/api-endpoints"
-import { DB_REVISION_STATUS } from "configs/constants"
+import { DB_REVISION_STATUS, HEATING } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
 import "./DownloadComponent.css"
 import { useLoading } from "hooks/useLoading"
@@ -31,6 +32,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { mutate } from "swr"
 import { getThermaxDateFormat } from "utils/helpers"
+import { useCurrentUser } from "hooks/useCurrentUser"
 
 interface TableDataType {
   key: React.Key
@@ -80,8 +82,10 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
   const [commonConfigData, setCommonConfigData] = useState<any[]>([])
   const [loadListData, setLoadListData] = useState<any[]>([])
   const [tabKey, setTabKey] = useState("1")
-
-  console.log(revisionHistory, "revisionHistory")
+  const userInfo: {
+    division: string
+  } = useCurrentUser()
+  // console.log(revisionHistory, "revisionHistory")
 
   useEffect(() => {
     if (revisionHistory?.length) {
@@ -95,26 +99,62 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
       setDataSource(dataSource)
     }
   }, [revisionHistory])
+  // const ENDPOINTS:any = {
+  //   HEATING: {
+  //     loadlist: GET_LOAD_LIST_EXCEL_API,
+  //     cableSchedule: GET_CABLE_SCHEDULE_HEATING_EXCEL_API,
+  //   },
+  //   DEFAULT: {
+  //     loadlist: "",
+  //     cableSchedule: "",
+  //   },
+  // };
+
+  // const getDownLoadEndpoint = (activeTab: any) => {
+  //   const divisionEndpoints = ENDPOINTS[userInfo.division] || ENDPOINTS.DEFAULT;
+  //   return divisionEndpoints[activeTab] || "";
+  // };
+
+  const getDownLoadEndpoint = () => {
+    switch (userInfo.division) {
+      case HEATING:
+        return tabKey === "1"
+          ? GET_LOAD_LIST_EXCEL_API
+          : tabKey === "2"
+          ? GET_CABLE_SCHEDULE_HEATING_EXCEL_API
+          : tabKey === "3"
+          ? ""
+          : ""
+      default:
+        return ""
+    }
+  }
 
   const handleDownload = async (revision_id: string) => {
     setDownloadIconSpin(true)
-    const result = await downloadFile(GET_LOAD_LIST_EXCEL_API, true, {
-      revision_id,
-    })
-    const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
-    const excelBlob = new Blob([byteArray.buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    })
-    const url = window.URL.createObjectURL(excelBlob)
-    const link = document.createElement("a")
-    link.href = url
-    link.setAttribute("download", `${getName(tabKey)}.xlsx`) // Filename
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    console.log(revision_id)
+    console.log(getDownLoadEndpoint())
+
     try {
+      const result = await downloadFile(getDownLoadEndpoint(), true, {
+        revision_id,
+      })
+      console.log(result);
+      
+      const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
+      const excelBlob = new Blob([byteArray.buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      })
+      const url = window.URL.createObjectURL(excelBlob)
+      const link = document.createElement("a")
+      link.href = url
+      link.setAttribute("download", `${getName(tabKey)}.xlsx`) // Filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     } catch (error) {
       console.error(error)
+      setDownloadIconSpin(false)
     } finally {
       setDownloadIconSpin(false)
     }
@@ -202,7 +242,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
                     icon={
                       <CloudDownloadOutlined
                         style={{
-                          fontSize: "1rem",
+                          fontSize: "1.3rem",
                           color: "green",
                         }}
                         spin={downloadIconSpin}
@@ -263,7 +303,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
         )
       },
     }
-    if (tab === "local-isolator" || tab === "motor-specs" || tab === "lpbs-specs" ) {
+    if (tab === "local-isolator" || tab === "motor-specs" || tab === "lpbs-specs") {
       let position = columns.length - 2
 
       // Insert the element at the calculated position
