@@ -412,28 +412,20 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       }
       typedLoadListColumns.forEach((column) => {
         if (column.name === "controlScheme") {
-          console.log(
-            [...new Set(selectedControlSchemeItems.filter((item: any) => item != "NA" && item != "")), "NA"],
-            "selectedLpbsItems"
-          )
+           
           column.source = [
             ...new Set(selectedControlSchemeItems.filter((item: any) => item != "NA" && item != "")),
             "NA",
           ]
         }
         if (column.name === "lbpsType") {
-          console.log([...new Set(selectedLpbsItems), "NA"], "selectedLpbsItems")
-
           column.source = [...new Set(selectedLpbsItems.filter((item: any) => item != "NA" && item != "")), "NA"]
         }
       })
-      // updateSheetData(loadListData)
     }
   }, [loadListData])
 
   useEffect(() => {
-    console.log(mainSupplyLV, "mainSupplyLV")
-    console.log(subPackages, "subPackages")
     if (subPackages?.length) {
       typedLoadListColumns.forEach((column) => {
         if (column.name === "pkg") {
