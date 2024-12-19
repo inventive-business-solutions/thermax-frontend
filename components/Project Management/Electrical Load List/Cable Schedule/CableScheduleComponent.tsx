@@ -88,23 +88,7 @@ const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any, cableTr
     ]
   })
 }
-const motorCanopyPayload = {
-  tag_number: "",
-  service_description: "",
-  qty: 0,
-  motor_rated_current: 0,
-  rpm: 0,
-  motor_mounting_type: "",
-  motor_frame_size: "",
-  motor_location: "",
-  moc: "",
-  canopy_model_number: "",
-  canopy_leg_length: "",
-  canopy_cut_out: "",
-  part_code: "",
-  motor_scope: "",
-  remark: "",
-}
+ 
 
 const useDataFetching = (
   designBasisRevisionId: string,
@@ -155,8 +139,7 @@ const useDataFetching = (
         `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
       const formattedData = getArrayOfCableScheduleData(loadList, savedCableSchedule, cableTrayData)
-      console.log(savedCableSchedule, "savedCableSchedule")
-      console.log(cableTrayData, "cableTrayData")
+     
       getData(getApiEndpoint(userInfo?.division)).then((res) => {
         console.log(res)
         let sortedSchemes
@@ -192,7 +175,7 @@ const useDataFetching = (
       setIsLoading(false)
       setLoading(false)
     }
-  }, [loadListLatestRevisionId])
+  }, [loadListLatestRevisionId,cableScheduleRevisionId,])
 
   useEffect(() => {
     fetchData()
@@ -331,19 +314,18 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           ? loadListItem.control_scheme === item.sub_scheme
           : loadListItem.control_scheme === item.control_scheme
       )
-      console.log(lpbsScheme, "selected lpbsScheme")
-      console.log(controlScheme, "selected controlScheme")
+
       const isPresentInGrouping = false
       const isSpaceHeater = loadListItem.space_heater === "Yes"
       const isThermister = loadListItem.thermistor === "Yes"
-      console.log("Payload load list item", loadListItem)
-      console.log("Payload spaceheater", isSpaceHeater)
-      console.log("Payload thermistor", isThermister)
+
       const cables = []
       const motorCable = {
         panel_name: loadListItem?.panel,
         starter_type: loadListItem?.starter_type,
         name: row[0] + " MOTOR",
+        tag_number: row[0],
+        service_description: row[1],
         voltage: division === HEATING ? row[6] : null,
         kw: getStandByKw(row[2], row[3]),
         type_of_cable: `${`Power - ${getCableType(row[0])}`}`,
@@ -363,10 +345,13 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
 
       if (isSpaceHeater) {
         const spaceheaterCable = {
-          panel_name: "",
+          panel_name: loadListItem?.panel,
           starter_type: "",
           name: row[1] + " SPACE HEATER",
           voltage: "",
+          tag_number: row[0],
+          service_description: row[1],
+
           kw: "",
           type_of_cable: "Power - 2XFY",
           scope: "",
@@ -385,9 +370,12 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       }
       if (lpbsScheme?.lcs) {
         const lcsCable = {
-          panel_name: "",
+          panel_name: loadListItem?.panel,
           starter_type: "",
           name: row[1] + " LCS",
+          tag_number: row[0],
+          service_description: row[1],
+
           voltage: "",
           kw: "",
           type_of_cable: "Control - 2XWY",
@@ -407,8 +395,11 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       }
       if (lpbsScheme?.lcs_inc_dec) {
         const lcsIncDecCable = {
-          panel_name: "",
+          panel_name: loadListItem?.panel,
           starter_type: "",
+          tag_number: row[0],
+          service_description: row[1],
+
           name: row[1] + " LCS (INC/DEC)",
           voltage: "",
           kw: "",
@@ -429,8 +420,11 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       }
       if (lpbsScheme?.lcs_rpm) {
         const lcsRpmCable = {
-          panel_name: "",
+          panel_name: loadListItem?.panel,
           starter_type: "",
+          tag_number: row[0],
+          service_description: row[1],
+
           name: row[1] + " LCS (RPM)",
           voltage: "",
           kw: "",
@@ -451,15 +445,18 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       }
       if (!isPresentInGrouping && controlScheme?.di) {
         const diCable = {
-          panel_name: "",
+          panel_name: loadListItem?.panel,
           starter_type: "",
+          tag_number: row[0],
+          service_description: row[1],
+
           name: "PLC (DI)",
           voltage: "",
           kw: "",
           type_of_cable: "Control - 2XWY",
           scope: "",
           number_of_runs: "1",
-          pair_core: controlScheme.di * 2 + "C",
+          pair_core: controlScheme.di * 2,
           sizemm2: "0.5",
           cable_material: "CU",
           type_of_insulation: "XLPE",
@@ -473,15 +470,18 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       }
       if (!isPresentInGrouping && controlScheme?.do) {
         const doCable = {
-          panel_name: "",
+          panel_name: loadListItem?.panel,
           starter_type: "",
+          tag_number: row[0],
+          service_description: row[1],
+
           name: "PLC (DO)",
           voltage: "",
           kw: "",
           type_of_cable: "Control - 2XWY",
           scope: "",
           number_of_runs: "1",
-          pair_core: controlScheme.do * 2 + "C",
+          pair_core: controlScheme.do * 2,
           sizemm2: "1.5",
           cable_material: "CU",
           type_of_insulation: "XLPE",
@@ -495,15 +495,18 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       }
       if (!isPresentInGrouping && controlScheme?.ai) {
         const aiCable = {
-          panel_name: "",
+          panel_name: loadListItem?.panel,
           starter_type: "",
+          tag_number: row[0],
+          service_description: row[1],
+
           name: "PLC (AI)",
           voltage: "",
           kw: "",
           type_of_cable: "Signal - 2XWY",
           scope: "",
           number_of_runs: "1",
-          pair_core: controlScheme.ai + "P",
+          pair_core: controlScheme.ai,
           sizemm2: "0.5",
           cable_material: "CU",
           type_of_insulation: "XLPE",
@@ -517,15 +520,18 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       }
       if (!isPresentInGrouping && controlScheme?.ao) {
         const aoCable = {
-          panel_name: "",
+          panel_name: loadListItem?.panel,
           starter_type: "",
+          tag_number: row[0],
+          service_description: row[1],
+
           name: "PLC (AO)",
           voltage: "",
           kw: "",
           type_of_cable: "Signal - 2XWY",
           scope: "",
           number_of_runs: "1",
-          pair_core: controlScheme.ao + "P",
+          pair_core: controlScheme.ao,
           sizemm2: "0.5",
           cable_material: "CU",
           type_of_insulation: "XLPE",
@@ -539,8 +545,11 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       }
       if (isThermister) {
         const thermisterCable = {
-          panel_name: "",
+          panel_name: loadListItem?.panel,
           starter_type: "",
+          tag_number: row[0],
+          service_description: row[1],
+
           name: row[1] + " THERMISTER CABLE",
           voltage: "",
           kw: "",
@@ -575,7 +584,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         let Do = grouping[i++][4]
         let Ai = grouping[i++][4]
         let Ao = grouping[i++][4]
-        i = i + 4
+        i += 4;
 
         let cables: any[] = []
         console.log(Di, Do, Ai, Ao, "DIDOAIAO")
@@ -586,10 +595,13 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             name: "PLC (DI)",
             voltage: "",
             kw: "",
+            service_description:"", 
+            tag_number:"",
+
             type_of_cable: "Control - 2XWY",
             scope: "",
             number_of_runs: "1",
-            pair_core: Di + "C",
+            pair_core: `${Di}` + "C",
             sizemm2: "0.5",
             cable_material: "CU",
             type_of_insulation: "XLPE",
@@ -607,6 +619,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             starter_type: "",
             name: "PLC (DO)",
             voltage: "",
+            service_description:"", 
+            tag_number:"",
             kw: "",
             type_of_cable: "Control - 2XWY",
             scope: "",
@@ -629,6 +643,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             starter_type: "",
             name: "PLC (AI)",
             voltage: "",
+            service_description:"", 
+            tag_number:"",
             kw: "",
             type_of_cable: "Signal - 2XWY",
             scope: "",
@@ -651,6 +667,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             starter_type: "",
             name: "PLC (AO)",
             voltage: "",
+            service_description:"", 
+            tag_number:"",
             kw: "",
             type_of_cable: "Signal - 2XWY",
             scope: "",
@@ -675,6 +693,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
     }
     console.log(individualFeeders, "final payload")
     console.log(groupPayload, "final payload group")
+    console.log({ ...individualFeeders, ...groupPayload }, "final payload all")
 
     let payload = {
       project_id: project_id,
