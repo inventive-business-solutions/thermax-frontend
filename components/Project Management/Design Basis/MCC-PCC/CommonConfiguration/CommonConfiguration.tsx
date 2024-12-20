@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import * as zod from "zod"
 import { Button, Divider, message } from "antd"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -220,9 +221,9 @@ const CommonConfiguration = ({
     metering_for_feeder_options,
   } = useCommonConfigDropdowns()
 
-  // const [testing_standards, setTestingStandards] = useState<any[]>(
-  //   Array.isArray(testing_standard_options) ? [...testing_standard_options] : []
-  // )
+  const [testing_standards, setTestingStandards] = useState<any[]>(
+    Array.isArray(testing_standard_options) ? [...testing_standard_options] : []
+  )
   const iec_testing_standards = testing_standard_options?.filter(
     (item: any) => item.name.startsWith("IEC") || item.name === "NA"
   )
@@ -274,9 +275,9 @@ const CommonConfiguration = ({
   const earth_bus_material_controlled = watch("earth_bus_material")
   const safe_field_motor_controlled = watch("safe_field_motor_material")
   const hazardous_field_motor_controlled = watch("hazardous_field_motor_material")
+  const hazardous__field_motor_type_controlled = watch("hazardous_field_motor_type")
   const safe_lpbs_material_controlled = watch("safe_lpbs_material")
   const hazardous_lpbs_material_controlled = watch("hazardous_lpbs_material")
-  const hazardous__field_motor_type_controlled = watch("hazardous_field_motor_type")
   const hazardous_lpbs_type_controlled = watch("hazardous_lpbs_type")
 
   useEffect(() => {
@@ -290,26 +291,27 @@ const CommonConfiguration = ({
     if (hazardous_field_motor_controlled !== "SS 316" && hazardous_field_motor_controlled !== "SS 304" && hazardous_field_motor_controlled !== "CRCA") {
       setValue("hazardous_field_motor_thickness", "NA")
     }
-    if (safe_lpbs_material_controlled !== "SS 316" && safe_lpbs_material_controlled !== "SS 304" && safe_lpbs_material_controlled !== "CRCA") {
-      setValue("safe_lpbs_thickness", "NA")
-    }
-    if (hazardous_lpbs_material_controlled !== "SS 316" && hazardous_lpbs_material_controlled !== "SS 304" && hazardous_lpbs_material_controlled !== "CRCA") {
-      setValue("hazardous_lpbs_thickness", "NA")
-    }
+      if (safe_lpbs_material_controlled !== "SS 316" && safe_lpbs_material_controlled !== "SS 304" && safe_lpbs_material_controlled !== "CRCA") {
+        setValue("safe_lpbs_thickness", "NA")
+      }
+      if (hazardous_lpbs_material_controlled !== "SS 316" && hazardous_lpbs_material_controlled !== "SS 304" && hazardous_lpbs_material_controlled !== "CRCA") {
+        setValue("hazardous_lpbs_thickness", "NA")
+      }
     if (hazardous__field_motor_type_controlled === "IEC Exd") {
       setValue("hazardous_field_motor_material", "Diecast Aluminium")
     }
     if (hazardous__field_motor_type_controlled === "IEC Exe") {
       setValue("hazardous_field_motor_material", "SS 316")
     }
-    if (hazardous_lpbs_type_controlled === "IEC Exd") {
-      setValue("hazardous_lpbs_material", "Diecast Aluminium")
-    }
-    if (hazardous_lpbs_type_controlled === "IEC Exe") {
-      setValue("hazardous_lpbs_material", "SS 316")
-    }
+      if (hazardous_lpbs_type_controlled === "IEC Exd") {
+        setValue("hazardous_lpbs_material", "Diecast Aluminium")
+      }
+      if (hazardous_lpbs_type_controlled === "IEC Exe") {
+        setValue("hazardous_lpbs_material", "SS 316")
+      }
 
-  }, [is_Ammeter_NA, safe_lpbs_material_controlled, hazardous_lpbs_material_controlled, hazardous__field_motor_type_controlled, hazardous_lpbs_type_controlled, safe_field_motor_controlled, hazardous_field_motor_controlled, setValue])
+    }, [is_Ammeter_NA, safe_lpbs_material_controlled, hazardous_lpbs_material_controlled, hazardous__field_motor_type_controlled, hazardous_lpbs_type_controlled, safe_field_motor_controlled, hazardous_field_motor_controlled, setValue])
+  // }, [is_Ammeter_NA, safe_field_motor_controlled, hazardous_field_motor_controlled, hazardous__field_motor_type_controlled, setValue])
 
   // Control Bus (dependancy Logic)
   useEffect(() => {
@@ -333,16 +335,16 @@ const CommonConfiguration = ({
     }
   }, [pb_current_density_options, power_bus_material_controlled, setValue])
 
-  // earth Bus (Dependency logic)
-  useEffect(() => {
-    if (earth_bus_material_controlled === "Aluminium") {
-      setValue("earth_bus_current_density", "0.8 A/Sq. mm")
-    } else if (earth_bus_material_controlled === "Copper") {
-      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
-    } else {
-      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
-    }
-  }, [earth_bus_material_controlled, eb_current_density_options, setValue])
+  // // earth Bus (Dependency logic)
+  // useEffect(() => {
+  //   if (earth_bus_material_controlled === "Aluminium") {
+  //     setValue("earth_bus_current_density", "0.8 A/Sq. mm")
+  //   } else if (earth_bus_material_controlled === "Copper") {
+  //     setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+  //   } else {
+  //     setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+  //   }
+  // }, [earth_bus_material_controlled, eb_current_density_options, setValue])
 
   const handleError = (error: any) => {
     try {
@@ -383,6 +385,7 @@ const CommonConfiguration = ({
         <Divider>
           <span className="font-bold text-slate-700">Outgoing Feeders</span>
         </Divider>
+
         <div className="flex items-center gap-8">
           <div className="flex-1">
             <CustomSingleSelect
@@ -455,15 +458,8 @@ const CommonConfiguration = ({
               size="small"
             />
           </div>
-          {/* <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="switchgear_combination"
-              label="Switchgear Combination"
-              options={switchgear_combination_options || []}
-              size="small"
-            />
-          </div> */}
+
+
           {userInfo?.division === WWS_SPG && (
             <div className="flex-1">
               <CustomSingleSelect
@@ -838,7 +834,7 @@ const CommonConfiguration = ({
             />
           </div>
         </Divider>
-        {/* SAFE AREA for ISOLATOR */}
+
         <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
           <div>Safe Area</div>
           <CustomRadioSelect
@@ -915,17 +911,6 @@ const CommonConfiguration = ({
               disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"}
             />
           </div>
-          {/* <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="safe_field_motor_cable_entry"
-              label="Cable Entry"
-              options={field_motor_cable_entry_options || []}
-              size="small"
-              disabled={true}
-            />
-          </div> */}
-
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -949,7 +934,7 @@ const CommonConfiguration = ({
         </div>
 
 
-        {/*Hazardous area for (ISOLATOR)  */}
+
         <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
           <div>Hazardous Area</div>
           <CustomRadioSelect
@@ -1026,16 +1011,6 @@ const CommonConfiguration = ({
               disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
             />
           </div>
-          {/* <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="hazardous_field_motor_cable_entry"
-              label="Cable Entry"
-              options={field_motor_cable_entry_options || []}
-              size="small"
-              disabled={true}
-            />
-          </div> */}
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -1127,7 +1102,6 @@ const CommonConfiguration = ({
           </div>
         </div>
 
-        {/* SAFE AREA for (LPBS) */}
         <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
           <div>Safe Area</div>
           <CustomRadioSelect
@@ -1226,7 +1200,6 @@ const CommonConfiguration = ({
           </div>
         </div>
 
-        {/* Hazardous AREA for (LPBS) */}
 
         <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
           <div>Hazardous Area</div>
@@ -1506,12 +1479,6 @@ const CommonConfiguration = ({
             />
           </div>
         </div>
-        {/* <Divider>
-          <span className="font-bold text-slate-700">Metering for Feeder</span>
-        </Divider>
-        <div className="w-1/3 flex-1">
-
-        </div> */}
         <Divider>
           <span className="font-bold text-slate-700">Others</span>
         </Divider>
@@ -1538,28 +1505,6 @@ const CommonConfiguration = ({
               ]}
             />
           </div>
-          {/* <div className="flex-1">
-            <CustomRadioSelect
-              control={control}
-              name="alarm_annunciator"
-              label="Alarm Annunciator"
-              options={[
-                { label: "Applicable", value: "Applicable" },
-                { label: "Not Applicable", value: "Not Applicable" },
-              ]}
-            />
-          </div> */}
-          {/* <div className="flex-1">
-            <CustomRadioSelect
-              control={control}
-              name="control_transformer"
-              label="Control Transformer"
-              options={[
-                { label: "Applicable", value: "Applicable" },
-                { label: "Not Applicable", value: "Not Applicable" },
-              ]}
-            />
-          </div> */}
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Spares</span>

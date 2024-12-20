@@ -261,6 +261,7 @@ const CableTray = ({
     try {
       setLoading(true)
       await updateData(`${CABLE_TRAY_LAYOUT}/${cableTrayData[0].name}`, false, values)
+      message.success("Cable Tray Updated Successfully")
       setActiveKey("2")
     } catch (error) {
       console.error("Submission error:", error)

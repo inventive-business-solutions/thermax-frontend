@@ -9,7 +9,7 @@ import { updateData } from "actions/crud-actions"
 import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { MOTOR_PARAMETER_API, PROJECT_INFO_API } from "configs/api-endpoints"
+import { MOTOR_PARAMETER_API, PROJECT_INFO_API, PROJECT_MAIN_PKG_API } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import useMotorParametersDropdowns from "./MotorParametersDropdown"
@@ -253,6 +253,13 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
   const { data: motorParameters } = useGetData(
     `${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
+
+  const { data: mainPackageData } = useGetData(
+    `${PROJECT_MAIN_PKG_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  )
+
+  console.log("mainPackageData: ", mainPackageData)
+
   useEffect(() => {
     if (motorParameters?.[0]) {
       setIsHazardous(Boolean(motorParameters?.[0].is_hazardous_area_present))
