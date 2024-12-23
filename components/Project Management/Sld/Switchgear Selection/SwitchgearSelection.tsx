@@ -33,9 +33,6 @@ const getArrayOfSwitchgearSelectionData = (
   division: string
 ) => {
   if (!data) return []
-  console.log(data, "load list")
-  console.log(commonConfiguration, "load list commonConfiguration")
-  console.log(makeComponents, "load list makeComponents")
 
   return data.map((item: any) => {
     const savedItem = motorCanopySavedData?.motor_canopy_data?.find((row: any) => row.tag_number === item.tag_number)
@@ -74,25 +71,17 @@ const getArrayOfSwitchgearSelectionData = (
   })
 }
 
-const useDataFetching = (
-  designBasisRevisionId: string,
-  motorCanopyRevisionId: string,
-  loadListData: any,
-  division: string
-) => {
+const useDataFetching = (designBasisRevisionId: string, loadListData: any, division: string) => {
   const [isLoading, setIsLoading] = useState(true)
-  const [motorCanopyData, setMotorCanopyData] = useState<any[]>([])
   const [swSelectionData, setSwSelectionData] = useState<any[]>([])
-  // const {setLoading} = useLoading();
-  // const [loadListData, setLoadListData] = useState<any[]>([])
-  const fetchData = useCallback(async () => {
-    // if (!loadListLatestRevisionId) return
+  const [commonConfiguration, setCommonConfiguration] = useState<any[]>([])
+  
 
+  const [makeComponents, setMakeComponents] = useState<any[]>([])
+  
+  const fetchData = useCallback(async () => {
     try {
       setIsLoading(true)
-      // const loadList = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
-      //   const motorCanopySavedData = await getData(`${MOTOR_CANOPY_REVISION_HISTORY_API}/${motorCanopyRevisionId}`)
-      // console.log(loadList);
       const commonConfiguration = await getData(
         `${COMMON_CONFIGURATION}?fields=["mcc_switchgear_type"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
@@ -107,19 +96,13 @@ const useDataFetching = (
         makeComponents[0],
         division
       )
-      console.log("commonConfiguration", commonConfiguration)
-      console.log("makeComponents", makeComponents)
-      console.log("array of sw data", formattedData)
-
-      //   console.log(savedCableSchedule, "savedCableSchedule")
-
-      //   setLoadListData(loadList?.electrical_load_list_data)
+      setMakeComponents(makeComponents[0])
+      setCommonConfiguration(commonConfiguration[0])
       setSwSelectionData(formattedData)
       setIsLoading(false)
     } catch (error) {
       console.error("Error fetching data:", error)
       message.error("Failed to load data")
-      setMotorCanopyData([])
     } finally {
       setIsLoading(false)
     }
@@ -129,7 +112,7 @@ const useDataFetching = (
     fetchData()
   }, [fetchData])
 
-  return { swSelectionData, loadListData, isLoading, refetch: fetchData }
+  return { commonConfiguration, makeComponents, swSelectionData, loadListData, isLoading, refetch: fetchData }
 }
 
 const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, motorCanopyRevisionId, data }) => {
@@ -144,9 +127,8 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, motorCano
 
   const project_id = params.project_id as string
 
-  const { swSelectionData, loadListData, isLoading, refetch } = useDataFetching(
+  let { commonConfiguration, makeComponents, swSelectionData, loadListData, isLoading, refetch } = useDataFetching(
     designBasisRevisionId,
-    motorCanopyRevisionId,
     data,
     userInfo.division
   )
@@ -234,18 +216,21 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, motorCano
   )
 
   // Initialize or update spreadsheet
+  const initSpreadsheet = () => {
+    // console.log(data);
+
+    if (spreadsheetInstance) {
+      spreadsheetInstance.destroy()
+    }
+    console.log(swSelectionData)
+
+    const instance = jspreadsheet(jRef.current!, swSelectionOptions)
+    setSpreadsheetInstance(instance)
+    setLoading(false)
+  }
+
   useEffect(() => {
     if (isLoading || !jRef.current) return
-
-    const initSpreadsheet = () => {
-      if (spreadsheetInstance) {
-        spreadsheetInstance.destroy()
-      }
-
-      const instance = jspreadsheet(jRef.current!, swSelectionOptions)
-      setSpreadsheetInstance(instance)
-      setLoading(false)
-    }
 
     initSpreadsheet()
 
@@ -253,11 +238,48 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, motorCano
       spreadsheetInstance?.destroy()
     }
   }, [isLoading, swSelectionOptions])
+  useEffect(() => {
+    console.log(data)
 
-  const handleMotorCanopySave = async () => {
+    if (data.length) {
+      const formattedData = getArrayOfSwitchgearSelectionData(
+        loadListData,
+        [],
+        commonConfiguration,
+        makeComponents,
+        userInfo.division
+      )
+      // setSwSelectionData(formattedData)
+      console.log(formattedData,"formattedData");
+      spreadsheetInstance?.setData(formattedData)
+      // swSelectionData=formattedData;
+      // initSpreadsheet()
+    }
+  }, [data])
+
+  const handleSgSave = async () => {
     const data = spreadsheetInstance?.getData()
 
     console.log(data, "all load list data")
+    const temp = {
+      tag_number: "",
+      service_description: "",
+      hp: 0,
+      kw: 0,
+      current: 0,
+      starter: "",
+      make: "",
+      mcc_switchgear_type: "",
+      vfd: "",
+      breaker_fuse: "",
+      fuse_holder: "",
+      contractor_main: "",
+      contractor_star: "",
+      contractor_delta: "",
+      overlay_relay: "",
+      terminal_part_number: "",
+      incomer: "",
+    }
 
     let payload = {
       project_id: project_id,
@@ -377,9 +399,9 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, motorCano
         {/* <Button type="primary">Get Cable Sizing</Button> */}
 
         <Button type="primary" onClick={handleGetSwDetails} disabled={isLoading}>
-          Get Details
+          Get Switchgear Details
         </Button>
-        <Button type="primary" onClick={handleMotorCanopySave} disabled={isLoading}>
+        <Button type="primary" onClick={handleSgSave} disabled={isLoading}>
           Save
         </Button>
         <Button type="primary" onClick={() => {}} disabled={isLoading}>

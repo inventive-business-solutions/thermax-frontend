@@ -20,16 +20,7 @@ const SldComponent: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
-    <div>
-      <div className="mb-4 flex justify-end gap-4">
-        <Button type="primary" onClick={() => {}} className="hover:bg-blue-600">
-          Get Load List Details
-        </Button>
-        <Button type="primary" onClick={() => {}} className="hover:bg-blue-600">
-          Panel Mapping
-        </Button>
-      </div>
-
+    <div> 
       <SLDTabs
         designBasisRevisionId={designBasisRevisionId}
         loadListLatestRevisionId={loadListLatestRevisionId}
