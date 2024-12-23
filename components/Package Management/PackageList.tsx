@@ -140,6 +140,7 @@ export default function PackageList() {
       title: "Action",
       align: "center",
       key: "main_action",
+      hidden: userInfo.is_superuser !== 1,
       render: (text, record) => (
         <div className="flex justify-center gap-2">
           <Tooltip placement="top" title="Add Sub Package">
@@ -172,6 +173,7 @@ export default function PackageList() {
       title: "Action",
       key: "sub_action",
       align:"center",
+      hidden: userInfo.is_superuser !== 1,
       render: (text, record) => (
         <div>
           <Button type="link" shape="circle" icon={<EditOutlined />} onClick={() => handleEditSubPkg(record)} />

@@ -1,8 +1,8 @@
 "use client"
 
 import {
-  ALARM_ACKNOWLEDGE_AND_LAMP_TEST,
-  ALARM_ACKNOWLEDGE_AND_LAMP_TEST2,
+  ALARM_ACKNOWLEDGE_DROPDOWN,
+  LAMP_TEST_DROPDOWN,
   AMMETER,
   AMMETER_CONFIGURATION,
   ANALOG_SIGNAL_WIRING_COLOR,
@@ -54,6 +54,7 @@ import {
   PUSH_BUTTON_ESS,
   PUSH_BUTTON_START_COLOR,
   PUSH_BUTTON_STOP_COLOR,
+  RESET_DROPDOWN,
   RUNNING_OPEN,
   SPARE_TERMINAL,
   SPEED_DECREASE_PB,
@@ -64,8 +65,7 @@ import {
   SUPPLY_FEEDER_POLE,
   SUPPLY_FEEDER_TESTING_STANDARD,
   SWITCHGEAR_COMBINATION,
-  TEST_RESET,
-  TEST_RESET2,
+  TEST_DROPDOWN,
   TRIP,
   VDC_24_WIRING_COLOR,
   VDC_24_WIRING_SIZE,
@@ -150,20 +150,20 @@ export default function useCommonConfigDropdowns() {
   const { dropdownOptions: ferrule_options } = useDropdownOptions(`${FERRULE}?fields=["*"]`, "ferrule")
   const { dropdownOptions: spare_terminal_options } = useDropdownOptions(`${SPARE_TERMINAL}?fields=["*"]`, "name")
 
-  let { dropdownOptions: test_reset_options } = useDropdownOptions(`${TEST_RESET}?fields=["*"]`, "name")
-  test_reset_options = moveNAtoEnd(test_reset_options)
-  let { dropdownOptions: test_reset2_options } = useDropdownOptions(`${TEST_RESET2}?fields=["*"]`, "name")
-  test_reset2_options = moveNAtoEnd(test_reset2_options)
-  let { dropdownOptions: alarm_acknowledge_and_lamp_test_options } = useDropdownOptions(
-    `${ALARM_ACKNOWLEDGE_AND_LAMP_TEST}?fields=["*"]`,
+  let { dropdownOptions: test_dropdown_options } = useDropdownOptions(`${TEST_DROPDOWN}?fields=["*"]`, "name")
+  test_dropdown_options = moveNAtoEnd(test_dropdown_options)
+  let { dropdownOptions: reset_dropdown_options } = useDropdownOptions(`${RESET_DROPDOWN}?fields=["*"]`, "name")
+  reset_dropdown_options = moveNAtoEnd(reset_dropdown_options)
+  let { dropdownOptions: alarm_acknowledge_dropdown_options } = useDropdownOptions(
+    `${ALARM_ACKNOWLEDGE_DROPDOWN}?fields=["*"]`,
     "name"
   )
-  alarm_acknowledge_and_lamp_test_options = moveNAtoEnd(alarm_acknowledge_and_lamp_test_options)
-  let { dropdownOptions: alarm_acknowledge_and_lamp_test2_options } = useDropdownOptions(
-    `${ALARM_ACKNOWLEDGE_AND_LAMP_TEST2}?fields=["*"]`,
+  alarm_acknowledge_dropdown_options = moveNAtoEnd(alarm_acknowledge_dropdown_options)
+  let { dropdownOptions: lamp_test_dropdown_options } = useDropdownOptions(
+    `${LAMP_TEST_DROPDOWN}?fields=["*"]`,
     "name"
   )
-  alarm_acknowledge_and_lamp_test2_options = moveNAtoEnd(alarm_acknowledge_and_lamp_test2_options)
+  lamp_test_dropdown_options = moveNAtoEnd(lamp_test_dropdown_options)
   let { dropdownOptions: speed_decrease_pb_options } = useDropdownOptions(`${SPEED_DECREASE_PB}?fields=["*"]`, "name")
   speed_decrease_pb_options = moveNAtoEnd(speed_decrease_pb_options)
   let { dropdownOptions: speed_increase_pb_options } = useDropdownOptions(`${SPEED_INCREASE_PB}?fields=["*"]`, "name")
@@ -373,10 +373,10 @@ export default function useCommonConfigDropdowns() {
     cable_wiring_pvc_options,
     ferrule_options,
     spare_terminal_options,
-    test_reset_options,
-    test_reset2_options,
-    alarm_acknowledge_and_lamp_test_options,
-    alarm_acknowledge_and_lamp_test2_options,
+    test_dropdown_options,
+    reset_dropdown_options,
+    alarm_acknowledge_dropdown_options,
+    lamp_test_dropdown_options,
     speed_decrease_pb_options,
     speed_increase_pb_options,
     ess_options,

@@ -3,6 +3,7 @@
 import {
   CABLE_PLACEMENT,
   CABLE_TRAY_HEIGHT,
+  CABLE_TRAY_MOC,
   CABLE_TRAY_ORIENTATION,
   CABLE_TRAY_THICKNESS,
   CABLE_TRAY_WIDTH,
@@ -84,6 +85,9 @@ export default function useCableTrayDropdowns() {
     `${MATERIAL_CONSTRUCTION_WET_AREA}?fields=["*"]`,
     "name"
   )
+  let {dropdownOptions: cable_tray_moc_options} = useDropdownOptions(`${CABLE_TRAY_MOC}?fields=["*"]`,"name")
+
+
   material_construction_wet_area_options = moveNAtoEnd(material_construction_wet_area_options)
   let { dropdownOptions: cable_tray_width_options } = useDropdownOptions(`${CABLE_TRAY_WIDTH}?fields=["*"]`, "name")
   cable_tray_width_options = sortDropdownOptions(cable_tray_width_options)
@@ -117,6 +121,7 @@ export default function useCableTrayDropdowns() {
     cable_tray_orientation_options,
     material_construction_dry_area_options,
     material_construction_wet_area_options,
+    cable_tray_moc_options,
     cable_tray_width_options,
     cable_tray_height_options,
     cable_tray_thickness_options,

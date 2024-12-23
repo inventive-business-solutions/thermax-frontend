@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import * as zod from "zod"
 import { Button, Divider, message } from "antd"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -58,8 +59,8 @@ const getDefaultValues = (commonConfigData: any) => {
     speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
     alarm_acknowledge_and_lamp_test: commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
     lamp_test_push_button: commonConfigData?.lamp_test_push_button || "Yellow",
-    test_reset: commonConfigData?.test_reset || "Yellow",
-    test_reset2: commonConfigData?.test_reset2 || "Black",
+    test_dropdown: commonConfigData?.test_dropdown || "Yellow",
+    reset_dropdown: commonConfigData?.reset_dropdown || "Black",
     selector_switch_applicable: commonConfigData?.selector_switch_applicable || "Not Applicable",
     selector_switch_lockable: commonConfigData?.selector_switch_lockable || "Lockable",
     running_open: commonConfigData?.running_open || "Green",
@@ -119,7 +120,7 @@ const getDefaultValues = (commonConfigData: any) => {
     control_bus_material: commonConfigData?.control_bus_material || "Aluminium",
     control_bus_current_density: commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
     control_bus_rating_of_busbar:
-      commonConfigData?.control_bus_rating_of_busbar || "( Min -1R X 60 mm X 12 mm) for 50 KA",
+      commonConfigData?.control_bus_rating_of_busbar || "( Min - 1R X 25 mm X 10 mm )",
     earth_bus_main_busbar_selection: commonConfigData?.earth_bus_main_busbar_selection || "As per IS8623",
     earth_bus_busbar_position: commonConfigData?.earth_bus_busbar_position || "Top",
     earth_bus_material: commonConfigData?.earth_bus_material || "Aluminium",
@@ -185,10 +186,10 @@ const CommonConfiguration = ({
     speed_increase_pb_options,
     field_motor_thickness_options,
     speed_decrease_pb_options,
-    test_reset_options,
-    test_reset2_options,
-    alarm_acknowledge_and_lamp_test_options,
-    alarm_acknowledge_and_lamp_test2_options,
+    test_dropdown_options,
+    reset_dropdown_options,
+    alarm_acknowledge_dropdown_options,
+    lamp_test_dropdown_options,
     running_open_options,
     stopped_closed_options,
     trip_options,
@@ -220,9 +221,9 @@ const CommonConfiguration = ({
     metering_for_feeder_options,
   } = useCommonConfigDropdowns()
 
-  // const [testing_standards, setTestingStandards] = useState<any[]>(
-  //   Array.isArray(testing_standard_options) ? [...testing_standard_options] : []
-  // )
+  const [testing_standards, setTestingStandards] = useState<any[]>(
+    Array.isArray(testing_standard_options) ? [...testing_standard_options] : []
+  )
   const iec_testing_standards = testing_standard_options?.filter(
     (item: any) => item.name.startsWith("IEC") || item.name === "NA"
   )
@@ -274,9 +275,9 @@ const CommonConfiguration = ({
   const earth_bus_material_controlled = watch("earth_bus_material")
   const safe_field_motor_controlled = watch("safe_field_motor_material")
   const hazardous_field_motor_controlled = watch("hazardous_field_motor_material")
+  const hazardous__field_motor_type_controlled = watch("hazardous_field_motor_type")
   const safe_lpbs_material_controlled = watch("safe_lpbs_material")
   const hazardous_lpbs_material_controlled = watch("hazardous_lpbs_material")
-  const hazardous__field_motor_type_controlled = watch("hazardous_field_motor_type")
   const hazardous_lpbs_type_controlled = watch("hazardous_lpbs_type")
 
   useEffect(() => {
@@ -310,6 +311,7 @@ const CommonConfiguration = ({
     }
 
   }, [is_Ammeter_NA, safe_lpbs_material_controlled, hazardous_lpbs_material_controlled, hazardous__field_motor_type_controlled, hazardous_lpbs_type_controlled, safe_field_motor_controlled, hazardous_field_motor_controlled, setValue])
+  // }, [is_Ammeter_NA, safe_field_motor_controlled, hazardous_field_motor_controlled, hazardous__field_motor_type_controlled, setValue])
 
   // Control Bus (dependancy Logic)
   useEffect(() => {
@@ -381,8 +383,9 @@ const CommonConfiguration = ({
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
         <Divider>
-          <span className="font-bold text-slate-700">Outgoing Feeders</span>
+          <span className="font-bold text-slate-700">Outgoing Feeder</span>
         </Divider>
+
         <div className="flex items-center gap-8">
           <div className="flex-1">
             <CustomSingleSelect
@@ -390,7 +393,7 @@ const CommonConfiguration = ({
               name="dol_starter"
               label={
                 <>
-                  DOL Starter <span className="text-xs text-blue-500">(KW including and below)</span>
+                  DOL Starter <span className="text-xs text-blue-500">(kW including and below)</span>
                 </>
               }
               options={dol_starter_options || []}
@@ -403,7 +406,7 @@ const CommonConfiguration = ({
               name="star_delta_starter"
               label={
                 <>
-                  Star Delta Starter <span className="text-xs text-blue-500">(KW including and above)</span>
+                  Star Delta Starter <span className="text-xs text-blue-500">(kW including and above)</span>
                 </>
               }
               options={star_delta_starter_options || []}
@@ -418,7 +421,7 @@ const CommonConfiguration = ({
               name="ammeter"
               label={
                 <>
-                  Ammeter <span className="text-xs text-blue-500">(KW including and above)</span>
+                  Ammeter <span className="text-xs text-blue-500">(kW including and above)</span>
                 </>
               }
               options={ammeter_options || []}
@@ -455,15 +458,8 @@ const CommonConfiguration = ({
               size="small"
             />
           </div>
-          {/* <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="switchgear_combination"
-              label="Switchgear Combination"
-              options={switchgear_combination_options || []}
-              size="small"
-            />
-          </div> */}
+
+
           {userInfo?.division === WWS_SPG && (
             <div className="flex-1">
               <CustomSingleSelect
@@ -735,8 +731,8 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="alarm_acknowledge_and_lamp_test"
-              label="Alarm Acknowledge Push Button"
-              options={alarm_acknowledge_and_lamp_test_options || []}
+              label="Alarm Acknowledge PB"
+              options={alarm_acknowledge_dropdown_options || []}
               size="small"
             />
           </div>
@@ -744,8 +740,8 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="lamp_test_push_button"
-              label="Lamp Test Push Button"
-              options={alarm_acknowledge_and_lamp_test2_options || []}
+              label="Lamp Test PB"
+              options={lamp_test_dropdown_options || []}
               size="small"
             />
           </div>
@@ -754,18 +750,18 @@ const CommonConfiguration = ({
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="test_reset"
+              name="test_dropdown"
               label="Test"
-              options={test_reset_options || []}
+              options={test_dropdown_options || []}
               size="small"
             />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="test_reset2"
+              name="reset_dropdown"
               label="Reset"
-              options={test_reset2_options || []}
+              options={reset_dropdown_options || []}
               size="small"
             />
           </div>
@@ -778,7 +774,7 @@ const CommonConfiguration = ({
             <CustomRadioSelect
               control={control}
               name="selector_switch_applicable"
-              label="Local/Remot Selector Switch On MCC Panel Front Door"
+              label="Local/Remote Selector Switch On MCC Panel Front Door"
               options={[
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },
@@ -838,7 +834,7 @@ const CommonConfiguration = ({
             />
           </div>
         </Divider>
-        {/* SAFE AREA for ISOLATOR */}
+
         <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
           <div>Safe Area</div>
           <CustomRadioSelect
@@ -915,17 +911,6 @@ const CommonConfiguration = ({
               disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"}
             />
           </div>
-          {/* <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="safe_field_motor_cable_entry"
-              label="Cable Entry"
-              options={field_motor_cable_entry_options || []}
-              size="small"
-              disabled={true}
-            />
-          </div> */}
-
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -949,7 +934,7 @@ const CommonConfiguration = ({
         </div>
 
 
-        {/*Hazardous area for (ISOLATOR)  */}
+
         <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
           <div>Hazardous Area</div>
           <CustomRadioSelect
@@ -1026,16 +1011,6 @@ const CommonConfiguration = ({
               disabled={watch("is_field_motor_isolator_selected") === "0" || watch("is_hazardous_area_isolator_selected") === "0"}
             />
           </div>
-          {/* <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="hazardous_field_motor_cable_entry"
-              label="Cable Entry"
-              options={field_motor_cable_entry_options || []}
-              size="small"
-              disabled={true}
-            />
-          </div> */}
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -1127,7 +1102,6 @@ const CommonConfiguration = ({
           </div>
         </div>
 
-        {/* SAFE AREA for (LPBS) */}
         <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
           <div>Safe Area</div>
           <CustomRadioSelect
@@ -1226,7 +1200,6 @@ const CommonConfiguration = ({
           </div>
         </div>
 
-        {/* Hazardous AREA for (LPBS) */}
 
         <div className="text-base font-bold text-slate-700 flex flex-row items-center gap-4">
           <div>Hazardous Area</div>
@@ -1506,60 +1479,35 @@ const CommonConfiguration = ({
             />
           </div>
         </div>
-        {/* <Divider>
-          <span className="font-bold text-slate-700">Metering for Feeder</span>
-        </Divider>
-        <div className="w-1/3 flex-1">
-
-        </div> */}
         <Divider>
           <span className="font-bold text-slate-700">Others</span>
         </Divider>
         <div className="flex items-center gap-4">
-          <div className="flex-1">
+          <div className="flex flex-row items-center gap-4 flex-1">
+            <div className="font-semibold mt-[6px]">Cooling Fans</div>
+
             <CustomRadioSelect
               control={control}
               name="cooling_fans"
-              label="Cooling Fans"
+              label=""
               options={[
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
             />
           </div>
-          <div className="flex-1">
+          <div className="flex flex-row items-center gap-4 flex-1">
+            <div className="font-semibold mt-[6px]">Louvers and Filters</div>
             <CustomRadioSelect
               control={control}
               name="louvers_and_filters"
-              label="Louvers and Filters"
+              label=""
               options={[
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
             />
           </div>
-          {/* <div className="flex-1">
-            <CustomRadioSelect
-              control={control}
-              name="alarm_annunciator"
-              label="Alarm Annunciator"
-              options={[
-                { label: "Applicable", value: "Applicable" },
-                { label: "Not Applicable", value: "Not Applicable" },
-              ]}
-            />
-          </div> */}
-          {/* <div className="flex-1">
-            <CustomRadioSelect
-              control={control}
-              name="control_transformer"
-              label="Control Transformer"
-              options={[
-                { label: "Applicable", value: "Applicable" },
-                { label: "Not Applicable", value: "Not Applicable" },
-              ]}
-            />
-          </div> */}
         </div>
         <Divider>
           <span className="font-bold text-slate-700">Spares</span>
