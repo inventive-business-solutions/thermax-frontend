@@ -85,13 +85,21 @@ const config = {
       return session
     },
   },
+  // session: {
+  //   strategy: "jwt",
+  //   maxAge: 30 * 24 * 60 * 60, // 30 days
+  //   updateAge: 24 * 60 * 60, // 24 hours
+  // },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
+    maxAge: 30 * 60,     // 30 minutes in seconds
+    updateAge: 10 * 60,   // Update session every 10 minutes
   },
+  // jwt: {
+  //   maxAge: 30 * 24 * 60 * 60, // 30 days
+  // },
   jwt: {
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 60,     // 30 minutes in seconds
   },
   debug: process.env.NODE_ENV !== "production" ? true : false,
 } satisfies NextAuthConfig

@@ -3,20 +3,13 @@ import { Button, Table, TableColumnsType, Tabs, Tag, Tooltip } from "antd"
 import React from "react"
 import { getThermaxDateFormat } from "utils/helpers"
 import SwitchgearSelection from "./Switchgear Selection/SwitchgearSelection"
+import Incomer from "./Incomer/Incomer"
 interface Props {
   panelData: any
   designBasisRevisionId: string
 }
-const PanelTab: React.FC<Props> = ({panelData,designBasisRevisionId}) => {
+const PanelTab: React.FC<Props> = ({ panelData, designBasisRevisionId }) => {
   const onChange = () => {}
-  // const arr = [
-  //   "SLD REVISION",
-  //   "SWITCHGEAR SELECTION",
-  //   "INCOMER",
-  //   "BUSBAR/ENCLOSURE SIZING",
-  //   "PANEL GA",
-  //   "PANEL SPECIFICATIONS",
-  // ]
 
   const columns: TableColumnsType = [
     {
@@ -129,6 +122,7 @@ const PanelTab: React.FC<Props> = ({panelData,designBasisRevisionId}) => {
     documentRevision: `R${index}`,
     createdDate: item.creation,
   }))
+console.log(panelData, 'panel data ');
 
   const PanelTabs = [
     {
@@ -152,12 +146,18 @@ const PanelTab: React.FC<Props> = ({panelData,designBasisRevisionId}) => {
     {
       label: "SWITCHGEAR SELECTION",
       key: "2",
-      children: <SwitchgearSelection designBasisRevisionId={designBasisRevisionId} motorCanopyRevisionId={"motorCanopyRevisionId"} data={panelData.data}/>,
+      children: (
+        <SwitchgearSelection
+          designBasisRevisionId={designBasisRevisionId}
+          motorCanopyRevisionId={"motorCanopyRevisionId"}
+          data={panelData.data}
+        />
+      ),
     },
     {
       label: "INCOMER",
       key: "3",
-      children: <h2>INCOMER</h2>,
+      children: <Incomer designBasisRevisionId={designBasisRevisionId} panelData={panelData}/>,
     },
     {
       label: "BUSBAR/ENCLOSURE SIZING",

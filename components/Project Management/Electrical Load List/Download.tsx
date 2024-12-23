@@ -16,7 +16,7 @@ import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
   COMMON_CONFIGURATION,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
-  GET_CABLE_SCHEDULE_HEATING_EXCEL_API,
+  GET_CABLE_SCHEDULE_EXCEL_API,
   GET_LOAD_LIST_EXCEL_API,
   LBPS_SPECIFICATIONS_REVISION_HISTORY_API,
   LOCAL_ISOLATOR_REVISION_HISTORY_API,
@@ -24,7 +24,7 @@ import {
   MOTOR_SPECIFICATIONS_REVISION_HISTORY_API,
   STATIC_DOCUMENT_API,
 } from "configs/api-endpoints"
-import { DB_REVISION_STATUS, HEATING } from "configs/constants"
+import { DB_REVISION_STATUS, ENVIRO, HEATING } from "configs/constants"
 import { useGetData } from "hooks/useCRUD"
 import "./DownloadComponent.css"
 import { useLoading } from "hooks/useLoading"
@@ -84,8 +84,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
   const [tabKey, setTabKey] = useState("1")
   const userInfo: {
     division: string
-  } = useCurrentUser()
-  // console.log(revisionHistory, "revisionHistory")
+  } = useCurrentUser() 
 
   useEffect(() => {
     if (revisionHistory?.length) {
@@ -99,32 +98,14 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
       setDataSource(dataSource)
     }
   }, [revisionHistory])
-  // const ENDPOINTS:any = {
-  //   HEATING: {
-  //     loadlist: GET_LOAD_LIST_EXCEL_API,
-  //     cableSchedule: GET_CABLE_SCHEDULE_HEATING_EXCEL_API,
-  //   },
-  //   DEFAULT: {
-  //     loadlist: "",
-  //     cableSchedule: "",
-  //   },
-  // };
-
-  // const getDownLoadEndpoint = (activeTab: any) => {
-  //   const divisionEndpoints = ENDPOINTS[userInfo.division] || ENDPOINTS.DEFAULT;
-  //   return divisionEndpoints[activeTab] || "";
-  // };
 
   const getDownLoadEndpoint = () => {
-    switch (userInfo.division) {
-      case HEATING:
-        return tabKey === "1"
-          ? GET_LOAD_LIST_EXCEL_API
-          : tabKey === "2"
-          ? GET_CABLE_SCHEDULE_HEATING_EXCEL_API
-          : tabKey === "3"
-          ? ""
-          : ""
+    switch (tabKey) {
+      case "1":
+        return GET_LOAD_LIST_EXCEL_API
+
+      case "2":
+        return GET_CABLE_SCHEDULE_EXCEL_API
       default:
         return ""
     }
@@ -139,8 +120,8 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
       const result = await downloadFile(getDownLoadEndpoint(), true, {
         revision_id,
       })
-      console.log(result);
-      
+      console.log(result)
+
       const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
       const excelBlob = new Blob([byteArray.buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

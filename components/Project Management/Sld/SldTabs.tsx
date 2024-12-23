@@ -10,10 +10,10 @@ import {
   LOCAL_ISOLATOR_REVISION_HISTORY_API,
   MOTOR_CANOPY_REVISION_HISTORY_API,
   MOTOR_SPECIFICATIONS_REVISION_HISTORY_API,
+  PROJECT_PANEL_API,
 } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
-import { useGetData } from "hooks/useCRUD"
-// import "./DownloadComponent.css"
+import { useGetData } from "hooks/useCRUD" 
 import { useLoading } from "hooks/useLoading"
 import { useParams, useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
@@ -26,33 +26,34 @@ interface Props {
   cableScheduleRevisionId: string
   loadListLatestRevisionId: any
 }
-const useDataFetching = (loadListLatestRevisionId: string, cableScheduleRevisionId: string) => {
+const useDataFetching = (
+  loadListLatestRevisionId: string,
+  cableScheduleRevisionId: string,
+  designBasisRevisionId: string
+) => {
   const { isLoading, setLoading: setIsLoading } = useLoading()
-  const [motorCanopyData, setMotorCanopyData] = useState<any[]>([])
-  const [motorCanopySavedData, setMotorCanopySavedData] = useState<any[]>([])
-  // const {setLoading} = useLoading();
   const [loadListData, setLoadListData] = useState<any[]>([])
   const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
+  const [projectPanelData, setProjectPanelData] = useState<any[]>([])
   const fetchData = useCallback(async () => {
     if (!loadListLatestRevisionId) return
 
     try {
       setIsLoading(true)
       const loadList = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
+      const projectPanelData = await getData(
+        `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]&order_by=creation asc`
+      )
       const cableScheduleData = await getData(`${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`)
       console.log(cableScheduleData, "cableScheduleData")
+      console.log(projectPanelData, "projectPanelData")
       console.log(loadList)
       setCableScheduleData(cableScheduleData.cable_schedule_data)
-      // const motorCanopySavedData = await getData(`${MOTOR_CANOPY_REVISION_HISTORY_API}/${motorCanopyRevisionId}`)
-      // const formattedData = getArrayOfMotorCanopyData(loadList, motorCanopySavedData)
-      //   console.log(savedCableSchedule, "savedCableSchedule")
-
+      setProjectPanelData(projectPanelData)
       setLoadListData(loadList?.electrical_load_list_data)
-      // setMotorCanopyData(formattedData)
     } catch (error) {
       console.error("Error fetching data:", error)
-      message.error("Failed to load data")
-      setMotorCanopyData([])
+      message.error("Failed to data")
     } finally {
       setIsLoading(false)
     }
@@ -62,73 +63,103 @@ const useDataFetching = (loadListLatestRevisionId: string, cableScheduleRevision
     fetchData()
   }, [fetchData])
 
-  return { cableScheduleData, motorCanopyData, loadListData, isLoading, refetch: fetchData }
+  return { projectPanelData, cableScheduleData, loadListData, isLoading, refetch: fetchData }
 }
 
 const SLDTabs: React.FC<Props> = ({ designBasisRevisionId, cableScheduleRevisionId, loadListLatestRevisionId }) => {
   const { setLoading: setModalLoading } = useLoading()
-  // const router = useRouter()
-
+  const [sLDTabs, setSLDTabs] = useState<any[]>([])
   const params = useParams()
   const project_id = params.project_id as string
 
-  // const dbLoadlistHistoryUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
-  const { motorCanopyData, cableScheduleData, loadListData, isLoading, refetch } = useDataFetching(
+  const { projectPanelData, cableScheduleData, loadListData, isLoading, refetch } = useDataFetching(
     loadListLatestRevisionId,
-    cableScheduleRevisionId
+    cableScheduleRevisionId,
+    designBasisRevisionId
   )
 
-  // const dbLoadlistHistoryUrl = `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`
-  // const { data: loadListData } = useGetData(dbLoadlistHistoryUrl)
-  // console.log(loadListData)
-
   const [panelWiseData, setPanelWiseData] = useState<any[]>([])
-
-  // const { setLoading: setModalLoading } = useLoading()
+  useEffect(() => {
+    console.log(panelWiseData);
+    
+    const updatedTabs = panelWiseData.map((tab: any, index: number) => {
+        return {
+            label: tab.panelName,
+            key: index + 1,
+            children: (
+                <>
+                    <PanelTab panelData={tab} designBasisRevisionId={designBasisRevisionId} />
+                </>
+            ),
+        };
+    });
+    setSLDTabs(updatedTabs);
+}, [panelWiseData]);
   useEffect(() => {
     setModalLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  useEffect(() => { 
+    console.log(sLDTabs,' sld tabs');
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sLDTabs])
   useEffect(() => {
-    console.log(loadListData, "loadListData")
-    // if(loadListData)
-    if (loadListData.length) {
-      const panelWiseData = Object.values(
-        loadListData.reduce((acc, item) => {
-          const panelName = item.panel
-          if (!acc[panelName]) {
-            acc[panelName] = { panelName, data: [] }
-          }
-          const cablesize = cableScheduleData.find((el: any) => el.tag_number === item.tag_number) || []
-          acc[panelName].data.push({
-            ...item,
-            cablesize:
-              cablesize && cablesize.number_of_runs && cablesize.number_of_cores && cablesize.final_cable_size
-                ? `${cablesize.number_of_runs}R X ${cablesize.number_of_cores} X ${cablesize.final_cable_size} Sqmm`
-                : "",
+    if (loadListData.length && projectPanelData.length) {
+      const panelWiseData = projectPanelData.reduce((acc, panel) => {
+        const panelName = panel.panel_name // Assuming each panel object in projectPanelData has a 'name' property
+        const filteredData = loadListData.filter((item) => item.panel === panelName)
+
+        if (filteredData.length) {
+          acc.push({
+            panelName,
+            data: [],
           })
-          return acc
-        }, {})
-      )
+        } else {
+          acc.push({ panelName, data: [] })
+        }
+
+        return acc
+      }, [])
+
       setPanelWiseData(panelWiseData)
       console.log(panelWiseData)
     }
-    // console.log(dataSource)
-  }, [loadListData])
+  }, [loadListData, projectPanelData])
 
-  // const panels = ["MCC", "MCC1"]
+  const getLoadListData = () => {
+    if (loadListData.length && projectPanelData.length) {
+      const panelWiseData = projectPanelData.reduce((acc, panel) => {
+        const panelName = panel.panel_name // Assuming each panel object in projectPanelData has a 'name' property
+        const filteredData = loadListData.filter((item) => item.panel === panelName)
 
-  const SLDTabs: any = panelWiseData.map((tab: any, index) => {
-    return {
-      label: tab.panelName,
-      key: index + 1,
-      children: (
-        <>
-          <PanelTab panelData={tab} designBasisRevisionId={designBasisRevisionId} />
-        </>
-      ),
+        if (filteredData.length) {
+          acc.push({
+            panelName,
+            data: filteredData.map((item) => {
+              const cablesize = cableScheduleData.find((el) => el.tag_number === item.tag_number)
+              return {
+                ...item,
+                cablesize:
+                  cablesize && cablesize.number_of_runs && cablesize.number_of_cores && cablesize.final_cable_size
+                    ? `${cablesize.number_of_runs}R X ${cablesize.number_of_cores} X ${cablesize.final_cable_size} Sqmm`
+                    : "",
+              }
+            }),
+          })
+        } else {
+          acc.push({ panelName, data: [] })
+        }
+
+        return acc
+      }, [])
+      
+      setPanelWiseData(panelWiseData)
+      console.log(panelWiseData)
     }
-  })
+  }
+ 
+ 
 
   const onChange = async (key: string) => {
     // setModalLoading(true)
@@ -162,7 +193,15 @@ const SLDTabs: React.FC<Props> = ({ designBasisRevisionId, cableScheduleRevision
 
   return (
     <div className="">
-      <Tabs onChange={onChange} type="card" style={{ fontSize: "11px !important" }} items={SLDTabs} />
+      <div className="mb-4 flex justify-end gap-4">
+        <Button type="primary" onClick={getLoadListData} className="hover:bg-blue-600">
+          Get Load List Details
+        </Button>
+        <Button type="primary" onClick={() => {}} className="hover:bg-blue-600">
+          Panel Mapping
+        </Button>
+      </div>
+      <Tabs onChange={onChange} type="card" style={{ fontSize: "11px !important" }} items={sLDTabs} />
     </div>
   )
 }
