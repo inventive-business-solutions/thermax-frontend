@@ -44,7 +44,6 @@ export const getSwSelectionDetails = async (payload: any) => {
       ?.map((el: any) => {
         const { tag_number, kw, starter_type, make, sw_type, starting_time } = el
 
-        // Handle DOL-HTR case
         if (starter_type === "DOL-HTR") {
           const matchingOptions = database_dol_htr.filter(
             (item: any) => item.make === make && item.sg_select === sw_type && item.starter_type === "HEATERS"
@@ -93,7 +92,7 @@ export const getSwSelectionDetails = async (payload: any) => {
             terminal_part_no: "",
           }
         }
- 
+
         let matchingOptions
         if (starter_type === "VFD" || starter_type === "VFD BYPASS-S/D" || starter_type === "VFD Bypass DOL") {
           matchingOptions = database_vfd.filter((item: any) => item.vfd_make === make && item.sg_select === sw_type)
@@ -122,10 +121,6 @@ export const getSwSelectionDetails = async (payload: any) => {
             (item: any) => item.make === make && item.sg_select === sw_type && item.starter_type === starter_type
           )
         }
-        // console.log(switchgear_database);
-
-        //star delta and dol use starting time filter
-        // item.starting_time === starting_time
 
         if (matchingOptions.length === 0) {
           return {
@@ -161,18 +156,58 @@ export const getSwSelectionDetails = async (payload: any) => {
 
         // for pair of starters like "VFD BYPASS-S/D" , "VFD Bypass DOL"
 
-        
+        let pair_starter_options
+        if (starter_type === "VFD BYPASS-S/D") {
+          let obj = swData?.find((item: any) => !item.make.includes("VFD")) // finding switchgear make from payload
+          division === HEATING
+            ? (pair_starter_options = switchgear_database.filter(
+                (item: any) =>
+                  item.make === obj.make &&
+                  item.sg_select === sw_type &&
+                  item.starter_type === "STAR-DELTA" &&
+                  item.unit_7 === starting_time.split(" ")[0] + " sec" // converted Sec to sec (sec) is in database
+              ))
+            : (pair_starter_options = switchgear_database.filter(
+                (item: any) =>
+                  item.make === obj.make && item.sg_select === sw_type && item.starter_type === "STAR-DELTA"
+              ))
+        }
+        if (starter_type === "VFD Bypass DOL") {
+          let obj = swData?.find((item: any) => !item.make.includes("VFD")) // finding switchgear make from payload
+          division === HEATING
+            ? (pair_starter_options = switchgear_database.filter(
+                (item: any) =>
+                  item.make === obj.make &&
+                  item.sg_select === sw_type &&
+                  item.starter_type === "DOL STARTER" &&
+                  item.unit_7 === starting_time.split(" ")[0] + " sec" // converted Sec to sec (sec) is in database
+              ))
+            : (pair_starter_options = switchgear_database.filter(
+                (item: any) =>
+                  item.make === obj.make && item.sg_select === sw_type && item.starter_type === "DOL STARTER"
+              ))
+        }
+        const sortedByKWforPairStarter = pair_starter_options?.sort((a: any, b: any) => a.kw - b.kw)
+        const switchgearForPairStarter = sortedByKWforPairStarter?.find((item: any) => item.kw >= kw)
+        if(switchgearForPairStarter){
 
-
+          console.log(switchgear, "vfd starter");
+          console.log(switchgearForPairStarter, "paired starter");
+          
+        }
         return {
           tag_number,
           vfd: switchgear.vfd_model || "",
-          breaker_fuse: switchgear.breaker || "",
-          fuse_holder: switchgear.fuse_holder || "",
-          contractor_main: switchgear.main_contractor_data || "",
-          contractor_star: switchgear.star_contractor || "",
-          contractor_delta: starter_type === "STAR-DELTA" ? switchgear.main_contractor_data : "",
-          overlay_relay: switchgear.overload_relay || "",
+          breaker_fuse: switchgearForPairStarter?.breaker ?? switchgear?.breaker ?? "",
+          fuse_holder: switchgearForPairStarter?.fuse_holder ?? switchgear.fuse_holder ?? "",
+          contractor_main: switchgearForPairStarter?.main_contractor_data ?? switchgear.main_contractor_data ?? "",
+          contractor_star: switchgearForPairStarter?.star_contractor ?? switchgear.star_contractor ?? "",
+          contractor_delta: switchgearForPairStarter?.main_contractor_data
+            ? switchgearForPairStarter?.main_contractor_data
+            : starter_type === "STAR-DELTA"
+            ? switchgear.main_contractor_data
+            : "",
+          overlay_relay: switchgearForPairStarter?.overload_relay ?? switchgear.overload_relay ?? "",
           terminal_part_no: switchgear.terminal_part_no || "",
         }
       })
