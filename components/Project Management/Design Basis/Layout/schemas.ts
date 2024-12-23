@@ -5,6 +5,18 @@ export const cableTrayValidationSchema = zod.object({
     required_error: "Number of cores is required",
     message: "Number of cores is required",
   }),
+  cable_tray_moc: zod.string({
+    required_error: "Cable Tray MOC is required",
+    message:"Cable Tray MOC is required"
+  }),
+  cable_tray_moc_input: zod.string({
+    required_error:"MOC input is required",
+    message:"MOC input is required",
+  }),
+  cable_tray_cover: zod.string({
+    required_error:"Tray Cable Tray Cover is required",
+    message:"Cable Tray Cover is required",
+  }),
   copper_conductor: zod.string({
     required_error: "Copper Conductor is required",
     message: "Copper Conductor is required",

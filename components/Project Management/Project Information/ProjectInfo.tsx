@@ -93,11 +93,11 @@ const ProjectInfoSchema = zod.object({
 const getDefaultValues = (isEdit: boolean, projectData: any) => {
   return {
     project_name: projectData?.project_name,
-    altitude: projectData?.altitude || "1",
-    min_humidity: projectData?.min_humidity || "1",
-    max_humidity: projectData?.max_humidity || "1",
-    avg_humidity: projectData?.avg_humidity || "1",
-    performance_humidity: projectData?.performance_humidity || "1",
+    altitude: projectData?.altitude || "75",
+    min_humidity: projectData?.min_humidity || "35",
+    max_humidity: projectData?.max_humidity || "85",
+    avg_humidity: projectData?.avg_humidity || "65",
+    performance_humidity: projectData?.performance_humidity || "65",
     project_oc_number: projectData?.project_oc_number,
     client_name: projectData?.client_name,
     project_location: projectData?.project_location,
@@ -490,7 +490,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               options={faultLevelOptions}
               suffixIcon={
                 <>
-                  <p className="font-semibold text-blue-500">KA</p>
+                  <p className="font-semibold text-blue-500">kA</p>
                   <DownOutlined />
                 </>
               }
@@ -558,73 +558,83 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
 
-        <div className="w-2/3">
-          <div className="flex-1">
+
+        {/* Humidity Part */}
+        {/* <div className="text-sm font-semibold text-slate-00">Humidity</div> */}
+        <div className="flex w-2/3 gap-4">
+          <div className="w-1/2">
             <CustomTextInput
-              name="altitude"
+              name="min_humidity"
               control={control}
-              label="Altitude"
+              label="Minimum Humidity"
+              suffix={
+                <>
+                  <PercentageOutlined style={{ color: "#3b82f6" }} />
+                </>
+              }
+              size="small"
+            />
+          </div>
+          <div className="w-1/2">
+            <CustomTextInput
+              name="max_humidity"
+              control={control}
+              label="Maximum Humidity"
+              suffix={
+                <>
+                  <PercentageOutlined style={{ color: "#3b82f6" }} />
+                </>
+              }
               size="small"
             />
           </div>
         </div>
 
-        {/* Humidity Part */}
-        <div className="text-sm font-semibold text-slate-00">Humidity</div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextInput
-              name="min_humidity"
-              control={control}
-              label="Minimum"
-              suffix={
-                <>
-                  <p className="text-lg font-semibold text-blue-500">%</p>
-                </>
-              }
-              size="small"
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              name="max_humidity"
-              control={control}
-              label="Maximum"
-              suffix={
-                <>
-                  <p className="text-lg font-semibold text-blue-500">%</p>
-                </>
-              }
-              size="small"
-            />
-          </div>
-          <div className="flex-1">
+        <div className="flex w-2/3 gap-4">
+          <div className="w-1/2">
             <CustomTextInput
               name="avg_humidity"
               control={control}
-              label="Average"
+              label="Average Humidity"
               suffix={
                 <>
-                  <p className="text-lg font-semibold text-blue-500">%</p>
+                  <PercentageOutlined style={{ color: "#3b82f6" }} />
                 </>
               }
               size="small"
             />
           </div>
-          <div className="flex-1">
+          <div className="w-1/2">
             <CustomTextInput
               name="performance_humidity"
               control={control}
-              label="Performance"
+              label="Performance Humidity"
               suffix={
                 <>
-                  <p className="text-lg font-semibold text-blue-500">%</p>
+                  <PercentageOutlined style={{ color: "#3b82f6" }} />
                 </>
               }
               size="small"
             />
           </div>
         </div>
+
+        <div className="w-1/3">
+          <div className="flex-1">
+            <CustomTextInput
+              name="altitude"
+              control={control}
+              label="Altitude"
+              suffix={
+                <>
+                  <p className="text-xs text-blue-500">meter</p>
+                </>
+              }
+              size="small"
+            />
+          </div>
+        </div>
+
         <div className="w-2/3">
           <PanelDataList revision_id={revision_id} />
         </div>

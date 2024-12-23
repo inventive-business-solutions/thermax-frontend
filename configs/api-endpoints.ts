@@ -103,10 +103,10 @@ export const CABLE_WIRING_PVC = `/document/Cable Insulation PVC`
 export const FERRULE = `/document/Ferrule`
 export const SPARE_TERMINAL = `/document/Spare Terminal`
 
-export const TEST_RESET = `/document/Test Reset`
-export const TEST_RESET2 = `/document/Test Reset 2`
-export const ALARM_ACKNOWLEDGE_AND_LAMP_TEST = `/document/Alarm Acknowledge and Lamp Test`
-export const ALARM_ACKNOWLEDGE_AND_LAMP_TEST2 = `/document/Alarm Acknowledge and Lamp Test2`
+export const TEST_DROPDOWN = `/document/Test Dropdown`
+export const RESET_DROPDOWN = `/document/Reset Dropdown`
+export const ALARM_ACKNOWLEDGE_DROPDOWN = `/document/Alarm Acknowledge Dropdown`
+export const LAMP_TEST_DROPDOWN = `/document/Lamp Test Dropdown`
 export const SPEED_DECREASE_PB = `/document/Speed Decrease PB`
 export const SPEED_INCREASE_PB = `/document/Speed Increase PB`
 export const PUSH_BUTTON_ESS = `/document/Push Button ESS`
@@ -234,6 +234,7 @@ export const EO_SCADA_FURNITURE = `/document/EO Furniture`
 
 // Cable Tray Layout
 export const CABLE_TRAY_LAYOUT = `/document/Cable Tray Layout`
+export const CABLE_TRAY_MOC = `/document/Cable Tray MOC`
 export const LAYOUT_NUMBER_OF_CORES = `/document/Layout Number Of Cores`
 export const LAYOUT_SPECIFIC_REQUIREMENT = `/document/Layout Specific Requirement`
 export const LAYOUT_TYPE_OF_INSULATION = `/document/Layout Type of Insulation`

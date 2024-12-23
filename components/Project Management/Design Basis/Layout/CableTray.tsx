@@ -16,10 +16,12 @@ import { cableTrayValidationSchema } from "./schemas"
 import CustomTextNumber from "components/FormInputs/CustomInputNumber"
 
 const getDefaultValues = (cableTrayData: any) => {
-  // console.log(cableTrayData, "cabletray data")
   return {
+    cable_tray_cover: cableTrayData?.cable_tray_cover || "1",
+    cable_tray_moc: cableTrayData?.cable_tray_moc || "SS 304",
+    cable_tray_moc_input: cableTrayData?.cable_tray_moc_input || "",
     number_of_cores: cableTrayData?.number_of_cores || "3C",
-    specific_requirement: cableTrayData?.specific_requirement || "FRLS",
+    specific_requirement: cableTrayData?.specific_requirement || "Fire Resistant",
     type_of_insulation: cableTrayData?.type_of_insulation || "PVC",
     color_scheme: cableTrayData?.color_scheme || "Red, Yellow, Blue",
     motor_voltage_drop_during_running: cableTrayData?.motor_voltage_drop_during_running || "2",
@@ -30,7 +32,7 @@ const getDefaultValues = (cableTrayData: any) => {
     voltage_grade: cableTrayData?.voltage_grade || "11 kV",
     derating_factor: cableTrayData?.derating_factor || "2",
     gland_make: cableTrayData?.gland_make || "Comet",
-    moc: cableTrayData?.moc || "SS304",
+    moc: cableTrayData?.moc || "SS 304",
     type_of_gland: cableTrayData?.type_of_gland || "Single Compression",
     future_space_on_trays: cableTrayData?.future_space_on_trays || "10",
     cable_placement: cableTrayData?.cable_placement || "Single Layer",
@@ -117,7 +119,7 @@ const CableTray = ({
     `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
-  console.log("cabletray data", cableTrayData?.[0])
+  // console.log("cabletray data", cableTrayData?.[0])
 
   const { control, reset, watch, setValue, handleSubmit } = useForm({
     resolver: zodResolver(cableTrayValidationSchema),
@@ -147,6 +149,7 @@ const CableTray = ({
     cable_tray_orientation_options,
     material_construction_dry_area_options,
     material_construction_wet_area_options,
+    cable_tray_moc_options,
     cable_tray_width_options,
     cable_tray_height_options,
     cable_tray_thickness_options,
@@ -184,10 +187,10 @@ const CableTray = ({
   }, [is_dry_area_selected_controlled, is_wet_area_selected_controlled, setValue])
 
   useEffect(() => {
-    const air_derating_factor = touching_air_controlled * ambient_temp_factor_air_controlled
-    const burid_derating_factor = touching_burid_controlled * ambient_temp_factor_burid_controlled
-    setValue("derating_factor_air", air_derating_factor)
-    setValue("derating_factor_burid", burid_derating_factor)
+    const air_derating_factor = (touching_air_controlled * ambient_temp_factor_air_controlled).toFixed(2)
+    const burid_derating_factor =( touching_burid_controlled * ambient_temp_factor_burid_controlled).toFixed(2)
+    setValue("derating_factor_air", Number(air_derating_factor))
+    setValue("derating_factor_burid", Number(burid_derating_factor))
   }, [
     ambient_temp_factor_air_controlled,
     ambient_temp_factor_burid_controlled,
@@ -261,6 +264,7 @@ const CableTray = ({
     try {
       setLoading(true)
       await updateData(`${CABLE_TRAY_LAYOUT}/${cableTrayData[0].name}`, false, values)
+      message.success("Cable Tray Updated Successfully")
       setActiveKey("2")
     } catch (error) {
       console.error("Submission error:", error)
@@ -273,7 +277,7 @@ const CableTray = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col px-4">
       <Divider>
-        <span className="font-bold text-slate-700">Power Cable</span>
+        <span className="font-bold text-slate-700">Field Power Cable</span>
       </Divider>
       <div className="flex flex-col gap-4">
         <div className="flex gap-4">
@@ -457,6 +461,17 @@ const CableTray = ({
       <div className="flex flex-col gap-4">
         <div className="flex gap-4">
           <div className="flex-1">
+            <CustomRadioSelect
+              control={control}
+              name="cable_tray_cover"
+              label="Cable Tray Cover"
+              options={[
+                { label: "Yes", value: "1" },
+                { label: "No", value: "0" },
+              ]}
+            />
+          </div>
+          <div className="flex-1">
             <CustomSingleSelect
               control={control}
               name="future_space_on_trays"
@@ -518,48 +533,30 @@ const CableTray = ({
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <h4 className="text-sm font-bold text-blue-500">Cable Tray MOC</h4>
+          <h4 className="text-sm font-bold">Cable Tray MOC</h4>
           <div className="flex gap-4">
-            <div className="flex flex-1 items-center gap-2">
-              <div className="flex items-center gap-4">
-                <h4 className="text-sm font-semibold text-slate-700">Dry Area</h4>
-                <div className="flex-1">
-                  <CustomRadioSelect
-                    control={control}
-                    name="is_dry_area_selected"
-                    label=""
-                    options={[
-                      { label: "Yes", value: "1" },
-                      { label: "No", value: "0" },
-                    ]}
-                  />
-                </div>
-              </div>
-              <div className="flex-1">
-                <CustomSingleSelect
+            <div className="w-1/2 mt-[4px]">
+              <CustomSingleSelect
+                control={control}
+                name="cable_tray_moc"
+                label=""
+                options={cable_tray_moc_options}
+              />
+            </div>
+            {Boolean(watch("cable_tray_moc") === "MS - Hot dipped Galvanised") &&
+
+              <div className="w-1/2">
+                <CustomTextInput
                   control={control}
-                  name="dry_area"
+                  name="cable_tray_moc_input"
                   label=""
-                  size="small"
-                  options={material_construction_dry_area_options}
-                  disabled={watch("is_dry_area_selected") === "0"}
                 />
               </div>
-            </div>
-            <div className="flex flex-1 items-center gap-2">
+            }
+            {/* <div className="flex flex-1 items-center gap-2">
               <div className="flex items-center gap-4">
                 <h4 className="text-sm font-semibold text-slate-700">Wet Area</h4>
-                <div className="flex-1">
-                  <CustomRadioSelect
-                    control={control}
-                    name="is_wet_area_selected"
-                    label=""
-                    options={[
-                      { label: "Yes", value: "1" },
-                      { label: "No", value: "0" },
-                    ]}
-                  />
-                </div>
+
               </div>
               <div className="flex-1">
                 <CustomSingleSelect
@@ -571,7 +568,7 @@ const CableTray = ({
                   disabled={watch("is_wet_area_selected") === "0"}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
