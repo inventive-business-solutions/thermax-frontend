@@ -7,11 +7,12 @@ import { ValidColumnType } from "../types"
 import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableConfig"
 import { CableSchedulecolumns, multicoreCableConfigColumns } from "../common/ExcelColumns"
 import "./CableScheduleComponent.css"
-import { getData, updateData } from "actions/crud-actions"
+import { downloadFile, getData, updateData } from "actions/crud-actions"
 import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
   CABLE_TRAY_LAYOUT,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
+  GET_VOLTAGE_DROP_EXCEL_API,
   HEATING_CONTROL_SCHEMES_URI,
   LPBS_SCHEMES_URI,
   SPG_SERVICES_CONTROL_SCHEMES_URI,
@@ -828,6 +829,37 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
 
     // setLoadListData(updatedLoadList)
   }
+  // handleDownloadVD
+  const handleDownloadVD = async () => {
+    setLoading(true)
+    // console.log(revision_id)
+    // console.log(getDownLoadEndpoint())
+
+    try {
+      const result = await downloadFile(GET_VOLTAGE_DROP_EXCEL_API, true, {
+        revision_id:cableScheduleRevisionId,
+      })
+      console.log(result);
+      
+      const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
+      const excelBlob = new Blob([byteArray.buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      })
+      const url = window.URL.createObjectURL(excelBlob)
+      const link = document.createElement("a")
+      link.href = url
+      link.setAttribute("download", `voltage_drop_calculation.xlsx`) // Filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error(error)
+      setLoading(false)
+    } finally {
+      setLoading(false)
+    }
+  }
+
 
   return (
     <>
@@ -858,7 +890,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       />
 
       <div className="flex w-full flex-row justify-end gap-2">
-        <Button type="primary">Download Voltage Drop Calculations</Button>
+        <Button type="primary" onClick={handleDownloadVD}>Download Voltage Drop Calculations</Button>
         <Button type="primary" onClick={getCableSizing}>
           Get Cable Sizing
         </Button>

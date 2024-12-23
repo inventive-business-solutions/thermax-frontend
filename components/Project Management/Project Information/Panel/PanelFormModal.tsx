@@ -19,6 +19,7 @@ import {
   PANEL_TYPE_API,
   PCC_PANEL,
   PROJECT_PANEL_API,
+  SLD_REVISIONS_API,
 } from "configs/api-endpoints"
 import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
@@ -128,6 +129,15 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
         panel_id: panelRes.name,
         revision_id: revisionId,
       }
+      const new_sld_revision = {
+        // panel_id: panelRes.name,
+        panel_name: panelRes.name,
+        project_id: "",
+        status: "Not Released",
+        description: "Issued for approval",
+      }
+      await createData(SLD_REVISIONS_API, false, new_sld_revision)
+
       if (panelType === MCC_PANEL_TYPE) {
         await createData(MCC_PANEL, false, panelCreateData)
       }
