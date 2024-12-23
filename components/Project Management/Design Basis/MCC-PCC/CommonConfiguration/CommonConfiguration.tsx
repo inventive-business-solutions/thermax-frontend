@@ -120,7 +120,7 @@ const getDefaultValues = (commonConfigData: any) => {
     control_bus_material: commonConfigData?.control_bus_material || "Aluminium",
     control_bus_current_density: commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
     control_bus_rating_of_busbar:
-      commonConfigData?.control_bus_rating_of_busbar || "( Min -1R X 60 mm X 12 mm) for 50 KA",
+      commonConfigData?.control_bus_rating_of_busbar || "( Min - 1R X 25 mm X 10 mm )",
     earth_bus_main_busbar_selection: commonConfigData?.earth_bus_main_busbar_selection || "As per IS8623",
     earth_bus_busbar_position: commonConfigData?.earth_bus_busbar_position || "Top",
     earth_bus_material: commonConfigData?.earth_bus_material || "Aluminium",
@@ -383,7 +383,7 @@ const CommonConfiguration = ({
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
         <Divider>
-          <span className="font-bold text-slate-700">Outgoing Feeders</span>
+          <span className="font-bold text-slate-700">Outgoing Feeder</span>
         </Divider>
 
         <div className="flex items-center gap-8">
@@ -393,7 +393,7 @@ const CommonConfiguration = ({
               name="dol_starter"
               label={
                 <>
-                  DOL Starter <span className="text-xs text-blue-500">(KW including and below)</span>
+                  DOL Starter <span className="text-xs text-blue-500">(kW including and below)</span>
                 </>
               }
               options={dol_starter_options || []}
@@ -406,7 +406,7 @@ const CommonConfiguration = ({
               name="star_delta_starter"
               label={
                 <>
-                  Star Delta Starter <span className="text-xs text-blue-500">(KW including and above)</span>
+                  Star Delta Starter <span className="text-xs text-blue-500">(kW including and above)</span>
                 </>
               }
               options={star_delta_starter_options || []}
@@ -421,7 +421,7 @@ const CommonConfiguration = ({
               name="ammeter"
               label={
                 <>
-                  Ammeter <span className="text-xs text-blue-500">(KW including and above)</span>
+                  Ammeter <span className="text-xs text-blue-500">(kW including and above)</span>
                 </>
               }
               options={ammeter_options || []}
@@ -731,7 +731,7 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="alarm_acknowledge_and_lamp_test"
-              label="Alarm Acknowledge Push Button"
+              label="Alarm Acknowledge PB"
               options={alarm_acknowledge_dropdown_options || []}
               size="small"
             />
@@ -740,7 +740,7 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="lamp_test_push_button"
-              label="Lamp Test Push Button"
+              label="Lamp Test PB"
               options={lamp_test_dropdown_options || []}
               size="small"
             />
@@ -774,7 +774,7 @@ const CommonConfiguration = ({
             <CustomRadioSelect
               control={control}
               name="selector_switch_applicable"
-              label="Local/Remot Selector Switch On MCC Panel Front Door"
+              label="Local/Remote Selector Switch On MCC Panel Front Door"
               options={[
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },
@@ -1483,22 +1483,25 @@ const CommonConfiguration = ({
           <span className="font-bold text-slate-700">Others</span>
         </Divider>
         <div className="flex items-center gap-4">
-          <div className="flex-1">
+          <div className="flex flex-row items-center gap-4 flex-1">
+            <div className="font-semibold mt-[6px]">Cooling Fans</div>
+
             <CustomRadioSelect
               control={control}
               name="cooling_fans"
-              label="Cooling Fans"
+              label=""
               options={[
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },
               ]}
             />
           </div>
-          <div className="flex-1">
+          <div className="flex flex-row items-center gap-4 flex-1">
+            <div className="font-semibold mt-[6px]">Louvers and Filters</div>
             <CustomRadioSelect
               control={control}
               name="louvers_and_filters"
-              label="Louvers and Filters"
+              label=""
               options={[
                 { label: "Applicable", value: "Applicable" },
                 { label: "Not Applicable", value: "Not Applicable" },

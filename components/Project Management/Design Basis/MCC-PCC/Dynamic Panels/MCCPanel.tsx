@@ -745,6 +745,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               label="Painting Standards"
               options={ppc_painting_standards_options}
               size="small"
+              disabled
             />
           </div>
           <div className="flex-1">
@@ -783,6 +784,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               label="Paint Shade for Base Frame"
               options={ppc_base_frame_paint_shade_options}
               size="small"
+              disabled
             />
           </div>
 

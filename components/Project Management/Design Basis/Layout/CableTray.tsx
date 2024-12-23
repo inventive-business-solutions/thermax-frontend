@@ -21,7 +21,7 @@ const getDefaultValues = (cableTrayData: any) => {
     cable_tray_moc: cableTrayData?.cable_tray_moc || "SS 304",
     cable_tray_moc_input: cableTrayData?.cable_tray_moc_input || "",
     number_of_cores: cableTrayData?.number_of_cores || "3C",
-    specific_requirement: cableTrayData?.specific_requirement || "FRLS",
+    specific_requirement: cableTrayData?.specific_requirement || "Fire Resistant",
     type_of_insulation: cableTrayData?.type_of_insulation || "PVC",
     color_scheme: cableTrayData?.color_scheme || "Red, Yellow, Blue",
     motor_voltage_drop_during_running: cableTrayData?.motor_voltage_drop_during_running || "2",
@@ -277,7 +277,7 @@ const CableTray = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col px-4">
       <Divider>
-        <span className="font-bold text-slate-700">Power Cable</span>
+        <span className="font-bold text-slate-700">Field Power Cable</span>
       </Divider>
       <div className="flex flex-col gap-4">
         <div className="flex gap-4">

@@ -477,7 +477,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <div className="flex-1 border p-1.5 text-sm font-semibold">Altitude ≤ (Meter)</div>
+          <div className="flex-1 border p-1.5 text-sm font-semibold">Altitude (Meter)</div>
           <div className="flex-1 border text-center">
             <CustomTextInput
               control={control}
