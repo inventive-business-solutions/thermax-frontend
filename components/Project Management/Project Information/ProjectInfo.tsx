@@ -561,7 +561,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
 
         {/* Humidity Part */}
         {/* <div className="text-sm font-semibold text-slate-00">Humidity</div> */}
-        <div className="flex gap-4">
+        <div className="flex w-2/3 gap-4">
           <div className="w-1/2">
             <CustomTextInput
               name="min_humidity"
@@ -590,7 +590,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex w-2/3 gap-4">
           <div className="w-1/2">
             <CustomTextInput
               name="avg_humidity"
@@ -619,7 +619,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
           </div>
         </div>
 
-        <div className="w-2/4">
+        <div className="w-1/3">
           <div className="flex-1">
             <CustomTextInput
               name="altitude"

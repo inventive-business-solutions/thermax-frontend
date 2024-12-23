@@ -45,7 +45,7 @@ const getDefaultValues = (commonConfigData: any) => {
     analog_signal_wiring_size: commonConfigData?.analog_signal_wiring_size || "1 Sq. mm",
     ct_wiring_color: commonConfigData?.ct_wiring_color || "Red, Yellow, Blue, Black",
     ct_wiring_size: commonConfigData?.ct_wiring_size || "2.5 Sq. mm",
-    cable_insulation_pvc: commonConfigData?.cable_insulation_pvc || "FRLS",
+    cable_insulation_pvc: commonConfigData?.cable_insulation_pvc || "Fire Resistant",
     ferrule: commonConfigData?.ferrule || "Cross Ferrule",
     common_requirement:
       commonConfigData?.common_requirement ||

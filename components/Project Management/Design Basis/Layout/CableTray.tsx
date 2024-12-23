@@ -187,10 +187,10 @@ const CableTray = ({
   }, [is_dry_area_selected_controlled, is_wet_area_selected_controlled, setValue])
 
   useEffect(() => {
-    const air_derating_factor = touching_air_controlled * ambient_temp_factor_air_controlled
-    const burid_derating_factor = touching_burid_controlled * ambient_temp_factor_burid_controlled
-    setValue("derating_factor_air", air_derating_factor)
-    setValue("derating_factor_burid", burid_derating_factor)
+    const air_derating_factor = (touching_air_controlled * ambient_temp_factor_air_controlled).toFixed(2)
+    const burid_derating_factor =( touching_burid_controlled * ambient_temp_factor_burid_controlled).toFixed(2)
+    setValue("derating_factor_air", Number(air_derating_factor))
+    setValue("derating_factor_burid", Number(burid_derating_factor))
   }, [
     ambient_temp_factor_air_controlled,
     ambient_temp_factor_burid_controlled,
