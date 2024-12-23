@@ -37,11 +37,11 @@ jobs:
         run: |
           docker build \
             --build-arg FRAPPE_ADMIN_AUTH_SECRET=${{ secrets.FRAPPE_ADMIN_AUTH_SECRET}} \
-            --build-arg AWS_S3_BUCKET_BASE_FOLDER=${{ secrets.AWS_S3_BUCKET_BASE_FOLDER}} \
-            --build-arg AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME}} \
-            --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY}} \
-            --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID}} \
-            --build-arg AWS_S3_REGION=${{ secrets.AWS_S3_REGION}} \
+            --build-arg AMAZON_S3_BUCKET_BASE_FOLDER=${{ secrets.AMAZON_S3_BUCKET_BASE_FOLDER}} \
+            --build-arg AMAZON_S3_BUCKET_NAME=${{ secrets.AMAZON_S3_BUCKET_NAME}} \
+            --build-arg AMAZON_SECRET_ACCESS_KEY=${{ secrets.AMAZON_SECRET_ACCESS_KEY}} \
+            --build-arg AMAZON_ACCESS_KEY_ID=${{ secrets.AMAZON_ACCESS_KEY_ID}} \
+            --build-arg AMAZON_S3_REGION=${{ secrets.AMAZON_S3_REGION}} \
             --build-arg NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL}} \
             --build-arg FRAPPE_BASE_URL=${{ secrets.FRAPPE_BASE_URL}} \
             --build-arg NEXT_PUBLIC_FRAPPE_DOMAIN_NAME=${{ secrets.NEXT_PUBLIC_FRAPPE_DOMAIN_NAME}} \
