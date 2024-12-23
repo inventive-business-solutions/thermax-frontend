@@ -58,7 +58,7 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     is_cable_alley_section_selected: mccPanelData?.is_cable_alley_section_selected || 1,
     is_power_and_bus_separation_section_selected: mccPanelData?.is_power_and_bus_separation_section_selected || 1,
     is_both_side_extension_section_selected: mccPanelData?.is_both_side_extension_section_selected || 1,
-    ga_gland_plate_3mm_drill_type: mccPanelData?.ga_gland_plate_3mm_drill_type || "Drilled",
+    ga_gland_plate_3mm_drill_type: mccPanelData?.ga_gland_plate_3mm_drill_type || "Knockout",
     ga_gland_plate_3mm_attachment_type: mccPanelData?.ga_gland_plate_3mm_attachment_type || "Detachable",
     ga_busbar_chamber_position: mccPanelData?.ga_busbar_chamber_position || "Top",
     ga_power_and_control_busbar_separation: mccPanelData?.ga_power_and_control_busbar_separation || "FRP",
@@ -681,12 +681,12 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ga_gland_plate_3mm_drill_type"
-              label="Gland Plate (3mm) Drill Type"
+              label="Gland Plate"
               options={ga_gland_plate_3mm_drill_type_options}
               size="small"
             />
           </div>
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomSingleSelect
               control={control}
               name="ga_gland_plate_3mm_attachment_type"
@@ -694,7 +694,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               options={ga_gland_plate_3mm_attachment_type_options}
               size="small"
             />
-          </div>
+          </div> */}
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -768,11 +768,11 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
         </div>
         <div className="mt-2 grid grid-cols-3 items-center gap-4">
           <div className="col-span-2">
-            <CustomSingleSelect
+            <CustomTextInput
               control={control}
               name="ppc_minimum_coating_thickness"
               label="Minimum Paint Thickness"
-              options={ppc_minimum_coating_thickness_options}
+              // options={ppc_minimum_coating_thickness_options}
               size="small"
             />
           </div>

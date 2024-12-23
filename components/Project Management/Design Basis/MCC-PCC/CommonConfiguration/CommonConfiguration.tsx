@@ -59,8 +59,8 @@ const getDefaultValues = (commonConfigData: any) => {
     speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
     alarm_acknowledge_and_lamp_test: commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
     lamp_test_push_button: commonConfigData?.lamp_test_push_button || "Yellow",
-    test_reset: commonConfigData?.test_reset || "Yellow",
-    test_reset2: commonConfigData?.test_reset2 || "Black",
+    test_dropdown: commonConfigData?.test_dropdown || "Yellow",
+    reset_dropdown: commonConfigData?.reset_dropdown || "Black",
     selector_switch_applicable: commonConfigData?.selector_switch_applicable || "Not Applicable",
     selector_switch_lockable: commonConfigData?.selector_switch_lockable || "Lockable",
     running_open: commonConfigData?.running_open || "Green",
@@ -186,10 +186,10 @@ const CommonConfiguration = ({
     speed_increase_pb_options,
     field_motor_thickness_options,
     speed_decrease_pb_options,
-    test_reset_options,
-    test_reset2_options,
-    alarm_acknowledge_and_lamp_test_options,
-    alarm_acknowledge_and_lamp_test2_options,
+    test_dropdown_options,
+    reset_dropdown_options,
+    alarm_acknowledge_dropdown_options,
+    lamp_test_dropdown_options,
     running_open_options,
     stopped_closed_options,
     trip_options,
@@ -291,26 +291,26 @@ const CommonConfiguration = ({
     if (hazardous_field_motor_controlled !== "SS 316" && hazardous_field_motor_controlled !== "SS 304" && hazardous_field_motor_controlled !== "CRCA") {
       setValue("hazardous_field_motor_thickness", "NA")
     }
-      if (safe_lpbs_material_controlled !== "SS 316" && safe_lpbs_material_controlled !== "SS 304" && safe_lpbs_material_controlled !== "CRCA") {
-        setValue("safe_lpbs_thickness", "NA")
-      }
-      if (hazardous_lpbs_material_controlled !== "SS 316" && hazardous_lpbs_material_controlled !== "SS 304" && hazardous_lpbs_material_controlled !== "CRCA") {
-        setValue("hazardous_lpbs_thickness", "NA")
-      }
+    if (safe_lpbs_material_controlled !== "SS 316" && safe_lpbs_material_controlled !== "SS 304" && safe_lpbs_material_controlled !== "CRCA") {
+      setValue("safe_lpbs_thickness", "NA")
+    }
+    if (hazardous_lpbs_material_controlled !== "SS 316" && hazardous_lpbs_material_controlled !== "SS 304" && hazardous_lpbs_material_controlled !== "CRCA") {
+      setValue("hazardous_lpbs_thickness", "NA")
+    }
     if (hazardous__field_motor_type_controlled === "IEC Exd") {
       setValue("hazardous_field_motor_material", "Diecast Aluminium")
     }
     if (hazardous__field_motor_type_controlled === "IEC Exe") {
       setValue("hazardous_field_motor_material", "SS 316")
     }
-      if (hazardous_lpbs_type_controlled === "IEC Exd") {
-        setValue("hazardous_lpbs_material", "Diecast Aluminium")
-      }
-      if (hazardous_lpbs_type_controlled === "IEC Exe") {
-        setValue("hazardous_lpbs_material", "SS 316")
-      }
+    if (hazardous_lpbs_type_controlled === "IEC Exd") {
+      setValue("hazardous_lpbs_material", "Diecast Aluminium")
+    }
+    if (hazardous_lpbs_type_controlled === "IEC Exe") {
+      setValue("hazardous_lpbs_material", "SS 316")
+    }
 
-    }, [is_Ammeter_NA, safe_lpbs_material_controlled, hazardous_lpbs_material_controlled, hazardous__field_motor_type_controlled, hazardous_lpbs_type_controlled, safe_field_motor_controlled, hazardous_field_motor_controlled, setValue])
+  }, [is_Ammeter_NA, safe_lpbs_material_controlled, hazardous_lpbs_material_controlled, hazardous__field_motor_type_controlled, hazardous_lpbs_type_controlled, safe_field_motor_controlled, hazardous_field_motor_controlled, setValue])
   // }, [is_Ammeter_NA, safe_field_motor_controlled, hazardous_field_motor_controlled, hazardous__field_motor_type_controlled, setValue])
 
   // Control Bus (dependancy Logic)
@@ -732,7 +732,7 @@ const CommonConfiguration = ({
               control={control}
               name="alarm_acknowledge_and_lamp_test"
               label="Alarm Acknowledge Push Button"
-              options={alarm_acknowledge_and_lamp_test_options || []}
+              options={alarm_acknowledge_dropdown_options || []}
               size="small"
             />
           </div>
@@ -741,7 +741,7 @@ const CommonConfiguration = ({
               control={control}
               name="lamp_test_push_button"
               label="Lamp Test Push Button"
-              options={alarm_acknowledge_and_lamp_test2_options || []}
+              options={lamp_test_dropdown_options || []}
               size="small"
             />
           </div>
@@ -750,18 +750,18 @@ const CommonConfiguration = ({
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="test_reset"
+              name="test_dropdown"
               label="Test"
-              options={test_reset_options || []}
+              options={test_dropdown_options || []}
               size="small"
             />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="test_reset2"
+              name="reset_dropdown"
               label="Reset"
-              options={test_reset2_options || []}
+              options={reset_dropdown_options || []}
               size="small"
             />
           </div>

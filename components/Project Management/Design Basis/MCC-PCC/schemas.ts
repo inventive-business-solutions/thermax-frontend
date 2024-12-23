@@ -126,8 +126,8 @@ export const configItemValidationSchema = zod.object({
     required_error: "Lamp Test Push Button is required",
     message: "Lamp Test Push Button is required",
   }),
-  test_reset: zod.string({ required_error: "Test Reset is required", message: "Test Reset is required" }),
-  test_reset2: zod.string({ required_error: "Test Reset is required", message: "Test Reset is required" }),
+  test_dropdown: zod.string({ required_error: "Test Reset is required", message: "Test Reset is required" }),
+  reset_dropdown: zod.string({ required_error: "Test Reset is required", message: "Test Reset is required" }),
   // Selector Switch
   selector_switch_applicable: zod.string({
     required_error: "Selector Switch Applicable is required",
