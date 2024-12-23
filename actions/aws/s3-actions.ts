@@ -2,8 +2,8 @@
 import { ListBucketsCommand, ListObjectsCommand, ListObjectsV2Command, PutObjectCommand } from "@aws-sdk/client-s3"
 import { getBucketName, getS3BucketClient } from "./client"
 
-const baseFolder = process.env.AWS_S3_BUCKET_BASE_FOLDER
-const bucketName = process.env.AWS_S3_BUCKET_NAME
+const baseFolder = process.env.AMAZON_S3_BUCKET_BASE_FOLDER
+const bucketName = process.env.AMAZON_S3_BUCKET_NAME
 
 export const getBucketObjects = async (folderPath: string) => {
   try {
