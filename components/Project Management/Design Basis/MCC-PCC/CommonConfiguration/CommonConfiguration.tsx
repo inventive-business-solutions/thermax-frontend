@@ -335,16 +335,16 @@ const CommonConfiguration = ({
     }
   }, [pb_current_density_options, power_bus_material_controlled, setValue])
 
-  // // earth Bus (Dependency logic)
-  // useEffect(() => {
-  //   if (earth_bus_material_controlled === "Aluminium") {
-  //     setValue("earth_bus_current_density", "0.8 A/Sq. mm")
-  //   } else if (earth_bus_material_controlled === "Copper") {
-  //     setValue("earth_bus_current_density", "1.0 A/Sq. mm")
-  //   } else {
-  //     setValue("earth_bus_current_density", "1.0 A/Sq. mm")
-  //   }
-  // }, [earth_bus_material_controlled, eb_current_density_options, setValue])
+  // earth Bus (Dependency logic)
+  useEffect(() => {
+    if (earth_bus_material_controlled === "Aluminium") {
+      setValue("earth_bus_current_density", "0.8 A/Sq. mm")
+    } else if (earth_bus_material_controlled === "Copper") {
+      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+    } else {
+      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+    }
+  }, [earth_bus_material_controlled, eb_current_density_options, setValue])
 
   const handleError = (error: any) => {
     try {

@@ -258,7 +258,7 @@ const MotorParameters = ({ revision_id }: { revision_id: string }) => {
     `${PROJECT_MAIN_PKG_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
-  console.log("mainPackageData: ", mainPackageData)
+  // console.log("mainPackageData: ", mainPackageData)
 
   useEffect(() => {
     if (motorParameters?.[0]) {
