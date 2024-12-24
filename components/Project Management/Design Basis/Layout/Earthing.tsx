@@ -41,7 +41,11 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
   )
   const [loading, setLoading] = useState(false)
 
-  const { earthing_system_options, earth_strip_options, earthing_pit_options } = useEarthingDropdowns()
+  const dropdown = useEarthingDropdowns()
+
+  let earthing_system_options = dropdown["Earthing System"]
+  let earth_strip_options = dropdown["Earth Strip"]
+  let earthing_pit_options = dropdown["Earth Pit"]
 
   const { control, handleSubmit, reset } = useForm({
     resolver: zodResolver(cableTrayValidationSchema),
@@ -98,7 +102,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="earthing_system"
               label="Earthing Connection as Per"
-              options={earthing_system_options}
+              options={earthing_system_options || []}
               size="small"
             />
           </div>
@@ -107,7 +111,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="earth_strip"
               label="Earth Strip MOC"
-              options={earth_strip_options}
+              options={earth_strip_options || []}
               size="small"
             />
           </div>
@@ -118,7 +122,7 @@ const Earthing = ({ revision_id }: { revision_id: string }) => {
               control={control}
               name="earth_pit"
               label="Earth Pit MOC"
-              options={earthing_pit_options}
+              options={earthing_pit_options || []}
               size="small"
             />
           </div>

@@ -112,17 +112,19 @@ const MakeOfComponent = ({
     `${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
 
-  const {
-    gland_make_options,
-    motors_make_options,
-    plc_make_options,
-    soft_starter_options,
-    vfd_vsd_options,
-    panel_enclosure_options,
-    lv_switchgear_options,
-    cable_make_options,
-  } = useMakeOfComponentDropdowns()
+  const dropdown : any = useMakeOfComponentDropdowns()
   const { setLoading: setModalLoading } = useLoading()
+
+  let gland_make_options = dropdown["Gland Make"]
+  let motors_make_options = dropdown["Motors Make"]
+  let plc_make_options = dropdown["PLC Make"]
+  let soft_starter_options = dropdown["Soft Starter Make"]
+  let vfd_vsd_options = dropdown["VFD VSD Make"]
+  let panel_enclosure_options = dropdown["Panel Enclosure Make"]
+  let lv_switchgear_options = dropdown["LV Switchgear Make"]
+  let cable_make_options = dropdown["Cables Make"]
+
+  console.log("Gland make optinos", dropdown)
 
   useEffect(() => {
     setModalLoading(false)

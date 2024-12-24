@@ -53,6 +53,8 @@
 // }
 "use client"
 
+import { createData } from "actions/crud-actions"
+import Dropdown from "antd/es/dropdown/dropdown"
 import {
   GLAND_MAKE,
   MAKE_CABLE,
@@ -65,6 +67,7 @@ import {
 } from "configs/api-endpoints"
 
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { useEffect, useState } from "react"
 
 // Define the structure of the dropdown option
 interface DropdownOption {
@@ -73,6 +76,11 @@ interface DropdownOption {
   label: string
   value: string
 }
+
+type DropdownState = {
+  [key: string]: any[]; // Each key is a string and the value is an array of any type
+};
+
 
 // Function to move "NA" options to the end of the array
 const moveNAtoEnd = (options: DropdownOption[]): DropdownOption[] => {
@@ -85,27 +93,26 @@ const moveNAtoEnd = (options: DropdownOption[]): DropdownOption[] => {
 
 // Main hook to fetch dropdown options for different components
 export default function useMakeOfComponentDropdowns() {
-  // Fetch dropdown options for each component manually
-  const glandMakeOptions = useDropdownOptions(`${GLAND_MAKE}?fields=["*"]`, "gland_make")
-  const motorsOptions = useDropdownOptions(`${MAKE_MOTORS}?fields=["*"]`, "motors")
-  const cableOptions = useDropdownOptions(`${MAKE_CABLE}?fields=["*"]`, "cable")
-  const lvSwitchgearOptions = useDropdownOptions(`${MAKE_LV_SWITCHGEAR}?fields=["*"]`, "lv_switchgear")
-  const panelEnclosureOptions = useDropdownOptions(`${MAKE_PANEL_ENCLOSURE}?fields=["*"]`, "panel_enclosure")
-  const vfdVsdOptions = useDropdownOptions(`${MAKE_VFD_VSD}?fields=["*"]`, "vfd_vsd")
-  const softStarterOptions = useDropdownOptions(`${MAKE_SOFT_STARTER}?fields=["*"]`, "soft_starter")
-  const plcOptions = useDropdownOptions(`${MAKE_PLC}?fields=["*"]`, "plc")
+  const [dropdown, setDropdown] = useState<DropdownState>({})
 
-  // Object to hold dropdown options for each component
-  const dropdownOptions: Record<string, DropdownOption[]> = {
-    gland_make_options: moveNAtoEnd(glandMakeOptions.dropdownOptions),
-    motors_make_options: moveNAtoEnd(motorsOptions.dropdownOptions),
-    cable_make_options: moveNAtoEnd(cableOptions.dropdownOptions),
-    lv_switchgear_options: moveNAtoEnd(lvSwitchgearOptions.dropdownOptions),
-    panel_enclosure_options: moveNAtoEnd(panelEnclosureOptions.dropdownOptions),
-    vfd_vsd_options: moveNAtoEnd(vfdVsdOptions.dropdownOptions),
-    soft_starter_options: moveNAtoEnd(softStarterOptions.dropdownOptions),
-    plc_make_options: moveNAtoEnd(plcOptions.dropdownOptions),
-  }
+  useEffect(() => {
+    const getDropdown = async () => {
+      const response = await createData("method/design_basis_make_of_component.get_make_of_component_dropdowns", true, {
+        "Gland Make": "name",
+        "Motors Make": "name",
+        "Cables Make": "name",
+        "LV Switchgear Make": "name",
+        "Panel Enclosure Make": "name",
+        "VFD VSD Make": "name",
+        "Soft Starter Make": "name",
+        "PLC Make": "name"
 
-  return dropdownOptions
+      })
+      console.log(response, 'make response')
+      setDropdown(response)
+    }
+    getDropdown()
+  }, [])
+
+  return dropdown
 }
