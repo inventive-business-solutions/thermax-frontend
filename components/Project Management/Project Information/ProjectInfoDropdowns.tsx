@@ -1,74 +1,40 @@
 "use client"
 
-import {
-  AMBIENT_TEMP_MAX_API,
-  CONTROL_SUPPLY_API,
-  CONTROL_UTILITY_PHASE_API,
-  ELECTRICAL_DESIGN_TEMP_API,
-  FAULT_LEVEL_API,
-  FREQUENCY_API,
-  FREQUENCY_VARIATION_API,
-  MAIN_SUPPLY_LV_API,
-  MAIN_SUPPLY_MV_API,
-  MAIN_SUPPLY_PHASE_API,
-  SEC_API,
-  SEISMIC_ZONE_API,
-  UTILITY_SUPPLY_API,
-  VOLTAGE_VARIATION_API,
-} from "configs/api-endpoints"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { createData } from "actions/crud-actions"
+import { useEffect, useState } from "react"
+
+type DropdownState = {
+  [key: string]: any[]; // Each key is a string and the value is an array of any type
+};
 
 export default function useProjectInfoDropdowns() {
-  const { dropdownOptions: mainSupplyMVOptions } = useDropdownOptions(`${MAIN_SUPPLY_MV_API}?fields=["*"]`, "name")
-  const { dropdownOptions: voltageVariationOptions } = useDropdownOptions(
-    `${VOLTAGE_VARIATION_API}?fields=["*"]`,
-    "variation"
-  )
-  const { dropdownOptions: frequencyVariationOptions } = useDropdownOptions(
-    `${FREQUENCY_VARIATION_API}?fields=["*"]`,
-    "variation"
-  )
-  const { dropdownOptions: mainSupplyLVOptions } = useDropdownOptions(`${MAIN_SUPPLY_LV_API}?fields=["*"]`, "voltage")
-  const { dropdownOptions: mainSupplyPhaseOptions } = useDropdownOptions(
-    `${MAIN_SUPPLY_PHASE_API}?fields=["*"]`,
-    "phase"
-  )
-  const { dropdownOptions: controlUtilityPhaseOptions } = useDropdownOptions(
-    `${CONTROL_UTILITY_PHASE_API}?fields=["*"]`,
-    "phase"
-  )
-  const { dropdownOptions: controlSupplyOptions } = useDropdownOptions(
-    `${CONTROL_SUPPLY_API}?fields=["*"]`,
-    "control_supply"
-  )
-  const { dropdownOptions: utilitySupplyOptions } = useDropdownOptions(
-    `${UTILITY_SUPPLY_API}?fields=["*"]`,
-    "utility_supply"
-  )
-  const { dropdownOptions: frequencyOptions } = useDropdownOptions(`${FREQUENCY_API}?fields=["*"]`, "name")
-  const { dropdownOptions: ambientTempMaxOptions } = useDropdownOptions(`${AMBIENT_TEMP_MAX_API}?fields=["*"]`, "name")
-  const { dropdownOptions: faultLevelOptions } = useDropdownOptions(`${FAULT_LEVEL_API}?fields=["*"]`, "name")
-  const { dropdownOptions: secOptions } = useDropdownOptions(`${SEC_API}?fields=["*"]`, "name")
-  const { dropdownOptions: electricalDesignTempOptions } = useDropdownOptions(
-    `${ELECTRICAL_DESIGN_TEMP_API}?fields=["*"]`,
-    "name"
-  )
-  const { dropdownOptions: seismicZoneOptions } = useDropdownOptions(`${SEISMIC_ZONE_API}?fields=["*"]`, "name")
+  const [dropdown, setDropdown] = useState<DropdownState>({})
 
+  useEffect(() => {
+    const getDropdown = async () => {
+      const response = await createData("method/project_information.get_project_info_dropdown_data", true, {
+        "Main Supply MV": "name",
+        "Voltage Variation": "variation",
+        "Main Supply LV": "name",
+        "Frequency Variation": "variation",
+        "Frequency": "name",
+        "Main Supply Phase": "phase",
+        "Control and Utility Supply Phase": "phase",
+        "Control Supply": "control_supply",
+        "Utility Supply": "utility_supply",
+        "Ambient Temperature Max": "name",
+        "Fault Level": "name",
+        "Sec": "name",
+        "Electrical Design Temp": "name",
+        "Seismic zone": "name"
+      })
+      console.log(response, 'response')
+      setDropdown(response)
+    }
+
+    getDropdown()
+  }, [])
   return {
-    mainSupplyMVOptions,
-    voltageVariationOptions,
-    frequencyVariationOptions,
-    mainSupplyLVOptions,
-    mainSupplyPhaseOptions,
-    controlUtilityPhaseOptions,
-    controlSupplyOptions,
-    utilitySupplyOptions,
-    frequencyOptions,
-    ambientTempMaxOptions,
-    faultLevelOptions,
-    secOptions,
-    electricalDesignTempOptions,
-    seismicZoneOptions,
+    dropdown
   }
 }

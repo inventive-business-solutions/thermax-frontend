@@ -130,43 +130,45 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   const isLoading = isMccPanelLoading || isProjectInfoLoading || isProjectMetaDataLoading
 
   const {
-    incomer_ampere_options,
-    incomer_pole_options,
-    incomer_type_options,
-    incomer_above_ampere_options,
-    incomer_above_pole_options,
-    incomer_above_type_options,
-    current_transformer_coating_options,
-    current_transformer_number_options,
-    mi_analog_options,
-    mi_digital_options,
-    mi_communication_protocol_options,
-    ga_moc_material_options,
-    ga_moc_thickness_door_options,
-    ga_moc_thickness_covers_options,
-    ga_mcc_compartmental_options,
-    ga_mcc_construction_front_type_options,
-    ga_mcc_construction_drawout_type_options,
-    ga_mcc_construction_type_options,
-    ga_current_density_options,
-    ga_panel_mounting_frame_options,
-    ga_panel_mounting_height_options,
-    ga_gland_plate_3mm_drill_type_options,
-    ga_gland_plate_3mm_attachment_type_options,
-    ga_busbar_chamber_position_options,
-    ga_power_and_control_busbar_separation_options,
-    ga_enclosure_protection_degree_options,
-    ga_cable_entry_position_options,
-    ppc_painting_standards_options,
-    ppc_interior_and_exterior_paint_shade_options,
-    ppc_component_mounting_plate_paint_shade_options,
-    control_transformer_configuration_options,
-    ppc_base_frame_paint_shade_options,
-    ppc_minimum_coating_thickness_options,
-    ppc_pretreatment_panel_standard_options,
+    dropdown,
   } = useMCCPCCPanelDropdowns()
 
-  const aluminium_current_density_options = ga_current_density_options.filter((item: any) =>
+  let incomer_ampere_options = dropdown["SD Incomer Ampere"]
+  let current_transformer_coating_options = dropdown["Current Transformer Coating"]
+  let current_transformer_number_options = dropdown["Current Transformer Number"]
+  let control_transformer_configuration_options = dropdown["Control Transformer Configuration"]
+  let incomer_pole_options = dropdown["SD Incomer Pole"]
+  let incomer_type_options = dropdown["SD Incomer Type"]
+  let incomer_above_ampere_options = dropdown["SD Incomer Above Ampere"]
+  let incomer_above_pole_options = dropdown["SD Incomer Above Pole"]
+  let incomer_above_type_options = dropdown["SD Incomer Above Type"]
+  let mi_analog_options = dropdown["MI Analog"]
+  let mi_digital_options = dropdown["MI Digital"]
+  let mi_communication_protocol_options = dropdown["MI Communication Protocol"]
+  let ga_moc_material_options = dropdown["GA MOC"]
+  let ga_moc_thickness_door_options = dropdown["GA MOC Thickness Door"]
+  let ga_moc_thickness_covers_options = dropdown["GA MOC Thickness Covers"]
+  let ga_mcc_compartmental_options = dropdown["GA MCC Compartmental"]
+  let ga_mcc_construction_front_type_options = dropdown["GA MCC Construction Front Type"]
+  let ga_mcc_construction_drawout_type_options = dropdown["GA MCC Construction Draw Out Type"]
+  let ga_mcc_construction_type_options = dropdown["GA MCC Construction Type"]
+  let ga_current_density_options = dropdown["GA Current Density"]
+  let ga_panel_mounting_frame_options = dropdown["GA Panel Mounting Frame"]
+  let ga_panel_mounting_height_options = dropdown["GA Panel Mounting Height"]
+  let ga_gland_plate_3mm_drill_type_options = dropdown["GA Gland Plate 3mm Drill Type"]
+  let ga_gland_plate_3mm_attachment_type_options = dropdown[""]
+  let ga_busbar_chamber_position_options = dropdown["GA Busbar Chamber Position"]
+  let ga_power_and_control_busbar_separation_options = dropdown["GA Power and Control Busbar Separation"]
+  let ga_enclosure_protection_degree_options = dropdown["GA Enclosure Protection Degree"]
+  let ga_cable_entry_position_options = dropdown["GA Cable Entry Position"]
+  let ppc_painting_standards_options = dropdown["PPC Painting Standards"]
+  let ppc_interior_and_exterior_paint_shade_options = dropdown["PPC Interior and Exterior Paint Shade"]
+  let ppc_component_mounting_plate_paint_shade_options = dropdown["PPC Component Mounting Plate Paint Shade"]
+  let ppc_base_frame_paint_shade_options = dropdown["PPC Base Frame Paint Shade"]
+  let ppc_minimum_coating_thickness_options = dropdown["PPC Minimum Coating Thickness"]
+  let ppc_pretreatment_panel_standard_options = dropdown["PPC Pretreatment Panel Standard"]
+
+  const aluminium_current_density_options = ga_current_density_options?.filter((item: any) =>
     item.name.startsWith("0.8")
   )
   const copper_current_density_options = ga_current_density_options?.filter(
@@ -337,7 +339,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="incomer_ampere"
               label="Ampere"
-              options={incomer_ampere_options}
+              options={incomer_ampere_options || []}
               size="small"
             />
           </div>
@@ -346,7 +348,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="incomer_pole"
               label="Pole"
-              options={incomer_pole_options}
+              options={incomer_pole_options || []}
               size="small"
             />
           </div>
@@ -355,7 +357,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="incomer_type"
               label="Type"
-              options={incomer_type_options}
+              options={incomer_type_options || []}
               size="small"
             />
           </div>
@@ -370,7 +372,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="incomer_above_ampere"
               label="Ampere"
-              options={incomer_above_ampere_options}
+              options={incomer_above_ampere_options || []}
               disabled={true}
               size="small"
             />
@@ -380,7 +382,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="incomer_above_pole"
               label="Pole"
-              options={incomer_above_pole_options}
+              options={incomer_above_pole_options || []}
               size="small"
             />
           </div>
@@ -389,7 +391,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="incomer_above_type"
               label="Type"
-              options={incomer_above_type_options}
+              options={incomer_above_type_options || []}
               size="small"
             />
           </div>
@@ -458,7 +460,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="current_transformer_coating"
               label="Current Transformer Coating"
-              options={current_transformer_coating_options}
+              options={current_transformer_coating_options || []}
               size="small"
             />
           </div>
@@ -467,7 +469,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="current_transformer_number"
               label="Current Transformer Quantity"
-              options={current_transformer_number_options}
+              options={current_transformer_number_options || []}
               size="small"
               disabled={currentTransformerCoating === "NA"}
             />
@@ -479,7 +481,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="control_transformer_coating"
               label="Control Transformer Coating"
-              options={current_transformer_coating_options}
+              options={current_transformer_coating_options || []}
               size="small"
             />
           </div>
@@ -488,7 +490,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="control_transformer_configuration"
               label="Control Transformer Configuration"
-              options={control_transformer_configuration_options}
+              options={control_transformer_configuration_options || []}
               disabled={control_transformer_coating_controlled === "NA"}
               size="small"
             />
@@ -514,7 +516,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="mi_analog"
               label="Analog"
-              options={mi_analog_options}
+              options={mi_analog_options || []}
               size="small"
             />
           </div>
@@ -523,7 +525,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="mi_digital"
               label="Digital"
-              options={mi_digital_options}
+              options={mi_digital_options || []}
               size="small"
             />
           </div>
@@ -532,7 +534,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="mi_communication_protocol"
               label="Communication Protocol"
-              options={mi_communication_protocol_options}
+              options={mi_communication_protocol_options || []}
               size="small"
             />
           </div>
@@ -546,7 +548,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_moc_material"
               label="MOC"
-              options={ga_moc_material_options}
+              options={ga_moc_material_options || []}
               size="small"
             />
           </div>
@@ -555,7 +557,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_moc_thickness_door"
               label="MOC Thickness (Door & Component mounting plate thickness in mm)"
-              options={ga_moc_thickness_door_options}
+              options={ga_moc_thickness_door_options || []}
               size="small"
             />
           </div>
@@ -564,7 +566,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_moc_thickness_covers"
               label="MOC Thickness (Top & Side covers thickness in mm)"
-              options={ga_moc_thickness_covers_options}
+              options={ga_moc_thickness_covers_options || []}
               size="small"
             />
           </div>
@@ -575,7 +577,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_mcc_compartmental"
               label="MCC Compartmentalization"
-              options={ga_mcc_compartmental_options}
+              options={ga_mcc_compartmental_options || []}
               size="small"
             />
           </div>
@@ -584,7 +586,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_mcc_construction_front_type"
               label="MCC Front Type"
-              options={ga_mcc_construction_front_type_options}
+              options={ga_mcc_construction_front_type_options || []}
               size="small"
             />
           </div>
@@ -594,7 +596,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_mcc_construction_drawout_type"
               label="MCC Drawout Type"
-              options={ga_mcc_construction_drawout_type_options}
+              options={ga_mcc_construction_drawout_type_options || []}
               disabled={watch("ga_mcc_compartmental").includes("Non ")}
               size="small"
             />
@@ -604,7 +606,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_mcc_construction_type"
               label="MCC Construction Type"
-              options={ga_mcc_construction_type_options}
+              options={ga_mcc_construction_type_options || []}
               size="small"
             />
           </div>
@@ -639,7 +641,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_panel_mounting_frame"
               label="Panel Mounting"
-              options={ga_panel_mounting_frame_options}
+              options={ga_panel_mounting_frame_options || []}
               size="small"
             />
           </div>
@@ -648,7 +650,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_panel_mounting_height"
               label="Height of Base Frame (mm)"
-              options={watch("ga_panel_mounting_frame") === "Base Frame" ? base_frame_options : extended_frame_options}
+              options={(watch("ga_panel_mounting_frame") === "Base Frame" ? base_frame_options : extended_frame_options) || []}
               size="small"
             />
           </div>
@@ -682,7 +684,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_gland_plate_3mm_drill_type"
               label="Gland Plate"
-              options={ga_gland_plate_3mm_drill_type_options}
+              options={ga_gland_plate_3mm_drill_type_options || []}
               size="small"
             />
           </div>
@@ -700,7 +702,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_busbar_chamber_position"
               label="Busbar Chamber Position"
-              options={ga_busbar_chamber_position_options}
+              options={ga_busbar_chamber_position_options || []}
               size="small"
             />
           </div>
@@ -711,7 +713,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_power_and_control_busbar_separation"
               label="Separation Between Power & Control Busbar"
-              options={ga_power_and_control_busbar_separation_options}
+              options={ga_power_and_control_busbar_separation_options || []}
               size="small"
             />
           </div>
@@ -720,7 +722,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_enclosure_protection_degree"
               label="Degree of Enclosure Protection"
-              options={ga_enclosure_protection_degree_options}
+              options={ga_enclosure_protection_degree_options || []}
               size="small"
             />
           </div>
@@ -729,7 +731,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ga_cable_entry_position"
               label="Cable Entry Position"
-              options={ga_cable_entry_position_options}
+              options={ga_cable_entry_position_options || []}
               size="small"
             />
           </div>
@@ -743,7 +745,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ppc_painting_standards"
               label="Painting Standards"
-              options={ppc_painting_standards_options}
+              options={ppc_painting_standards_options || []}
               size="small"
               disabled
             />
@@ -753,7 +755,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ppc_interior_and_exterior_paint_shade"
               label="Paint Shade for Interior and Exterior"
-              options={ppc_interior_and_exterior_paint_shade_options}
+              options={ppc_interior_and_exterior_paint_shade_options || []}
               size="small"
             />
           </div>
@@ -762,7 +764,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ppc_component_mounting_plate_paint_shade"
               label="Paint Shade for Component Mounting Plate"
-              options={ppc_component_mounting_plate_paint_shade_options}
+              options={ppc_component_mounting_plate_paint_shade_options || []}
               size="small"
             />
           </div>
@@ -782,7 +784,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ppc_base_frame_paint_shade"
               label="Paint Shade for Base Frame"
-              options={ppc_base_frame_paint_shade_options}
+              options={ppc_base_frame_paint_shade_options || []}
               size="small"
               disabled
             />
@@ -793,7 +795,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               control={control}
               name="ppc_pretreatment_panel_standard"
               label="Standard for pretreatment Panel Shall Be Degreased And Derusted (7 Tank Pretreatment)"
-              options={ppc_pretreatment_panel_standard_options}
+              options={ppc_pretreatment_panel_standard_options || []}
               size="small"
             />
           </div>

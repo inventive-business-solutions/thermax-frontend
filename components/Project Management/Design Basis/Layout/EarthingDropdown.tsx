@@ -1,11 +1,29 @@
 "use client"
 
-import { EARTH_PIT, EARTH_STRIP, EARTHING_SYSTEM } from "configs/api-endpoints"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { createData } from "actions/crud-actions";
+import { useEffect, useState } from "react";
+
+type DropdownState = {
+  [key: string]: any[];
+}
 
 export default function useEarthingDropdowns() {
-  const { dropdownOptions: earthing_system_options } = useDropdownOptions(`${EARTHING_SYSTEM}?fields=["*"]`, "name")
-  const { dropdownOptions: earth_strip_options } = useDropdownOptions(`${EARTH_STRIP}?fields=["*"]`, "name")
-  const { dropdownOptions: earthing_pit_options } = useDropdownOptions(`${EARTH_PIT}?fields=["*"]`, "name")
-  return { earthing_system_options, earth_strip_options, earthing_pit_options }
+
+  const [dropdown, setDropdown] = useState<DropdownState>({})
+
+  useEffect(() => {
+    const getDropdown = async () => {
+      const response = await createData("method/layout_earthing.get_layout_earthing_dropdown", true, {
+        "Earthing System": "name",
+        "Earth Strip": "name",
+        "Earth Pit": "name",
+      })
+
+      console.log("earthing response", response)
+      setDropdown(response)
+    }
+    getDropdown()
+  }, [])
+
+  return dropdown
 }

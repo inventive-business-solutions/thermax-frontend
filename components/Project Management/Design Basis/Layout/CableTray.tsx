@@ -118,9 +118,6 @@ const CableTray = ({
   const { data: cableTrayData } = useGetData(
     `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   )
-
-  // console.log("cabletray data", cableTrayData?.[0])
-
   const { control, reset, watch, setValue, handleSubmit } = useForm({
     resolver: zodResolver(cableTrayValidationSchema),
     defaultValues: getDefaultValues(cableTrayData?.[0]),
@@ -131,31 +128,29 @@ const CableTray = ({
     reset(getDefaultValues(cableTrayData?.[0]))
   }, [cableTrayData, reset])
 
-  const {
-    no_of_core_options,
-    specific_requirement_options,
-    type_of_insulation_options,
-    color_scheme_options,
-    running_motor_voltage_drop_options,
-    copper_conductor_options,
-    aluminium_conductor_options,
-    starting_motor_voltage_drop_options,
-    voltage_grade_options,
-    gland_make_options,
-    gland_moc_options,
-    type_of_gland_options,
-    future_space_on_trays_options,
-    cable_placement_options,
-    cable_tray_orientation_options,
-    material_construction_dry_area_options,
-    material_construction_wet_area_options,
-    cable_tray_moc_options,
-    cable_tray_width_options,
-    cable_tray_height_options,
-    cable_tray_thickness_options,
-    conduit_moc_options,
-    conduit_size_options,
-  } = useCableTrayDropdowns()
+  const dropdown = useCableTrayDropdowns()
+
+  let no_of_core_options = dropdown["Layout Number Of Cores"]
+  let specific_requirement_options = dropdown["Layout Specific Requirement"]
+  let type_of_insulation_options = dropdown["Layout Type of Insulation"]
+  let color_scheme_options = dropdown["Layout Color Scheme"]
+  let running_motor_voltage_drop_options = dropdown["Layout Running Motor Voltage Drop"]
+  let copper_conductor_options = dropdown["Layout Conductor"]?.filter((item: any) => !item.name.startsWith("25"))
+  let aluminium_conductor_options = dropdown["Layout Conductor"]?.filter((item: any) => !item.name.startsWith("2.5"))
+  let starting_motor_voltage_drop_options = dropdown["Layout Starting Motor Voltage Drop"]
+  let voltage_grade_options = dropdown["Layout Voltage Grade"]
+  let gland_make_options = dropdown["Gland Make"]
+  let gland_moc_options = dropdown["Gland MOC"]
+  let type_of_gland_options = dropdown["Type Of Gland"]
+  let future_space_on_trays_options = dropdown["Future Space on Trays"]
+  let cable_placement_options = dropdown["Cable Placement"]
+  let cable_tray_orientation_options = dropdown["Cable Tray Orientation"]
+  let cable_tray_moc_options = dropdown["Cable Tray MOC"]
+  let cable_tray_width_options = dropdown["Cable Tray Width"]
+  let cable_tray_height_options = dropdown["Cable Tray Height"]
+  let cable_tray_thickness_options = dropdown["Cable Tray Thickness"]
+  let conduit_moc_options = dropdown["Conduit MOC"]
+  let conduit_size_options = dropdown["Conduit Size"]
 
   // Define a type for the valid keys for setValue
   type SetValueKeys =
@@ -188,7 +183,7 @@ const CableTray = ({
 
   useEffect(() => {
     const air_derating_factor = (touching_air_controlled * ambient_temp_factor_air_controlled).toFixed(2)
-    const burid_derating_factor =( touching_burid_controlled * ambient_temp_factor_burid_controlled).toFixed(2)
+    const burid_derating_factor = (touching_burid_controlled * ambient_temp_factor_burid_controlled).toFixed(2)
     setValue("derating_factor_air", Number(air_derating_factor))
     setValue("derating_factor_burid", Number(burid_derating_factor))
   }, [
@@ -286,7 +281,7 @@ const CableTray = ({
               control={control}
               name="number_of_cores"
               label="Number of Cores"
-              options={no_of_core_options}
+              options={no_of_core_options || []}
               size="small"
             />
           </div>
@@ -295,7 +290,7 @@ const CableTray = ({
               control={control}
               name="specific_requirement"
               label="Specific Requirement"
-              options={specific_requirement_options}
+              options={specific_requirement_options || []}
               size="small"
             />
           </div>
@@ -304,7 +299,7 @@ const CableTray = ({
               control={control}
               name="type_of_insulation"
               label="Type of Insulation"
-              options={type_of_insulation_options}
+              options={type_of_insulation_options || []}
               size="small"
             />
           </div>
@@ -315,7 +310,7 @@ const CableTray = ({
               control={control}
               name="color_scheme"
               label="Color Scheme"
-              options={color_scheme_options}
+              options={color_scheme_options || []}
               disabled={true}
               size="small"
             />
@@ -325,7 +320,7 @@ const CableTray = ({
               control={control}
               name="motor_voltage_drop_during_running"
               label="Motor Voltage Drop During Running"
-              options={running_motor_voltage_drop_options}
+              options={running_motor_voltage_drop_options || []}
               size="small"
               suffixIcon={
                 <>
@@ -339,7 +334,7 @@ const CableTray = ({
               control={control}
               name="motor_voltage_drop_during_starting"
               label="Motor Voltage Drop During Starting"
-              options={starting_motor_voltage_drop_options}
+              options={starting_motor_voltage_drop_options || []}
               size="small"
               suffixIcon={
                 <>
@@ -355,7 +350,7 @@ const CableTray = ({
               control={control}
               name="voltage_grade"
               label="Voltage Grade"
-              options={voltage_grade_options}
+              options={voltage_grade_options || []}
               size="small"
             />
           </div>
@@ -365,7 +360,7 @@ const CableTray = ({
               control={control}
               name="copper_conductor"
               label="Copper Conductor (Sq mm. including and below)"
-              options={copper_conductor_options}
+              options={copper_conductor_options || []}
               suffixIcon={
                 <>
                   <p className="text-xs font-semibold text-blue-500">Sq. mm</p>
@@ -379,7 +374,7 @@ const CableTray = ({
               control={control}
               name="aluminium_conductor"
               label="Aluminium Conductor (Sq mm. including and above)"
-              options={aluminium_conductor_options}
+              options={aluminium_conductor_options || []}
               suffixIcon={
                 <>
                   <p className="text-xs font-semibold text-blue-500">Sq. mm</p>
@@ -443,14 +438,14 @@ const CableTray = ({
           />
         </div> */}
         <div className="flex-1">
-          <CustomSingleSelect control={control} name="moc" label="MOC" options={gland_moc_options} size="small" />
+          <CustomSingleSelect control={control} name="moc" label="MOC" options={gland_moc_options || []} size="small" />
         </div>
         <div className="flex-1">
           <CustomSingleSelect
             control={control}
             name="type_of_gland"
             label="Type of Gland"
-            options={type_of_gland_options}
+            options={type_of_gland_options || []}
             size="small"
           />
         </div>
@@ -476,7 +471,7 @@ const CableTray = ({
               control={control}
               name="future_space_on_trays"
               label="Future Space on Trays"
-              options={future_space_on_trays_options}
+              options={future_space_on_trays_options || []}
               size="small"
               suffixIcon={
                 <>
@@ -490,7 +485,7 @@ const CableTray = ({
               control={control}
               name="cable_placement"
               label="Cable Placement"
-              options={cable_placement_options}
+              options={cable_placement_options || []}
               size="small"
             />
           </div>
@@ -499,7 +494,7 @@ const CableTray = ({
               control={control}
               name="orientation"
               label="Orientation"
-              options={cable_tray_orientation_options}
+              options={cable_tray_orientation_options || []}
               size="small"
             />
           </div>
@@ -540,7 +535,7 @@ const CableTray = ({
                 control={control}
                 name="cable_tray_moc"
                 label=""
-                options={cable_tray_moc_options}
+                options={cable_tray_moc_options || []}
               />
             </div>
             {Boolean(watch("cable_tray_moc") === "MS - Hot dipped Galvanised") &&
@@ -598,7 +593,7 @@ const CableTray = ({
               control={control}
               name="pct_perforated_type_width"
               label="Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_pct_perforated_type_selected") === "0"}
             />
@@ -608,7 +603,7 @@ const CableTray = ({
               control={control}
               name="pct_perforated_type_max_width"
               label="Min. Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_pct_perforated_type_selected") === "0"}
             />
@@ -618,7 +613,7 @@ const CableTray = ({
               control={control}
               name="pct_perforated_type_height"
               label="Height"
-              options={cable_tray_height_options}
+              options={cable_tray_height_options || []}
               size="small"
               disabled={watch("is_pct_perforated_type_selected") === "0"}
             />
@@ -628,7 +623,7 @@ const CableTray = ({
               control={control}
               name="pct_perforated_type_thickness"
               label="Thickness"
-              options={cable_tray_thickness_options}
+              options={cable_tray_thickness_options || []}
               size="small"
               disabled={watch("is_pct_perforated_type_selected") === "0"}
             />
@@ -656,7 +651,7 @@ const CableTray = ({
               control={control}
               name="pct_ladder_type_width"
               label="Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_pct_ladder_type_selected") === "0"}
             />
@@ -666,7 +661,7 @@ const CableTray = ({
               control={control}
               name="pct_ladder_type_max_width"
               label="Max. Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_pct_ladder_type_selected") === "0"}
             />
@@ -676,7 +671,7 @@ const CableTray = ({
               control={control}
               name="pct_ladder_type_height"
               label="Height"
-              options={cable_tray_height_options}
+              options={cable_tray_height_options || []}
               size="small"
               disabled={watch("is_pct_ladder_type_selected") === "0"}
             />
@@ -686,7 +681,7 @@ const CableTray = ({
               control={control}
               name="pct_ladder_type_thickness"
               label="Thickness"
-              options={cable_tray_thickness_options}
+              options={cable_tray_thickness_options || []}
               size="small"
               disabled={watch("is_pct_ladder_type_selected") === "0"}
             />
@@ -714,7 +709,7 @@ const CableTray = ({
               control={control}
               name="pct_mesh_type_width"
               label="Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_pct_mesh_type_selected") === "0"}
             />
@@ -724,7 +719,7 @@ const CableTray = ({
               control={control}
               name="pct_mesh_type_max_width"
               label="Max. Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_pct_mesh_type_selected") === "0"}
             />
@@ -734,7 +729,7 @@ const CableTray = ({
               control={control}
               name="pct_mesh_type_height"
               label="Height"
-              options={cable_tray_height_options}
+              options={cable_tray_height_options || []}
               size="small"
               disabled={watch("is_pct_mesh_type_selected") === "0"}
             />
@@ -744,7 +739,7 @@ const CableTray = ({
               control={control}
               name="pct_mesh_type_thickness"
               label="Thickness"
-              options={cable_tray_thickness_options}
+              options={cable_tray_thickness_options || []}
               size="small"
               disabled={watch("is_pct_mesh_type_selected") === "0"}
             />
@@ -772,7 +767,7 @@ const CableTray = ({
               control={control}
               name="pct_conduit_moc"
               label="MOC"
-              options={conduit_moc_options}
+              options={conduit_moc_options || []}
               size="small"
               disabled={watch("is_pct_conduit_selected") === "0"}
             />
@@ -782,7 +777,7 @@ const CableTray = ({
               control={control}
               name="pct_conduit_size"
               label="Size"
-              options={conduit_size_options}
+              options={conduit_size_options || []}
               size="small"
               disabled={watch("is_pct_conduit_selected") === "0"}
             />
@@ -815,7 +810,7 @@ const CableTray = ({
               control={control}
               name="cct_perforated_type_width"
               label="Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_cct_perforated_type_selected") === "0"}
             />
@@ -825,7 +820,7 @@ const CableTray = ({
               control={control}
               name="cct_perforated_type_max_width"
               label="Min. Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_cct_perforated_type_selected") === "0"}
             />
@@ -835,7 +830,7 @@ const CableTray = ({
               control={control}
               name="cct_perforated_type_height"
               label="Height"
-              options={cable_tray_height_options}
+              options={cable_tray_height_options || []}
               size="small"
               disabled={watch("is_cct_perforated_type_selected") === "0"}
             />
@@ -845,7 +840,7 @@ const CableTray = ({
               control={control}
               name="cct_perforated_type_thickness"
               label="Thickness"
-              options={cable_tray_thickness_options}
+              options={cable_tray_thickness_options || []}
               size="small"
               disabled={watch("is_cct_perforated_type_selected") === "0"}
             />
@@ -873,7 +868,7 @@ const CableTray = ({
               control={control}
               name="cct_ladder_type_width"
               label="Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_cct_ladder_type_selected") === "0"}
             />
@@ -883,7 +878,7 @@ const CableTray = ({
               control={control}
               name="cct_ladder_type_max_width"
               label="Max. Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_cct_ladder_type_selected") === "0"}
             />
@@ -893,7 +888,7 @@ const CableTray = ({
               control={control}
               name="cct_ladder_type_height"
               label="Height"
-              options={cable_tray_height_options}
+              options={cable_tray_height_options || []}
               size="small"
               disabled={watch("is_cct_ladder_type_selected") === "0"}
             />
@@ -903,7 +898,7 @@ const CableTray = ({
               control={control}
               name="cct_ladder_type_thickness"
               label="Thickness"
-              options={cable_tray_thickness_options}
+              options={cable_tray_thickness_options || []}
               size="small"
               disabled={watch("is_cct_ladder_type_selected") === "0"}
             />
@@ -931,7 +926,7 @@ const CableTray = ({
               control={control}
               name="cct_mesh_type_width"
               label="Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_cct_mesh_type_selected") === "0"}
             />
@@ -941,7 +936,7 @@ const CableTray = ({
               control={control}
               name="cct_mesh_type_max_width"
               label="Max. Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_cct_mesh_type_selected") === "0"}
             />
@@ -951,7 +946,7 @@ const CableTray = ({
               control={control}
               name="cct_mesh_type_height"
               label="Height"
-              options={cable_tray_height_options}
+              options={cable_tray_height_options || []}
               size="small"
               disabled={watch("is_cct_mesh_type_selected") === "0"}
             />
@@ -961,7 +956,7 @@ const CableTray = ({
               control={control}
               name="cct_mesh_type_thickness"
               label="Thickness"
-              options={cable_tray_thickness_options}
+              options={cable_tray_thickness_options || []}
               size="small"
               disabled={watch("is_cct_mesh_type_selected") === "0"}
             />
@@ -989,7 +984,7 @@ const CableTray = ({
               control={control}
               name="cct_conduit_moc"
               label="MOC"
-              options={conduit_moc_options}
+              options={conduit_moc_options || []}
               size="small"
               disabled={watch("is_cct_conduit_selected") === "0"}
             />
@@ -999,7 +994,7 @@ const CableTray = ({
               control={control}
               name="cct_conduit_size"
               label="Size"
-              options={conduit_size_options}
+              options={conduit_size_options || []}
               size="small"
               disabled={watch("is_cct_conduit_selected") === "0"}
             />
@@ -1032,7 +1027,7 @@ const CableTray = ({
               control={control}
               name="sct_perforated_type_width"
               label="Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_sct_perforated_type_selected") === "0"}
             />
@@ -1042,7 +1037,7 @@ const CableTray = ({
               control={control}
               name="sct_perforated_type_max_width"
               label="Min. Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_sct_perforated_type_selected") === "0"}
             />
@@ -1052,7 +1047,7 @@ const CableTray = ({
               control={control}
               name="sct_perforated_type_height"
               label="Height"
-              options={cable_tray_height_options}
+              options={cable_tray_height_options || []}
               size="small"
               disabled={watch("is_sct_perforated_type_selected") === "0"}
             />
@@ -1062,7 +1057,7 @@ const CableTray = ({
               control={control}
               name="sct_perforated_type_thickness"
               label="Thickness"
-              options={cable_tray_thickness_options}
+              options={cable_tray_thickness_options || []}
               size="small"
               disabled={watch("is_sct_perforated_type_selected") === "0"}
             />
@@ -1090,7 +1085,7 @@ const CableTray = ({
               control={control}
               name="sct_ladder_type_width"
               label="Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_sct_ladder_type_selected") === "0"}
             />
@@ -1100,7 +1095,7 @@ const CableTray = ({
               control={control}
               name="sct_ladder_type_max_width"
               label="Max. Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_pct_perforated_type_selected") === "0"}
             />
@@ -1110,7 +1105,7 @@ const CableTray = ({
               control={control}
               name="sct_ladder_type_height"
               label="Height"
-              options={cable_tray_height_options}
+              options={cable_tray_height_options || []}
               size="small"
               disabled={watch("is_pct_perforated_type_selected") === "0"}
             />
@@ -1120,7 +1115,7 @@ const CableTray = ({
               control={control}
               name="sct_ladder_type_thickness"
               label="Thickness"
-              options={cable_tray_thickness_options}
+              options={cable_tray_thickness_options || []}
               size="small"
               disabled={watch("is_sct_ladder_type_selected") === "0"}
             />
@@ -1148,7 +1143,7 @@ const CableTray = ({
               control={control}
               name="sct_mesh_type_width"
               label="Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_sct_mesh_type_selected") === "0"}
             />
@@ -1158,7 +1153,7 @@ const CableTray = ({
               control={control}
               name="sct_mesh_type_max_width"
               label="Max. Width"
-              options={cable_tray_width_options}
+              options={cable_tray_width_options || []}
               size="small"
               disabled={watch("is_sct_mesh_type_selected") === "0"}
             />
@@ -1168,7 +1163,7 @@ const CableTray = ({
               control={control}
               name="sct_mesh_type_height"
               label="Height"
-              options={cable_tray_height_options}
+              options={cable_tray_height_options || []}
               size="small"
               disabled={watch("is_sct_mesh_type_selected") === "0"}
             />
@@ -1178,7 +1173,7 @@ const CableTray = ({
               control={control}
               name="sct_mesh_type_thickness"
               label="Thickness"
-              options={cable_tray_thickness_options}
+              options={cable_tray_thickness_options || []}
               size="small"
               disabled={watch("is_sct_mesh_type_selected") === "0"}
             />
@@ -1206,7 +1201,7 @@ const CableTray = ({
               control={control}
               name="sct_conduit_moc"
               label="MOC"
-              options={conduit_moc_options}
+              options={conduit_moc_options || []}
               size="small"
               disabled={watch("is_sct_conduit_selected") === "0"}
             />
@@ -1216,7 +1211,7 @@ const CableTray = ({
               control={control}
               name="sct_conduit_size"
               label="Size"
-              options={conduit_size_options}
+              options={conduit_size_options || []}
               size="small"
               disabled={watch("is_sct_conduit_selected") === "0"}
             />

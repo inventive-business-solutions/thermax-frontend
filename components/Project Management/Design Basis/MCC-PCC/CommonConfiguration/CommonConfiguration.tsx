@@ -153,73 +153,79 @@ const CommonConfiguration = ({
 
   const userInfo = useCurrentUser()
   let {
-    dol_starter_options,
-    star_delta_starter_options,
-    ammeter_options,
-    ammeter_configuration_options,
-    mcc_switchgear_type_options,
-    switchgear_combination_options,
-    pole_options,
-    dm_standard_options,
-    testing_standard_options,
-    power_wiring_color_options,
-    power_wiring_length_options,
-    control_wiring_color_options,
-    control_wiring_length_options,
-    vdc_24_wiring_color_options,
-    vdc_24_wiring_length_options,
-    analog_signal_wiring_color_options,
-    analog_signal_wiring_length_options,
-    ct_wiring_color_options,
-    ct_wiring_length_options,
-    cable_wiring_pvc_options,
-    ferrule_options,
-    spare_terminal_options,
-    push_button_stop_options,
-    push_button_start_options,
-    // ess_options,
-    // speed_increase_pb_options,
-    // speed_decrease_pb_options,
-    // test_reset_options,
-    // alarm_acknowledge_and_lamp_test_options,
-    ess_options,
-    speed_increase_pb_options,
-    field_motor_thickness_options,
-    speed_decrease_pb_options,
-    test_dropdown_options,
-    reset_dropdown_options,
-    alarm_acknowledge_dropdown_options,
-    lamp_test_dropdown_options,
-    running_open_options,
-    stopped_closed_options,
-    trip_options,
-    field_motor_type_options,
-    hazardous_area_type_options,
-    field_motor_enclosure_options,
-    field_motor_material_options,
-    field_motor_qty_options,
-    field_motor_color_shade_options,
-    field_motor_cable_entry_options,
-    field_motor_canopy_on_top_options,
-    field_motor_canopy_type_options,
-    lpbs_color_shade_options,
-    lpbs_canopy_on_top_options,
-    lpbs_indicator_on_options,
-    lpbs_indiacator_off_options,
-    lpbs_speed_increase_options,
-    lpbs_speed_decrease_options,
-    apfc_relay_options,
-    pb_main_busbar_selection_options,
-    pb_heat_pvc_sleeve_options,
-    pb_current_density_options,
-    cb_main_busbar_selection_option,
-    cb_heat_pvc_sleeve_options,
-    cb_current_density_options,
-    eb_main_busbar_selection_options,
-    eb_main_busbar_position_options,
-    eb_current_density_options,
-    metering_for_feeder_options,
+    dropdown
   } = useCommonConfigDropdowns()
+
+  let dol_starter_options = dropdown["DOL Starter"]
+  let star_delta_starter_options = dropdown["Star Delta Starter"]
+  let ammeter_options = dropdown["Ammeter"]
+  let ammeter_configuration_options = dropdown["Ammeter Configuration"]
+  let mcc_switchgear_type_options = dropdown["MCC Switchgear Type"]
+  let switchgear_combination_options = dropdown["Switchgear Combination"]
+  let pole_options = dropdown["Supply Feeder Pole"]
+  let dm_standard_options = dropdown["Supply Feeder DM Standard"]
+  let testing_standard_options = dropdown["Supply Feeder Testing Standard"]
+  let power_wiring_color_options = dropdown["Power Wiring Color"]
+  let power_wiring_length_options = dropdown["Power Wiring Size"]
+  let control_wiring_color_options = dropdown["Control Wiring Color"]
+  let control_wiring_length_options = dropdown["Control Wiring Size"]
+  let vdc_24_wiring_color_options = dropdown["VDC 24 Wiring Color"]
+  let vdc_24_wiring_length_options = dropdown["VDC 24 Wiring Size"]
+  let analog_signal_wiring_color_options = dropdown["Analog Signal Wiring Color"]
+  let analog_signal_wiring_length_options = dropdown["Analog Signal Wiring Size"]
+  let ct_wiring_color_options = dropdown["CT Wiring Color"]
+  let ct_wiring_length_options = dropdown["CT Wiring Size"]
+  let cable_wiring_pvc_options = dropdown["Cable Insulation PVC"]
+  let ferrule_options = dropdown["Ferrule"]
+
+  let spare_terminal_options = dropdown["Spare Terminal"]
+
+  let push_button_stop_options = dropdown["Push Button Stop Color"]
+  let push_button_start_options = dropdown["Push Button Start Color"]
+  let ess_options = dropdown["Push Button ESS"]
+  let speed_increase_pb_options = dropdown["Speed Increase PB"]
+  let field_motor_thickness_options = dropdown["Field Motor Thickness"]
+  let speed_decrease_pb_options = dropdown["Speed Decrease PB"]
+  let test_dropdown_options = dropdown["Test Dropdown"]
+  let reset_dropdown_options = dropdown["Reset Dropdown"]
+  let alarm_acknowledge_dropdown_options = dropdown["Alarm Acknowledge Dropdown"]
+  let lamp_test_dropdown_options = dropdown["Lamp Test Dropdown"]
+
+  let running_open_options = dropdown["Indicating Lamp Running Open"]
+  let stopped_closed_options = dropdown["Indicating Lamp Stopped Closed"]
+  let trip_options = dropdown["Indicating Lamp Trip"]
+
+  let field_motor_type_options = dropdown["Field Motor Isolator General Type"]
+  let hazardous_area_type_options = dropdown["Hazardous Area Type Isolator and Lpbs"]
+  let field_motor_enclosure_options = dropdown["Field Motor Isolator General Enclosure"]
+  let field_motor_material_options = dropdown["Field Motor Isolator General Material"]
+  let field_motor_qty_options = dropdown["Field Motor Isolator General QTY"]
+  let field_motor_color_shade_options = dropdown["Field Motor Isolator Color Shade"]
+  let field_motor_cable_entry_options = dropdown["Field Motor Isolator General Cable Entry"]
+  let field_motor_canopy_on_top_options = dropdown["Field Motor Isolator Canopy On Top"]
+  let field_motor_canopy_type_options = dropdown["Field Motor Isolator Canopy Type"]
+
+  let lpbs_color_shade_options = dropdown["Local Push Button Station LPBS Color Shade"]
+  let lpbs_canopy_on_top_options = dropdown["Local Push Button Station Canopy On top"]
+  let lpbs_indicator_on_options = dropdown["LPBS Start On Indication Lamp Color"]
+  let lpbs_indiacator_off_options = dropdown["LPBS Stop Off Indication Lamp Color"]
+  let lpbs_speed_increase_options = dropdown["LPBS Speed Increase Push Button"]
+  let lpbs_speed_decrease_options = dropdown["LPBS Speed Decrease Push Button"]
+
+  let apfc_relay_options = dropdown["APFC Relay"]
+
+
+  let pb_main_busbar_selection_options = dropdown["Power Bus Main Busbar Selection"]
+  let pb_heat_pvc_sleeve_options = dropdown["Power Bus Heat Shrinkable Color PVC sleeve"]
+  let pb_current_density_options = dropdown["Power Bus Current Density"]
+  let cb_main_busbar_selection_option = dropdown["Control Bus Main Busbar Selection"]
+  let cb_heat_pvc_sleeve_options = dropdown["Control Bus Heat Shrinkable Color PVC sleeve"]
+  let cb_current_density_options = dropdown["Control Bus Current Density"]
+  let eb_main_busbar_selection_options = dropdown["Earth Bus Main Busbar Selection"]
+  let eb_main_busbar_position_options = dropdown["Earth Bus Busbar Position"]
+  let eb_current_density_options = dropdown["Earth Bus Current Density"]
+  let metering_for_feeder_options = dropdown["Metering for Feeder"]
+
 
   const [testing_standards, setTestingStandards] = useState<any[]>(
     Array.isArray(testing_standard_options) ? [...testing_standard_options] : []
@@ -499,7 +505,7 @@ const CommonConfiguration = ({
               control={control}
               name="dm_standard"
               label="Design & Manufacturer's standard"
-              options={watch("supply_feeder_standard").startsWith("IEC") ? iec_dm_standards : is_dm_standards}
+              options={(watch("supply_feeder_standard").startsWith("IEC") ? iec_dm_standards : is_dm_standards) || []}
               size="small"
             />
           </div>
@@ -508,7 +514,7 @@ const CommonConfiguration = ({
               control={control}
               name="testing_standard"
               label="Testing Standard"
-              options={watch("supply_feeder_standard").startsWith("IEC") ? iec_testing_standards : is_testing_standards}
+              options={(watch("supply_feeder_standard").startsWith("IEC") ? iec_testing_standards : is_testing_standards) || []}
               size="small"
             />
           </div>
@@ -1358,7 +1364,7 @@ const CommonConfiguration = ({
               control={control}
               name="power_bus_current_density"
               label="Current Density"
-              options={watch("power_bus_material") === "Aluminium" ? al_pb_current_density : cu_pb_current_density}
+              options={(watch("power_bus_material") === "Aluminium" ? al_pb_current_density : cu_pb_current_density) || []}
               size="small"
             />
           </div>
@@ -1412,7 +1418,7 @@ const CommonConfiguration = ({
               control={control}
               name="control_bus_current_density"
               label="Current Density"
-              options={watch("control_bus_material") === "Aluminium" ? al_cb_current_density : cu_cb_current_density}
+              options={(watch("control_bus_material") === "Aluminium" ? al_cb_current_density : cu_cb_current_density) || []}
               size="small"
             />
           </div>
@@ -1466,7 +1472,7 @@ const CommonConfiguration = ({
               control={control}
               name="earth_bus_current_density"
               label="Current Density"
-              options={watch("earth_bus_material") === "Aluminium" ? al_eb_current_density : cu_eb_current_density}
+              options={(watch("earth_bus_material") === "Aluminium" ? al_eb_current_density : cu_eb_current_density) || []}
               size="small"
             />
           </div>
