@@ -20,8 +20,9 @@ import ProjectFormModal from "./ProjectFormModal"
 import { UploadProjectFilesModal } from "./UploadProjectFilesModal"
 import { getThermaxDateFormat } from "utils/helpers"
 import { deleteProject } from "actions/project"
-import { TagColors } from "configs/constants"
+import { ENVIRO, HEATING, SERVICES, TagColors, WWS_IPG, WWS_SPG } from "configs/constants"
 import AlertNotification from "components/AlertNotification"
+import { WWS_SPG_DATA } from "app/Data"
 
 interface DataType {
   key: string
@@ -59,7 +60,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
   }
   let { data: projectList, isLoading } = useGetData(getProjectUrl)
 
-  console.log('projectList', projectList)
+  console.log("projectList", projectList)
 
   if (projectList) {
     projectList.sort((a: any, b: any) => {
@@ -99,6 +100,11 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       render: (text: keyof typeof TagColors) => {
         return <Tag color={TagColors[text]}>{text}</Tag>
       },
+      filters: [HEATING, ENVIRO, WWS_IPG, WWS_SPG, SERVICES].map((division) => {
+        return { text: division, value: division }
+      }),
+      onFilter: (value, record) => record.division.indexOf(value) === 0,
+      defaultFilteredValue: [userInfo?.division],
     },
     {
       title: () => <div className="text-center">Project OC No</div>,
