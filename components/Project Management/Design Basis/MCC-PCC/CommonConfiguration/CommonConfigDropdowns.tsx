@@ -1,86 +1,11 @@
 "use client"
 
 import { createData } from "actions/crud-actions";
-import {
-  ALARM_ACKNOWLEDGE_DROPDOWN,
-  LAMP_TEST_DROPDOWN,
-  AMMETER,
-  AMMETER_CONFIGURATION,
-  ANALOG_SIGNAL_WIRING_COLOR,
-  ANALOG_SIGNAL_WIRING_LENGTH as ANALOG_SIGNAL_WIRING_SIZE,
-  APFC_RELAY,
-  CABLE_WIRING_PVC,
-  CONTROL_BUS_CURRENT_DENSITY,
-  CONTROL_BUS_HEAT_PVC_SLEEVE,
-  CONTROL_BUS_MAIN_BUSBAR_SELECTION,
-  CONTROL_WIRING_COLOR,
-  CONTROL_WIRING_SIZE,
-  CT_WIRING_COLOR,
-  CT_WIRING_SIZE,
-  DOL_STARTER,
-  EARTH_BUS_BUSBAR_POSITION,
-  EARTH_BUS_CURRENT_DENSITY,
-  EARTH_BUS_MAIN_BUSBAR_SELECTION,
-  FERRULE,
-  FIELD_MOTOR_CABLE_ENTRY,
-  FIELD_MOTOR_CANOPY_ON_TOP,
-  FIELD_MOTOR_CANOPY_TYPE,
-  FIELD_MOTOR_COLOUR_SHADE,
-  FIELD_MOTOR_ENCLOSURE,
-  FIELD_MOTOR_MATERIAL,
-  FIELD_MOTOR_QTY,
-  FIELD_MOTOR_THICKNESS,
-  FIELD_MOTOR_TYPE,
-  HAZARDOUS_AREA_TYPE,
-  LPBS_CANOPY_ON_TOP,
-  LPBS_COLOR_SHADE,
-  LPBS_ENCLOSURE,
-  LPBS_INDICATOR_OFF_COLOR,
-  LPBS_INDICATOR_ON_COLOR,
-  LPBS_MATERIAL,
-  LPBS_PUSH_BUTTON_START_COLOR,
-  LPBS_QTY,
-  LPBS_SPEED_DECREASE_BUTTON,
-  LPBS_SPEED_INCREASE_BUTTON,
-  LPBS_TYPE,
-  LR_SELECTOR_LOCK_TYPE,
-  LR_SELECTOR_SWITCH_APPLICABLE,
-  MCC_SWITCHGEAR_TYPE,
-  METERING_FOR_FEEDER,
-  POWER_BUS_CURRENT_DENSITY,
-  POWER_BUS_HEAT_PVC_SLEEVE,
-  POWER_BUS_MAIN_BUSBAR_SELECTION,
-  POWER_WIRING_COLOR,
-  POWER_WIRING_SIZE,
-  PUSH_BUTTON_ESS,
-  PUSH_BUTTON_START_COLOR,
-  PUSH_BUTTON_STOP_COLOR,
-  RESET_DROPDOWN,
-  RUNNING_OPEN,
-  SPARE_TERMINAL,
-  SPEED_DECREASE_PB,
-  SPEED_INCREASE_PB,
-  STAR_DELTA_STARTER,
-  STOPPED_CLOSED,
-  SUPPLY_FEEDER_DM_STANDARD,
-  SUPPLY_FEEDER_POLE,
-  SUPPLY_FEEDER_TESTING_STANDARD,
-  SWITCHGEAR_COMBINATION,
-  TEST_DROPDOWN,
-  TRIP,
-  VDC_24_WIRING_COLOR,
-  VDC_24_WIRING_SIZE,
-} from "configs/api-endpoints"
+import { useEffect, useState } from "react";
 
 type DropdownState = {
   [key: string]: any[]; // Each key is a string and the value is an array of any type
 };
-
-
-import { useDropdownOptions } from "hooks/useDropdownOptions"
-import { lte } from "lodash"
-import { useEffect, useState } from "react";
-import { moveNAtoEnd, sortDropdownOptions } from "utils/helpers"
 
 export default function useCommonConfigDropdowns() {
 
@@ -88,50 +13,50 @@ export default function useCommonConfigDropdowns() {
 
   useEffect(() => {
     const getDropdown = async () => {
-      let response = await createData("/method/common_configuration.get_common_config_dropdown",true, {
-        "DOL Starter":"name",
-        "Star Delta Starter":"name",
-        "Ammeter":"name",
-        "Ammeter Configuration":"name",
-        "MCC Switchgear Type":"name",
-        "Switchgear Combination":"name",
-        "Metering for Feeder":"name",  //Ammeter Type
+      let response = await createData("/method/common_configuration.get_common_config_dropdown", true, {
+        "DOL Starter": "name",
+        "Star Delta Starter": "name",
+        "Ammeter": "name",
+        "Ammeter Configuration": "name",
+        "MCC Switchgear Type": "name",
+        "Switchgear Combination": "name",
+        "Metering for Feeder": "name",  //Ammeter Type
 
 
-        "Supply Feeder Pole":"name",
-        "Supply Feeder DM Standard":"name",
-        "Supply Feeder Testing Standard":"name",
-        "Power Wiring Color":"name",
-        "Power Wiring Size":"name",
-        "Control Wiring Color":"name",
-        "Control Wiring Size":"name",
-        "VDC 24 Wiring Color":"name",
-        "VDC 24 Wiring Size":"name",
-        "Analog Signal Wiring Color":"name",
-        "Analog Signal Wiring Size":"name",
-        "CT Wiring Color":"name",
-        "CT Wiring Size":"name",
-        "Cable Insulation PVC":"name",
-        "Ferrule":"name",
-        "Spare Terminal":"name",
+        "Supply Feeder Pole": "name",
+        "Supply Feeder DM Standard": "name",
+        "Supply Feeder Testing Standard": "name",
+        "Power Wiring Color": "name",
+        "Power Wiring Size": "name",
+        "Control Wiring Color": "name",
+        "Control Wiring Size": "name",
+        "VDC 24 Wiring Color": "name",
+        "VDC 24 Wiring Size": "name",
+        "Analog Signal Wiring Color": "name",
+        "Analog Signal Wiring Size": "name",
+        "CT Wiring Color": "name",
+        "CT Wiring Size": "name",
+        "Cable Insulation PVC": "name",
+        "Ferrule": "name",
+        "Spare Terminal": "name",
 
-        "Test Dropdown":"name",
-        "Reset Dropdown":"name",
-        "Alarm Acknowledge Dropdown":"name",
-        "Lamp Test Dropdown":"name",
-        "Speed Decrease PB":"name",
-        "Speed Increase PB":"name",
-        "Push Button ESS":"name",
-        "Push Button Stop Color":"name",
-        "Push Button Start Color":"name",
+        "Test Dropdown": "name",
+        "Reset Dropdown": "name",
+        "Alarm Acknowledge Dropdown": "name",
+        "Lamp Test Dropdown": "name",
+        "Speed Decrease PB": "name",
+        "Speed Increase PB": "name",
+        "Push Button ESS": "name",
+        "Push Button Stop Color": "name",
+        "Push Button Start Color": "name",
 
-        
-        "Indicating Lamp Stopped Closed":"name",
-        "Indicating Lamp Running Open":"name",
-        "Indicating Lamp Trip":"name",
 
-        
-        "Hazardous Area Type Isolator and Lpbs":"name",
+        "Indicating Lamp Stopped Closed": "name",
+        "Indicating Lamp Running Open": "name",
+        "Indicating Lamp Trip": "name",
+
+
+        "Hazardous Area Type Isolator and Lpbs": "name",
         "Field Motor Isolator General Type": "name",
         "Field Motor Isolator General Enclosure": "name",
         "Field Motor Isolator General Material": "name",
@@ -153,21 +78,21 @@ export default function useCommonConfigDropdowns() {
         "LPBS Stop Off Indication Lamp Color": "name",
         "LPBS Speed Increase Push Button": "name",
         "LPBS Speed Decrease Push Button": "name",
-        
-        "APFC Relay":"name",
 
-        "Power Bus Main Busbar Selection" : "name",
-        "Power Bus Heat Shrinkable Color PVC sleeve" : "name",
-        "Power Bus Current Density" : "name",
-        "Control Bus Main Busbar Selection" : "name",
-        "Control Bus Heat Shrinkable Color PVC sleeve" : "name",
-        "Control Bus Current Density" : "name",
-        "Earth Bus Main Busbar Selection" : "name",
-        "Earth Bus Busbar Position" : "name",
-        "Earth Bus Current Density" : "name",
+        "APFC Relay": "name",
+
+        "Power Bus Main Busbar Selection": "name",
+        "Power Bus Heat Shrinkable Color PVC sleeve": "name",
+        "Power Bus Current Density": "name",
+        "Control Bus Main Busbar Selection": "name",
+        "Control Bus Heat Shrinkable Color PVC sleeve": "name",
+        "Control Bus Current Density": "name",
+        "Earth Bus Main Busbar Selection": "name",
+        "Earth Bus Busbar Position": "name",
+        "Earth Bus Current Density": "name",
       })
 
-      console.log(response , "common Config response")
+      console.log(response, "common Config response")
       setDropdown(response)
     }
 

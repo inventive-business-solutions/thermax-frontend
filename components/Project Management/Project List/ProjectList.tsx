@@ -103,7 +103,7 @@ export default function ProjectList({ userInfo, isComplete }: any) {
       filters: [HEATING, ENVIRO, WWS_IPG, WWS_SPG, SERVICES].map((division) => {
         return { text: division, value: division }
       }),
-      onFilter: (value, record) => record.division.indexOf(value) === 0,
+      onFilter: (value, record: any) => record?.division.indexOf(value) === 0,
       defaultFilteredValue: [userInfo?.division],
     },
     {
