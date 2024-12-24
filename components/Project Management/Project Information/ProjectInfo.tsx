@@ -1,7 +1,7 @@
 "use client"
 import { DownOutlined, PercentageOutlined } from "@ant-design/icons"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, message, Tooltip } from "antd"
+import { Button, message, Skeleton, Tooltip } from "antd"
 import { useParams, useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -131,6 +131,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
 
+
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
@@ -144,20 +145,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const [openDocumentList, setOpenDocumentList] = useState(false)
   const projectData = React.useMemo(() => ({ ...projectMetadata, ...projectInfo }), [projectMetadata, projectInfo])
   const {
-    mainSupplyMVOptions,
-    voltageVariationOptions,
-    frequencyVariationOptions,
-    mainSupplyLVOptions,
-    mainSupplyPhaseOptions,
-    controlUtilityPhaseOptions,
-    controlSupplyOptions,
-    utilitySupplyOptions,
-    frequencyOptions,
-    ambientTempMaxOptions,
-    faultLevelOptions,
-    secOptions,
-    electricalDesignTempOptions,
-    seismicZoneOptions,
+    dropdown,
   } = useProjectInfoDropdowns()
 
   const { control, handleSubmit, reset, formState, watch, setValue } = useForm({
@@ -229,6 +217,14 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
     }
   }
 
+  // if (dropdown) {
+  //   return (
+  //     <div>
+  //       <Skeleton active paragraph={{ rows: 8 }} />
+  //     </div>
+  //   )
+  // }
+
   return (
     <div className="flex flex-col gap-4 px-4">
       <div className="flex font-semibold">
@@ -292,7 +288,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
                 </>
               }
               label="Main Supply [MV]"
-              options={mainSupplyMVOptions}
+              options={dropdown["Main Supply MV"] || []}
               size="small"
             />
           </div>
@@ -302,7 +298,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="main_supply_mv_variation"
               control={control}
               label="Variation"
-              options={voltageVariationOptions}
+              options={dropdown["Voltage Variation"] || []}
               suffixIcon={
                 <>
                   <PercentageOutlined style={{ color: "#3b82f6" }} />
@@ -317,7 +313,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="main_supply_mv_phase"
               control={control}
               label="Phase"
-              options={mainSupplyPhaseOptions}
+              options={dropdown["Main Supply Phase"] || []}
               size="small"
             />
           </div>
@@ -334,7 +330,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
                 </>
               }
               label="Main Supply [LV]"
-              options={mainSupplyLVOptions}
+              options={dropdown["Main Supply LV"] || []}
               size="small"
             />
           </div>
@@ -343,7 +339,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="main_supply_lv_variation"
               control={control}
               label="Variation"
-              options={voltageVariationOptions.filter((item: any) => item.name !== "NA")}
+              options={dropdown["Voltage Variation"]?.filter((item: any) => item.name !== "NA") || []}
               size="small"
               suffixIcon={
                 <>
@@ -358,7 +354,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="main_supply_lv_phase"
               control={control}
               label="Phase"
-              options={mainSupplyPhaseOptions.filter((item: any) => item.name !== "NA")}
+              options={dropdown["Main Supply Phase"]?.filter((item: any) => item.name !== "NA") || []}
               size="small"
             />
           </div>
@@ -375,7 +371,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
                 </>
               }
               label="Control Supply"
-              options={controlSupplyOptions}
+              options={dropdown["Control Supply"] || []}
               size="small"
             />
           </div>
@@ -384,7 +380,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="control_supply_variation"
               control={control}
               label="Variation"
-              options={voltageVariationOptions}
+              options={dropdown["Voltage Variation"] || []}
               size="small"
               disabled={watch("control_supply").endsWith("VDC")}
               suffixIcon={
@@ -400,7 +396,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="control_supply_phase"
               control={control}
               label="Phase"
-              options={controlUtilityPhaseOptions}
+              options={dropdown["Control and Utility Supply Phase"] || []}
               disabled={watch("control_supply").endsWith("VDC")}
               size="small"
             />
@@ -418,7 +414,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
                 </>
               }
               label="Utility Supply"
-              options={utilitySupplyOptions}
+              options={dropdown["Utility Supply"] || []}
               size="small"
             />
           </div>
@@ -427,7 +423,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="utility_supply_variation"
               control={control}
               label="Variation"
-              options={voltageVariationOptions}
+              options={dropdown["Voltage Variation"] || []}
               disabled={watch("utility_supply").endsWith("VDC")}
               suffixIcon={
                 <>
@@ -443,7 +439,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="utility_supply_phase"
               control={control}
               label="Phase"
-              options={controlUtilityPhaseOptions}
+              options={dropdown["Control and Utility Supply Phase"] || []}
               disabled={watch("utility_supply").endsWith("VDC")}
               size="small"
             />
@@ -455,7 +451,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="frequency"
               control={control}
               label="Frequency"
-              options={frequencyOptions}
+              options={dropdown["Frequency"] || []}
               suffixIcon={
                 <>
                   <p className="font-semibold text-blue-500">Hz</p>
@@ -470,7 +466,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="frequency_variation"
               control={control}
               label="Variation"
-              options={frequencyVariationOptions}
+              options={dropdown["Frequency Variation"] || []}
               suffixIcon={
                 <>
                   <PercentageOutlined style={{ color: "#3b82f6" }} />
@@ -487,7 +483,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="fault_level"
               control={control}
               label="Fault Level"
-              options={faultLevelOptions}
+              options={dropdown["Fault Level"] || []}
               suffixIcon={
                 <>
                   <p className="font-semibold text-blue-500">kA</p>
@@ -498,7 +494,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
             />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect name="sec" control={control} label="Sec" options={secOptions} size="small" />
+            <CustomSingleSelect name="sec" control={control} label="Sec" options={dropdown["Sec"] || []} size="small" />
           </div>
         </div>
         <div className="flex w-2/3 gap-8">
@@ -507,7 +503,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="ambient_temperature_max"
               control={control}
               label="Ambient Temperature [Max]"
-              options={ambientTempMaxOptions}
+              options={dropdown["Ambient Temperature Max"] || []}
               suffixIcon={
                 <>
                   <p className="font-semibold text-blue-500">Deg C</p>
@@ -538,7 +534,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
               name="electrical_design_temperature"
               control={control}
               label="Electrical Design Temperature"
-              options={electricalDesignTempOptions}
+              options={dropdown["Electrical Design Temp"] || []}
               suffixIcon={
                 <>
                   <p className="font-semibold text-blue-500">Deg C</p>

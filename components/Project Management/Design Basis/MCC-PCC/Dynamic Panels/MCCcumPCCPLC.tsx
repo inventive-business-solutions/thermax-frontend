@@ -106,7 +106,7 @@ const getDefaultValues = (plcData: any) => {
     is_plc_programming_license_software_selected:
       plcData?.is_plc_programming_license_software_selected?.toString() || "1",
     no_of_plc_programming_license_software: plcData?.no_of_plc_programming_license_software || 1,
-    system_hardware: plcData?.system_hardware || "Industrial Grade PC",
+    system_hardware: plcData?.system_hardware || "Industrial grade PC",
     commercial_grade_pc:
       plcData?.commercial_grade_pc ||
       "Minimum Configuration = min. i5/latest Processor, min 8GB RAM, min 1TB Hard Disk, multimedia with DVD R/W drive, Keyboard mouse set 1 nos with 4USB Port",
@@ -140,38 +140,40 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
   )
   const [loading, setLoading] = useState(false)
   const {
-    plc_ups_scope_options,
-    plc_ups_type_options,
-    plc_ups_battery_backup_time_options,
-    plc_hardware_communication_protocol_options,
-    plc_client_system_communication_options,
-    plc_cpu_redundancy_options,
-    plc_panel_memory_options,
-    marshalling_cabinet_options,
-    plc_control_voltage_options,
-    push_button_color_acknowledge_options,
-    push_button_color_reset_options,
-    non_ups_indicating_lamp_color_options,
-    ups_indicating_lamp_color_options,
-    di_module_density_options,
-    di_module_input_type_options,
-    di_module_interrogation_voltage_options,
-    do_module_density_options,
-    do_module_output_type_options,
-    do_contact_no_options,
-    ai_module_density_options,
-    rtd_density_options,
-    rtd_input_type_options,
-    ao_module_density_options,
-    ao_module_output_type_options,
-    plc_io_count_options,
-    plc_spare_memory_options,
-    plc_hmi_size_options,
-    eo_system_hardware_options,
-    eo_monitor_size_options,
-    eo_pc_cable_options,
-    eo_scada_furniture_options,
+    dropdown
   } = usePLCDropdowns()
+
+  let plc_ups_scope_options = dropdown["PLC UPS Scope"]
+  let plc_ups_type_options = dropdown["PLC UPS Type"]
+  let plc_ups_battery_backup_time_options = dropdown["PLC UPS Battery Backup Time"]
+  let plc_hardware_communication_protocol_options = dropdown["PLC Hardware Third Party Communication Protocol"]
+  let plc_client_system_communication_options = dropdown["PLC Hardware Client System Communication"]
+  let plc_cpu_redundancy_options = dropdown["PLC CPU Redundancy"]
+  let plc_panel_memory_options = dropdown["PLC Panel Memory"]
+  let marshalling_cabinet_options = dropdown["Marshalling Cabinet for PLC and UPS"]
+  let plc_control_voltage_options = dropdown["PLC Control Voltage"]
+  let push_button_color_acknowledge_options = dropdown["Push Button Color Acknowledge"]
+  let push_button_color_reset_options = dropdown["Push Button Color Reset"]
+  let non_ups_indicating_lamp_color_options = dropdown["Indicating Lamp Color for Non-UPS Power Supply"]
+  let ups_indicating_lamp_color_options = dropdown["Indicating Lamp Color for UPS Power Supply"]
+  let di_module_density_options = dropdown["DI Modules Density"]
+  let di_module_input_type_options = dropdown["DI Modules Type Of Input"]
+  let di_module_interrogation_voltage_options = dropdown["DI Modules Interrogation Voltage"]
+  let do_module_density_options = dropdown["DO Modules Density"]
+  let do_module_output_type_options = dropdown["DO Modules Type Of Output"]
+  let do_contact_no_options = dropdown["DO No Of Contacts"]
+  let ai_module_density_options = dropdown["AI Module Density"]
+  let rtd_density_options = dropdown["RTD Density"]
+  let rtd_input_type_options = dropdown["RTD Type Of Input"]
+  let ao_module_density_options = dropdown["AO Modules Density"]
+  let ao_module_output_type_options = dropdown["AO Modules Type of Output"]
+  let plc_io_count_options = dropdown["PLC IO Count"]
+  let plc_spare_memory_options = dropdown["PLC Spare Memory"]
+  let plc_hmi_size_options = dropdown["PLC HMI Size"]
+  let eo_system_hardware_options = dropdown["EO System Hardware"]
+  let eo_monitor_size_options = dropdown["EO Monitor Size"]
+  let eo_pc_cable_options = dropdown["EO Printer and Communication Cable"]
+  let eo_scada_furniture_options = dropdown["EO Furniture"]
 
   const { control, handleSubmit, reset, watch, getValues, setValue } = useForm({
     resolver: zodResolver(plcPanelValidationSchema),
@@ -193,33 +195,33 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
   // const is_rtd_tc_moduule_selected_controlled = watch("is_rtd_tc_moduule_selected")
 
   // useEffect(() => {
-    // if (is_third_party_communication_protocol_selected_controlled === "0") {
-    //   setValue("third_party_communication_protocol", "NA")
-    // }
-    // if (is_client_system_communication_selected_controlled === "0") {
-    //   setValue("client_system_communication", "NA")
-    // }
-    // if (is_cpu_redundancy_selected_controlled === "0") {
-    //   setValue("cpu_redundancy", "NA")
-    // }
-    // if (is_plc_and_ups_marshalling_cabinet_selected_controlled === "0") {
-    //   setValue("marshalling_cabinet_for_plc_and_ups", "NA")
-    // }
-    // if (is_no_of_contact_selected_controlled === "0") {
-    //   setValue("do_module_no_of_contact", "NA")
-    // }
-    // if (is_plc_spare_io_count_selected_controlled === "0") {
-    //   setValue("plc_spare_io_count", "NA")
-    // }
-    // if (is_plc_spare_memory_selected_controlled === "0") {
-    //   setValue("plc_spare_memory", "NA")
-    // }
-    // if (is_rtd_tc_moduule_selected_controlled === "0") {
-    //   setValue("rtd_tc_module_density", "NA")
-    //   setValue("rtd_tc_module_input_type", "NA")
-    //   setValue("rtd_tc_module_scan_time", "NA")
-    //   setValue("is_rtd_tc_module_hart_protocol_support_selected", 0)
-    // }
+  // if (is_third_party_communication_protocol_selected_controlled === "0") {
+  //   setValue("third_party_communication_protocol", "NA")
+  // }
+  // if (is_client_system_communication_selected_controlled === "0") {
+  //   setValue("client_system_communication", "NA")
+  // }
+  // if (is_cpu_redundancy_selected_controlled === "0") {
+  //   setValue("cpu_redundancy", "NA")
+  // }
+  // if (is_plc_and_ups_marshalling_cabinet_selected_controlled === "0") {
+  //   setValue("marshalling_cabinet_for_plc_and_ups", "NA")
+  // }
+  // if (is_no_of_contact_selected_controlled === "0") {
+  //   setValue("do_module_no_of_contact", "NA")
+  // }
+  // if (is_plc_spare_io_count_selected_controlled === "0") {
+  //   setValue("plc_spare_io_count", "NA")
+  // }
+  // if (is_plc_spare_memory_selected_controlled === "0") {
+  //   setValue("plc_spare_memory", "NA")
+  // }
+  // if (is_rtd_tc_moduule_selected_controlled === "0") {
+  //   setValue("rtd_tc_module_density", "NA")
+  //   setValue("rtd_tc_module_input_type", "NA")
+  //   setValue("rtd_tc_module_scan_time", "NA")
+  //   setValue("is_rtd_tc_module_hart_protocol_support_selected", 0)
+  // }
   // }, [
   //   is_third_party_communication_protocol_selected_controlled,
   //   is_client_system_communication_selected_controlled,
@@ -306,7 +308,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="ups_scope"
               label="UPS Scope"
-              options={plc_ups_scope_options}
+              options={plc_ups_scope_options || []}
               size="small"
             />
           </div>
@@ -315,7 +317,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="ups_type"
               label="UPS Type"
-              options={plc_ups_type_options}
+              options={plc_ups_type_options || []}
               disabled={
                 isClientOrThermaxScopeisSelected === "Thermax Scope" ||
                 isClientOrThermaxScopeisSelected === "Client Scope"
@@ -360,7 +362,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="ups_battery_backup_time"
               label="UPS Battery Backup Time In Min"
-              options={plc_ups_battery_backup_time_options}
+              options={plc_ups_battery_backup_time_options || []}
               size="small"
               disabled={
                 isClientOrThermaxScopeisSelected === "Thermax Scope" ||
@@ -422,7 +424,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 control={control}
                 name="third_party_communication_protocol"
                 label=""
-                options={plc_hardware_communication_protocol_options}
+                options={plc_hardware_communication_protocol_options || []}
                 size="small"
                 disabled={watch("is_third_party_communication_protocol_selected") === "0"}
               />
@@ -445,7 +447,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 control={control}
                 name="client_system_communication"
                 label=""
-                options={plc_client_system_communication_options}
+                options={plc_client_system_communication_options || []}
                 size="small"
                 disabled={watch("is_client_system_communication_selected") === "0"}
               />
@@ -533,7 +535,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               name="cpu_redundancy"
               label=""
               size="small"
-              options={plc_cpu_redundancy_options}
+              options={plc_cpu_redundancy_options || []}
               disabled={watch("is_cpu_redundancy_selected") === "0"}
             />
           </div>
@@ -547,7 +549,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="plc_panel_memory"
               label="Memory"
-              options={plc_panel_memory_options}
+              options={plc_panel_memory_options || []}
               size="small"
             />
           </div>
@@ -562,7 +564,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               name="control_voltage"
               label=" Control Voltage : Ǿ : Wire : Frequency : ± 5 (UPS)"
               size="small"
-              options={plc_control_voltage_options}
+              options={plc_control_voltage_options || []}
             />
           </div>
           <div className="flex flex-1 items-center gap-2">
@@ -586,7 +588,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="marshalling_cabinet_for_plc_and_ups"
                 label=""
                 size="small"
-                options={marshalling_cabinet_options}
+                options={marshalling_cabinet_options || []}
                 disabled={watch("is_plc_and_ups_marshalling_cabinet_selected") === "0"}
               />
             </div>
@@ -601,7 +603,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="push_button_colour_acknowledge"
               label="Push Button Colour Acknowledge"
-              options={push_button_color_acknowledge_options}
+              options={push_button_color_acknowledge_options || []}
               size="small"
             />
           </div>
@@ -610,7 +612,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="push_button_color_reset"
               label="Push Button Colour Reset"
-              options={push_button_color_reset_options}
+              options={push_button_color_reset_options || []}
               size="small"
             />
           </div>
@@ -621,7 +623,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="indicating_lamp_color_for_nonups_power_supply"
               label="Indicating Lamp Colour for Non-UPS Power Supply"
-              options={non_ups_indicating_lamp_color_options}
+              options={non_ups_indicating_lamp_color_options || []}
               size="small"
             />
           </div>
@@ -630,7 +632,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               control={control}
               name="indicating_lamp_colour_for_ups_power_supply"
               label="Indicating Lamp Colour for UPS Power Supply"
-              options={ups_indicating_lamp_color_options}
+              options={ups_indicating_lamp_color_options || []}
               size="small"
             />
           </div>
@@ -665,8 +667,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="di_module_density"
                     label=""
                     size="small"
-                    options={di_module_density_options}
-                    // disabled={watch("is_di_module_density_selected") === "0"}
+                    options={di_module_density_options || []}
+                  // disabled={watch("is_di_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -691,8 +693,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="di_module_input_type"
                     label=""
                     size="small"
-                    options={di_module_input_type_options}
-                    // disabled={watch("is_di_module_input_type_selected") === "0"}
+                    options={di_module_input_type_options || []}
+                  // disabled={watch("is_di_module_input_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -719,8 +721,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="interrogation_voltage"
                     label=""
                     size="small"
-                    options={di_module_interrogation_voltage_options}
-                    // disabled={watch("is_interrogation_voltage_selected") === "0"}
+                    options={di_module_interrogation_voltage_options || []}
+                  // disabled={watch("is_interrogation_voltage_selected") === "0"}
                   />
                 </div>
               </div>
@@ -755,8 +757,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="do_module_density"
                     label=""
                     size="small"
-                    options={do_module_density_options}
-                    // disabled={watch("is_do_module_density_selected") === "0"}
+                    options={do_module_density_options || []}
+                  // disabled={watch("is_do_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -781,8 +783,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="do_module_output_type"
                     label=""
                     size="small"
-                    options={do_module_output_type_options}
-                    // disabled={watch("is_do_module_output_type_selected") === "0"}
+                    options={do_module_output_type_options || []}
+                  // disabled={watch("is_do_module_output_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -824,7 +826,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   name="do_module_no_of_contact"
                   label=""
                   size="small"
-                  options={do_contact_no_options}
+                  options={do_contact_no_options || []}
                   disabled={watch("is_no_of_contact_selected") === "0"}
                 />
               </div>
@@ -856,8 +858,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="ai_module_density"
                     label=""
                     size="small"
-                    options={ai_module_density_options}
-                    // disabled={watch("is_ai_module_density_selected") === "0"}
+                    options={ai_module_density_options || []}
+                  // disabled={watch("is_ai_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -882,7 +884,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="ai_module_output_type"
                     label=""
                     size="small"
-                    // disabled={watch("is_ai_module_output_type_selected") === "0"}
+                  // disabled={watch("is_ai_module_output_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -946,8 +948,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="rtd_tc_module_density"
                     label=""
                     size="small"
-                    options={rtd_density_options}
-                    disabled={ isRtdModuleSelected === "0"}
+                    options={rtd_density_options || []}
+                    disabled={isRtdModuleSelected === "0"}
                   />
                 </div>
               </div>
@@ -972,8 +974,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="rtd_tc_module_input_type"
                     label=""
                     size="small"
-                    options={rtd_input_type_options}
-                    disabled={ isRtdModuleSelected === "0" }
+                    options={rtd_input_type_options || []}
+                    disabled={isRtdModuleSelected === "0"}
                   />
                 </div>
               </div>
@@ -1031,8 +1033,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="ao_module_density"
                     label=""
                     size="small"
-                    options={ao_module_density_options}
-                    // disabled={watch("is_ao_module_density_selected") === "0"}
+                    options={ao_module_density_options || []}
+                  // disabled={watch("is_ao_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -1057,8 +1059,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="ao_module_output_type"
                     label=""
                     size="small"
-                    options={ao_module_output_type_options}
-                    // disabled={watch("is_ao_module_output_type_selected") === "0"}
+                    options={ao_module_output_type_options || []}
+                  // disabled={watch("is_ao_module_output_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -1109,7 +1111,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="plc_spare_io_count"
                 label=""
                 size="small"
-                options={plc_io_count_options}
+                options={plc_io_count_options || []}
                 disabled={watch("is_plc_spare_io_count_selected") === "0"}
               />
             </div>
@@ -1135,7 +1137,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="plc_spare_memory"
                 label=""
                 size="small"
-                options={plc_spare_memory_options}
+                options={plc_spare_memory_options || []}
                 disabled={watch("is_plc_spare_memory_selected") === "0"}
               />
             </div>
@@ -1244,7 +1246,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                   name="hid_hmi_size"
                   label=""
                   size="small"
-                  options={plc_hmi_size_options}
+                  options={plc_hmi_size_options || []}
                   suffixIcon={
                     <>
                       <p className="font-semibold text-blue-500">inch</p>
@@ -1376,7 +1378,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="system_hardware"
                 label="System Hardware"
                 size="small"
-                options={eo_system_hardware_options}
+                options={eo_system_hardware_options || []}
               />
             </div>
             <div className="flex-1">
@@ -1395,7 +1397,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     <p className="font-semibold text-blue-500">inch</p>
                   </>
                 }
-                options={eo_monitor_size_options}
+                options={eo_monitor_size_options || []}
               />
             </div>
             <div className="flex-1">
@@ -1429,7 +1431,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="printer_with_communication_cable"
                 label=""
                 size="small"
-                options={eo_pc_cable_options}
+                options={eo_pc_cable_options || []}
                 disabled={watch("is_printer_with_cable_selected") === "0"}
               />
             </div>
@@ -1477,7 +1479,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="furniture_for_scada_station"
                 label=""
                 size="small"
-                options={eo_scada_furniture_options}
+                options={eo_scada_furniture_options || []}
                 disabled={watch("is_furniture_for_scada_station_selected") === "0"}
               />
             </div>

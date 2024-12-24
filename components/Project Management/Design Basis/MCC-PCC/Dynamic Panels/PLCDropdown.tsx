@@ -1,4 +1,5 @@
 "use client"
+import { createData } from "actions/crud-actions";
 import {
   AI_MODULE_DENSITY,
   AO_MODULE_DENSITY,
@@ -32,9 +33,60 @@ import {
   UPS_INDICATING_LAMP_COLOR,
 } from "configs/api-endpoints"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
+import { useEffect, useState } from "react";
 import { sortDropdownOptions } from "utils/helpers"
 
+type DropdownState = {
+  [key: string]: any[]; // Each key is a string and the value is an array of any type
+};
+
+
 export default function usePLCDropdowns() {
+
+  const [dropdown, setDropdown] = useState<DropdownState>({})
+
+  useEffect(() => {
+    const getDropdown = async () => {
+      const response = await createData("/method/plc_panel.get_plc_panel_dropdown", true, {
+        "PLC UPS Scope": "name",
+        "PLC UPS Type": "name",
+        "PLC UPS Battery Backup Time": "name",
+        "PLC Hardware Third Party Communication Protocol": "name",
+        "PLC Hardware Client System Communication": "name",
+        "PLC CPU Redundancy": "name",
+        "PLC Panel Memory": "name",
+        "Marshalling Cabinet for PLC and UPS": "name",
+        "PLC Control Voltage": "name",
+        "Push Button Color Acknowledge": "name",
+        "Push Button Color Reset": "name",
+        "Indicating Lamp Color for Non-UPS Power Supply": "name",
+        "Indicating Lamp Color for UPS Power Supply": "name",
+        "DI Modules Density": "name",
+        "DI Modules Type Of Input": "name",
+        "DI Modules Interrogation Voltage": "name",
+        "DO Modules Density": "name",
+        "DO Modules Type Of Output": "name",
+        "DO No Of Contacts": "name",
+        "RTD Density": "name",
+        "RTD Type Of Input": "name",
+        "AO Modules Density": "name",
+        "AO Modules Type of Output": "name",
+        "PLC IO Count": "name",
+        "PLC Spare Memory": "name",
+        "PLC HMI Size": "name",
+        "EO System Hardware": "name",
+        "EO Monitor Size": "name",
+        "EO Printer and Communication Cable": "name",
+        "EO Furniture": "name",
+        "AI Module Density":"name",
+      })
+      setDropdown(response)
+      console.log("plc response", response)
+    }
+    getDropdown()
+
+  }, [])
+
   const { dropdownOptions: plc_ups_scope_options } = useDropdownOptions(`${PLC_UPS_SCOPE}?fields=["*"]`, "name")
   //   PLC_UPS_TYPE
   const { dropdownOptions: plc_ups_type_options } = useDropdownOptions(`${PLC_UPS_TYPE}?fields=["*"]`, "name")
@@ -154,36 +206,6 @@ export default function usePLCDropdowns() {
   )
 
   return {
-    plc_ups_scope_options,
-    plc_ups_type_options,
-    plc_ups_battery_backup_time_options,
-    plc_hardware_communication_protocol_options,
-    plc_client_system_communication_options,
-    plc_cpu_redundancy_options,
-    plc_panel_memory_options,
-    marshalling_cabinet_options,
-    plc_control_voltage_options,
-    push_button_color_acknowledge_options,
-    push_button_color_reset_options,
-    non_ups_indicating_lamp_color_options,
-    ups_indicating_lamp_color_options,
-    di_module_density_options,
-    di_module_input_type_options,
-    di_module_interrogation_voltage_options,
-    do_module_density_options,
-    do_module_output_type_options,
-    do_contact_no_options,
-    ai_module_density_options,
-    rtd_density_options,
-    rtd_input_type_options,
-    ao_module_density_options,
-    ao_module_output_type_options,
-    plc_io_count_options,
-    plc_spare_memory_options,
-    plc_hmi_size_options,
-    eo_system_hardware_options,
-    eo_monitor_size_options,
-    eo_pc_cable_options,
-    eo_scada_furniture_options,
+    dropdown
   }
 }
