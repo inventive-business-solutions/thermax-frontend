@@ -24,7 +24,7 @@ interface DataType {
   panel_main_type?: string
 }
 
-export default function PanelDataList({ revision_id }: { revision_id: string }) {
+export default function PanelDataList({ revision_id, projectMetadata }: { revision_id: string; projectMetadata: any }) {
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [projectRow, setProjectRow] = useState<any>(null)
@@ -37,6 +37,12 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
     { title: "Panel Name", dataIndex: "panel_name", key: "panel_name", align: "center" },
     { title: "Panel Type", dataIndex: "panel_sub_type", key: "panel_sub_type", align: "center" },
     { title: "Panel Main Type", dataIndex: "panel_main_type", key: "panel_main_type", hidden: true, align: "center" },
+    {
+      title: "Area of Classification",
+      dataIndex: "area_of_classification",
+      key: "area_of_classification",
+      align: "center",
+    },
     {
       title: "Action",
       dataIndex: "action",
@@ -158,6 +164,7 @@ export default function PanelDataList({ revision_id }: { revision_id: string }) 
         values={projectRow}
         getProjectPanelUrl={getProjectPanelDataUrl}
         revisionId={revision_id}
+        projectMetadata={projectMetadata}
       />
       <Table columns={columns} dataSource={changeNameToKey(projectPanelData)} bordered size="small" />
     </div>
