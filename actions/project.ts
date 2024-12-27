@@ -25,6 +25,9 @@ import {
   LBPS_SPECIFICATIONS_REVISION_HISTORY_API,
   LOCAL_ISOLATOR_REVISION_HISTORY_API,
   MOTOR_SPECIFICATIONS_REVISION_HISTORY_API,
+  COMMON_CONFIGURATION_1,
+  COMMON_CONFIGURATION_2,
+  COMMON_CONFIGURATION_3,
 } from "configs/api-endpoints"
 import { createData, deleteData, getData } from "./crud-actions"
 
@@ -42,7 +45,9 @@ export const createProject = async (projectData: any, userInfo: any) => {
     await createData(DESIGN_BASIS_GENERAL_INFO_API, false, { revision_id: design_basis_revision_id })
     await createData(MOTOR_PARAMETER_API, false, { revision_id: design_basis_revision_id })
     await createData(MAKE_OF_COMPONENT_API, false, { revision_id: design_basis_revision_id })
-    await createData(COMMON_CONFIGURATION, false, { revision_id: design_basis_revision_id })
+    await createData(COMMON_CONFIGURATION_1, false, { revision_id: design_basis_revision_id })
+    await createData(COMMON_CONFIGURATION_2, false, { revision_id: design_basis_revision_id })
+    await createData(COMMON_CONFIGURATION_3, false, { revision_id: design_basis_revision_id })
     await createData(CABLE_TRAY_LAYOUT, false, { revision_id: design_basis_revision_id })
     await createData(LAYOUT_EARTHING, false, { revision_id: design_basis_revision_id })
 
@@ -117,12 +122,30 @@ export const deleteProject = async (project_id: string) => {
       }
 
       // Delete Common Configuration
-      const commonConfigurations = await getData(
-        `${COMMON_CONFIGURATION}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
+      // const commonConfigurations = await getData(
+      //   `${COMMON_CONFIGURATION}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
+      // )
+
+      const commonConfigurations1 = await getData(
+        `${COMMON_CONFIGURATION_1}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
       )
-      for (const commonConfiguration of commonConfigurations || []) {
+      const commonConfigurations2 = await getData(
+        `${COMMON_CONFIGURATION_2}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
+      )
+      const commonConfigurations3 = await getData(
+        `${COMMON_CONFIGURATION_3}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
+      )
+      for (const commonConfiguration of commonConfigurations1 || []) {
         const commonConfigurationID = commonConfiguration.name
-        await deleteData(`${COMMON_CONFIGURATION}/${commonConfigurationID}`, false)
+        await deleteData(`${COMMON_CONFIGURATION_1}/${commonConfigurationID}`, false)
+      }
+      for (const commonConfiguration of commonConfigurations2 || []) {
+        const commonConfigurationID = commonConfiguration.name
+        await deleteData(`${COMMON_CONFIGURATION_2}/${commonConfigurationID}`, false)
+      }
+      for (const commonConfiguration of commonConfigurations3 || []) {
+        const commonConfigurationID = commonConfiguration.name
+        await deleteData(`${COMMON_CONFIGURATION_3}/${commonConfigurationID}`, false)
       }
 
       // Delete all MCC Panel Data
