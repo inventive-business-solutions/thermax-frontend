@@ -76,11 +76,19 @@ export const configItemValidationSchema = zod.object({
     required_error: "Current Transformer is required",
     message: "Current Transformer is Required",
   }),
+  
   current_transformer_coating: zod.string({
     required_error: "Current Transformer Coating is required",
     message: "Current Transformer Coating is Required",
   }),
-
+  current_transformer_quantity: zod.string({
+    required_error: "Current Transformer Quantity is required",
+    message: "Current Transformer Quantity is Required",
+  }),
+  current_transformer_configuration: zod.string({
+    required_error: "Current Transformer Configuration is required",
+    message: "Current Transformer Configuration is Required",
+  }),
 
   safe_field_motor_thickness: zod.string({
     required_error: "Safe Field Motor Thickness is required",
