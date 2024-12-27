@@ -41,7 +41,7 @@ export const UserButton = () => {
       danger: true,
       icon: <LogoutOutlined />,
       label: "Logout",
-      onClick: () => signOut({ callbackUrl: SIGN_IN }),
+      onClick: async () => await signOut({ callbackUrl: SIGN_IN }),
     },
   ]
   return (

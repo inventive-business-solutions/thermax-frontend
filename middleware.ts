@@ -4,17 +4,35 @@ import {
   BTG,
   COMPLETE_PROJECT_PAGE,
   DASHBOARD_PAGE,
+  HOME_PAGE,
   PACKAGE_PAGE,
   PROJECTS_PAGE,
+  RESET_PASSWORD,
+  SIGN_IN,
+  SIGN_UP,
+  UNAUTHORIZED,
+  UNVERIFIED,
   USER_MANAGEMENT_PAGE,
 } from "configs/constants"
 
 export default auth((req) => {
-  if (!req.auth) {
+  const pathname = req?.nextUrl?.pathname
+  const signInURL = new URL(SIGN_IN, req?.url)
+
+  // Define public routes
+  const publicRoutes = [SIGN_IN, SIGN_UP, RESET_PASSWORD, UNAUTHORIZED, UNVERIFIED, HOME_PAGE]
+
+  // Allow access to public routes without further checks
+  if (publicRoutes.includes(pathname)) {
     return NextResponse.next()
   }
+
+  // Check if req is undefined or req.auth is null
+  if (!req || !req.auth) {
+    return NextResponse.redirect(signInURL)
+  }
+
   const { userInfo } = req.auth as any
-  const pathname = req.nextUrl.pathname
   if (userInfo.division === BTG && !pathname.includes(USER_MANAGEMENT_PAGE)) {
     return NextResponse.redirect(new URL(USER_MANAGEMENT_PAGE, req.url))
   }
@@ -25,12 +43,9 @@ export default auth((req) => {
   // Define protected routes
   const protectedRoutes = [DASHBOARD_PAGE, PROJECTS_PAGE, PACKAGE_PAGE, COMPLETE_PROJECT_PAGE, USER_MANAGEMENT_PAGE]
 
-  // Check if the user is authenticated. If auth is null then the user is not authenticated
-  const isAuthenticated = !!req.auth
-
   // Redirect unauthenticated users trying to access protected routes
-  if (protectedRoutes.includes(pathname) && !isAuthenticated) {
-    return NextResponse.redirect(new URL("auth/sign-in", req.url))
+  if (protectedRoutes.includes(pathname) && !req.auth) {
+    return NextResponse.redirect(signInURL)
   }
 
   // Allow access to public routes
