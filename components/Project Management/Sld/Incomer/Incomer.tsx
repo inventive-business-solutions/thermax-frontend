@@ -5,14 +5,19 @@ import { useGetData } from "hooks/useCRUD"
 import { PROJECT_PANEL_API } from "configs/api-endpoints"
 interface Props {
   designBasisRevisionId: string
+  revision_id: string
   panelData: any
+  projectPanelData: any
 }
-const Incomer: React.FC<Props> = ({ designBasisRevisionId, panelData }) => {
+const Incomer: React.FC<Props> = ({ designBasisRevisionId, projectPanelData, panelData, revision_id }) => {
   const [isAddMainsIncomerOpen, setIsAddMainsIncomerOpen] = useState<boolean>(false)
-  const { data: projectPanelData } = useGetData(
-    `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]&order_by=creation asc`
-  )
+
+  console.log(designBasisRevisionId, "project panel data")
   console.log(projectPanelData, "project panel data")
+  console.log(panelData, "project panel data")
+  const getPanelType = () => {
+    return projectPanelData?.find((item: any) => item.panel_name === panelData.panelName)
+  }
 
   return (
     <div>
@@ -26,17 +31,22 @@ const Incomer: React.FC<Props> = ({ designBasisRevisionId, panelData }) => {
         >
           Add Mains Incomer
         </Button>
-        <Button type="primary" onClick={() => {}} className="hover:bg-blue-600">
+        {/* <Button type="primary" onClick={() => {}} className="hover:bg-blue-600">
           Add DG Incomer
-        </Button>
+        </Button> */}
 
-        <AddIncomer
-          panelType={"string"}
-          revision_id={"string"}
-          panel_id={"string"}
-          onClose={() => setIsAddMainsIncomerOpen(false)}
-          isOpen={isAddMainsIncomerOpen}
-        />
+        {isAddMainsIncomerOpen && (
+          <AddIncomer
+            panelType={getPanelType().panel_main_type}
+            revision_id={getPanelType().revision_id}
+            panel_id={getPanelType().name}
+            onClose={() => setIsAddMainsIncomerOpen(false)}
+            isOpen={isAddMainsIncomerOpen}
+            panelData={panelData.data}
+            sld_revision_id={revision_id}
+            designBasisRevisionId={designBasisRevisionId}
+          />
+        )}
       </div>
     </div>
   )

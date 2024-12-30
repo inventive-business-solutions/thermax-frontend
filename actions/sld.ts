@@ -11,6 +11,7 @@ import { HEATING } from "configs/constants"
 export const getSwSelectionDetails = async (payload: any) => {
   const division = payload.division
   const swData = payload.data
+  const project_id = payload.project_id
 
   const filters_htr = JSON.stringify([["division_subtype", "=", "With Heater"]])
   let filters_all

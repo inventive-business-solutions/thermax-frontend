@@ -811,7 +811,8 @@ export const switchGearSelectionColumns = (division: string) => {
     { type: "text", name: "motorTag", title: "TAG NO.", width: "150", readOnly: true },
     { type: "text", name: "feederName", title: "SERVICE DESCRIPTION", width: "225", readOnly: true, filters: true },
     { type: "text", name: "hp", title: "HP", width: "70", readOnly: true },
-    { type: "text", name: "kw", title: "KW", width: "70", readOnly: true },
+    { type: "text", name: "kw", title: "WORKING KW", width: "90", readOnly: true },
+    { type: "text", name: "kwstandby", title: "STAND-BY KW", width: "90", readOnly: true },
     { type: "text", name: "current", title: "CURRENT", width: "70", readOnly: true },
     { type: "text", name: "starter", title: "STARTER", width: "130", readOnly: true },
     { type: "text", name: "make", title: "MAKE", width: "140", readOnly: true },
@@ -827,7 +828,7 @@ export const switchGearSelectionColumns = (division: string) => {
       title: "SWITCH GEAR TYPE",
       width: "300",
     },
-    { type: "text", name: "vfd", title: "VFD", width: "130", readOnly: true },
+    { type: "text", name: "vfd", title: "VFD", width: "130" },
     {
       type: "text",
       name: "breakerOrFuse",
@@ -846,6 +847,9 @@ export const switchGearSelectionColumns = (division: string) => {
   ]
   if (division === HEATING) {
     columns.splice(8, 0, { type: "text", name: "startingTime", title: "STARTING TIME", width: "70", readOnly: true })
+  }
+  if (division === ENVIRO) {
+    columns.splice(5, 0, { type: "text", name: "kva", title: "KVA", width: "70", readOnly: true })
   }
   return columns
 }

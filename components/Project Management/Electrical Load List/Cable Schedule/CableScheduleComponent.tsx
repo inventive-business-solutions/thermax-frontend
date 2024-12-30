@@ -85,7 +85,7 @@ const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any, cableTr
         : "",
       cableScheduleData?.final_cable_size,
       cableScheduleData?.cable_selected_status ? cableScheduleData?.cable_selected_status : "Safe",
-      cableScheduleData?.cable_size_as_per_heating_chart,
+      cableScheduleData?.cable_size_heating_chart,
     ]
   })
 }
@@ -727,7 +727,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           number_of_cores: row[22],
           final_cable_size: row[23],
           cable_selected_status: row[24],
-          cable_size_as_per_heating_chart: row[25],
+          cable_size_heating_chart: row[25],
         }
       }),
       excel_payload: { ...individualFeeders, ...groupPayload },

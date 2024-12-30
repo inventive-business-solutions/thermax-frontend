@@ -310,7 +310,7 @@ export const GET_DESIGN_BASIS_EXCEL_API = `/method/db_revision.get_design_basis_
 export const GET_LOAD_LIST_EXCEL_API = `/method/load_list_revisions.get_load_list_excel`
 export const GET_CABLE_SCHEDULE_EXCEL_API = `/method/cable_schedule_revisions.get_cable_schedule_excel`
 export const GET_VOLTAGE_DROP_EXCEL_API = `/method/cable_schedule_revisions.get_voltage_drop_excel`
-
+export const  GET_CB_COUNT = `/method/frappe.client.get_count?doctype=Circuit Breaker`
 
 //sld
 
@@ -319,3 +319,5 @@ export const VFD_SWITCHGEAR_API = `/document/VFD`
 export const SOFTSTARTER_SWITCHGEAR_API = `/document/Soft Starter`
 export const SUPPLYFEEDER_SWITCHGEAR_API = `/document/Supply Feeder`
 export const SLD_REVISIONS_API = `/document/SLD Revisions`
+
+export const CIRCUIT_BREAKER_API = `/document/Circuit Breaker`
