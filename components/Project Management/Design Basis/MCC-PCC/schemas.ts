@@ -2,11 +2,11 @@ import * as zod from "zod"
 export const configItemValidationSchema = zod.object({
   rtd_thermocouple_wiring_color: zod.string({
     required_error: "RTD / Thermocouple Wiring Color is required",
-    message: "RTD / Thermocouple Wiring Color is required"
+    message: "RTD / Thermocouple Wiring Color is required",
   }),
   rtd_thermocouple_wiring_size: zod.string({
     required_error: "RTD / Thermocouple Wiring Size is required",
-    message: "RTD / Thermocouple Wiring Size is required"
+    message: "RTD / Thermocouple Wiring Size is required",
   }),
   is_field_motor_isolator_selected: zod.string(),
   is_safe_area_isolator_selected: zod.string(),
@@ -32,7 +32,6 @@ export const configItemValidationSchema = zod.object({
     required_error: "Switchgear Combination is required",
     message: "Switchgear Combination is required",
   }),
-
 
   is_control_transformer_applicable: zod.string({
     required_error: "Control Transformer is required",
@@ -71,12 +70,12 @@ export const configItemValidationSchema = zod.object({
     required_error: "Communication Protocol is required",
     message: "Communication Protocol is Required",
   }),
-  
+
   current_transformer: zod.string({
     required_error: "Current Transformer is required",
     message: "Current Transformer is Required",
   }),
-  
+
   current_transformer_coating: zod.string({
     required_error: "Current Transformer Coating is required",
     message: "Current Transformer Coating is Required",
@@ -168,7 +167,10 @@ export const configItemValidationSchema = zod.object({
   }),
   ferrule: zod.string({ required_error: "Ferrule is required", message: "Ferrule is required" }),
   ferrule_note: zod.string({ required_error: "Ferrule is required", message: "Ferrule is required" }),
-  device_identification_of_components: zod.string({ required_error: "Ferrule is required", message: "Ferrule is required" }),
+  device_identification_of_components: zod.string({
+    required_error: "Ferrule is required",
+    message: "Ferrule is required",
+  }),
   general_note_internal_wiring: zod.string({
     required_error: "General Note Internal Wiring is required",
     message: "General Note Internal Wiring is required",
@@ -178,9 +180,18 @@ export const configItemValidationSchema = zod.object({
     message: "Common Requirements is required",
   }),
   // Terminal
-  power_terminal_clipon: zod.string({ required_error: "Power Terminal Clipon is required", message: "Spare Terminal is required" }),
-  power_terminal_busbar_type: zod.string({ required_error: "Power Terminal Busbar Type is required", message: "Spare Terminal is required" }),
-  control_terminal: zod.string({ required_error: "Control Terminal is required", message: "Spare Terminal is required" }),
+  power_terminal_clipon: zod.string({
+    required_error: "Power Terminal Clipon is required",
+    message: "Spare Terminal is required",
+  }),
+  power_terminal_busbar_type: zod.string({
+    required_error: "Power Terminal Busbar Type is required",
+    message: "Spare Terminal is required",
+  }),
+  control_terminal: zod.string({
+    required_error: "Control Terminal is required",
+    message: "Spare Terminal is required",
+  }),
   spare_terminal: zod.string({ required_error: "Spare  is required", message: "Spare Terminal is required" }),
   forward_push_button_start: zod.string({
     required_error: "Push Button Start is required",
@@ -316,7 +327,6 @@ export const configItemValidationSchema = zod.object({
     required_error: "Field Motor Isolator Canopy Type is Required",
     message: "Field Motor Isolator Canopy Type is Required",
   }),
-
 
   // Local Push Button Station (General Specification)
 
@@ -1044,7 +1054,31 @@ export const pccPanelValidationSchema = zod
   })
 
 export const plcPanelValidationSchema = zod.object({
+  ups_control_voltage: zod.string({
+    required_error: "Control Voltage is required",
+    message: "Control Voltage is required",
+  }),
+  non_ups_control_voltage: zod.string({
+    required_error: "Control Voltage is required",
+    message: "Control Voltage is required",
+  }),
+  is_bulk_power_supply_selected: zod.string({
+    required_error: "Bulk Power Supply is required",
+    message: "Bulk Power Supply is required",
+  }),
   ups_scope: zod.string({ required_error: "UPS Scope is required", message: "UPS Scope is required" }),
+  ups_input_voltage_3p: zod.string({
+    required_error: "UPS Input Voltage 3 Phase is required",
+    message: "UPS Input Voltage 3 Phase is required",
+  }),
+  ups_input_voltage_1p: zod.string({
+    required_error: "UPS Input Voltage 1 Phase is required",
+    message: "UPS Input Voltage 1 Phase is required",
+  }),
+  ups_output_voltage_1p: zod.string({
+    required_error: "UPS Output Voltage 1 Phase is required",
+    message: "UPS Output Voltage 1 Phase is required",
+  }),
   ups_type: zod.string({ required_error: "UPS Type is required", message: "UPS Type is required" }),
   ups_battery_type: zod.string({
     required_error: "UPS Battery Type is required",
@@ -1058,6 +1092,24 @@ export const plcPanelValidationSchema = zod.object({
     required_error: "UPS Battery Mounting Rack is required",
     message: "UPS Battery Mounting Rack is required",
   }),
+  ups_redundancy: zod.string({ required_error: "UPS Redundancy is required", message: "UPS Redundancy is required" }),
+  plc_cpu_system_series: zod.string({
+    required_error: "PLC CPU System Series is required",
+    message: "PLC CPU System Series is required",
+  }),
+  plc_cpu_system_input_voltage: zod.string({
+    required_error: "PLC CPU System Input Voltage is required",
+    message: "PLC CPU System Input Voltage is required",
+  }),
+  plc_cpu_system_battery_backup: zod.string({
+    required_error: "PLC CPU System Battery Backup is required",
+    message: "PLC CPU System Battery Backup is required",
+  }),
+  plc_cpu_system_memory_free_space_after_program: zod.string({
+    required_error: "PLC CPU System Memory Free Space After Program is required",
+    message: "PLC CPU System Memory Free Space After Program is required",
+  }),
+
   control_transformer_coating: zod.string({
     required_error: "Control Transformer Coating is required",
     message: "Control Transformer Coating is required",
@@ -1066,56 +1118,33 @@ export const plcPanelValidationSchema = zod.object({
     required_error: "Control Transformer Configuration is required",
     message: "Control Transformer Configuration is required",
   }),
-  plc_cpu_or_processor_module_or_series: zod.string({
-    required_error: "PLC CPU/Processor Module/Series is required",
-    message: "PLC CPU/Processor Module/Series is required",
-  }),
-  is_bulk_power_supply_selected: zod.string({
-    required_error: "Bulk Power Supply is required",
-    message: "Bulk Power Supply is required",
-  }),
-  plc_communication_between_cpu_and_io_card: zod.string({
-    required_error: "PLC Communication between CPU and I/O card is required",
-    message: "PLC Communication between CPU and I/O card is required",
-  }),
-  is_third_party_communication_protocol_selected: zod.string({
-    required_error: "Third party communication protocol is required",
-    message: "Third party communication protocol is required",
-  }),
-  third_party_communication_protocol: zod.string({
-    required_error: "Third party communication protocol is required",
-    message: "Third party communication protocol is required",
-  }),
-  is_client_system_communication_selected: zod.string({
-    required_error: "Client system communication is required",
-    message: "Client system communication is required",
-  }),
-  client_system_communication: zod.string({
-    required_error: "Client system communication is required",
-    message: "Client system communication is required",
-  }),
-  is_power_supply_redundancy_selected: zod.string({
+  is_power_supply_plc_cpu_system_selected: zod.string({
     required_error: "Power Supply Redundancy is required",
     message: "Power Supply Redundancy is required",
   }),
-  is_cpu_redundancy_selected: zod.string({
+
+  is_plc_cpu_system_selected: zod.string({
     required_error: "CPU Redundancy is required",
     message: "CPU Redundancy is required",
   }),
   cpu_redundancy: zod.string({ required_error: "CPU Redundancy is required", message: "CPU Redundancy is required" }),
-  is_io_redundancy_selected: zod.string({
+  is_power_supply_input_output_module_selected: zod.string({
     required_error: "I/O Redundancy is required",
     message: "I/O Redundancy is required",
   }),
-  is_cpu_and_io_card_redundancy_selected: zod.string({
+  is_plc_input_output_modules_system_selected: zod.string({
+    required_error: "I/O Redundancy is required",
+    message: "I/O Redundancy is required",
+  }),
+  is_plc_cpu_system_and_input_output_modules_system_selected: zod.string({
     required_error: "PLC Communication Redundancy between CPU and I/O card is required",
     message: "PLC Communication Redundancy between CPU and I/O card is required",
   }),
-  is_cpu_and_hmi_scada_card_redundancy_selected: zod.string({
+  is_plc_cpu_system_and_hmi_scada_selected: zod.string({
     required_error: "PLC Communication Redundancy between CPU and HMI/SCADA is required",
     message: "PLC Communication Redundancy between CPU and HMI/SCADA is required",
   }),
-  is_cpu_and_third_party_services_redundancy_selected: zod.string({
+  is_plc_cpu_system_and_third_party_devices_selected: zod.string({
     required_error: "PLC Communication Redundancy between CPU and Third party devices is required",
     message: "PLC Communication Redundancy between CPU and Third party devices is required",
   }),
@@ -1127,6 +1156,22 @@ export const plcPanelValidationSchema = zod.object({
   marshalling_cabinet_for_plc_and_ups: zod.string({
     required_error: "Marshalling Cabinet For PLC and UPS is required",
     message: "Marshalling Cabinet For PLC and UPS is required",
+  }),
+  is_electronic_hooter_selected: zod.string({
+    required_error: "Electronic Hooter is required",
+    message: "Electronic Hooter is required",
+  }),
+  electronic_hooter_acknowledge: zod.string({
+    required_error: "Electronic Hooter Acknowledge is required",
+    message: "Electronic Hooter Acknowledge is required",
+  }),
+  panel_power_supply_on_color: zod.string({
+    required_error: "Panel Power Supply ON Color is required",
+    message: "Panel Power Supply ON Color is required",
+  }),
+  panel_power_supply_off_color: zod.string({
+    required_error: "Panel Power Supply OFF Color is required",
+    message: "Panel Power Supply OFF Color is required",
   }),
   panel_mounted_ac: zod.string({
     required_error: "Panel Mounted AC is required",

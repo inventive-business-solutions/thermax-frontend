@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import * as zod from "zod"
 import { Button, Divider, message } from "antd"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
+import React, { useEffect, useMemo, useState } from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
 import { createData, getData, updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomTextNumber from "components/FormInputs/CustomInputNumber"
@@ -9,39 +10,50 @@ import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
 import { MCC_PCC_PLC_PANEL_1, MCC_PCC_PLC_PANEL_2 } from "configs/api-endpoints"
-import { useGetData } from "hooks/useCRUD"
+import { useGetData, useNewGetData } from "hooks/useCRUD"
 import usePLCDropdowns from "./PLCDropdown"
 import { plcPanelValidationSchema } from "../schemas"
 
 const getDefaultValues = (plcData: any) => {
-  return {
-    ups_scope: plcData?.ups_scope || "Client Scope",
-    is_rtd_tc_moduule_selected: plcData?.is_rtd_tc_moduule_selected?.toString() || "1",
-    ups_type: plcData?.ups_type || "Commercial",
-    ups_battery_type: plcData?.ups_battery_type || "SMF Battery",
-    ups_battery_backup_time: plcData?.ups_battery_backup_time || "20 min",
-    is_ups_battery_mounting_rack_selected: plcData?.is_ups_battery_mounting_rack_selected?.toString() || "1",
-    plc_cpu_or_processor_module_or_series: plcData?.plc_cpu_or_processor_module_or_series || "VTS",
+  const defaultValues = {
+    ups_control_voltage: plcData?.ups_control_voltage || "230 VAC, 1-Phase, 2 Wire",
+    non_ups_control_voltage: plcData?.non_ups_control_voltage || "230 VAC, 1-Phase, 2 Wire",
     is_bulk_power_supply_selected: plcData?.is_bulk_power_supply_selected?.toString() || "1",
-    plc_communication_between_cpu_and_io_card: plcData?.plc_communication_between_cpu_and_io_card || "VTS",
-    is_third_party_communication_protocol_selected:
-      plcData?.is_third_party_communication_protocol_selected?.toString() || "1",
-    third_party_communication_protocol: plcData?.third_party_communication_protocol || "Ethernet",
-    is_client_system_communication_selected: plcData?.is_client_system_communication_selected?.toString() || "1",
-    client_system_communication: plcData?.client_system_communication || "FO",
-    is_power_supply_redundancy_selected: plcData?.is_power_supply_redundancy_selected?.toString() || "1",
-    is_cpu_redundancy_selected: plcData?.is_cpu_redundancy_selected?.toString() || "1",
+    ups_scope: plcData?.ups_scope || "Client Scope",
+    ups_input_voltage_3p: plcData?.ups_input_voltage_3p || "NA",
+    ups_input_voltage_1p: plcData?.ups_input_voltage_1p || "NA",
+    ups_output_voltage_1p: plcData?.ups_output_voltage_1p || "230 VAC, 1-Phase, 2 Wire",
+    is_rtd_tc_moduule_selected: plcData?.is_rtd_tc_moduule_selected?.toString() || "1",
+    ups_type: plcData?.ups_type || "NA",
+    ups_battery_type: plcData?.ups_battery_type || "NA",
+    is_ups_battery_mounting_rack_selected: plcData?.is_ups_battery_mounting_rack_selected?.toString() || "1",
+    ups_battery_backup_time: plcData?.ups_battery_backup_time || "NA",
+    ups_redundancy: plcData?.ups_redundancy || "NA",
+    plc_cpu_system_series: plcData?.plc_cpu_system_series || "VTS",
+    plc_cpu_system_input_voltage: plcData?.plc_cpu_system_input_voltage || "24 VDC",
+    plc_cpu_system_battery_backup: plcData?.plc_cpu_system_battery_backup || "40%",
+    plc_cpu_system_memory_free_space_after_program: plcData?.plc_cpu_system_memory_free_space_after_program || "20%",
+    panel_power_supply_on_color: plcData?.panel_power_supply_on_color || "NA",
+    panel_power_supply_off_color: plcData?.panel_power_supply_off_color || "Green",
+
+    is_power_supply_plc_cpu_system_selected: plcData?.is_power_supply_plc_cpu_system_selected?.toString() || "1",
+    is_plc_cpu_system_selected: plcData?.is_plc_cpu_system_selected?.toString() || "1",
     cpu_redundancy: plcData?.cpu_redundancy || "Hot",
-    is_io_redundancy_selected: plcData?.is_io_redundancy_selected?.toString() || "1",
-    is_cpu_and_io_card_redundancy_selected: plcData?.is_cpu_and_io_card_redundancy_selected?.toString() || "1",
-    is_cpu_and_hmi_scada_card_redundancy_selected:
-      plcData?.is_cpu_and_hmi_scada_card_redundancy_selected?.toString() || "1",
-    is_cpu_and_third_party_services_redundancy_selected:
-      plcData?.is_cpu_and_third_party_services_redundancy_selected?.toString() || "1",
+    is_power_supply_input_output_module_selected:
+      plcData?.is_power_supply_input_output_module_selected?.toString() || "1",
+    is_plc_input_output_modules_system_selected:
+      plcData?.is_plc_input_output_modules_system_selected?.toString() || "1",
+    is_plc_cpu_system_and_input_output_modules_system_selected:
+      plcData?.is_plc_cpu_system_and_input_output_modules_system_selected?.toString() || "0",
+    is_plc_cpu_system_and_hmi_scada_selected: plcData?.is_plc_cpu_system_and_hmi_scada_selected?.toString() || "0",
+    is_plc_cpu_system_and_third_party_devices_selected:
+      plcData?.is_plc_cpu_system_and_third_party_devices_selected?.toString() || "0",
     plc_panel_memory: plcData?.plc_panel_memory || "20%",
     is_plc_and_ups_marshalling_cabinet_selected:
       plcData?.is_plc_and_ups_marshalling_cabinet_selected?.toString() || "1",
     marshalling_cabinet_for_plc_and_ups: plcData?.marshalling_cabinet_for_plc_and_ups || "As per OEM",
+    is_electronic_hooter_selected: plcData?.is_electronic_hooter_selected?.toString() || "0",
+    electronic_hooter_acknowledge: plcData?.electronic_hooter_acknowledge || "NA",
     panel_mounted_ac: plcData?.panel_mounted_ac || "NA",
     control_voltage: plcData?.control_voltage || "230 VAC, 1 Phase, 2W, 50Hz",
     push_button_colour_acknowledge: plcData?.push_button_colour_acknowledge || "Black",
@@ -124,36 +136,44 @@ const getDefaultValues = (plcData: any) => {
     iiot_requirement: plcData?.iiot_requirement || "NA",
     mandatory_spares: plcData?.mandatory_spares || "NA",
   }
+  return defaultValues
 }
 
 const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
-  const { data: plcPanelData1 } = useGetData(
+  const { data: plcPanelData1 } = useNewGetData(
     `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
-  const { data: plcPanelData2 } = useGetData(
+  const { data: plcPanelData2 } = useNewGetData(
     `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
   )
 
   const plcPanelData = useMemo(
-    () => [...(plcPanelData1 || []), ...(plcPanelData2 || [])],
+    () => ({
+      ...(plcPanelData1?.[0] || {}),
+      ...(plcPanelData2?.[0] || {}),
+    }),
     [plcPanelData1, plcPanelData2]
   )
+
   const [loading, setLoading] = useState(false)
-  const {
-    dropdown
-  } = usePLCDropdowns()
+  const dropdown = usePLCDropdowns()
+
+  let plc_control_voltage_options = dropdown["PLC Control Voltage"]
 
   let plc_ups_scope_options = dropdown["PLC UPS Scope"]
+  let plc_ups_3p_voltage_options = dropdown["PLC UPS 3 Phase Voltage"]
+  let plc_ups_1p_voltage_options = dropdown["PLC UPS 1 Phase Voltage"]
   let plc_ups_type_options = dropdown["PLC UPS Type"]
+  let plc_ups_battery_type_options = dropdown["PLC UPS Battery Type"]
   let plc_ups_battery_backup_time_options = dropdown["PLC UPS Battery Backup Time"]
-  let plc_hardware_communication_protocol_options = dropdown["PLC Hardware Third Party Communication Protocol"]
-  let plc_client_system_communication_options = dropdown["PLC Hardware Client System Communication"]
-  let plc_cpu_redundancy_options = dropdown["PLC CPU Redundancy"]
+  let plc_ups_redundancy_options = dropdown["UPS Redundancy"]
+  let plc_cpu_system_options = dropdown["PLC CPU System"]
   let plc_panel_memory_options = dropdown["PLC Panel Memory"]
   let marshalling_cabinet_options = dropdown["Marshalling Cabinet for PLC and UPS"]
-  let plc_control_voltage_options = dropdown["PLC Control Voltage"]
-  let push_button_color_acknowledge_options = dropdown["Push Button Color Acknowledge"]
-  let push_button_color_reset_options = dropdown["Push Button Color Reset"]
+  let electronic_hooter_acknowledge_options = dropdown["Electronic Hooter Acknowledge"]
+  let panel_power_supply_on_options = dropdown["Panel Power Supply On"]
+  let panel_power_supply_off_options = dropdown["Panel Power Supply Off"]
+
   let non_ups_indicating_lamp_color_options = dropdown["Indicating Lamp Color for Non-UPS Power Supply"]
   let ups_indicating_lamp_color_options = dropdown["Indicating Lamp Color for UPS Power Supply"]
   let di_module_density_options = dropdown["DI Modules Density"]
@@ -180,14 +200,14 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     defaultValues: getDefaultValues(plcPanelData?.[0]),
     mode: "onSubmit",
   })
-  const isClientOrThermaxScopeisSelected = watch("ups_scope")
+  const upsScope = watch("ups_scope")
   const isRtdModuleSelected = watch("is_rtd_tc_moduule_selected")
 
   // const is_third_party_communication_protocol_selected_controlled = watch(
   //   "is_third_party_communication_protocol_selected"
   // )
   // const is_client_system_communication_selected_controlled = watch("is_client_system_communication_selected")
-  // const is_cpu_redundancy_selected_controlled = watch("is_cpu_redundancy_selected")
+  // const is_cpu_redundancy_selected_controlled = watch("is_plc_cpu_system_selected")
   // const is_plc_and_ups_marshalling_cabinet_selected_controlled = watch("is_plc_and_ups_marshalling_cabinet_selected")
   // const is_no_of_contact_selected_controlled = watch("is_no_of_contact_selected")
   // const is_plc_spare_io_count_selected_controlled = watch("is_plc_spare_io_count_selected")
@@ -247,213 +267,207 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
     }
   }
 
-  const onSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      setLoading(true)
-      try {
-        let data = getValues()
-        const mccPanelData1 = await getData(
-          `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
-        )
-        const mccPanelData2 = await getData(
-          `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
-        )
-
-        if (mccPanelData1 && mccPanelData1.length > 0) {
-          await updateData(`${MCC_PCC_PLC_PANEL_1}/${mccPanelData1[0].name}`, false, data)
-        } else {
-          const combined_Data = {
-            ...data,
-            revision_id,
-            panel_id,
-          }
-          data = { ...combined_Data }
-          // data["revision_id"] = revision_id
-          // data["panel_id"] = panel_id
-          await createData(MCC_PCC_PLC_PANEL_1, false, data)
-        }
-
-        if (mccPanelData2 && mccPanelData2.length > 0) {
-          await updateData(`${MCC_PCC_PLC_PANEL_2}/${mccPanelData2[0].name}`, false, data)
-        } else {
-          const combined_Data = {
-            ...data,
-            revision_id,
-            panel_id,
-          }
-          data = { ...combined_Data }
-          await createData(MCC_PCC_PLC_PANEL_2, false, data)
-        }
-
-        message.success("PLC Data updated successfully")
-      } catch (error) {
-        console.error(error)
-        handleError(error)
-      } finally {
-        setLoading(false)
-      }
-    },
-    [revision_id, reset, getValues]
-  )
+  const onSubmit: SubmitHandler<zod.infer<typeof plcPanelValidationSchema>> = async (data) => {
+    setLoading(true)
+    try {
+      await updateData(`${MCC_PCC_PLC_PANEL_1}/${plcPanelData1[0].name}`, false, data)
+      await updateData(`${MCC_PCC_PLC_PANEL_2}/${plcPanelData2[0].name}`, false, data)
+      message.success("PLC Data updated successfully")
+    } catch (error) {
+      console.error(error)
+      handleError(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <>
-      <Divider>
-        <span className="font-bold text-slate-700">UPS</span>
-      </Divider>
-      <form onSubmit={onSubmit} className="flex flex-col gap-2 px-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="ups_scope"
-              label="UPS Scope"
-              options={plc_ups_scope_options || []}
-              size="small"
-            />
-          </div>
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="ups_type"
-              label="UPS Type"
-              options={plc_ups_type_options || []}
-              disabled={
-                isClientOrThermaxScopeisSelected === "Thermax Scope" ||
-                isClientOrThermaxScopeisSelected === "Client Scope"
-              }
-              size="small"
-            />
-          </div>
-          <div className="flex-1">
-            <CustomTextInput
-              control={control}
-              name="ups_battery_type"
-              label="UPS Battery Type"
-              disabled={
-                isClientOrThermaxScopeisSelected === "Thermax Scope" ||
-                isClientOrThermaxScopeisSelected === "Client Scope"
-              }
-              size="small"
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex basis-1/3 items-center gap-4">
-            <h4 className="text-sm font-semibold text-slate-700">UPS Battery Mounting Rack</h4>
-            <div className="">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
+        <Divider>
+          <span className="font-bold text-slate-700">Supply Requirements</span>
+        </Divider>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="ups_control_voltage"
+                label="Control voltage ( UPS )"
+                options={plc_control_voltage_options || []}
+                size="small"
+              />
+            </div>
+
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="non_ups_control_voltage"
+                label="Control voltage ( Non UPS )"
+                options={plc_control_voltage_options || []}
+                size="small"
+              />
+            </div>
+
+            <div className="flex-1">
               <CustomRadioSelect
                 control={control}
-                name="is_ups_battery_mounting_rack_selected"
-                label=""
+                name="is_bulk_power_supply_selected"
+                label="Bulk Power Supply for I/O"
                 options={[
                   { label: "Yes", value: "1" },
                   { label: "No", value: "0" },
                 ]}
-                disabled={
-                  isClientOrThermaxScopeisSelected === "Thermax Scope" ||
-                  isClientOrThermaxScopeisSelected === "Client Scope"
-                }
               />
             </div>
           </div>
-          <div className="basis-1/3">
-            <CustomSingleSelect
-              control={control}
-              name="ups_battery_backup_time"
-              label="UPS Battery Backup Time In Min"
-              options={plc_ups_battery_backup_time_options || []}
-              size="small"
-              disabled={
-                isClientOrThermaxScopeisSelected === "Thermax Scope" ||
-                isClientOrThermaxScopeisSelected === "Client Scope"
-              }
-            />
+        </div>
+
+        <Divider>
+          <span className="font-bold text-slate-700">UPS</span>
+        </Divider>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="ups_scope"
+                label="UPS Scope"
+                options={plc_ups_scope_options || []}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="ups_input_voltage_3p"
+                label="UPS Input Voltage 3-Phase"
+                options={plc_ups_3p_voltage_options || []}
+                size="small"
+                disabled={upsScope === "Thermax Scope" || upsScope === "Client Scope"}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="ups_input_voltage_1p"
+                label="UPS Input Voltage 1-Phase"
+                options={plc_ups_1p_voltage_options || []}
+                size="small"
+                disabled={upsScope === "Thermax Scope" || upsScope === "Client Scope"}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="ups_output_voltage_1p"
+                label="UPS Output Voltage 1-Phase"
+                options={plc_ups_1p_voltage_options || []}
+                size="small"
+                disabled={upsScope === "Thermax Scope" || upsScope === "Client Scope"}
+              />
+            </div>
           </div>
         </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="ups_type"
+                label="UPS Type"
+                options={plc_ups_type_options || []}
+                disabled={upsScope === "Thermax Scope" || upsScope === "Client Scope"}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="ups_battery_type"
+                label="UPS Battery Type"
+                options={plc_ups_battery_type_options || []}
+                disabled={upsScope === "Thermax Scope" || upsScope === "Client Scope"}
+                size="small"
+              />
+            </div>
+            <div className="flex-1">
+              <CustomRadioSelect
+                control={control}
+                name="is_ups_battery_mounting_rack_selected"
+                label="UPS Battery Mounting Rack"
+                options={[
+                  { label: "Yes", value: "1" },
+                  { label: "No", value: "0" },
+                ]}
+                disabled={upsScope === "Thermax Scope" || upsScope === "Client Scope"}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="ups_battery_backup_time"
+                label="UPS Battery Backup Time In Min"
+                options={plc_ups_battery_backup_time_options || []}
+                size="small"
+                disabled={upsScope === "Thermax Scope" || upsScope === "Client Scope"}
+              />
+            </div>
+
+            <div className="flex-1">
+              <CustomSingleSelect
+                control={control}
+                name="ups_redundancy"
+                label="UPS Redundancy"
+                options={plc_ups_redundancy_options || []}
+                size="small"
+                disabled={upsScope === "Thermax Scope" || upsScope === "Client Scope"}
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-4"></div>
+        </div>
+
         <Divider>
           <span className="font-bold text-slate-700">PLC Hardware</span>
         </Divider>
         <div className="flex gap-4">
-          <div className="flex flex-1 items-center gap-4">
-            <h4 className="text-sm font-semibold text-slate-700">Bulk Power Supply for I/O</h4>
-            <div className="">
-              <CustomRadioSelect
-                control={control}
-                name="is_bulk_power_supply_selected"
-                label=""
-                options={[
-                  { label: "Yes", value: "1" },
-                  { label: "No", value: "0" },
-                ]}
-              />
-            </div>
+          <div className="flex-1">
+            <CustomTextInput
+              control={control}
+              name="plc_cpu_system_series"
+              label="PLC CPU System Series"
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="plc_cpu_system_input_voltage"
+              label="PLC CPU System Input Voltage"
+              size="small"
+              options={plc_control_voltage_options || []}
+            />
           </div>
           <div className="flex-1">
             <CustomTextInput
               control={control}
-              name="plc_cpu_or_processor_module_or_series"
-              label="PLC CPU/Processor Module/Series"
+              name="plc_cpu_system_battery_backup"
+              label="PLC CPU System Input Voltage"
               size="small"
             />
           </div>
           <div className="flex-1">
             <CustomTextInput
               control={control}
-              name="plc_communication_between_cpu_and_io_card"
-              label="PLC Communication Between CPU and I/O Card"
+              name="plc_cpu_system_memory_free_space_after_program"
+              label="PLC CPU System Memory Free Space after Program"
               size="small"
             />
           </div>
         </div>
-        <div className="flex gap-4">
-          <div className="flex flex-1 flex-col gap-4">
-            <div>
-              <CustomRadioSelect
-                control={control}
-                name="is_third_party_communication_protocol_selected"
-                label="Third Party Communication Protocol"
-                options={[
-                  { label: "Yes", value: "1" },
-                  { label: "No", value: "0" },
-                ]}
-              />
-            </div>
-            <div>
-              <CustomSingleSelect
-                control={control}
-                name="third_party_communication_protocol"
-                label=""
-                options={plc_hardware_communication_protocol_options || []}
-                size="small"
-                disabled={watch("is_third_party_communication_protocol_selected") === "0"}
-              />
-            </div>
-          </div>
-          <div className="flex flex-1 flex-col gap-4">
-            <div>
-              <CustomRadioSelect
-                control={control}
-                name="is_client_system_communication_selected"
-                label="Client System Communication"
-                options={[
-                  { label: "Yes", value: "1" },
-                  { label: "No", value: "0" },
-                ]}
-              />
-            </div>
-            <div>
-              <CustomSingleSelect
-                control={control}
-                name="client_system_communication"
-                label=""
-                options={plc_client_system_communication_options || []}
-                size="small"
-                disabled={watch("is_client_system_communication_selected") === "0"}
-              />
-            </div>
-          </div>
-        </div>
+
         <Divider>
           <span className="font-bold text-slate-700">Redundancy</span>
         </Divider>
@@ -461,8 +475,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           <div className="flex-1">
             <CustomRadioSelect
               control={control}
-              name="is_power_supply_redundancy_selected"
-              label="Power Supply Redundancy"
+              name="is_power_supply_plc_cpu_system_selected"
+              label="Power Supply PLC CPU System"
               options={[
                 { label: "Yes", value: "1" },
                 { label: "No", value: "0" },
@@ -472,8 +486,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           <div className="flex-1">
             <CustomRadioSelect
               control={control}
-              name="is_io_redundancy_selected"
-              label="I/O Redundancy"
+              name="is_power_supply_input_output_module_selected"
+              label="Power Supply Input - Output Module"
               options={[
                 { label: "Yes", value: "1" },
                 { label: "No", value: "0" },
@@ -483,8 +497,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           <div className="flex-1">
             <CustomRadioSelect
               control={control}
-              name="is_cpu_and_io_card_redundancy_selected"
-              label="PLC Communication Redundancy between CPU and I/O card"
+              name="is_plc_input_output_modules_system_selected"
+              label="PLC Input - Output Modules System "
               options={[
                 { label: "Yes", value: "1" },
                 { label: "No", value: "0" },
@@ -494,8 +508,19 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           <div className="flex-1">
             <CustomRadioSelect
               control={control}
-              name="is_cpu_and_hmi_scada_card_redundancy_selected"
-              label="PLC Communication Redundancy Between CPU and HMI/SCADA"
+              name="is_plc_cpu_system_and_input_output_modules_system_selected"
+              label="PLC CPU System and PLC Input - Output Modules System"
+              options={[
+                { label: "Yes", value: "1" },
+                { label: "No", value: "0" },
+              ]}
+            />
+          </div>
+          <div className="flex-1">
+            <CustomRadioSelect
+              control={control}
+              name="is_plc_cpu_system_and_hmi_scada_selected"
+              label="PLC CPU System and HMI / SCADA"
               options={[
                 { label: "Yes", value: "1" },
                 { label: "No", value: "0" },
@@ -507,8 +532,8 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           <div className="flex-1">
             <CustomRadioSelect
               control={control}
-              name="is_cpu_and_third_party_services_redundancy_selected"
-              label="PLC Communication Redundancy Between CPU and Third Party Devices"
+              name="is_plc_cpu_system_and_third_party_devices_selected"
+              label="PLC CPU System and Third Party devices"
               options={[
                 { label: "Yes", value: "1" },
                 { label: "No", value: "0" },
@@ -516,65 +541,45 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             />
           </div>
           <div className="flex items-center gap-4">
-            <h4 className="text-sm font-semibold text-slate-700">CPU Redundancy</h4>
-            <div className="">
+            <div className="flex-1">
               <CustomRadioSelect
                 control={control}
-                name="is_cpu_redundancy_selected"
-                label=""
+                name="is_plc_cpu_system_selected"
+                label="PLC CPU System"
                 options={[
                   { label: "Yes", value: "1" },
                   { label: "No", value: "0" },
                 ]}
               />
             </div>
-          </div>
-          <div className="basis-1/3">
-            <CustomSingleSelect
-              control={control}
-              name="cpu_redundancy"
-              label=""
-              size="small"
-              options={plc_cpu_redundancy_options || []}
-              disabled={watch("is_cpu_redundancy_selected") === "0"}
-            />
+            <div className="basis-1/3">
+              <CustomSingleSelect
+                control={control}
+                name="plc_cpu_system"
+                label=""
+                size="small"
+                options={plc_cpu_system_options || []}
+                disabled={watch("is_plc_cpu_system_selected") === "0"}
+              />
+            </div>
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">PLC Panel</span>
+          <span className="font-bold text-slate-700">PLC Panel Mounted</span>
         </Divider>
         <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="plc_panel_memory"
-              label="Memory"
-              options={plc_panel_memory_options || []}
-              size="small"
-            />
-          </div>
           <div className="flex-1">
             <CustomTextInput control={control} name="panel_mounted_ac" label="Panel Mounted AC" size="small" />
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="control_voltage"
-              label=" Control Voltage : Ǿ : Wire : Frequency : ± 5 (UPS)"
-              size="small"
-              options={plc_control_voltage_options || []}
-            />
-          </div>
           <div className="flex flex-1 items-center gap-2">
             <div className="flex flex-1 items-center gap-4">
-              <h4 className="text-sm font-semibold text-slate-700">Marshalling Cabinet For PLC and UPS</h4>
               <div className="flex-1">
                 <CustomRadioSelect
                   control={control}
                   name="is_plc_and_ups_marshalling_cabinet_selected"
-                  label=""
+                  label="Marshalling Cabinet For PLC and UPS"
                   options={[
                     { label: "Yes", value: "1" },
                     { label: "No", value: "0" },
@@ -595,29 +600,39 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Indicating Lamp, Push Button & Isolation Switch</span>
+          <span className="font-bold text-slate-700">Panel Mounted Push Buttons , Indication lamps & Colors</span>
         </Divider>
+
         <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomRadioSelect
+              control={control}
+              name="is_electronic_hooter_selected"
+              label="Electronic Hooter"
+              options={[
+                { label: "Yes", value: "1" },
+                { label: "No", value: "0" },
+              ]}
+            />
+          </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="push_button_colour_acknowledge"
-              label="Push Button Colour Acknowledge"
-              options={push_button_color_acknowledge_options || []}
+              name="electronic_hooter_acknowledge"
+              label="Electronic Hooter Acknowledge"
+              options={electronic_hooter_acknowledge_options || []}
               size="small"
             />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="push_button_color_reset"
-              label="Push Button Colour Reset"
-              options={push_button_color_reset_options || []}
+              name="panel_power_supply_on_color"
+              label="Electronic Hooter Acknowledge"
+              options={panel_power_supply_on_options || []}
               size="small"
             />
           </div>
-        </div>
-        <div className="flex gap-4">
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -668,7 +683,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={di_module_density_options || []}
-                  // disabled={watch("is_di_module_density_selected") === "0"}
+                    // disabled={watch("is_di_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -694,7 +709,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={di_module_input_type_options || []}
-                  // disabled={watch("is_di_module_input_type_selected") === "0"}
+                    // disabled={watch("is_di_module_input_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -722,7 +737,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={di_module_interrogation_voltage_options || []}
-                  // disabled={watch("is_interrogation_voltage_selected") === "0"}
+                    // disabled={watch("is_interrogation_voltage_selected") === "0"}
                   />
                 </div>
               </div>
@@ -758,7 +773,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={do_module_density_options || []}
-                  // disabled={watch("is_do_module_density_selected") === "0"}
+                    // disabled={watch("is_do_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -784,7 +799,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={do_module_output_type_options || []}
-                  // disabled={watch("is_do_module_output_type_selected") === "0"}
+                    // disabled={watch("is_do_module_output_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -859,7 +874,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={ai_module_density_options || []}
-                  // disabled={watch("is_ai_module_density_selected") === "0"}
+                    // disabled={watch("is_ai_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -884,7 +899,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     name="ai_module_output_type"
                     label=""
                     size="small"
-                  // disabled={watch("is_ai_module_output_type_selected") === "0"}
+                    // disabled={watch("is_ai_module_output_type_selected") === "0"}
                   />
                 </div>
               </div>
@@ -1034,7 +1049,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={ao_module_density_options || []}
-                  // disabled={watch("is_ao_module_density_selected") === "0"}
+                    // disabled={watch("is_ao_module_density_selected") === "0"}
                   />
                 </div>
               </div>
@@ -1060,7 +1075,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                     label=""
                     size="small"
                     options={ao_module_output_type_options || []}
-                  // disabled={watch("is_ao_module_output_type_selected") === "0"}
+                    // disabled={watch("is_ao_module_output_type_selected") === "0"}
                   />
                 </div>
               </div>
