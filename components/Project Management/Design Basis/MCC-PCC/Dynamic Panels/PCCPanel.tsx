@@ -32,10 +32,20 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     is_lsi_selected: pccPanelData?.is_lsi_selected || 0,
     is_neural_link_with_disconnect_facility_selected:
       pccPanelData?.is_neural_link_with_disconnect_facility_selected || 0,
+
     is_led_type_lamp_selected: pccPanelData?.is_led_type_lamp_selected?.toString() || "1",
-    is_blue_cb_spring_charge_selected: pccPanelData?.is_blue_cb_spring_charge_selected || 0,
-    is_red_cb_in_service: pccPanelData?.is_red_cb_in_service || 0,
-    is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || 0,
+    is_indication_on_selected: (Number)(pccPanelData?.is_indication_on_selected) || 0,
+    led_type_on_input: pccPanelData?.led_type_on_input || "NA",
+    is_indication_off_selected: (Number)(pccPanelData?.is_indication_off_selected) || 0,
+    led_type_off_input: pccPanelData?.led_type_off_input || "NA",
+    is_indication_trip_selected: (Number)(pccPanelData?.is_indication_trip_selected) || 0,
+    led_type_trip_input: pccPanelData?.led_type_trip_input || "NA",
+
+
+    is_blue_cb_spring_charge_selected: pccPanelData?.is_blue_cb_spring_charge_selected || "Blue",
+    is_red_cb_in_service: pccPanelData?.is_red_cb_in_service || "Red",
+    is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || "White",
+
     alarm_annunciator: pccPanelData?.alarm_annunciator || "Applicable",
     control_transformer_coating: pccPanelData?.control_transformer_coating || "Cast Resin",
     control_transformer_configuration: pccPanelData?.control_transformer_configuration || "Single",
@@ -131,6 +141,18 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   let incomer_ampere_options = dropdown["SD Incomer Ampere"]
   let current_transformer_coating_options = dropdown["Current Transformer Coating"]
+  let current_transformer_quantity_options = dropdown["Current Transformer Number"]
+  let current_transformer_configuration_options = dropdown["Current Transformer Configuration"]
+
+  let led_type_on_input_options = dropdown["ON Indication Lamp"]
+  let led_type_off_input_options = dropdown["OFF Indication Lamp"]
+  let led_type_trip_input_options = dropdown["Trip Indication Lamp"]
+
+  let acb_service_indication_options = dropdown["ACB Service Indication lamp"]
+  let acb_spring_charge_options = dropdown["ACB Spring Charge Indication lamp"]
+  let trip_circuit_healthy_indication_options = dropdown["Trip Circuit Healthy Indication lamp"]
+
+
   let control_transformer_configuration_options = dropdown["Control Transformer Configuration"]
   let incomer_pole_options = dropdown["SD Incomer Pole"]
   let incomer_type_options = dropdown["SD Incomer Type"]
@@ -219,22 +241,22 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   // to control the checkboxes
 
-  useEffect(() => {
-    if (
-      incomer_type_controlled === "EDO ACB" ||
-      incomer_type_controlled === "MDO ACB" ||
-      incomer_type_controlled === "EF ACB" ||
-      incomer_type_controlled === "MF ACB" ||
-      incomer_above_type_controlled === "EDO ACB" ||
-      incomer_above_type_controlled === "MDO ACB" ||
-      incomer_above_type_controlled === "EF ACB" ||
-      incomer_above_type_controlled === "MF ACB"
-    ) {
-      setValue("is_blue_cb_spring_charge_selected", 1)
-      setValue("is_red_cb_in_service", 1)
-      setValue("is_white_healthy_trip_circuit_selected", 1)
-    }
-  }, [incomer_type_controlled, incomer_above_type_controlled, setValue])
+  // useEffect(() => {
+  //   if (
+  //     incomer_type_controlled === "EDO ACB" ||
+  //     incomer_type_controlled === "MDO ACB" ||
+  //     incomer_type_controlled === "EF ACB" ||
+  //     incomer_type_controlled === "MF ACB" ||
+  //     incomer_above_type_controlled === "EDO ACB" ||
+  //     incomer_above_type_controlled === "MDO ACB" ||
+  //     incomer_above_type_controlled === "EF ACB" ||
+  //     incomer_above_type_controlled === "MF ACB"
+  //   ) {
+  //     setValue("is_blue_cb_spring_charge_selected", 1)
+  //     setValue("is_red_cb_in_service", 1)
+  //     setValue("is_white_healthy_trip_circuit_selected", 1)
+  //   }
+  // }, [incomer_type_controlled, incomer_above_type_controlled, setValue])
 
   useEffect(() => {
     if (incomer_ampere_controlled === "1000") {
@@ -394,9 +416,9 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           </div>
         </div>
         <div className="mt-2 flex items-center gap-4">
-          <div className="grid flex-1 grid-cols-2 items-center justify-center">
-            <div className="col-span-2 font-semibold">Indication (LED Type Lamp)</div>
-            <CustomRadioSelect
+          <div className="flex-1">
+            {/* <div className="col-span-2 font-semibold">Indication (LED Type Lamp)</div> */}
+            {/*<CustomRadioSelect
               control={control}
               name="is_led_type_lamp_selected"
               label=""
@@ -404,35 +426,106 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
                 { label: "ON", value: "1" },
                 { label: "OFF", value: "0" },
               ]}
+            /> */}
+            <CustomCheckboxInput control={control} name="is_indication_on_selected" label="ON Indication Lamp" />
+            <CustomSingleSelect
+              control={control}
+              name="led_type_on_input"
+              label=""
+              disabled={!(Boolean)(watch("is_indication_on_selected"))}
+              options={led_type_on_input_options || []}
+              size="small"
             />
-            <CustomCheckboxInput control={control} name="is_other_selected" label="Other" />
           </div>
+          <div className="flex-1">
+            <CustomCheckboxInput control={control} name="is_indication_off_selected" label="OFF Indication Lamp" />
+            <CustomSingleSelect
+              control={control}
+              name="led_type_off_input"
+              label=""
+              disabled={!(Boolean)(watch("is_indication_off_selected"))}
+              options={led_type_off_input_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomCheckboxInput control={control} name="is_indication_trip_selected" label="Trip Indication Lamp" />
+            <CustomSingleSelect
+              control={control}
+              name="led_type_trip_input"
+              label=""
+              disabled={!(Boolean)(watch("is_indication_trip_selected"))}
+              options={led_type_trip_input_options || []}
+              size="small"
 
-          {(Boolean)(watch("is_other_selected")) && (
-            <div className="flex-1">
-              <CustomTextInput control={control} name="led_type_other_input" label="" />
-            </div>
-          )}
-          <div className="flex-1">
-            <CustomCheckboxInput
-              control={control}
-              name="is_blue_cb_spring_charge_selected"
-              label="CB Spring Charge (Blue)"
-            />
-          </div>
-          <div className="flex-1">
-            <CustomCheckboxInput control={control} name="is_red_cb_in_service" label="CB in Service (Red)" />
-          </div>
-          <div className="flex-1">
-            <CustomCheckboxInput
-              control={control}
-              name="is_white_healthy_trip_circuit_selected"
-              label="Trip Circuit Healthy (White)"
             />
           </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="is_blue_cb_spring_charge_selected"
+              label="ACB Spring Charge Indication lamp"
+              size="small"
+              options={acb_spring_charge_options || []}
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="is_red_cb_in_service"
+              label="ACB Service Indication lamp"
+              size="small"
+              options={acb_service_indication_options || []}
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="is_white_healthy_trip_circuit_selected"
+              label="Trip Circuit Healthy Indication lamp"
+              size="small"
+              options={trip_circuit_healthy_indication_options || []}
+            />
+          </div>
+        </div>
+
+        <Divider>
+          <span className="font-bold text-slate-700">Current Transformer for Incomer</span>
+        </Divider>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="current_transformer_coating"
+              label="Current Transformer Coating"
+              options={current_transformer_coating_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="current_transformer_quantity"
+              label="Current Transformer Quantity"
+              options={current_transformer_quantity_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="current_transformer_configuration"
+              label="Current Transformer Configuration"
+              options={current_transformer_configuration_options || []}
+              size="small"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          {/* <div className="flex-1">
             <CustomSingleSelect
               control={control}
               name="control_transformer_coating"
@@ -450,7 +543,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               disabled={control_transformer_coating_controlled === "NA"}
               size="small"
             />
-          </div>
+          </div> */}
           <div className="flex-1">
             <CustomRadioSelect
               control={control}

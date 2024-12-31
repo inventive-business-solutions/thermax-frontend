@@ -87,6 +87,12 @@ export default function useMCCPCCPanelDropdowns() {
         "PPC Base Frame Paint Shade": "name",
         "PPC Minimum Coating Thickness": "name",
         "PPC Pretreatment Panel Standard": "name",
+        "ON Indication Lamp": "name",
+        "OFF Indication Lamp": "name",
+        "Trip Indication Lamp": "name",
+        "ACB Service Indication lamp": "name",
+        "ACB Spring Charge Indication lamp": "name",
+        "Trip Circuit Healthy Indication lamp": "name",
       })
 
       console.log("PCC response", response)

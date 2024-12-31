@@ -43,11 +43,11 @@ const getDefaultValues = (commonConfigData: any) => {
     control_transformer_type: commonConfigData?.control_transformer_type || "Industrial control Step down transformer",
 
     digital_meters: commonConfigData?.digital_meters || "NA",
-    analog_meters: commonConfigData?.analog_meters || "Ammeter with ASS ",
+    analog_meters: commonConfigData?.analog_meters || "Ammeter with ASS",
     communication_protocol: commonConfigData?.communication_protocol || "NA",
 
     current_transformer: commonConfigData?.current_transformer || "NA",
-    current_transformer_coating: commonConfigData?.current_transformer_coating || "Cast resin",
+    current_transformer_coating: commonConfigData?.current_transformer_coating || "Cast Resin",
     current_transformer_quantity: commonConfigData?.current_transformer_quantity || "One",
     current_transformer_configuration: commonConfigData?.current_transformer_configuration || "Y-Phase with CT",
 
@@ -212,6 +212,7 @@ const CommonConfiguration = ({
   let mcc_switchgear_type_options = dropdown["MCC Switchgear Type"]
   let switchgear_combination_options = dropdown["Switchgear Combination"]
 
+  let control_transformer_type_options = dropdown["Control Transformer Type"]
   let control_transformer_primary_voltage_options = dropdown["Control Transformer primary voltage"]
   let control_tranformer_coating_options = dropdown["Current Transformer Coating"]
   let control_tranformer_quantity_options = dropdown["Control Transformer Quantity"]
@@ -610,7 +611,7 @@ const CommonConfiguration = ({
               control={control}
               name="control_transformer_type"
               label="Control Transformer Type"
-              options={control_tranformer_configuration_options || []}
+              options={control_transformer_type_options || []}
               size="small"
             />
           </div>
