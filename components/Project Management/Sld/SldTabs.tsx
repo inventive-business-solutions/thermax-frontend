@@ -13,7 +13,7 @@ import {
   PROJECT_PANEL_API,
 } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
-import { useGetData } from "hooks/useCRUD" 
+import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import { useParams, useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
@@ -25,6 +25,7 @@ interface Props {
   designBasisRevisionId: string
   cableScheduleRevisionId: string
   loadListLatestRevisionId: any
+  sldRevisions: any
 }
 const useDataFetching = (
   loadListLatestRevisionId: string,
@@ -66,7 +67,14 @@ const useDataFetching = (
   return { projectPanelData, cableScheduleData, loadListData, isLoading, refetch: fetchData }
 }
 
-const SLDTabs: React.FC<Props> = ({ designBasisRevisionId, cableScheduleRevisionId, loadListLatestRevisionId }) => {
+const SLDTabs: React.FC<Props> = ({
+  designBasisRevisionId,
+  cableScheduleRevisionId,
+  loadListLatestRevisionId,
+  sldRevisions,
+}) => {
+  console.log(sldRevisions, "getAllSldRevisions")
+
   const { setLoading: setModalLoading } = useLoading()
   const [sLDTabs, setSLDTabs] = useState<any[]>([])
   const params = useParams()
@@ -80,28 +88,33 @@ const SLDTabs: React.FC<Props> = ({ designBasisRevisionId, cableScheduleRevision
 
   const [panelWiseData, setPanelWiseData] = useState<any[]>([])
   useEffect(() => {
-    console.log(panelWiseData);
-    
+    console.log(panelWiseData)
+
     const updatedTabs = panelWiseData.map((tab: any, index: number) => {
-        return {
-            label: tab.panelName,
-            key: index + 1,
-            children: (
-                <>
-                    <PanelTab panelData={tab} designBasisRevisionId={designBasisRevisionId} />
-                </>
-            ),
-        };
-    });
-    setSLDTabs(updatedTabs);
-}, [panelWiseData]);
+      return {
+        label: tab.panelName,
+        key: index + 1,
+        children: (
+          <>
+            <PanelTab
+              panelData={tab}
+              sldRevisions={sldRevisions.filter((item: any) => item.panel_name === tab.panelName)}
+              designBasisRevisionId={designBasisRevisionId}
+              projectPanelData={projectPanelData}
+            />
+          </>
+        ),
+      }
+    })
+    setSLDTabs(updatedTabs)
+  }, [panelWiseData])
   useEffect(() => {
     setModalLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  useEffect(() => { 
-    console.log(sLDTabs,' sld tabs');
-    
+  useEffect(() => {
+    console.log(sLDTabs, " sld tabs")
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sLDTabs])
   useEffect(() => {
@@ -130,7 +143,7 @@ const SLDTabs: React.FC<Props> = ({ designBasisRevisionId, cableScheduleRevision
   const getLoadListData = () => {
     if (loadListData.length && projectPanelData.length) {
       const panelWiseData = projectPanelData.reduce((acc, panel) => {
-        const panelName = panel.panel_name // Assuming each panel object in projectPanelData has a 'name' property
+        const panelName = panel.panel_name
         const filteredData = loadListData.filter((item) => item.panel === panelName)
 
         if (filteredData.length) {
@@ -153,13 +166,11 @@ const SLDTabs: React.FC<Props> = ({ designBasisRevisionId, cableScheduleRevision
 
         return acc
       }, [])
-      
+
       setPanelWiseData(panelWiseData)
       console.log(panelWiseData)
     }
   }
- 
- 
 
   const onChange = async (key: string) => {
     // setModalLoading(true)
@@ -197,9 +208,9 @@ const SLDTabs: React.FC<Props> = ({ designBasisRevisionId, cableScheduleRevision
         <Button type="primary" onClick={getLoadListData} className="hover:bg-blue-600">
           Get Load List Details
         </Button>
-        <Button type="primary" onClick={() => {}} className="hover:bg-blue-600">
+        {/* <Button type="primary" onClick={() => {}} className="hover:bg-blue-600">
           Panel Mapping
-        </Button>
+        </Button> */}
       </div>
       <Tabs onChange={onChange} type="card" style={{ fontSize: "11px !important" }} items={sLDTabs} />
     </div>

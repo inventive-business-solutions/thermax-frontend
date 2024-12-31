@@ -6,11 +6,13 @@ import SLDTabs from "./SldTabs"
 interface Props {
   designBasisRevisionId: string
   loadListLatestRevisionId: any
+  sldRevisions: any
   cableScheduleRevisionId: string
 }
 const SldComponent: React.FC<Props> = ({
   loadListLatestRevisionId,
   designBasisRevisionId,
+  sldRevisions,
   cableScheduleRevisionId,
 }) => {
   const { setLoading } = useLoading()
@@ -20,8 +22,9 @@ const SldComponent: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
-    <div> 
+    <div>
       <SLDTabs
+        sldRevisions={sldRevisions}
         designBasisRevisionId={designBasisRevisionId}
         loadListLatestRevisionId={loadListLatestRevisionId}
         cableScheduleRevisionId={cableScheduleRevisionId}
