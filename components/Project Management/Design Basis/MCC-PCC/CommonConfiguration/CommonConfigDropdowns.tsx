@@ -35,7 +35,7 @@ export default function useCommonConfigDropdowns() {
 
         "Current Transformer": "name",
         "Current Transformer Configuration": "name",
-
+        "Forward and Reverse Push Button": "name",
 
         "Supply Feeder Pole": "name",
         "Supply Feeder DM Standard": "name",
