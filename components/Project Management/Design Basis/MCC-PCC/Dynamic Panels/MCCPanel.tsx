@@ -31,10 +31,19 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, mccPanelData: 
     is_lsi_selected: mccPanelData?.is_lsi_selected || 0,
     is_neural_link_with_disconnect_facility_selected:
       mccPanelData?.is_neural_link_with_disconnect_facility_selected || 0,
+
     is_led_type_lamp_selected: mccPanelData?.is_led_type_lamp_selected?.toString() || "1",
-    is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected || 0,
-    is_red_cb_in_service: mccPanelData?.is_red_cb_in_service || 0,
-    is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected || 0,
+    is_indication_on_selected: (Number)(mccPanelData?.is_indication_on_selected) || 0,
+    led_type_on_input: mccPanelData?.led_type_on_input || "NA",
+    is_indication_off_selected: (Number)(mccPanelData?.is_indication_off_selected) || 0,
+    led_type_off_input: mccPanelData?.led_type_off_input || "NA",
+    is_indication_trip_selected: (Number)(mccPanelData?.is_indication_trip_selected) || 0,
+    led_type_trip_input: mccPanelData?.led_type_trip_input || "NA",
+
+
+    is_blue_cb_spring_charge_selected: mccPanelData?.is_blue_cb_spring_charge_selected || "Blue",
+    is_red_cb_in_service: mccPanelData?.is_red_cb_in_service || "Red",
+    is_white_healthy_trip_circuit_selected: mccPanelData?.is_white_healthy_trip_circuit_selected || "White",
     current_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
     control_transformer_coating: mccPanelData?.current_transformer_coating || "Cast Resin",
     control_transformer_configuration: mccPanelData?.control_transformer_configuration || "Single",
@@ -137,6 +146,15 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   let current_transformer_coating_options = dropdown["Current Transformer Coating"]
   let current_transformer_number_options = dropdown["Current Transformer Number"]
   let control_transformer_configuration_options = dropdown["Control Transformer Configuration"]
+
+  let led_type_on_input_options = dropdown["ON Indication Lamp"]
+  let led_type_off_input_options = dropdown["OFF Indication Lamp"]
+  let led_type_trip_input_options = dropdown["Trip Indication Lamp"]
+
+  let acb_service_indication_options = dropdown["ACB Service Indication lamp"]
+  let acb_spring_charge_options = dropdown["ACB Spring Charge Indication lamp"]
+  let trip_circuit_healthy_indication_options = dropdown["Trip Circuit Healthy Indication lamp"]
+
   let incomer_pole_options = dropdown["SD Incomer Pole"]
   let incomer_type_options = dropdown["SD Incomer Type"]
   let incomer_above_ampere_options = dropdown["SD Incomer Above Ampere"]
@@ -183,7 +201,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
     (item: any) => item.name === "200" || item.name === "300" || item.name === "500"
   )
 
-  const { control, handleSubmit, reset, watch, setValue, getValues } = useForm({
+  const { control, reset, watch, setValue, getValues } = useForm({
     resolver: zodResolver(mccPanelValidationSchema),
     defaultValues: getDefaultValues(projectMetadata, projectInfo, mccPanelData?.[0]),
     mode: "onSubmit",
@@ -242,22 +260,22 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   // to control the checkboxes
 
-  useEffect(() => {
-    if (
-      incomer_type_controlled === "EDO ACB" ||
-      incomer_type_controlled === "MDO ACB" ||
-      incomer_type_controlled === "EF ACB" ||
-      incomer_type_controlled === "MF ACB" ||
-      incomer_above_type_controlled === "EDO ACB" ||
-      incomer_above_type_controlled === "MDO ACB" ||
-      incomer_above_type_controlled === "EF ACB" ||
-      incomer_above_type_controlled === "MF ACB"
-    ) {
-      setValue("is_blue_cb_spring_charge_selected", 1)
-      setValue("is_red_cb_in_service", 1)
-      setValue("is_white_healthy_trip_circuit_selected", 1)
-    }
-  }, [incomer_type_controlled, incomer_above_type_controlled, setValue])
+  // useEffect(() => {
+  //   if (
+  //     incomer_type_controlled === "EDO ACB" ||
+  //     incomer_type_controlled === "MDO ACB" ||
+  //     incomer_type_controlled === "EF ACB" ||
+  //     incomer_type_controlled === "MF ACB" ||
+  //     incomer_above_type_controlled === "EDO ACB" ||
+  //     incomer_above_type_controlled === "MDO ACB" ||
+  //     incomer_above_type_controlled === "EF ACB" ||
+  //     incomer_above_type_controlled === "MF ACB"
+  //   ) {
+  //     setValue("is_blue_cb_spring_charge_selected", 1)
+  //     setValue("is_red_cb_in_service", 1)
+  //     setValue("is_white_healthy_trip_circuit_selected", 1)
+  //   }
+  // }, [incomer_type_controlled, incomer_above_type_controlled, setValue])
 
   useEffect(() => {
     if (incomer_ampere_controlled === "1000") {
@@ -420,37 +438,67 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
         </div>
         <div className="mt-2 flex items-center gap-4">
           <div className="flex-1">
-            <CustomRadioSelect
+
+            <CustomCheckboxInput control={control} name="is_indication_on_selected" label="ON Indication Lamp" />
+            <CustomSingleSelect
               control={control}
-              name="is_led_type_lamp_selected"
-              label="Indication (LED Type Lamp)"
-              options={[
-                { label: "ON", value: "1" },
-                { label: "OFF", value: "0" }
-              ]}
+              name="led_type_on_input"
+              label=""
+              disabled={!(Boolean)(watch("is_indication_on_selected"))}
+              options={led_type_on_input_options || []}
+              size="small"
             />
-            <CustomCheckboxInput control={control} name="is_other_selected" label="Other" />
           </div>
-          {(Boolean)(watch("is_other_selected")) &&
-            <div className="flex-1">
-              <CustomTextInput control={control} name="led_type_other_input" label="" />
-            </div>
-          }
           <div className="flex-1">
-            <CustomCheckboxInput
+            <CustomCheckboxInput control={control} name="is_indication_off_selected" label="OFF Indication Lamp" />
+            <CustomSingleSelect
+              control={control}
+              name="led_type_off_input"
+              label=""
+              disabled={!(Boolean)(watch("is_indication_off_selected"))}
+              options={led_type_off_input_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomCheckboxInput control={control} name="is_indication_trip_selected" label="Trip Indication Lamp" />
+            <CustomSingleSelect
+              control={control}
+              name="led_type_trip_input"
+              label=""
+              disabled={!(Boolean)(watch("is_indication_trip_selected"))}
+              options={led_type_trip_input_options || []}
+              size="small"
+
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
               control={control}
               name="is_blue_cb_spring_charge_selected"
-              label="CB Spring Charge (Blue)"
+              label="ACB Spring Charge Indication lamp"
+              size="small"
+              options={acb_spring_charge_options || []}
             />
           </div>
           <div className="flex-1">
-            <CustomCheckboxInput control={control} name="is_red_cb_in_service" label="CB in Service (Red)" />
+            <CustomSingleSelect
+              control={control}
+              name="is_red_cb_in_service"
+              label="ACB Service Indication lamp"
+              size="small"
+              options={acb_service_indication_options || []}
+            />
           </div>
           <div className="flex-1">
-            <CustomCheckboxInput
+            <CustomSingleSelect
               control={control}
               name="is_white_healthy_trip_circuit_selected"
-              label="Trip Circuit Healthy (White)"
+              label="Trip Circuit Healthy Indication lamp"
+              size="small"
+              options={trip_circuit_healthy_indication_options || []}
             />
           </div>
         </div>
@@ -1177,7 +1225,7 @@ const MCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             Save and Next
           </Button>
         </div>
-      </form>
+      </form >
     </>
   )
 }
