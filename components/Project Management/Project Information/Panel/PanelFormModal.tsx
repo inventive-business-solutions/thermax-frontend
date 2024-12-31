@@ -24,6 +24,7 @@ import {
 import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE, S3FolderMapping } from "configs/constants"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { useGetData } from "hooks/useCRUD"
+import { useParams, useRouter } from "next/navigation"
 import S3BucketUpload from "components/FormInputs/S3BucketUpload"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
@@ -86,6 +87,9 @@ export default function PanelFormModal({
 
   const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revisionId}"]]`
   let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
+  const params = useParams()
+  // const router = useRouter()
+  const project_id = params.project_id as string
 
   const panel_data_list = projectPanelData?.map((project: any) => project.panel_name)
 
@@ -135,10 +139,12 @@ export default function PanelFormModal({
         panel_id: panelRes.name,
         revision_id: revisionId,
       }
+      console.log(panelRes);
+      
       const new_sld_revision = {
         // panel_id: panelRes.name,
-        panel_name: panelRes.name,
-        project_id: "",
+        panel_name: panelRes.panel_name,
+        project_id,
         status: "Not Released",
         description: "Issued for approval",
       }

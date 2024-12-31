@@ -135,6 +135,8 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
       document.body.removeChild(link)
     } catch (error) {
       console.error(error)
+      message.error("Unable to download file")
+
       setDownloadIconSpin(false)
     } finally {
       setDownloadIconSpin(false)

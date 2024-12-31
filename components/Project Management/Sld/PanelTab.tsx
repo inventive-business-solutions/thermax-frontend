@@ -4,11 +4,14 @@ import React from "react"
 import { getThermaxDateFormat } from "utils/helpers"
 import SwitchgearSelection from "./Switchgear Selection/SwitchgearSelection"
 import Incomer from "./Incomer/Incomer"
+import BusbarSizing from "./Busbar Sizing/BusbarSizing"
 interface Props {
   panelData: any
+  sldRevisions: any
+  projectPanelData: any
   designBasisRevisionId: string
 }
-const PanelTab: React.FC<Props> = ({ panelData, designBasisRevisionId }) => {
+const PanelTab: React.FC<Props> = ({ panelData, sldRevisions, projectPanelData, designBasisRevisionId }) => {
   const onChange = () => {}
 
   const columns: TableColumnsType = [
@@ -101,28 +104,18 @@ const PanelTab: React.FC<Props> = ({ panelData, designBasisRevisionId }) => {
       },
     },
   ]
-  const sample = [
-    {
-      name: "stit85npco",
-      owner: "shyam.pawar@thermaxglobal.com",
-      creation: "2024-12-09 15:46:01.144718",
-      modified: "2024-12-09 22:18:15.933151",
-      modified_by: "shyam.pawar@thermaxglobal.com",
-      docstatus: 0,
-      idx: 0,
-      project_id: "5ht5n5bfjt",
-      status: "Not Released",
-      description: "test",
-    },
-  ]
-  const dataSource = sample?.map((item: any, index: number) => ({
+
+  const dataSource = sldRevisions?.map((item: any, index: number) => ({
     key: item.name,
-    documentName: "sld",
+    documentName: "SLD",
     status: item.status,
     documentRevision: `R${index}`,
     createdDate: item.creation,
   }))
-console.log(panelData, 'panel data ');
+  console.log(panelData, "panel data ")
+  const getLatestRevision = () => {
+    return sldRevisions?.find((item: any) => item.status === "Not Released") ?? {}
+  }
 
   const PanelTabs = [
     {
@@ -149,20 +142,27 @@ console.log(panelData, 'panel data ');
       children: (
         <SwitchgearSelection
           designBasisRevisionId={designBasisRevisionId}
-          motorCanopyRevisionId={"motorCanopyRevisionId"}
           data={panelData.data}
+          revision_id={getLatestRevision().name}
         />
       ),
     },
     {
       label: "INCOMER",
       key: "3",
-      children: <Incomer designBasisRevisionId={designBasisRevisionId} panelData={panelData}/>,
+      children: (
+        <Incomer
+          designBasisRevisionId={designBasisRevisionId}
+          panelData={panelData}
+          projectPanelData={projectPanelData}
+          revision_id={getLatestRevision().name}
+        />
+      ),
     },
     {
       label: "BUSBAR/ENCLOSURE SIZING",
       key: "4",
-      children: <h2>BUSBAR/ENCLOSURE SIZING</h2>,
+      children: <BusbarSizing designBasisRevisionId={designBasisRevisionId} />,
     },
     {
       label: "PANEL GA",
