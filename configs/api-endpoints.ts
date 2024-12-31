@@ -79,6 +79,9 @@ export const MAKE_PLC = `/document/PLC Make`
 
 // Common Coniguration on MCC/PCC :
 export const COMMON_CONFIGURATION = `/document/Common Configuration`
+export const COMMON_CONFIGURATION_1 = `/document/Common Configuration 1`
+export const COMMON_CONFIGURATION_2 = `/document/Common Configuration 2`
+export const COMMON_CONFIGURATION_3 = `/document/Common Configuration 3`
 export const DOL_STARTER = `/document/DOL Starter`
 export const STAR_DELTA_STARTER = `/document/Star Delta Starter`
 export const AMMETER = `/document/Ammeter`

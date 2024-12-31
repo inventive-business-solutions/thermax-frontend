@@ -21,10 +21,17 @@ import {
   PROJECT_PANEL_API,
   SLD_REVISIONS_API,
 } from "configs/api-endpoints"
-import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
+import { MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE, S3FolderMapping } from "configs/constants"
 import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { useGetData } from "hooks/useCRUD"
 import { useParams, useRouter } from "next/navigation"
+import S3BucketUpload from "components/FormInputs/S3BucketUpload"
+import { useCurrentUser } from "hooks/useCurrentUser"
+import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
+
+interface UserInfo {
+  division: keyof typeof S3FolderMapping
+}
 
 function getPanelFormModalValidationSchema(project_panel_name: any[], editMode: boolean) {
   return zod.object({
@@ -45,40 +52,38 @@ function getPanelFormModalValidationSchema(project_panel_name: any[], editMode: 
       .min(1, {
         message: "Panel type is required",
       }),
+    area_of_classification: zod
+      .string({ required_error: "Area of classification is required", message: "Area of classification is required" })
+      .min(1, {
+        message: "Area of classification is required",
+      }),
   })
 }
-
-// const PanelFormValidationSchema = zod.object({
-//   panel_name: zod
-//     .string({ required_error: "Panel name is required", message: "Panel name is required" })
-//     .min(1, { message: "Panel name is required" })
-//     .refine(
-//       (value) => {
-//         return editMode || !project_oc_numbers.includes(value)
-//       },
-//       { message: "Project OC number already exists" }
-//     ),
-//   panel_sub_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
-//     message: "Panel type is required",
-//   }),
-//   panel_main_type: zod.string({ required_error: "Panel type is required", message: "Panel type is required" }).min(1, {
-//     message: "Panel type is required",
-//   }),
-// })
 
 const getDefaultValues = (editMode: boolean, values: any) => {
   return {
     panel_name: editMode ? values?.panel_name : null,
     panel_sub_type: editMode ? values?.panel_sub_type : null,
     panel_main_type: editMode ? values?.panel_main_type : null,
+    area_of_classification: editMode ? values?.area_of_classification : null,
   }
 }
 
-export default function PanelFormModal({ open, setOpen, editMode, values, getProjectPanelUrl, revisionId }: any) {
+export default function PanelFormModal({
+  open,
+  setOpen,
+  editMode,
+  values,
+  getProjectPanelUrl,
+  revisionId,
+  projectMetadata,
+}: any) {
+  console.log("projectMetadata", projectMetadata)
   const [infoMessage, setInfoMessage] = useState("")
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
   const { dropdownOptions: panelTypeOptions } = useDropdownOptions(`${PANEL_TYPE_API}?fields=["*"]`, "panel_name")
+  const userInfo = useCurrentUser() as UserInfo
 
   const getProjectPanelDataUrl = `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revisionId}"]]`
   let { data: projectPanelData } = useGetData(getProjectPanelDataUrl)
@@ -114,6 +119,7 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
 
   // Watch panel_sub_type changes
   const panelSubType = watch("panel_sub_type")
+  console.log("panelSubType", panelSubType)
 
   // Effect to set panel_main_type based on panel_sub_type selection
   useEffect(() => {
@@ -234,6 +240,27 @@ export default function PanelFormModal({ open, setOpen, editMode, values, getPro
           <div className="hidden">
             <CustomTextInput name="panel_main_type" control={panelControl} label="Panel Type" disabled />
           </div>
+          <div className="flex-1">
+            <CustomRadioSelect
+              control={panelControl}
+              name="area_of_classification"
+              label="Area of Classification"
+              options={[
+                { label: "Safe Area", value: "Safe Area" },
+                { label: "Hazardous Area", value: "Hazardous Area" },
+              ]}
+            />
+          </div>
+          {panelSubType === "Power cum Relay Based Control Panel" && (
+            <div className="flex items-center gap-2">
+              <S3BucketUpload
+                accept=".pdf"
+                folderPath={`${
+                  S3FolderMapping[userInfo?.division]
+                }/${projectMetadata?.project_name}-${projectMetadata?.project_oc_number}/Power Relay Control Panel`}
+              />
+            </div>
+          )}
         </div>
         <AlertNotification message={infoMessage} status={status} />
         <div className="text-end">

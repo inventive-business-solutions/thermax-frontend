@@ -23,7 +23,10 @@ const ProjectInfoSchema = zod.object({
   min_humidity: zod.string({ required_error: "Minimum Humidity is required", message: "Humidity is required" }),
   max_humidity: zod.string({ required_error: "Maximum Humidity is required", message: "Humidity is required" }),
   avg_humidity: zod.string({ required_error: "Average Humidity is required", message: "Humidity is required" }),
-  performance_humidity: zod.string({ required_error: "Performance Humidity is required", message: "Humidity is required" }),
+  performance_humidity: zod.string({
+    required_error: "Performance Humidity is required",
+    message: "Humidity is required",
+  }),
   project_oc_number: zod.string({
     required_error: "Project OC number is required",
     message: "Project OC number is required",
@@ -131,7 +134,6 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const getProjectMetadataUrl = `${PROJECT_API}/${project_id}`
   const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
 
-
   const { setLoading: setModalLoading } = useLoading()
   useEffect(() => {
     setModalLoading(false)
@@ -144,9 +146,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
   const [loading, setLoading] = useState(false)
   const [openDocumentList, setOpenDocumentList] = useState(false)
   const projectData = React.useMemo(() => ({ ...projectMetadata, ...projectInfo }), [projectMetadata, projectInfo])
-  const {
-    dropdown,
-  } = useProjectInfoDropdowns()
+  const { dropdown } = useProjectInfoDropdowns()
 
   const { control, handleSubmit, reset, formState, watch, setValue } = useForm({
     resolver: zodResolver(ProjectInfoSchema),
@@ -545,15 +545,9 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
             />
           </div>
           <div className="flex-1">
-            <CustomTextInput
-              name="seismic_zone"
-              control={control}
-              label="Seismic Zone"
-              size="small"
-            />
+            <CustomTextInput name="seismic_zone" control={control} label="Seismic Zone" size="small" />
           </div>
         </div>
-
 
         {/* Humidity Part */}
         {/* <div className="text-sm font-semibold text-slate-00">Humidity</div> */}
@@ -632,7 +626,7 @@ const ProjectInfo = ({ revision_id }: { revision_id: string }) => {
         </div>
 
         <div className="w-2/3">
-          <PanelDataList revision_id={revision_id} />
+          <PanelDataList revision_id={revision_id} projectMetadata={projectMetadata} />
         </div>
 
         <div className="mt-4 flex items-end justify-end gap-2">

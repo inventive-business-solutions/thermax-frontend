@@ -22,6 +22,19 @@ export default function useCommonConfigDropdowns() {
         "Switchgear Combination": "name",
         "Metering for Feeder": "name",  //Ammeter Type
 
+        "Control Transformer primary voltage": "name",
+        "Control Transformer secondary voltage": "name",
+        "Current Transformer Coating": "name",
+        "Control Transformer Quantity": "name",
+        "Control Transformer Configuration": "name",
+
+        "Digital Meters": "name",
+        "Analog Meters": "name",
+        "Communication Protocol": "name",
+
+        "Current Transformer": "name",
+        "Current Transformer Configuration": "name",
+
 
         "Supply Feeder Pole": "name",
         "Supply Feeder DM Standard": "name",
@@ -38,7 +51,11 @@ export default function useCommonConfigDropdowns() {
         "CT Wiring Size": "name",
         "Cable Insulation PVC": "name",
         "Ferrule": "name",
+        "Power Terminal Clipon": "name",
+        "Power Terminal Busbar Type": "name",
+        "Control Terminal": "name",
         "Spare Terminal": "name",
+        "Air Clearance Doctype": "name",
 
         "Test Dropdown": "name",
         "Reset Dropdown": "name",

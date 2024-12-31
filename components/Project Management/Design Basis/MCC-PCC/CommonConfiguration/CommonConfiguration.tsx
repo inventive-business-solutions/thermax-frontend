@@ -3,14 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as zod from "zod"
 import { Button, Divider, message } from "antd"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { createData, getData, updateData } from "actions/crud-actions"
 import CustomTextInput from "components/FormInputs/CustomInput"
 import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
 import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
 import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { COMMON_CONFIGURATION } from "configs/api-endpoints"
+import { COMMON_CONFIGURATION, COMMON_CONFIGURATION_1, COMMON_CONFIGURATION_2, COMMON_CONFIGURATION_3 } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import useCommonConfigDropdowns from "./CommonConfigDropdowns"
 import { configItemValidationSchema } from "../schemas"
@@ -19,6 +19,8 @@ import { WWS_SPG } from "configs/constants"
 
 const getDefaultValues = (commonConfigData: any) => {
   return {
+    rtd_thermocouple_wiring_color: commonConfigData?.rtd_thermocouple_wiring_color?.toString() || "Brown, White Shielded Cable",
+    rtd_thermocouple_wiring_size: commonConfigData?.rtd_thermocouple_wiring_size?.toString() || "1 Sq. mm",
     is_field_motor_isolator_selected: commonConfigData?.is_field_motor_isolator_selected?.toString() || "1",
     is_safe_area_isolator_selected: commonConfigData?.is_safe_area_isolator_selected?.toString() || "1",
     is_hazardous_area_isolator_selected: commonConfigData?.is_hazardous_area_isolator_selected?.toString() || "1",
@@ -31,6 +33,25 @@ const getDefaultValues = (commonConfigData: any) => {
     ammeter_configuration: commonConfigData?.ammeter_configuration || "All Phase With CT",
     mcc_switchgear_type: commonConfigData?.mcc_switchgear_type || "Type II Coordination-Fuseless-One Size Higher",
     switchgear_combination: commonConfigData?.switchgear_combination || "Without MCB",
+
+    is_control_transformer_applicable: commonConfigData?.is_control_transformer_applicable || "0",
+    control_transformer_primary_voltage: commonConfigData?.control_transformer_primary_voltage || "230 VAC, 1-Phase, 2 wire",
+    control_transformer_secondary_voltage: commonConfigData?.control_transformer_secondary_voltage || "230 VAC, 1-Phase, 2 wire",
+    control_transformer_coating: commonConfigData?.control_transformer_coating || "Tape Wound",
+    control_transformer_quantity: commonConfigData?.control_transformer_quantity || "One",
+    control_transformer_configuration: commonConfigData?.control_transformer_configuration || "Single",
+    control_transformer_type: commonConfigData?.control_transformer_type || "Industrial control Step down transformer",
+
+    digital_meters: commonConfigData?.digital_meters || "NA",
+    analog_meters: commonConfigData?.analog_meters || "Ammeter with ASS ",
+    communication_protocol: commonConfigData?.communication_protocol || "NA",
+
+    current_transformer: commonConfigData?.current_transformer || "NA",
+    current_transformer_coating: commonConfigData?.current_transformer_coating || "Cast resin",
+    current_transformer_quantity: commonConfigData?.current_transformer_quantity || "One",
+    current_transformer_configuration: commonConfigData?.current_transformer_configuration || "Y-Phase with CT",
+
+
     pole: commonConfigData?.pole || "4 POLE",
     supply_feeder_standard: commonConfigData?.supply_feeder_standard || "IEC",
     dm_standard: commonConfigData?.dm_standard || "IEC 61439",
@@ -41,19 +62,30 @@ const getDefaultValues = (commonConfigData: any) => {
     control_wiring_size: commonConfigData?.control_wiring_size || "1 Sq. mm",
     vdc_24_wiring_color: commonConfigData?.vdc_24_wiring_color || "Orange, White",
     vdc_24_wiring_size: commonConfigData?.vdc_24_wiring_size || "0.75 Sq. mm",
-    analog_signal_wiring_color: commonConfigData?.analog_signal_wiring_color || "Blue, White Shielded Cable",
+    analog_signal_wiring_color: commonConfigData?.analog_signal_wiring_color || "Brown, White Shielded Cable",
     analog_signal_wiring_size: commonConfigData?.analog_signal_wiring_size || "1 Sq. mm",
     ct_wiring_color: commonConfigData?.ct_wiring_color || "Red, Yellow, Blue, Black",
     ct_wiring_size: commonConfigData?.ct_wiring_size || "2.5 Sq. mm",
     cable_insulation_pvc: commonConfigData?.cable_insulation_pvc || "Fire Resistant",
+    air_clearance_between_phase_to_phase_bus: commonConfigData?.air_clearance_between_phase_to_phase_bus || "25mm",
+    air_clearance_between_phase_to_neutral_bus: commonConfigData?.air_clearance_between_phase_to_neutral_bus || "19mm",
     ferrule: commonConfigData?.ferrule || "Cross Ferrule",
+    ferrule_note: commonConfigData?.ferrule_note || "Printed Ferrules-Black Letters On White Sleeves",
+    device_identification_of_components: commonConfigData?.device_identification_of_components || "PVC sticker with black letters",
+    general_note_internal_wiring: commonConfigData?.general_note_internal_wiring || "Not Applicable",
     common_requirement:
       commonConfigData?.common_requirement ||
       "660/1100 V Grade PVC insulated, FR/FRLS, Multistranded, Copper, Flexible cable identified with colour code",
+    power_terminal_clipon: commonConfigData?.power_terminal_clipon || "Min.4 Sq.mm Clipon Type",
+    power_terminal_busbar_type: commonConfigData?.power_terminal_busbar_type || "Above 4 sq.mm Busbar Type",
+    control_terminal: commonConfigData?.control_terminal || "Min.4 Sq.mm Clipon Type",
     spare_terminal: commonConfigData?.spare_terminal || "10",
+    forward_push_button_start: commonConfigData?.forward_push_button_start || "Yellow",
+    reverse_push_button_start: commonConfigData?.reverse_push_button_start || "Yellow",
     push_button_start: commonConfigData?.push_button_start || "Green",
     push_button_stop: commonConfigData?.push_button_stop || "Green",
-    push_button_ess: commonConfigData?.push_button_ess || "Stayput (RED)",
+    push_button_ess: commonConfigData?.push_button_ess || "Mushroom headed Stayput ( Key to release) Red Colour",
+    potentiometer: commonConfigData?.potentiometer || "0",
     is_push_button_speed_selected: commonConfigData?.is_push_button_speed_selected?.toString() || "1",
     speed_increase_pb: commonConfigData?.speed_increase_pb || "Yellow",
     speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
@@ -114,18 +146,18 @@ const getDefaultValues = (commonConfigData: any) => {
     power_bus_heat_pvc_sleeve: commonConfigData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
     power_bus_material: commonConfigData?.power_bus_material || "Aluminium",
     power_bus_current_density: commonConfigData?.power_bus_current_density || "0.8 A/Sq. mm",
-    power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "( Min -1R X 60 mm X 12 mm) for 50 KA",
+    power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "(Min - 1R x 65 mm X 10 mm)",
     control_bus_main_busbar_selection: commonConfigData?.control_bus_main_busbar_selection || "As per IS8623",
     control_bus_heat_pvc_sleeve: commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Black",
     control_bus_material: commonConfigData?.control_bus_material || "Aluminium",
     control_bus_current_density: commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
     control_bus_rating_of_busbar:
-      commonConfigData?.control_bus_rating_of_busbar || "( Min - 1R X 25 mm X 10 mm )",
+      commonConfigData?.control_bus_rating_of_busbar || "VTS",
     earth_bus_main_busbar_selection: commonConfigData?.earth_bus_main_busbar_selection || "As per IS8623",
     earth_bus_busbar_position: commonConfigData?.earth_bus_busbar_position || "Top",
     earth_bus_material: commonConfigData?.earth_bus_material || "Aluminium",
     earth_bus_current_density: commonConfigData?.earth_bus_current_density || "0.8 A/Sq. mm",
-    earth_bus_rating_of_busbar: commonConfigData?.earth_bus_rating_of_busbar || "( Min- 1R X 20 mm X 5 mm )",
+    earth_bus_rating_of_busbar: commonConfigData?.earth_bus_rating_of_busbar || "(Min - 1R x 30 mm X 10 mm )",
     metering_for_feeders: commonConfigData?.metering_for_feeders || "Ammeter (Digital)",
     cooling_fans: commonConfigData?.cooling_fans || "Not Applicable",
     louvers_and_filters: commonConfigData?.louvers_and_filters || "Not Applicable",
@@ -133,6 +165,9 @@ const getDefaultValues = (commonConfigData: any) => {
     control_transformer: commonConfigData?.control_transformer || "Not Applicable",
     commissioning_spare: commonConfigData?.commissioning_spare || "Not Applicable",
     two_year_operational_spare: commonConfigData?.two_year_operational_spare || "Not Applicable",
+    general_note_busbar_and_insulation_materials: commonConfigData?.general_note_busbar_and_insulation_materials || "Not Applicable",
+    door_earthing: commonConfigData?.door_earthing || "Through Separate Stud With Yellow-Green PVC stranded copper wire (2.5 sq.mm)",
+    instrument_earth: commonConfigData?.instrument_earth || "1. Dark Green PVC Copper Wire 0.5/1 Sq.mm & Copper Busbar \n2. Every VFD section shall have isolated Isntrument Earth busbar",
   }
 }
 
@@ -142,8 +177,22 @@ const CommonConfiguration = ({
   revision_id: string
   setActiveKey: React.Dispatch<React.SetStateAction<string>>
 }) => {
-  const { data: commonConfigurationData } = useGetData(
-    `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  // const { data: commonConfigurationData } = useGetData(
+  //   `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  // )
+  const { data: commonConfiguration1 } = useGetData(
+    `${COMMON_CONFIGURATION_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  )
+  const { data: commonConfiguration2 } = useGetData(
+    `${COMMON_CONFIGURATION_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  )
+  const { data: commonConfiguration3 } = useGetData(
+    `${COMMON_CONFIGURATION_3}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
+  )
+
+  const commonConfigurationData = useMemo(
+    () => [...(commonConfiguration1 || []), ...(commonConfiguration2 || []), ...(commonConfiguration3 || [])],
+    [commonConfiguration1, commonConfiguration2, commonConfiguration3]
   )
 
   // const { data: projectPanelData } = useGetData(
@@ -162,6 +211,19 @@ const CommonConfiguration = ({
   let ammeter_configuration_options = dropdown["Ammeter Configuration"]
   let mcc_switchgear_type_options = dropdown["MCC Switchgear Type"]
   let switchgear_combination_options = dropdown["Switchgear Combination"]
+
+  let control_transformer_primary_voltage_options = dropdown["Control Transformer primary voltage"]
+  let control_tranformer_coating_options = dropdown["Current Transformer Coating"]
+  let control_tranformer_quantity_options = dropdown["Control Transformer Quantity"]
+  let control_tranformer_configuration_options = dropdown["Control Transformer Configuration"]
+
+  let digital_meters_options = dropdown["Digital Meters"]
+  let analog_meters_options = dropdown["Analog Meters"]
+  let communication_protocol_options = dropdown["Communication Protocol"]
+
+  let current_transformer_options = dropdown["Current Transformer"]
+  let current_transformer_configuration_options = dropdown["Current Transformer Configuration"]
+
   let pole_options = dropdown["Supply Feeder Pole"]
   let dm_standard_options = dropdown["Supply Feeder DM Standard"]
   let testing_standard_options = dropdown["Supply Feeder Testing Standard"]
@@ -176,8 +238,13 @@ const CommonConfiguration = ({
   let ct_wiring_color_options = dropdown["CT Wiring Color"]
   let ct_wiring_length_options = dropdown["CT Wiring Size"]
   let cable_wiring_pvc_options = dropdown["Cable Insulation PVC"]
+  let air_clearance_between_phase_to_neutral_bus_options = dropdown["Air Clearance Doctype"]
+  let air_clearance_between_phase_to_phase_bus_options = dropdown["Air Clearance Doctype"]
   let ferrule_options = dropdown["Ferrule"]
 
+  let power_terminal_clipon_options = dropdown["Power Terminal Clipon"]
+  let power_terminal_busbar_type_options = dropdown["Power Terminal Busbar Type"]
+  let control_terminal_options = dropdown["Control Terminal"]
   let spare_terminal_options = dropdown["Spare Terminal"]
 
   let push_button_stop_options = dropdown["Push Button Stop Color"]
@@ -362,20 +429,16 @@ const CommonConfiguration = ({
   }
 
   const onSubmit = async (data: any) => {
+    console.log("data", data)
     setLoading(true)
     try {
-      const commonConfigData = await getData(
-        `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-      )
 
-      if (commonConfigData && commonConfigData.length > 0) {
-        await updateData(`${COMMON_CONFIGURATION}/${commonConfigData[0].name}`, false, data)
-        message.success("Common configuration updated successfully")
-      } else {
-        data["revision_id"] = revision_id
-        await createData(COMMON_CONFIGURATION, false, data)
-        message.success("Common configuration created successfully")
-      }
+      await updateData(`${COMMON_CONFIGURATION_1}/${commonConfiguration1[0].name}`, false, data)
+      await updateData(`${COMMON_CONFIGURATION_2}/${commonConfiguration2[0].name}`, false, data)
+      await updateData(`${COMMON_CONFIGURATION_3}/${commonConfiguration3[0].name}`, false, data)
+      message.success("Common configuration updated successfully")
+
+
     } catch (error) {
       console.error("error: ", error)
       console.error("error: ", error)
@@ -483,6 +546,151 @@ const CommonConfiguration = ({
           )}
         </div>
         <Divider>
+          <span className="font-bold text-slate-700">Control Transformer</span>
+          <CustomRadioSelect
+            control={control}
+            name="is_control_transformer_applicable"
+            label=""
+            options={[
+              { label: "Yes", value: "1" },
+              { label: "No", value: "0" },
+            ]}
+          />
+        </Divider>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_primary_voltage"
+              label="Control Transformer Primary Voltage"
+              options={control_transformer_primary_voltage_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_secondary_voltage"
+              label="Control Transformer Secondary Voltage"
+              options={control_transformer_primary_voltage_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_coating"
+              label="Control Transformer Coating"
+              options={control_tranformer_coating_options || []}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_quantity"
+              label="Control Transformer Quantity"
+              options={control_tranformer_quantity_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_configuration"
+              label="Control Transformer Configuration"
+              options={control_tranformer_configuration_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_transformer_type"
+              label="Control Transformer Type"
+              options={control_tranformer_configuration_options || []}
+              size="small"
+            />
+          </div>
+        </div>
+        <Divider>
+          <span className="font-bold text-slate-700">Metering Instruments for Feeders</span>
+        </Divider>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="digital_meters"
+              label="Digital Meters"
+              options={digital_meters_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="analog_meters"
+              label="Analog Meters"
+              options={analog_meters_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="communication_protocol"
+              label="Communication Protocol"
+              options={communication_protocol_options || []}
+              size="small"
+            />
+          </div>
+        </div>
+        <Divider>
+          <span className="font-bold text-slate-700">Current Transformer for Feeders</span>
+        </Divider>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="current_transformer"
+              label="Current Transformer (kW Including and Above ) "
+              options={current_transformer_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="current_transformer_coating"
+              label="Current Transformer Coating "
+              options={control_tranformer_coating_options || []}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="current_transformer_quantity"
+              label="Current Transformer Quantity "
+              options={control_tranformer_quantity_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="current_transformer_configuration"
+              label="Current Transformer Configruration"
+              options={current_transformer_configuration_options || []}
+              size="small"
+            />
+          </div>
+        </div>
+        <Divider>
           <span className="font-bold text-slate-700">Supply Feeder</span>
         </Divider>
         <div className="w-1/3">
@@ -504,7 +712,7 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="dm_standard"
-              label="Design & Manufacturer's standard"
+              label="Design, Manufacturer's Standard & Testing Standard"
               options={(watch("supply_feeder_standard").startsWith("IEC") ? iec_dm_standards : is_dm_standards) || []}
               size="small"
             />
@@ -513,7 +721,7 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="testing_standard"
-              label="Testing Standard"
+              label=""
               options={(watch("supply_feeder_standard").startsWith("IEC") ? iec_testing_standards : is_testing_standards) || []}
               size="small"
             />
@@ -627,6 +835,27 @@ const CommonConfiguration = ({
             />
           </div>
         </div>
+        <div className="flex items-center gap-4">
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">RTD / Thermocouple Wiring (+, - )</h4>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="rtd_thermocouple_wiring_color"
+              label="Color"
+              options={analog_signal_wiring_color_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="rtd_thermocouple_wiring_size"
+              label="Size"
+              options={analog_signal_wiring_length_options || []}
+              size="small"
+            />
+          </div>
+        </div>
         <div className="flex gap-4">
           <div className="flex-1">
             <CustomSingleSelect
@@ -640,37 +869,115 @@ const CommonConfiguration = ({
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="ferrule"
-              label="Ferrule"
-              options={ferrule_options || []}
+              name="air_clearance_between_phase_to_phase_bus"
+              label="Air clearance between phase to phase Bus"
+              options={air_clearance_between_phase_to_phase_bus_options || []}
               size="small"
             />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="air_clearance_between_phase_to_neutral_bus"
+              label="Air clearance between phase to neutral Bus"
+              options={air_clearance_between_phase_to_neutral_bus_options || []}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomTextAreaInput control={control} name="general_note_internal_wiring" label="General Note Internal Wiring" />
           </div>
           <div className="flex-1">
             <CustomTextAreaInput control={control} name="common_requirement" label="Common Requirement" />
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Terminal</span>
-        </Divider>
-        <div className="w-1/2">
-          <CustomSingleSelect
-            control={control}
-            name="spare_terminal"
-            label="Spare Terminal"
-            options={spare_terminal_options || []}
-            size="small"
-            suffixIcon={
-              <>
-                <p className="text-base font-semibold text-blue-400">%</p>
-              </>
-            }
-          />
-        </div>
-        <Divider>
-          <span className="font-bold text-slate-700">Push Button Color</span>
+          <span className="font-bold text-slate-700">Terminal Block Connectors</span>
         </Divider>
         <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="power_terminal_clipon"
+              label="Power Terminal Clipon"
+              options={power_terminal_clipon_options || []}
+              size="small"
+            // suffixIcon={
+            //   <>
+            //     <p className="text-base font-semibold text-blue-400">%</p>
+            //   </>
+            // }
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="power_terminal_busbar_type"
+              label="Power Terminal Busbar Type"
+              options={power_terminal_busbar_type_options || []}
+              size="small"
+            // suffixIcon={
+            //   <>
+            //     <p className="text-base font-semibold text-blue-400">%</p>
+            //   </>
+            // }
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="control_terminal"
+              label="Control Terminal"
+              options={control_terminal_options || []}
+              size="small"
+            // suffixIcon={
+            //   <>
+            //     <p className="text-base font-semibold text-blue-400">%</p>
+            //   </>
+            // }
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="spare_terminal"
+              label="Spare Terminal"
+              options={spare_terminal_options || []}
+              size="small"
+              suffixIcon={
+                <>
+                  <p className="text-base font-semibold text-blue-400">%</p>
+                </>
+              }
+            />
+          </div>
+        </div>
+        <Divider>
+          <span className="font-bold text-slate-700">Panel Mounted Push Buttons & Colours</span>
+        </Divider>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="forward_push_button_start"
+              label="Forward Start Push Button"
+              options={push_button_start_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="reverse_push_button_start"
+              label="Reverse Start Push Button"
+              options={push_button_start_options || []}
+              size="small"
+            />
+          </div>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -689,7 +996,7 @@ const CommonConfiguration = ({
               size="small"
             />
           </div>
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomSingleSelect
               control={control}
               name="push_button_ess"
@@ -697,7 +1004,7 @@ const CommonConfiguration = ({
               options={ess_options || []}
               size="small"
             />
-          </div>
+          </div> */}
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -728,6 +1035,28 @@ const CommonConfiguration = ({
               label="Speed Decrease PB"
               options={speed_decrease_pb_options || []}
               disabled={watch("is_push_button_speed_selected") === "0"}
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="w-1/4">
+            <CustomRadioSelect
+              control={control}
+              name="potentiometer"
+              label="Potentiometer"
+              options={[
+                { label: "Applicable", value: "1" },
+                { label: "Not Applicable", value: "0" },
+              ]}
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="push_button_ess"
+              label="Emergency Stop Push button"
+              options={ess_options || []}
               size="small"
             />
           </div>
@@ -801,14 +1130,14 @@ const CommonConfiguration = ({
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Indicating Lamp</span>
+          <span className="font-bold text-slate-700">Panel Mounted Indicating Lamps & Colours</span>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
               name="running_open"
-              label="Running / Open"
+              label="Run"
               options={running_open_options || []}
               size="small"
             />
@@ -817,7 +1146,7 @@ const CommonConfiguration = ({
             <CustomSingleSelect
               control={control}
               name="stopped_closed"
-              label="Stopped / Closed"
+              label="Stop"
               options={stopped_closed_options || []}
               size="small"
             />
@@ -1372,7 +1701,7 @@ const CommonConfiguration = ({
             <CustomTextInput
               control={control}
               name="power_bus_rating_of_busbar"
-              label="Rating of Busbar"
+              label="Busbar Size & Rating"
               size="small"
             />
           </div>
@@ -1426,7 +1755,7 @@ const CommonConfiguration = ({
             <CustomTextInput
               control={control}
               name="control_bus_rating_of_busbar"
-              label="Rating of Busbar"
+              label="Busbar Size & Rating"
               size="small"
             />
           </div>
@@ -1480,7 +1809,60 @@ const CommonConfiguration = ({
             <CustomTextInput
               control={control}
               name="earth_bus_rating_of_busbar"
-              label="Rating of Busbar"
+              label="Busbar Size & Rating"
+              size="small"
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <CustomTextAreaInput
+              control={control}
+              name="door_earthing"
+              label="Door Earthing"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomTextAreaInput
+              control={control}
+              name="instrument_earth"
+              label="Instrumental Earth"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomTextAreaInput
+              control={control}
+              name="general_note_busbar_and_insulation_materials"
+              label="General Note Busbar & Instrumental Materials"
+            />
+          </div>
+        </div>
+        <Divider>
+          <span className="font-bold text-slate-700">Identification of Components</span>
+        </Divider>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="ferrule"
+              label="Ferrule"
+              options={ferrule_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomTextInput
+              control={control}
+              name="ferrule_note"
+              label="Ferrule Note"
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomTextInput
+              control={control}
+              name="device_identification_of_components"
+              label="Device identification of components"
               size="small"
             />
           </div>
