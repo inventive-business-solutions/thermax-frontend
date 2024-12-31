@@ -4,7 +4,14 @@ import React, { useRef, useEffect, useState, useMemo, useCallback } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
 import { Button, message, Spin } from "antd"
 import { getData, updateData } from "actions/crud-actions"
-import { COMMON_CONFIGURATION, MAKE_OF_COMPONENT_API, SLD_REVISIONS_API } from "configs/api-endpoints"
+import {
+  COMMON_CONFIGURATION,
+  COMMON_CONFIGURATION_1,
+  COMMON_CONFIGURATION_2,
+  COMMON_CONFIGURATION_3,
+  MAKE_OF_COMPONENT_API,
+  SLD_REVISIONS_API,
+} from "configs/api-endpoints"
 import { useLoading } from "hooks/useLoading"
 import { useParams, useRouter } from "next/navigation"
 import { switchGearSelectionColumns } from "components/Project Management/Electrical Load List/common/ExcelColumns"
@@ -13,6 +20,7 @@ import { getStandByKw } from "components/Project Management/Electrical Load List
 import { useCurrentUser } from "hooks/useCurrentUser"
 import { ENVIRO, HEATING } from "configs/constants"
 import { getSwSelectionDetails } from "actions/sld"
+import { log } from "node:console"
 
 interface Props {
   designBasisRevisionId: string
@@ -37,7 +45,7 @@ const getArrayOfSwitchgearSelectionData = (
         item.service_description,
         item?.hp || "",
         item.working_kw,
-        item?.standby_kw, 
+        item?.standby_kw,
         item.current,
         item.starter,
         item.make,
@@ -64,6 +72,7 @@ const getArrayOfSwitchgearSelectionData = (
   }
 
   if (!data) return []
+  console.log(commonConfiguration, "commonConfiguration")
 
   return data.map((item: any) => {
     const savedItem = sg_saved_data?.find((row: any) => row.tag_number === item.tag_number)
@@ -116,14 +125,26 @@ const useDataFetching = (designBasisRevisionId: string, loadListData: any, divis
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true)
+      // const commonConfiguration = await getData(
+      //   `${COMMON_CONFIGURATION}?fields=["mcc_switchgear_type"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      // )
       const commonConfiguration = await getData(
-        `${COMMON_CONFIGURATION}?fields=["mcc_switchgear_type"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+        `${COMMON_CONFIGURATION_1}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
+      // const commonConfiguration2 = await getData(
+      //   `${COMMON_CONFIGURATION_2}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      // )
+      // const commonConfiguration3 = await getData(
+      //   `${COMMON_CONFIGURATION_3}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      // )
+
+      // const commonConfiguration: any =  [...(commonConfiguration1 || []), ...(commonConfiguration2 || []), ...(commonConfiguration3 || [])].flat()
       const sg_saved_data = await getData(`${SLD_REVISIONS_API}/${revision_id}`)
       const makeComponents = await getData(
         `${MAKE_OF_COMPONENT_API}?fields=["preferred_soft_starter","preferred_lv_switchgear","preferred_vfdvsd"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
-      console.log(sg_saved_data, "sg_saved_data")
+      console.log(commonConfiguration, "commonConfiguration")
+
 
       const formattedData = getArrayOfSwitchgearSelectionData(
         loadListData,
@@ -321,7 +342,7 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
 
     let payload = {
       switchgear_selection_data: data?.map((row: any) => {
-        if(userInfo.division === ENVIRO){
+        if (userInfo.division === ENVIRO) {
           return {
             tag_number: row[0],
             service_description: row[1],
@@ -345,7 +366,6 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
             incomer: row[19],
           }
         }
-      
       }),
     }
     try {
@@ -380,7 +400,7 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
             kw: getStandByKw(item[3], item[4]),
             starter_type: userInfo.division === ENVIRO ? item[7] : item[6],
             make: userInfo.division === ENVIRO ? item[8] : item[7],
-            sw_type: userInfo.division === ENVIRO ? item[9] : item[8] ,
+            sw_type: userInfo.division === ENVIRO ? item[9] : item[8],
             starting_time: userInfo.division === HEATING ? item[9] : "",
           }
         }),
