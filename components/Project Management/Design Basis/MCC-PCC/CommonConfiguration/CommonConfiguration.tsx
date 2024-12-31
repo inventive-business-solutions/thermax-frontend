@@ -121,7 +121,7 @@ const getDefaultValues = (commonConfigData: any) => {
     safe_lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
     safe_lpbs_material: commonConfigData?.lpbs_material || "CRCA",
     safe_lpbs_thickness: commonConfigData?.thickness || "1.6 mm",
-    safe_lpbs_qty: commonConfigData?.lpbs_qty || "As mentioned in Electrical Load List",
+    safe_lpbs_qty: commonConfigData?.lpbs_qty || "As Mentioned in Electrical Load List",
     safe_lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
     safe_lpbs_canopy: commonConfigData?.lpbs_canopy_on_top || "All",
     safe_lpbs_canopy_type: commonConfigData?.type || "On Top",
@@ -130,7 +130,7 @@ const getDefaultValues = (commonConfigData: any) => {
     hazardous_lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
     hazardous_lpbs_material: commonConfigData?.lpbs_material || "CRCA",
     hazardous_lpbs_thickness: commonConfigData?.thickness || "1.6 mm",
-    hazardous_lpbs_qty: commonConfigData?.lpbs_qty || "As mentioned in Electrical Load List",
+    hazardous_lpbs_qty: commonConfigData?.lpbs_qty || "As Mentioned in Electrical Load List",
     hazardous_lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
     hazardous_lpbs_canopy: commonConfigData?.lpbs_canopy_on_top || "All",
     hazardous_lpbs_canopy_type: commonConfigData?.type || "On Top",
@@ -248,6 +248,7 @@ const CommonConfiguration = ({
   let control_terminal_options = dropdown["Control Terminal"]
   let spare_terminal_options = dropdown["Spare Terminal"]
 
+  let forward_reverst_push_button_options = dropdown["Forward and Reverse Push Button"]
   let push_button_stop_options = dropdown["Push Button Stop Color"]
   let push_button_start_options = dropdown["Push Button Start Color"]
   let ess_options = dropdown["Push Button ESS"]
@@ -966,7 +967,7 @@ const CommonConfiguration = ({
               control={control}
               name="forward_push_button_start"
               label="Forward Start Push Button"
-              options={push_button_start_options || []}
+              options={forward_reverst_push_button_options || []}
               size="small"
             />
           </div>
@@ -975,7 +976,7 @@ const CommonConfiguration = ({
               control={control}
               name="reverse_push_button_start"
               label="Reverse Start Push Button"
-              options={push_button_start_options || []}
+              options={forward_reverst_push_button_options || []}
               size="small"
             />
           </div>
