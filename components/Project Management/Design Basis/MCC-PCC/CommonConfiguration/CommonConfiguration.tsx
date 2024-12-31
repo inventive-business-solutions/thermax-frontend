@@ -43,11 +43,11 @@ const getDefaultValues = (commonConfigData: any) => {
     control_transformer_type: commonConfigData?.control_transformer_type || "Industrial control Step down transformer",
 
     digital_meters: commonConfigData?.digital_meters || "NA",
-    analog_meters: commonConfigData?.analog_meters || "Ammeter with ASS ",
+    analog_meters: commonConfigData?.analog_meters || "Ammeter with ASS",
     communication_protocol: commonConfigData?.communication_protocol || "NA",
 
     current_transformer: commonConfigData?.current_transformer || "NA",
-    current_transformer_coating: commonConfigData?.current_transformer_coating || "Cast resin",
+    current_transformer_coating: commonConfigData?.current_transformer_coating || "Cast Resin",
     current_transformer_quantity: commonConfigData?.current_transformer_quantity || "One",
     current_transformer_configuration: commonConfigData?.current_transformer_configuration || "Y-Phase with CT",
 
@@ -121,7 +121,7 @@ const getDefaultValues = (commonConfigData: any) => {
     safe_lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
     safe_lpbs_material: commonConfigData?.lpbs_material || "CRCA",
     safe_lpbs_thickness: commonConfigData?.thickness || "1.6 mm",
-    safe_lpbs_qty: commonConfigData?.lpbs_qty || "As mentioned in Electrical Load List",
+    safe_lpbs_qty: commonConfigData?.lpbs_qty || "As Mentioned in Electrical Load List",
     safe_lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
     safe_lpbs_canopy: commonConfigData?.lpbs_canopy_on_top || "All",
     safe_lpbs_canopy_type: commonConfigData?.type || "On Top",
@@ -130,7 +130,7 @@ const getDefaultValues = (commonConfigData: any) => {
     hazardous_lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
     hazardous_lpbs_material: commonConfigData?.lpbs_material || "CRCA",
     hazardous_lpbs_thickness: commonConfigData?.thickness || "1.6 mm",
-    hazardous_lpbs_qty: commonConfigData?.lpbs_qty || "As mentioned in Electrical Load List",
+    hazardous_lpbs_qty: commonConfigData?.lpbs_qty || "As Mentioned in Electrical Load List",
     hazardous_lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
     hazardous_lpbs_canopy: commonConfigData?.lpbs_canopy_on_top || "All",
     hazardous_lpbs_canopy_type: commonConfigData?.type || "On Top",
@@ -212,6 +212,7 @@ const CommonConfiguration = ({
   let mcc_switchgear_type_options = dropdown["MCC Switchgear Type"]
   let switchgear_combination_options = dropdown["Switchgear Combination"]
 
+  let control_transformer_type_options = dropdown["Control Transformer Type"]
   let control_transformer_primary_voltage_options = dropdown["Control Transformer primary voltage"]
   let control_tranformer_coating_options = dropdown["Current Transformer Coating"]
   let control_tranformer_quantity_options = dropdown["Control Transformer Quantity"]
@@ -247,6 +248,7 @@ const CommonConfiguration = ({
   let control_terminal_options = dropdown["Control Terminal"]
   let spare_terminal_options = dropdown["Spare Terminal"]
 
+  let forward_reverst_push_button_options = dropdown["Forward and Reverse Push Button"]
   let push_button_stop_options = dropdown["Push Button Stop Color"]
   let push_button_start_options = dropdown["Push Button Start Color"]
   let ess_options = dropdown["Push Button ESS"]
@@ -610,7 +612,7 @@ const CommonConfiguration = ({
               control={control}
               name="control_transformer_type"
               label="Control Transformer Type"
-              options={control_tranformer_configuration_options || []}
+              options={control_transformer_type_options || []}
               size="small"
             />
           </div>
@@ -965,7 +967,7 @@ const CommonConfiguration = ({
               control={control}
               name="forward_push_button_start"
               label="Forward Start Push Button"
-              options={push_button_start_options || []}
+              options={forward_reverst_push_button_options || []}
               size="small"
             />
           </div>
@@ -974,7 +976,7 @@ const CommonConfiguration = ({
               control={control}
               name="reverse_push_button_start"
               label="Reverse Start Push Button"
-              options={push_button_start_options || []}
+              options={forward_reverst_push_button_options || []}
               size="small"
             />
           </div>

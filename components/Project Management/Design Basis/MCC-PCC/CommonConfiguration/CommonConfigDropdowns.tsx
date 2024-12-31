@@ -22,6 +22,7 @@ export default function useCommonConfigDropdowns() {
         "Switchgear Combination": "name",
         "Metering for Feeder": "name",  //Ammeter Type
 
+        "Control Transformer Type": "name",
         "Control Transformer primary voltage": "name",
         "Control Transformer secondary voltage": "name",
         "Current Transformer Coating": "name",
@@ -34,7 +35,7 @@ export default function useCommonConfigDropdowns() {
 
         "Current Transformer": "name",
         "Current Transformer Configuration": "name",
-
+        "Forward and Reverse Push Button": "name",
 
         "Supply Feeder Pole": "name",
         "Supply Feeder DM Standard": "name",
