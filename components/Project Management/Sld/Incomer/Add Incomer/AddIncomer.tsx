@@ -83,7 +83,9 @@ const useDataFetching = (panelType: string, revision_id: string, panel_id: strin
         )}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
       )
       const sg_data = await getData(`${SLD_REVISIONS_API}/${sld_revision_id}`)
-
+      console.log(projectPanelData,"vishal");
+      console.log(sg_data, projectPanelData[0],"vishal");
+      
       const preferredSwitchgear = makeComponents[0]?.preferred_lv_switchgear.toUpperCase()
       const pole = getPoles(sg_data, projectPanelData[0]) + "-POLE"
       const device = getDevice(sg_data, projectPanelData[0])
@@ -148,7 +150,9 @@ const AddIncomer: React.FC<Props> = ({
   } = useDataFetching(panelType, revision_id, panel_id, sld_revision_id)
 
   // Table states
-  console.log(incomerResponse, "tableData")
+  console.log(sg_data, "vishal")
+  // console.log(sg_data, "vishal")
+  console.log(projectPanelData, "vishal")
   const [searchModel, setSearchModel] = useState("")
   const [searchRating, setSearchRating] = useState("")
 
@@ -221,6 +225,8 @@ const AddIncomer: React.FC<Props> = ({
       const preferredSwitchgear = makeComponents?.preferred_lv_switchgear.toUpperCase()
       const pole = getPoles(sg_data, projectPanelData) + "-POLE"
       const device = getDevice(sg_data, projectPanelData)
+      console.log(sg_data);
+      
       const current_rating = getRatingForIncomer(sg_data)
 
       const filters = [
