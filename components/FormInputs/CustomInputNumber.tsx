@@ -17,7 +17,7 @@ export default function CustomTextNumber({ control, name, label, placeholder, ..
       control={control}
       render={({ field, fieldState }) => (
         <div>
-          <label htmlFor={name} className="text-sm">
+          <label htmlFor={name} className="text-sm font-semibold text-slate-700">
             {label}
           </label>
           <InputNumber

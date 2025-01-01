@@ -21,6 +21,7 @@ import {
   MCC_PANEL,
   MCC_PCC_PLC_PANEL_1,
   MCC_PCC_PLC_PANEL_2,
+  MCC_PCC_PLC_PANEL_3,
   MOTOR_PARAMETER_API,
   PCC_PANEL,
   PROJECT_API,
@@ -166,12 +167,17 @@ export default function DocumentRevision() {
           `${MCC_PCC_PLC_PANEL_2}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
         )
 
+        const mccPccPlcPanel3Data = await getData(
+          `${MCC_PCC_PLC_PANEL_3}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
+        )
+
         finalProjectPanelData.push({
           ...projectPanel,
           mccPanelData: mccCumPccMccPanelData[0],
           plcPanelData: {
             ...mccPccPlcPanel1Data[0],
             ...mccPccPlcPanel2Data[0],
+            ...mccPccPlcPanel3Data[0],
           },
         })
       }

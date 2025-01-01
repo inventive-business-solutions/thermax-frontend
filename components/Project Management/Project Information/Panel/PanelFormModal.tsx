@@ -16,6 +16,7 @@ import {
   MCC_PANEL,
   MCC_PCC_PLC_PANEL_1,
   MCC_PCC_PLC_PANEL_2,
+  MCC_PCC_PLC_PANEL_3,
   PANEL_TYPE_API,
   PCC_PANEL,
   PROJECT_PANEL_API,
@@ -139,8 +140,8 @@ export default function PanelFormModal({
         panel_id: panelRes.name,
         revision_id: revisionId,
       }
-      console.log(panelRes);
-      
+      console.log(panelRes)
+
       const new_sld_revision = {
         // panel_id: panelRes.name,
         panel_name: panelRes.panel_name,
@@ -160,6 +161,7 @@ export default function PanelFormModal({
         await createData(MCC_PANEL, false, panelCreateData)
         await createData(MCC_PCC_PLC_PANEL_1, false, panelCreateData)
         await createData(MCC_PCC_PLC_PANEL_2, false, panelCreateData)
+        await createData(MCC_PCC_PLC_PANEL_3, false, panelCreateData)
       }
       setStatus("success")
       setInfoMessage("New panel created successfully")

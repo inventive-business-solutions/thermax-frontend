@@ -18,3 +18,16 @@ export const useGetData = (url: string) => {
 
   return { data, error, isLoading }
 }
+
+// Hook for reading documents
+export const useNewGetData = (url: string) => {
+  const { data, error, isLoading } = useSWR(url, getData)
+
+  useEffect(() => {
+    if (error) {
+      console.error(`Error fetching data from ${url}:`, error)
+    }
+  }, [error, url])
+
+  return { data, error, isLoading }
+}
