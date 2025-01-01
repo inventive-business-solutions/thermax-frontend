@@ -11,6 +11,7 @@ import {
   HEATING_SWITCHGEAR_HEATER_API,
   MOTOR_CANOPY_METADATA,
   MOTOR_CANOPY_REVISION_HISTORY_API,
+  SLD_REVISIONS_API,
 } from "configs/api-endpoints"
 
 export const getCurrentCalculation = async (loadListData: any) => {
@@ -85,6 +86,14 @@ export const getLatestLoadlistRevision = async (projectId: string) => {
 export const getLatestCableScheduleRevision = async (projectId: string) => {
   const dbRevisionData = await getData(
     `${CABLE_SCHEDULE_REVISION_HISTORY_API}?filters=[["project_id", "=", "${projectId}"], ["status", "in", ["${LOAD_LIST_REVISION_STATUS.NotReleased}"]]]&fields=["*"]&order_by=creation desc`
+  )
+
+  return dbRevisionData
+}
+export const getAllSldRevisions = async (projectId: string) => {
+  // ["status", "in", ["${LOAD_LIST_REVISION_STATUS.NotReleased}"]]
+  const dbRevisionData = await getData(
+    `${SLD_REVISIONS_API}?filters=[["project_id", "=", "${projectId}"]]&fields=["*"]&order_by=creation desc`
   )
 
   return dbRevisionData

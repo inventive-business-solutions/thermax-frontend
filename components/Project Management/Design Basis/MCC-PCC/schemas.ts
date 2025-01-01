@@ -556,9 +556,18 @@ export const mccPanelValidationSchema = zod
       required_error: "LED Type Lamp is required",
       message: "LED Type Lamp is required",
     }),
-    is_blue_cb_spring_charge_selected: zod.number().optional(),
-    is_red_cb_in_service: zod.number().optional(),
-    is_white_healthy_trip_circuit_selected: zod.number().optional(),
+    is_blue_cb_spring_charge_selected: zod.string({
+      required_error: "This field is required",
+      message: "This field is required"
+    }),
+    is_red_cb_in_service: zod.string({
+      required_error: "This field is required",
+      message: "This field is required",
+    }),
+    is_white_healthy_trip_circuit_selected: zod.number({
+      required_error: "This field is required",
+      message: "This field is required",
+    }),
     current_transformer_coating: zod.string({
       required_error: "Current Transformer Coating is required",
       message: "Current Transformer Coating is required",
@@ -570,6 +579,31 @@ export const mccPanelValidationSchema = zod
     alarm_annunciator: zod.string({
       required_error: "Alarm Annunciator is required",
       message: "Alarm Annunciator is required",
+    }),
+    is_indication_on_selected: zod.string({
+      required_error: "Alarm Annunciator is required",
+      message: "Alarm Annunciator is required",
+    }),
+    is_indication_off_selected: zod.string({
+      required_error: "Alarm Annunciator is required",
+      message: "Alarm Annunciator is required",
+    }),
+    is_indication_trip_selected: zod.string({
+      required_error: "Alarm Annunciator is required",
+      message: "Alarm Annunciator is required",
+    }),
+
+    led_type_on_input: zod.string({
+      required_error: "ON Indication Lamp is required",
+      message: "ON Indication Lamp is required",
+    }),
+    led_type_off_input: zod.string({
+      required_error: "ON Indication Lamp is required",
+      message: "ON Indication Lamp is required",
+    }),
+    led_type_trip_input: zod.string({
+      required_error: "ON Indication Lamp is required",
+      message: "ON Indication Lamp is required",
     }),
     mi_analog: zod.string({ required_error: "Analog is required", message: "Analog is required" }),
     mi_digital: zod.string({ required_error: "Digital is required", message: "Digital is required" }),
@@ -828,13 +862,49 @@ export const pccPanelValidationSchema = zod
       required_error: "LED Type Lamp is required",
       message: "LED Type Lamp is required",
     }),
-    is_blue_cb_spring_charge_selected: zod.number().optional(),
-    is_red_cb_in_service: zod.number().optional(),
-    is_white_healthy_trip_circuit_selected: zod.number().optional(),
+    is_blue_cb_spring_charge_selected: zod.string({
+      required_error: "This field is required",
+      message: "This field is required"
+    }),
+    is_red_cb_in_service: zod.string({
+      required_error: "This field is required",
+      message: "This field is required",
+    }),
+    is_white_healthy_trip_circuit_selected: zod.number({
+      required_error: "This field is required",
+      message: "This field is required",
+    }),
     alarm_annunciator: zod.string({
       required_error: "Alarm Annunciator is required",
       message: "Alarm Annunciator is required",
     }),
+
+    is_indication_on_selected: zod.string({
+      required_error: "Alarm Annunciator is required",
+      message: "Alarm Annunciator is required",
+    }),
+    is_indication_off_selected: zod.string({
+      required_error: "Alarm Annunciator is required",
+      message: "Alarm Annunciator is required",
+    }),
+    is_indication_trip_selected: zod.string({
+      required_error: "Alarm Annunciator is required",
+      message: "Alarm Annunciator is required",
+    }),
+
+    led_type_on_input: zod.string({
+      required_error: "ON Indication Lamp is required",
+      message: "ON Indication Lamp is required",
+    }),
+    led_type_off_input: zod.string({
+      required_error: "ON Indication Lamp is required",
+      message: "ON Indication Lamp is required",
+    }),
+    led_type_trip_input: zod.string({
+      required_error: "ON Indication Lamp is required",
+      message: "ON Indication Lamp is required",
+    }),
+
     mi_analog: zod.string({ required_error: "Analog is required", message: "Analog is required" }),
     mi_digital: zod.string({ required_error: "Digital is required", message: "Digital is required" }),
     mi_communication_protocol: zod.string({
