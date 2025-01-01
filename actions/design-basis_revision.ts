@@ -15,6 +15,7 @@ import {
   MCC_PCC_PLC_PANEL_2,
   CABLE_TRAY_LAYOUT,
   LAYOUT_EARTHING,
+  MCC_PCC_PLC_PANEL_3,
 } from "configs/api-endpoints"
 import { DB_REVISION_STATUS } from "configs/constants"
 import { createData, getData, updateData } from "./crud-actions"
@@ -143,6 +144,18 @@ export const releaseRevision = async (project_id: string, revision_id: string) =
       for (const mccPccPlcPanel2 of mccPccPlcPanel2Data || []) {
         await createData(MCC_PCC_PLC_PANEL_2, false, {
           ...mccPccPlcPanel2,
+          revision_id: new_revision_id,
+          panel_id: new_panel_id,
+        })
+      }
+
+      const mccPccPlcPanel3Data = await getData(
+        `${MCC_PCC_PLC_PANEL_3}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${old_panel_id}"]]&fields=["*"]`
+      )
+
+      for (const mccPccPlcPanel3 of mccPccPlcPanel3Data || []) {
+        await createData(MCC_PCC_PLC_PANEL_3, false, {
+          ...mccPccPlcPanel3,
           revision_id: new_revision_id,
           panel_id: new_panel_id,
         })
