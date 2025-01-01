@@ -60,11 +60,12 @@ export default function usePLCDropdowns() {
         "Electronic Hooter Acknowledge": "name",
         "Panel Power Supply On": "name",
         "Panel Power Supply Off": "name",
-
         "Indicating Lamp Color for Non-UPS Power Supply": "name",
         "Indicating Lamp Color for UPS Power Supply": "name",
-        "DI Modules Density": "name",
-        "DI Modules Type Of Input": "name",
+        "Channel Density": "name",
+        "Isolation Dropdown": "name",
+        "Interposing Relay": "name",
+
         "DI Modules Interrogation Voltage": "name",
         "DO Modules Density": "name",
         "DO Modules Type Of Output": "name",

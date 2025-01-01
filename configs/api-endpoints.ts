@@ -216,7 +216,7 @@ export const PUSH_BUTTON_COLOR_ACKNOWLEDGE = `/document/Push Button Color Acknow
 export const PUSH_BUTTON_COLOR_RESET = `/document/Push Button Color Reset`
 export const NON_UPS_INDICATING_LAMP_COLOR = `/document/Indicating Lamp Color for Non-UPS Power Supply`
 export const UPS_INDICATING_LAMP_COLOR = `/document/Indicating Lamp Color for UPS Power Supply`
-export const DI_MODULE_DENSITY = `/document/DI Modules Density`
+export const DI_MODULE_DENSITY = `/document/Channel Density`
 export const DI_MODULE_INPUT_TYPE = `/document/DI Modules Type Of Input`
 export const DI_MODULE_INTERROGATION_VOLTAGE = `/document/DI Modules Interrogation Voltage`
 export const DO_MODULE_DENSITY = `/document/DO Modules Density`
@@ -313,7 +313,6 @@ export const GET_DESIGN_BASIS_EXCEL_API = `/method/db_revision.get_design_basis_
 export const GET_LOAD_LIST_EXCEL_API = `/method/load_list_revisions.get_load_list_excel`
 export const GET_CABLE_SCHEDULE_EXCEL_API = `/method/cable_schedule_revisions.get_cable_schedule_excel`
 export const GET_VOLTAGE_DROP_EXCEL_API = `/method/cable_schedule_revisions.get_voltage_drop_excel`
-
 
 //sld
 
