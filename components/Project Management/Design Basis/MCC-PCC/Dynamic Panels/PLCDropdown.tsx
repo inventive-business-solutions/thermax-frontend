@@ -74,14 +74,21 @@ export default function usePLCDropdowns() {
         "RTD Type Of Input": "name",
         "AO Modules Density": "name",
         "AO Modules Type of Output": "name",
+        "Terminal Block Connector Dropdown": "name",
         "PLC IO Count": "name",
         "PLC Spare Memory": "name",
         "PLC HMI Size": "name",
+        "HMI Hardware Make": "name",
         "EO System Hardware": "name",
         "EO Monitor Size": "name",
         "EO Printer and Communication Cable": "name",
         "EO Furniture": "name",
+        "Printer Type": "name",
+        "Printer Size": "name",
         "AI Module Density": "name",
+        "Interface Signal and Control Logic": "name",
+        "Differential Pressure Flow Linearization": "name",
+        "PLC CPU Communication Protocol": "name",
       })
       setDropdown(response)
       console.log("plc response", response)

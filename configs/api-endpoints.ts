@@ -201,8 +201,9 @@ export const PPC_MINIMUM_COATING_THICKNESS = `/document/PPC Minimum Coating Thic
 export const PPC_PRETREATMENT_PANEL_STANDARD = `/document/PPC Pretreatment Panel Standard`
 
 // PLC Panel
-export const MCC_PCC_PLC_PANEL_1 = `/document/PLC Panel`
-export const MCC_PCC_PLC_PANEL_2 = `/document/MCC Cum PCC PLC Panel 2`
+export const MCC_PCC_PLC_PANEL_1 = `/document/Panel PLC 1 - 3`
+export const MCC_PCC_PLC_PANEL_2 = `/document/Panel PLC 2 - 3`
+export const MCC_PCC_PLC_PANEL_3 = `/document/Panel PLC 3 - 3`
 export const PLC_UPS_SCOPE = `/document/PLC UPS Scope`
 export const PLC_UPS_TYPE = `/document/PLC UPS Type`
 export const PLC_UPS_BATTERY_BACKUP_TIME = `/document/PLC UPS Battery Backup Time`

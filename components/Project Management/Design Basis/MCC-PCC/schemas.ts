@@ -558,7 +558,7 @@ export const mccPanelValidationSchema = zod
     }),
     is_blue_cb_spring_charge_selected: zod.string({
       required_error: "This field is required",
-      message: "This field is required"
+      message: "This field is required",
     }),
     is_red_cb_in_service: zod.string({
       required_error: "This field is required",
@@ -864,7 +864,7 @@ export const pccPanelValidationSchema = zod
     }),
     is_blue_cb_spring_charge_selected: zod.string({
       required_error: "This field is required",
-      message: "This field is required"
+      message: "This field is required",
     }),
     is_red_cb_in_service: zod.string({
       required_error: "This field is required",
@@ -1459,10 +1459,6 @@ export const plcPanelValidationSchema = zod.object({
   is_hmi_selected: zod.string({
     required_error: "HMI is required",
     message: "HMI is required",
-  }),
-  hmi_type: zod.string({
-    required_error: "HMI Type is required",
-    message: "HMI Type is required",
   }),
   hmi_size: zod.string({
     required_error: "HMI Size is required",

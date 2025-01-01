@@ -8,6 +8,7 @@ import {
   MCC_PANEL,
   MCC_PCC_PLC_PANEL_1,
   MCC_PCC_PLC_PANEL_2,
+  MCC_PCC_PLC_PANEL_3,
   PCC_PANEL,
   PROJECT_PANEL_API,
 } from "configs/api-endpoints"
@@ -133,6 +134,16 @@ export default function PanelDataList({ revision_id, projectMetadata }: { revisi
       for (const mccPccPlcPanel2 of mccPccPlcPanel2Data) {
         const mccPccPlcPanel2ID = mccPccPlcPanel2.name
         await deleteData(`${MCC_PCC_PLC_PANEL_2}/${mccPccPlcPanel2ID}`, false)
+      }
+
+      // Delete all MCC_PCC_PLC_PANEL_3 Data
+      const mccPccPlcPanel3Data = await getData(
+        `${MCC_PCC_PLC_PANEL_3}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panelId}"]]&fields=["*"]`
+      )
+
+      for (const mccPccPlcPanel3 of mccPccPlcPanel3Data) {
+        const mccPccPlcPanel3ID = mccPccPlcPanel3.name
+        await deleteData(`${MCC_PCC_PLC_PANEL_3}/${mccPccPlcPanel3ID}`, false)
       }
     }
     await deleteData(`${PROJECT_PANEL_API}/${selectedRowID}`, false)
