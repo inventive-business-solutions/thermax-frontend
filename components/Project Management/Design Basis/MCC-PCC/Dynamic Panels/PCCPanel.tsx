@@ -41,33 +41,45 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     is_indication_trip_selected: (Number)(pccPanelData?.is_indication_trip_selected) || 0,
     led_type_trip_input: pccPanelData?.led_type_trip_input || "NA",
 
-
     is_blue_cb_spring_charge_selected: pccPanelData?.is_blue_cb_spring_charge_selected || "Blue",
     is_red_cb_in_service: pccPanelData?.is_red_cb_in_service || "Red",
     is_white_healthy_trip_circuit_selected: pccPanelData?.is_white_healthy_trip_circuit_selected || "White",
 
+    current_transformer_coating: pccPanelData?.current_transformer_coating || "Cast Resin",
+    current_transformer_number: pccPanelData?.current_transformer_number || "One",
+    current_transformer_configuration: pccPanelData?.current_transformer_configuration || "Y-Phase with CT",
+
     alarm_annunciator: pccPanelData?.alarm_annunciator || "Applicable",
     control_transformer_coating: pccPanelData?.control_transformer_coating || "Cast Resin",
     control_transformer_configuration: pccPanelData?.control_transformer_configuration || "Single",
-    mi_analog: pccPanelData?.mi_analog || "Ammeter",
+
+    mi_analog: pccPanelData?.mi_analog || "Ammeter with ASS",
     mi_digital: pccPanelData?.mi_digital || "Multifunction meter",
     mi_communication_protocol: pccPanelData?.mi_communication_protocol || "Ethernet",
+
     ga_moc_material: pccPanelData?.ga_moc_material || "FRP",
-    ga_moc_thickness_door: pccPanelData?.ga_moc_thickness_door || "1.6",
-    ga_moc_thickness_covers: pccPanelData?.ga_moc_thickness_covers || "1.6",
+    ga_moc_thickness_door: pccPanelData?.ga_moc_thickness_door || "1.6 mm",
+    ga_moc_thickness_covers: pccPanelData?.ga_moc_thickness_covers || "1.6 mm",
     ga_pcc_compartmental: pccPanelData?.ga_pcc_compartmental || "Form-I A (Non Compartmental)",
     ga_pcc_construction_front_type: pccPanelData?.ga_pcc_construction_front_type || "Single Front",
-    ga_pcc_construction_drawout_type: pccPanelData?.ga_pcc_construction_drawout_type || "Drawout Type",
+
+    incoming_drawout_type: pccPanelData?.incoming_drawout_type || "Non Drawout Type",
+    outgoing_drawout_type: pccPanelData?.outgoing_drawout_type || "Non Drawout Type",
+
     ga_pcc_construction_type: pccPanelData?.ga_pcc_construction_type || "Intelligent",
     busbar_material_of_construction: pccPanelData?.busbar_material_of_construction || "Aluminium",
     ga_current_density: pccPanelData?.ga_current_density || "0.8 A/Sq. mm",
     ga_panel_mounting_frame: pccPanelData?.ga_panel_mounting_frame || "Base Frame",
     ga_panel_mounting_height: pccPanelData?.ga_panel_mounting_height || "100",
-    is_marshalling_section_selected: pccPanelData?.is_marshalling_section_selected || 1,
+
+    is_marshalling_section_selected: pccPanelData?.is_marshalling_section_selected || "0",
+    marshalling_section_text_area: pccPanelData?.marshalling_section_text_area || "a) Min width 400 mm & Above\nb) Separate Marshaling for each shiping section with Partition\nc) Signal from MCC to PLC DI/DO/AI/AO with Separate TB.\nd) DI, DO TB to be mounted on separate column\ne) Signal from MCC to Field with Separate TB.",
+
     is_cable_alley_section_selected: pccPanelData?.is_cable_alley_section_selected || 1,
     is_power_and_bus_separation_section_selected: pccPanelData?.is_power_and_bus_separation_section_selected || 1,
     is_both_side_extension_section_selected: pccPanelData?.is_both_side_extension_section_selected || 1,
     ga_gland_plate_3mm_drill_type: pccPanelData?.ga_gland_plate_3mm_drill_type || "Knockout",
+    ga_gland_plate_thickness: pccPanelData?.ga_gland_plate_thickness || "1.6 mm",
     ga_gland_plate_3mm_attachment_type: pccPanelData?.ga_gland_plate_3mm_attachment_type || "Detachable",
     ga_busbar_chamber_position: pccPanelData?.ga_busbar_chamber_position || "Top",
     ga_power_and_control_busbar_separation: pccPanelData?.ga_power_and_control_busbar_separation || "FRP",
@@ -78,7 +90,8 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     ppc_component_mounting_plate_paint_shade: pccPanelData?.ppc_component_mounting_plate_paint_shade || "RAL 7035",
     ppc_base_frame_paint_shade: pccPanelData?.ppc_base_frame_paint_shade || "Black",
     ppc_minimum_coating_thickness: pccPanelData?.ppc_minimum_coating_thickness || "As per Client Specification",
-    ppc_pretreatment_panel_standard: pccPanelData?.ppc_pretreatment_panel_standard || "OEM Standard for pretreatment",
+    ppc_pretreatment_panel_standard: pccPanelData?.ppc_pretreatment_panel_standard || "- Panel Shall Be Degreased And Derusted(7 Tank Pretreatment)\n- Panel Shall Be Powder Coated.\nOR\n- OEM standard for pretreatment.    ",
+    general_requirments_for_construction: pccPanelData?.general_requirments_for_construction || "NA",
     is_punching_details_for_boiler_selected: pccPanelData?.is_punching_details_for_boiler_selected?.toString() || "0",
     boiler_model: pccPanelData?.boiler_model || "NA",
     boiler_fuel: pccPanelData?.boiler_fuel || "NA",
@@ -114,6 +127,8 @@ const getDefaultValues = (projectMetadata: any, projectInfo: any, pccPanelData: 
     spg_name_plate_oc_number: pccPanelData?.spg_name_plate_oc_number || projectMetadata?.project_oc_number,
     spg_name_plate_part_code: pccPanelData?.spg_name_plate_part_code || "NA",
     is_spg_applicable: pccPanelData?.is_spg_applicable?.toString() || "0",
+    commissioning_spare: pccPanelData?.commissioning_spare || "Not Applicable",
+    two_year_operational_spare: pccPanelData?.two_year_operational_spare || "Not Applicable",
   }
 }
 
@@ -141,7 +156,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
 
   let incomer_ampere_options = dropdown["SD Incomer Ampere"]
   let current_transformer_coating_options = dropdown["Current Transformer Coating"]
-  let current_transformer_quantity_options = dropdown["Current Transformer Number"]
+  let current_transformer_number_options = dropdown["Current Transformer Number"]
   let current_transformer_configuration_options = dropdown["Current Transformer Configuration"]
 
   let led_type_on_input_options = dropdown["ON Indication Lamp"]
@@ -159,9 +174,9 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
   let incomer_above_ampere_options = dropdown["SD Incomer Above Ampere"]
   let incomer_above_pole_options = dropdown["SD Incomer Above Pole"]
   let incomer_above_type_options = dropdown["SD Incomer Above Type"]
-  let mi_analog_options = dropdown["MI Analog"]
-  let mi_digital_options = dropdown["MI Digital"]
-  let mi_communication_protocol_options = dropdown["MI Communication Protocol"]
+  let mi_analog_options = dropdown["Analog Meters"]
+  let mi_digital_options = dropdown["Digital Meters"]
+  let mi_communication_protocol_options = dropdown["Communication Protocol"]
   let ga_moc_material_options = dropdown["GA MOC"]
   let ga_moc_thickness_door_options = dropdown["GA MOC Thickness Door"]
   let ga_moc_thickness_covers_options = dropdown["GA MOC Thickness Covers"]
@@ -489,6 +504,17 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               options={trip_circuit_healthy_indication_options || []}
             />
           </div>
+          <div className="flex-1">
+            <CustomRadioSelect
+              control={control}
+              name="alarm_annunciator"
+              label="Alarm Annunciator"
+              options={[
+                { label: "Applicable", value: "Applicable" },
+                { label: "Not Applicable", value: "Not Applicable" },
+              ]}
+            />
+          </div>
         </div>
 
         <Divider>
@@ -507,9 +533,9 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="current_transformer_quantity"
+              name="current_transformer_number"
               label="Current Transformer Quantity"
-              options={current_transformer_quantity_options || []}
+              options={current_transformer_number_options || []}
               size="small"
             />
           </div>
@@ -544,33 +570,11 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               size="small"
             />
           </div> */}
-          <div className="flex-1">
-            <CustomRadioSelect
-              control={control}
-              name="alarm_annunciator"
-              label="Alarm Annunciator"
-              options={[
-                { label: "Applicable", value: "Applicable" },
-                { label: "Not Applicable", value: "Not Applicable" },
-              ]}
-            />
-          </div>
         </div>
-        {/* <div className="w-1/3 flex-1">
-          <CustomRadioSelect
-            control={control}
-            name="alarm_annunciator"
-            label="Alarm Annunciator"
-            options={[
-              { label: "Applicable", value: "Applicable" },
-              { label: "Not Applicable", value: "Not Applicable" },
-            ]}
-          />
-        </div> */}
         <Divider>
           <span className="font-bold text-slate-700">Metering Instruments for Incomer</span>
         </Divider>
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -586,6 +590,38 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               name="mi_digital"
               label="Digital"
               options={mi_digital_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="mi_communication_protocol"
+              label="Communication Protocol"
+              options={mi_communication_protocol_options || []}
+              size="small"
+            />
+          </div>
+        </div> */}
+        {/* <Divider>
+          <span className="font-bold text-slate-700">Metering Instruments for Feeders</span>
+        </Divider> */}
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="mi_digital"
+              label="Digital Meters"
+              options={mi_digital_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="mi_analog"
+              label="Analog Meters"
+              options={mi_analog_options || []}
               size="small"
             />
           </div>
@@ -616,7 +652,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ga_moc_thickness_door"
-              label="MOC Thickness (Door & Component mounting plate thickness in mm)"
+              label="Component Mounting Plate Thickness"
               options={ga_moc_thickness_door_options || []}
               size="small"
             />
@@ -625,7 +661,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ga_moc_thickness_covers"
-              label="MOC Thickness (Top & Side covers thickness in mm)"
+              label="Top & Side Thickness"
               options={ga_moc_thickness_covers_options || []}
               size="small"
             />
@@ -636,7 +672,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ga_pcc_compartmental"
-              label="PCC Compartmentalization"
+              label="Panel Front Type"
               options={ga_mcc_compartmental_options || []}
               size="small"
             />
@@ -645,7 +681,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ga_pcc_construction_front_type"
-              label="PCC Front Type"
+              label="Type of Construction for Board"
               options={ga_mcc_construction_front_type_options || []}
               size="small"
             />
@@ -653,13 +689,26 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="ga_pcc_construction_drawout_type"
-              label="PCC Drawout Type"
+              name="incoming_drawout_type"
+              label="Panel Incoming Feeder Drawout Type"
               options={ga_mcc_construction_drawout_type_options || []}
               disabled={watch("ga_pcc_compartmental").includes("Non ")}
               size="small"
             />
           </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="outgoing_drawout_type"
+              label="Panel Outgoing Feeder Drawout Type"
+              options={ga_mcc_construction_drawout_type_options || []}
+              disabled={watch("ga_pcc_compartmental").includes("Non ")}
+              size="small"
+            />
+          </div>
+
+        </div>
+        <div className="mt-2 flex items-center gap-4">
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -669,8 +718,6 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               size="small"
             />
           </div>
-        </div>
-        <div className="mt-2 flex items-center gap-4">
           {/* <div className="flex-1">
             <CustomRadioSelect
               control={control}
@@ -716,13 +763,24 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
         </div>
         <div className="mt-2 flex items-center gap-4">
           <h4 className="mr-2 font-semibold text-slate-700">Sections</h4>
-          <div className="">
-            <CustomCheckboxInput control={control} name="is_marshalling_section_selected" label="Marshalling Section" />
+          <div className="flex-1">
+            <CustomRadioSelect
+              control={control}
+              name="is_marshalling_section_selected"
+              label="Marshalling Section"
+              options={[
+                { label: "Applicable", value: "1" },
+                { label: "Not Applicable", value: "0" }
+              ]}
+            />
           </div>
-          <div className="">
+          <div className="flex-1">
+            <CustomTextAreaInput control={control} name="marshalling_section_text_area" label="" disabled={watch("is_marshalling_section_selected") === "0"} />
+          </div>
+          <div className="flex-1">
             <CustomCheckboxInput control={control} name="is_cable_alley_section_selected" label="Cable Alley Section" />
           </div>
-          <div className="">
+          <div className="flex-1">
             <CustomCheckboxInput
               control={control}
               name="is_power_and_bus_separation_section_selected"
@@ -733,7 +791,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomCheckboxInput
               control={control}
               name="is_both_side_extension_section_selected"
-              label="Extentional On Both Sides"
+              label="Extension On Both Sides"
             />
           </div>
         </div>
@@ -742,8 +800,17 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             <CustomSingleSelect
               control={control}
               name="ga_gland_plate_3mm_drill_type"
-              label="Gland Plate"
+              label="Gland Plate Type"
               options={ga_gland_plate_3mm_drill_type_options || []}
+              size="small"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomSingleSelect
+              control={control}
+              name="ga_gland_plate_thickness"
+              label="Gland Plate Thickness"
+              options={ga_moc_thickness_covers_options || []}
               size="small"
             />
           </div>
@@ -799,7 +866,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
           <span className="font-bold text-slate-700">Painting / Powder Coating</span>
         </Divider>
         <div className="mt-2 flex items-center gap-4">
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <CustomSingleSelect
               control={control}
               name="ppc_painting_standards"
@@ -808,7 +875,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               size="small"
               disabled
             />
-          </div>
+          </div> */}
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -828,8 +895,8 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
             />
           </div>
         </div>
-        <div className="mt-2 grid grid-cols-3 items-center gap-4">
-          <div className="col-span-2">
+        <div className="flex gap-4">
+          <div className="flex-1">
             <CustomTextInput
               control={control}
               name="ppc_minimum_coating_thickness"
@@ -838,7 +905,7 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               size="small"
             />
           </div>
-          <div className="">
+          {/* <div className="">
             <CustomSingleSelect
               control={control}
               name="ppc_base_frame_paint_shade"
@@ -847,15 +914,36 @@ const PCCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: st
               size="small"
               disabled
             />
-          </div>
+          </div> */}
 
-          <div className="col-span-2">
-            <CustomSingleSelect
+          <div className="flex-1">
+            <CustomTextAreaInput
               control={control}
               name="ppc_pretreatment_panel_standard"
-              label="Standard for pretreatment Panel Shall Be Degreased And Derusted (7 Tank Pretreatment)"
-              options={ppc_pretreatment_panel_standard_options || []}
-              size="small"
+              label="Standard for Pretreatment"
+            />
+          </div>
+          <div className="flex-1">
+            <CustomTextAreaInput
+              control={control}
+              name="general_requirments_for_construction"
+              label="General Requirements for Construction"
+            />
+          </div>
+        </div>
+
+        <Divider>
+          <span className="font-bold text-slate-700">Spares</span>
+        </Divider>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <CustomTextAreaInput control={control} name="commissioning_spare" label="Commissioning Spare" />
+          </div>
+          <div className="flex-1">
+            <CustomTextAreaInput
+              control={control}
+              name="two_year_operational_spare"
+              label="Two Year Operational Spare"
             />
           </div>
         </div>
