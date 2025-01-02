@@ -48,7 +48,7 @@ const getDefaultValues = (commonConfigData: any) => {
 
     current_transformer: commonConfigData?.current_transformer || "NA",
     current_transformer_coating: commonConfigData?.current_transformer_coating || "Cast Resin",
-    current_transformer_quantity: commonConfigData?.current_transformer_quantity || "One",
+    current_transformer_number: commonConfigData?.current_transformer_number || "One",
     current_transformer_configuration: commonConfigData?.current_transformer_configuration || "Y-Phase with CT",
 
 
@@ -159,15 +159,15 @@ const getDefaultValues = (commonConfigData: any) => {
     earth_bus_current_density: commonConfigData?.earth_bus_current_density || "0.8 A/Sq. mm",
     earth_bus_rating_of_busbar: commonConfigData?.earth_bus_rating_of_busbar || "(Min - 1R x 30 mm X 10 mm )",
     metering_for_feeders: commonConfigData?.metering_for_feeders || "Ammeter (Digital)",
+    general_note_busbar_and_insulation_materials: commonConfigData?.general_note_busbar_and_insulation_materials || "Not Applicable",
+    door_earthing: commonConfigData?.door_earthing || "Through Separate Stud With Yellow-Green PVC stranded copper wire (2.5 sq.mm)",
+    instrument_earth: commonConfigData?.instrument_earth || "1. Dark Green PVC Copper Wire 0.5/1 Sq.mm & Copper Busbar \n2. Every VFD section shall have isolated Isntrument Earth busbar",
     cooling_fans: commonConfigData?.cooling_fans || "Not Applicable",
     louvers_and_filters: commonConfigData?.louvers_and_filters || "Not Applicable",
     alarm_annunciator: commonConfigData?.alarm_annunciator || "Not Applicable",
     control_transformer: commonConfigData?.control_transformer || "Not Applicable",
     commissioning_spare: commonConfigData?.commissioning_spare || "Not Applicable",
     two_year_operational_spare: commonConfigData?.two_year_operational_spare || "Not Applicable",
-    general_note_busbar_and_insulation_materials: commonConfigData?.general_note_busbar_and_insulation_materials || "Not Applicable",
-    door_earthing: commonConfigData?.door_earthing || "Through Separate Stud With Yellow-Green PVC stranded copper wire (2.5 sq.mm)",
-    instrument_earth: commonConfigData?.instrument_earth || "1. Dark Green PVC Copper Wire 0.5/1 Sq.mm & Copper Busbar \n2. Every VFD section shall have isolated Isntrument Earth busbar",
   }
 }
 
@@ -676,7 +676,7 @@ const CommonConfiguration = ({
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
-              name="current_transformer_quantity"
+              name="current_transformer_number"
               label="Current Transformer Quantity "
               options={control_tranformer_quantity_options || []}
               size="small"
@@ -998,15 +998,6 @@ const CommonConfiguration = ({
               size="small"
             />
           </div>
-          {/* <div className="flex-1">
-            <CustomSingleSelect
-              control={control}
-              name="push_button_ess"
-              label="ESS"
-              options={ess_options || []}
-              size="small"
-            />
-          </div> */}
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -1899,22 +1890,6 @@ const CommonConfiguration = ({
             />
           </div>
         </div>
-        {/* <Divider>
-          <span className="font-bold text-slate-700">Spares</span>
-        </Divider>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <CustomTextAreaInput control={control} name="commissioning_spare" label="Commissioning Spare" />
-          </div>
-          <div className="flex-1">
-            <CustomTextAreaInput
-              control={control}
-              name="two_year_operational_spare"
-              label="Two Year Operational Spare"
-            />
-          </div>
-        </div> */}
-
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
             Save and Next

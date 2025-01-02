@@ -45,6 +45,10 @@ export const configItemValidationSchema = zod.object({
     required_error: "Control Transformer Secondary Voltage is required",
     message: "Control Transformer Secondary Voltage is required",
   }),
+  control_transformer_type: zod.string({
+    required_error: "Control Transformer Secondary Voltage is required",
+    message: "Control Transformer Secondary Voltage is required",
+  }),
   control_transformer_coating: zod.string({
     required_error: "Control Transformer Coating is required",
     message: "Control Transformer Coating is required",
@@ -515,8 +519,8 @@ export const configItemValidationSchema = zod.object({
     message: "Control Transformer is required",
   }),
   // Spares
-  commissioning_spare: zod.string().optional(),
-  two_year_operational_spare: zod.string().optional(),
+  // commissioning_spare: zod.string().optional(),
+  // two_year_operational_spare: zod.string().optional(),
 })
 
 export const mccPanelValidationSchema = zod
