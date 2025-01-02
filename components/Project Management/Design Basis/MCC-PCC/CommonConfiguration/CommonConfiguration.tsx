@@ -1899,7 +1899,7 @@ const CommonConfiguration = ({
             />
           </div>
         </div>
-        <Divider>
+        {/* <Divider>
           <span className="font-bold text-slate-700">Spares</span>
         </Divider>
         <div className="flex gap-4">
@@ -1913,7 +1913,7 @@ const CommonConfiguration = ({
               label="Two Year Operational Spare"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="mt-2 flex w-full justify-end">
           <Button type="primary" htmlType="submit" loading={loading}>
