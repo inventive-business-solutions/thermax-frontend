@@ -53,6 +53,7 @@ export const DB_REVISION_STATUS = {
   Unsubmitted: "Review Unsubmitted",
   Submitted: "Review Submitted",
   Resubmitted: "Review Resubmitted",
+  ResubmittedAgain: "Review Resubmitted Again",
   Approved: "Approved",
   Released: "Released",
 }

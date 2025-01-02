@@ -1,8 +1,7 @@
 "use client"
-import Icon, {
+import {
   CheckCircleOutlined,
   CloudDownloadOutlined,
-  CopyOutlined,
   CopyTwoTone,
   ExportOutlined,
   FolderOpenOutlined,
@@ -13,38 +12,21 @@ import { Button, message, Table, TableColumnsType, Tag, Tooltip } from "antd"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import {
-  CABLE_TRAY_LAYOUT,
-  DESIGN_BASIS_GENERAL_INFO_API,
   DESIGN_BASIS_REVISION_HISTORY_API,
   GET_DESIGN_BASIS_EXCEL_API,
-  LAYOUT_EARTHING,
-  MAKE_OF_COMPONENT_API,
-  MCC_PANEL,
-  MCC_PCC_PLC_PANEL_1,
-  MCC_PCC_PLC_PANEL_2,
-  MCC_PCC_PLC_PANEL_3,
-  MOTOR_PARAMETER_API,
-  PCC_PANEL,
   PROJECT_API,
-  PROJECT_INFO_API,
-  PROJECT_MAIN_PKG_API,
-  PROJECT_PANEL_API,
   REVIEW_APPROVAL_EMAIL_API,
   REVIEW_SUBMISSION_EMAIL_API,
-  THERMAX_USER_API,
 } from "configs/api-endpoints"
 import { useGetData } from "hooks/useCRUD"
 import { useLoading } from "hooks/useLoading"
 import { getThermaxDateFormat } from "utils/helpers"
-import { createData, downloadFile, getData, updateData } from "actions/crud-actions"
-import { DB_REVISION_STATUS, MCC_PANEL_TYPE, MCCcumPCC_PANEL_TYPE, PCC_PANEL_TYPE } from "configs/constants"
+import { createData, downloadFile, updateData } from "actions/crud-actions"
+import { DB_REVISION_STATUS } from "configs/constants"
 import { mutate } from "swr"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import clsx from "clsx"
 import ResubmitModel from "./ResubmitModel"
-import { copyDesignBasisRevision } from "actions/design-basis_revision"
-import { getSuperuserEmail } from "actions/user-actions"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
 import CopyRevisionModel from "./CopyModel"
 
 export default function DocumentRevision() {
@@ -69,17 +51,26 @@ export default function DocumentRevision() {
 
   const { data: revisionHistory } = useGetData(dbRevisionHistoryUrl)
   const { data: projectData } = useGetData(`${PROJECT_API}/${project_id}`)
+  const projectOwnerEmail = projectData?.owner
+  console.log("projectData", projectData)
 
-  const handleReviewSubmission = async (revision_id: string) => {
+  const handleReviewSubmission = async (record: any) => {
+    const revision_id = record?.key
+    const projectApproverEmail = record?.approverEmail
+    const currentStatus = record?.status
     setSubmitIconSpin(true)
     try {
+      let status = DB_REVISION_STATUS.Submitted
+      if (currentStatus === DB_REVISION_STATUS.Resubmitted) {
+        status = DB_REVISION_STATUS.ResubmittedAgain
+      }
       await updateData(`${DESIGN_BASIS_REVISION_HISTORY_API}/${revision_id}`, false, {
-        status: DB_REVISION_STATUS.Submitted,
+        status,
       })
 
       await createData(REVIEW_SUBMISSION_EMAIL_API, false, {
-        approver_email: projectData?.approver,
-        project_owner_email: projectData?.owner,
+        approver_email: projectApproverEmail,
+        project_owner_email: projectOwnerEmail,
         project_oc_number: projectData?.project_oc_number,
         project_name: projectData?.project_name,
         subject: `Design Basis Approval - EnIMAX - ${projectData?.project_oc_number}`,
@@ -129,7 +120,9 @@ export default function DocumentRevision() {
     setCopyModelOpen(true)
   }
 
-  const handleApprove = async (revision_id: string) => {
+  const handleApprove = async (record: any) => {
+    const revision_id = record?.key
+    const projectApproverEmail = record.approverEmail
     setApprovalIconSpin(true)
     try {
       await updateData(`${DESIGN_BASIS_REVISION_HISTORY_API}/${revision_id}`, false, {
@@ -137,8 +130,8 @@ export default function DocumentRevision() {
       })
 
       await createData(REVIEW_APPROVAL_EMAIL_API, false, {
-        approver_email: projectData?.approver,
-        project_owner_email: projectData?.owner,
+        approver_email: projectApproverEmail,
+        project_owner_email: projectOwnerEmail,
         project_oc_number: projectData?.project_oc_number,
         project_name: projectData?.project_name,
         subject: `Approved - EnIMAX - ${projectData?.project_oc_number}`,
@@ -194,11 +187,41 @@ export default function DocumentRevision() {
     {
       title: () => <div className="text-center">Status</div>,
       dataIndex: "status",
-      render: (text) => (
-        <div className="text-center">
-          <Tag color="green">{text}</Tag>
-        </div>
-      ),
+      render: (text, record) => {
+        const projectApproverEmail = record.approverEmail
+        let status = text
+
+        switch (status) {
+          case DB_REVISION_STATUS.Submitted:
+            status =
+              projectApproverEmail === userInfo.email ? "Review Submitted" : "Review Submitted and Pending for Approval"
+            break
+          case DB_REVISION_STATUS.Resubmitted:
+            status = projectApproverEmail === userInfo.email ? "Review Returned" : "Review Re-Submit"
+            break
+          case DB_REVISION_STATUS.ResubmittedAgain:
+            status =
+              projectApproverEmail === userInfo.email
+                ? "Review Re-Submitted"
+                : "Review Re-Submitted and Pending for Approval"
+            break
+          case DB_REVISION_STATUS.Approved:
+            status = "Review Approved"
+            break
+          case DB_REVISION_STATUS.Released:
+            status = "Released & Locked"
+            break
+          default:
+            status = "Review Unsubmitted"
+            break
+        }
+
+        return (
+          <div className="text-center">
+            <Tag color="green">{status}</Tag>
+          </div>
+        )
+      },
     },
     {
       title: () => <div className="text-center">Approver</div>,
@@ -213,24 +236,29 @@ export default function DocumentRevision() {
     {
       title: () => <div className="text-center">Clone</div>,
       dataIndex: "clone",
-      render: (_, record) => (
-        <div className="text-center">
-          <Tooltip title={"Clone Revision"}>
-            <Button
-              type="link"
-              shape="circle"
-              icon={
-                <CopyTwoTone
-                  style={{
-                    fontSize: "1rem",
-                  }}
-                />
-              }
-              onClick={() => handleClone(record?.key)}
-            />
-          </Tooltip>
-        </div>
-      ),
+      render: (_, record) => {
+        console.log("Clone record", record)
+        return (
+          <div className="text-center">
+            <Tooltip title={"Clone Revision"}>
+              <Button
+                type="link"
+                shape="circle"
+                icon={
+                  <CopyTwoTone
+                    style={{
+                      fontSize: "1rem",
+                    }}
+                    twoToneColor={record.status === DB_REVISION_STATUS.Released ? "blue" : "grey"}
+                  />
+                }
+                onClick={() => handleClone(record?.key)}
+                disabled={record.status !== DB_REVISION_STATUS.Released}
+              />
+            </Tooltip>
+          </div>
+        )
+      },
     },
     {
       title: () => <div className="text-center">Created Date</div>,
@@ -246,6 +274,7 @@ export default function DocumentRevision() {
       title: () => <div className="text-center">Download</div>,
       dataIndex: "download",
       render(text, record) {
+        const projectApproverEmail = record.approverEmail
         return (
           <div className="flex flex-row justify-center gap-2 hover:cursor-pointer">
             <div>
@@ -285,7 +314,7 @@ export default function DocumentRevision() {
                       spin={submitIconSpin}
                     />
                   }
-                  onClick={async () => await handleReviewSubmission(record.key)}
+                  onClick={async () => await handleReviewSubmission(record)}
                   disabled={[
                     DB_REVISION_STATUS.Released,
                     DB_REVISION_STATUS.Submitted,
@@ -294,7 +323,7 @@ export default function DocumentRevision() {
                 />
               </Tooltip>
             </div>
-            <div className={clsx(projectData?.approver !== userInfo.email && "hidden")}>
+            <div className={clsx(projectApproverEmail !== userInfo.email && "hidden")}>
               <Tooltip title={"Resubmit for Review"}>
                 <Button
                   type="link"
@@ -324,7 +353,7 @@ export default function DocumentRevision() {
                 />
               </Tooltip>
             </div>
-            <div className={clsx(projectData?.approver !== userInfo.email && "hidden")}>
+            <div className={clsx(projectApproverEmail !== userInfo.email && "hidden")}>
               <Tooltip title={"Approve"}>
                 <Button
                   type="link"
@@ -344,7 +373,7 @@ export default function DocumentRevision() {
                       spin={approvalIconSpin}
                     />
                   }
-                  onClick={() => handleApprove(record.key)}
+                  onClick={() => handleApprove(record)}
                   disabled={[
                     DB_REVISION_STATUS.Released,
                     DB_REVISION_STATUS.Approved,

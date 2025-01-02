@@ -29,7 +29,6 @@ export default function CopyRevisionModel({
   setCopyRevisionId: (revision_id: string) => void
 }) {
   const { name: project_id, approver: defaultApprover } = projectData || {}
-  console.log(userInfo, projectData)
   const [loading, setLoading] = useState(false)
   const { dropdownOptions: approverOptions } = useDropdownOptions(
     `${THERMAX_USER_API}?fields=["*"]&filters=[["division", "=",  "${userInfo?.division}"], ["email", "!=", "${userInfo?.email}"]]`,
