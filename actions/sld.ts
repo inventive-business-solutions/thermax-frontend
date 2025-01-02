@@ -109,6 +109,8 @@ export const getSwSelectionDetails = async (payload: any) => {
             : (matchingOptions = switchgear_database.filter(
                 (item: any) => item.make === make && item.sg_select === sw_type && item.starter_type === starter_type
               ))
+
+          console.log("heating dol starter, start delta:", matchingOptions)
         } else if (starter_type === "SOFT STARTER") {
           matchingOptions = [].filter(
             (item: any) => item.make === make && item.sg_select === sw_type && item.starter_type === starter_type
@@ -153,7 +155,7 @@ export const getSwSelectionDetails = async (payload: any) => {
             terminal_part_no: "",
           }
         }
-        console.log(switchgear)
+        console.log(`selected sg : ${tag_number} >>`, switchgear)
 
         // for pair of starters like "VFD BYPASS-S/D" , "VFD Bypass DOL"
 
@@ -190,11 +192,9 @@ export const getSwSelectionDetails = async (payload: any) => {
         }
         const sortedByKWforPairStarter = pair_starter_options?.sort((a: any, b: any) => a.kw - b.kw)
         const switchgearForPairStarter = sortedByKWforPairStarter?.find((item: any) => item.kw >= kw)
-        if(switchgearForPairStarter){
-
-          console.log(switchgear, "vfd starter");
-          console.log(switchgearForPairStarter, "paired starter");
-          
+        if (switchgearForPairStarter) {
+          console.log(switchgear, "vfd starter")
+          console.log(switchgearForPairStarter, "paired starter")
         }
         return {
           tag_number,
