@@ -400,8 +400,8 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
             kw: getStandByKw(item[3], item[4]),
             starter_type: userInfo.division === ENVIRO ? item[7] : item[6],
             make: userInfo.division === ENVIRO ? item[8] : item[7],
-            sw_type: userInfo.division === ENVIRO ? item[9] : item[8],
-            starting_time: userInfo.division === HEATING ? item[9] : "",
+            sw_type: userInfo.division === ENVIRO || userInfo.division === HEATING ? item[9] : item[8],
+            starting_time: userInfo.division === HEATING ? item[8] : "",
           }
         }),
       }
