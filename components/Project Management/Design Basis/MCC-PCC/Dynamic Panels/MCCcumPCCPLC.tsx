@@ -258,7 +258,6 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
   let di_module_interrogation_voltage_options = dropdown["DI Modules Interrogation Voltage"]
   let do_module_output_type_options = dropdown["DO Modules Type Of Output"]
   let number_of_contacts_options = dropdown["Number of Contacts"]
-  let rtd_input_type_options = dropdown["RTD Type Of Input"]
   let ao_module_output_type_options = dropdown["AO Modules Type of Output"]
   let terminal_block_connector_options = dropdown["Terminal Block Connector Dropdown"]
   let plc_hmi_size_options = dropdown["PLC HMI Size"]
