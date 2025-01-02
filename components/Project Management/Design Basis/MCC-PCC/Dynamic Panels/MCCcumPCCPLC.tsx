@@ -993,13 +993,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <CustomSingleSelect
-                control={control}
-                name="rtd_module_input_type"
-                label="Type of Input"
-                size="small"
-                options={rtd_input_type_options || []}
-              />
+              <CustomTextInput control={control} name="rtd_module_input_type" label="Type of Input" size="small" />
             </div>
             <div className="flex-1">
               <CustomTextInput control={control} name="rtd_module_scan_time" label="Scan Time" size="small" />
@@ -1052,12 +1046,11 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <CustomSingleSelect
+              <CustomTextInput
                 control={control}
                 name="thermocouple_module_input_type"
                 label="Type of Input"
                 size="small"
-                options={rtd_input_type_options || []}
               />
             </div>
             <div className="flex-1">
@@ -1111,12 +1104,11 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <CustomSingleSelect
+              <CustomTextInput
                 control={control}
                 name="universal_module_input_type"
                 label="Type of Input"
                 size="small"
-                options={rtd_input_type_options || []}
               />
             </div>
             <div className="flex-1">
@@ -1683,6 +1675,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 control={control}
                 name="hardware_between_plc_and_burner_controller_lmv"
                 label="Communication Cable & Hardware Between PLC CPU System & Burner Controller LMV"
+                size="small"
               />
             </div>
           </div>
