@@ -5,7 +5,6 @@ import "jspreadsheet-ce/dist/jspreadsheet.css"
 import { Button, message, Spin } from "antd"
 import { getData, updateData } from "actions/crud-actions"
 import {
-  COMMON_CONFIGURATION,
   COMMON_CONFIGURATION_1,
   COMMON_CONFIGURATION_2,
   COMMON_CONFIGURATION_3,
@@ -125,9 +124,7 @@ const useDataFetching = (designBasisRevisionId: string, loadListData: any, divis
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true)
-      // const commonConfiguration = await getData(
-      //   `${COMMON_CONFIGURATION}?fields=["mcc_switchgear_type"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-      // )
+
       const commonConfiguration = await getData(
         `${COMMON_CONFIGURATION_1}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
@@ -144,7 +141,6 @@ const useDataFetching = (designBasisRevisionId: string, loadListData: any, divis
         `${MAKE_OF_COMPONENT_API}?fields=["preferred_soft_starter","preferred_lv_switchgear","preferred_vfdvsd"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
       console.log(commonConfiguration, "commonConfiguration")
-
 
       const formattedData = getArrayOfSwitchgearSelectionData(
         loadListData,

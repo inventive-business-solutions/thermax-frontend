@@ -30,15 +30,12 @@ export default function ResubmitModel({
   const { control, handleSubmit } = useForm({
     resolver: zodResolver(
       zod.object({
-        feedback_description: zod.string({
-          required_error: "Feedback is required",
-          message: "Feedback is required",
-        }),
+        feedback_description: zod.string().optional(),
         email_attachment: zod.any().optional(),
       })
     ),
     defaultValues: {
-      feedback_description: null,
+      feedback_description: "",
       email_attachment: [],
     },
     mode: "onSubmit",

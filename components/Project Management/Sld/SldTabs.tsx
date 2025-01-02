@@ -3,7 +3,6 @@
 import { Button, message, Spin, Table, TableColumnsType, TableColumnType, Tabs, Tag, Tooltip } from "antd"
 import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
-  COMMON_CONFIGURATION,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
   GET_LOAD_LIST_EXCEL_API,
   LBPS_SPECIFICATIONS_REVISION_HISTORY_API,

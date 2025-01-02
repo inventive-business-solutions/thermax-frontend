@@ -1,8 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Form, InputNumber, Card, Button, Select, message, Spin } from "antd"
 import { getData } from "actions/crud-actions"
-import { COMMON_CONFIGURATION, PROJECT_INFO_API } from "configs/api-endpoints"
 import { useParams } from "next/navigation"
+import {
+  COMMON_CONFIGURATION_1,
+  COMMON_CONFIGURATION_2,
+  COMMON_CONFIGURATION_3,
+  PROJECT_INFO_API,
+} from "configs/api-endpoints"
 
 const useDataFetching = (designBasisRevisionId: string) => {
   const [isLoading, setIsLoading] = useState(true)
@@ -21,13 +26,24 @@ const useDataFetching = (designBasisRevisionId: string) => {
     try {
       setIsLoading(true)
       const projectInfo = await getData(getProjectInfoUrl)
-      const commonConfig = await getData(
-        `${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      // Fetch all required data in parallel
+      const commonConfigData1 = await getData(
+        `${COMMON_CONFIGURATION_1}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
+      const commonConfigData2 = await getData(
+        `${COMMON_CONFIGURATION_2}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      )
+
+      const commonConfigData3 = await getData(
+        `${COMMON_CONFIGURATION_3}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      )
+
+      const commonConfig = { ...commonConfigData1?.[0], ...commonConfigData2?.[0], ...commonConfigData3?.[0] }
+
       console.log(commonConfig, "commonConfig")
 
       setProjectInfo(projectInfo)
-      setCommonConfig(commonConfig[0])
+      setCommonConfig(commonConfig)
       setIsLoading(false)
     } catch (error) {
       console.error("Error fetching data:", error)

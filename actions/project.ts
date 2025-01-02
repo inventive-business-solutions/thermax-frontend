@@ -8,7 +8,6 @@ import {
   PROJECT_MAIN_PKG_API,
   MOTOR_PARAMETER_API,
   MAKE_OF_COMPONENT_API,
-  COMMON_CONFIGURATION,
   MCC_PANEL,
   PCC_PANEL,
   MCC_PCC_PLC_PANEL_1,
@@ -36,12 +35,15 @@ export const createProject = async (projectData: any, userInfo: any) => {
   try {
     // Create Project
     const projectCreatedata = await createData(PROJECT_API, false, projectData)
-    const project_id = projectCreatedata.name
+    const { name: project_id, approver: approver_email } = projectCreatedata
     await createData(PROJECT_INFO_API, false, { project_id })
     await createData(STATIC_DOCUMENT_API, false, { project_id })
 
     // Create Design Basis Revision History
-    const designBasisRevisionHistoryData = await createData(DESIGN_BASIS_REVISION_HISTORY_API, false, { project_id })
+    const designBasisRevisionHistoryData = await createData(DESIGN_BASIS_REVISION_HISTORY_API, false, {
+      project_id,
+      approver_email,
+    })
     const design_basis_revision_id = designBasisRevisionHistoryData.name
     await createData(DESIGN_BASIS_GENERAL_INFO_API, false, { revision_id: design_basis_revision_id })
     await createData(MOTOR_PARAMETER_API, false, { revision_id: design_basis_revision_id })
@@ -121,11 +123,6 @@ export const deleteProject = async (project_id: string) => {
         const makeOfComponentID = makeOfComponent.name
         await deleteData(`${MAKE_OF_COMPONENT_API}/${makeOfComponentID}`, false)
       }
-
-      // Delete Common Configuration
-      // const commonConfigurations = await getData(
-      //   `${COMMON_CONFIGURATION}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
-      // )
 
       const commonConfigurations1 = await getData(
         `${COMMON_CONFIGURATION_1}?filters=[["revision_id", "=", "${revisionID}"]]&fields=["*"]`
