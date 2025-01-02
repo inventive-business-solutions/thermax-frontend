@@ -3,7 +3,9 @@ import jspreadsheet, { CellValue, Column, JspreadsheetInstance, JspreadsheetInst
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react"
 import "jspreadsheet-ce/dist/jspreadsheet.css"
 import {
-  COMMON_CONFIGURATION,
+  COMMON_CONFIGURATION_1,
+  COMMON_CONFIGURATION_2,
+  COMMON_CONFIGURATION_3,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
   HEATING_CONTROL_SCHEMES_URI,
   MAIN_SUPPLY_LV_API,
@@ -107,17 +109,27 @@ const useDataFetching = (
       // const panelData = projectPanelResult.data;
 
       // Fetch all required data in parallel
-      const [loadList, motorParams, commonConfig, makeComponent, projInfo, mainSupply, mainPkgData] = await Promise.all(
-        [
-          getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`),
-          getData(`${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`),
-          getData(`${COMMON_CONFIGURATION}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`),
-          getData(`${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`),
-          getData(`${PROJECT_INFO_API}?fields=["main_supply_lv"]&filters=[["project_id", "=", "${project_id}"]]`),
-          getData(`${MAIN_SUPPLY_LV_API}?fields=["voltage"]`),
-          getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${designBasisRevisionId}`),
-        ]
+      const commonConfigData1 = await getData(
+        `${COMMON_CONFIGURATION_1}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
+      const commonConfigData2 = await getData(
+        `${COMMON_CONFIGURATION_2}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      )
+
+      const commonConfigData3 = await getData(
+        `${COMMON_CONFIGURATION_3}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      )
+
+      const commonConfig = [{ ...commonConfigData1?.[0], ...commonConfigData2?.[0], ...commonConfigData3?.[0] }]
+
+      const [loadList, motorParams, makeComponent, projInfo, mainSupply, mainPkgData] = await Promise.all([
+        getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`),
+        getData(`${MOTOR_PARAMETER_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`),
+        getData(`${MAKE_OF_COMPONENT_API}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`),
+        getData(`${PROJECT_INFO_API}?fields=["main_supply_lv"]&filters=[["project_id", "=", "${project_id}"]]`),
+        getData(`${MAIN_SUPPLY_LV_API}?fields=["voltage"]`),
+        getData(`${PROJECT_MAIN_PKG_LIST_API}?revision_id=${designBasisRevisionId}`),
+      ])
 
       setLoadListData(loadList)
       setMotorParameters(motorParams)
@@ -245,7 +257,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
     console.log(typeof colIndex)
 
     if (colIndex === "5") {
-     
       if (newValue === "DOL-HTR") {
         data[rowIndex][34] = "1"
       }
@@ -412,7 +423,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
       }
       typedLoadListColumns.forEach((column) => {
         if (column.name === "controlScheme") {
-           
           column.source = [
             ...new Set(selectedControlSchemeItems.filter((item: any) => item != "NA" && item != "")),
             "NA",
@@ -890,7 +900,6 @@ const LoadList: React.FC<LoadListProps> = ({ designBasisRevisionId, loadListLate
 
     const filteredPanelData = Object.values(panelsSumData).filter((item) => item.totalCurrent !== 0)
 
-    
     setPanelsSumData(filteredPanelData)
   }
 

@@ -1,7 +1,9 @@
 "use client"
-import {
+import Icon, {
   CheckCircleOutlined,
   CloudDownloadOutlined,
+  CopyOutlined,
+  CopyTwoTone,
   ExportOutlined,
   FolderOpenOutlined,
   RetweetOutlined,
@@ -12,7 +14,6 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import {
   CABLE_TRAY_LAYOUT,
-  COMMON_CONFIGURATION,
   DESIGN_BASIS_GENERAL_INFO_API,
   DESIGN_BASIS_REVISION_HISTORY_API,
   GET_DESIGN_BASIS_EXCEL_API,
@@ -41,8 +42,10 @@ import { mutate } from "swr"
 import { useCurrentUser } from "hooks/useCurrentUser"
 import clsx from "clsx"
 import ResubmitModel from "./ResubmitModel"
-import { releaseRevision } from "actions/design-basis_revision"
+import { copyDesignBasisRevision } from "actions/design-basis_revision"
 import { getSuperuserEmail } from "actions/user-actions"
+import { useDropdownOptions } from "hooks/useDropdownOptions"
+import CopyRevisionModel from "./CopyModel"
 
 export default function DocumentRevision() {
   const userInfo = useCurrentUser()
@@ -52,6 +55,8 @@ export default function DocumentRevision() {
   const [approvalIconSpin, setApprovalIconSpin] = useState(false)
   const [downloadIconSpin, setDownloadIconSpin] = useState(false)
   const [resubmitModalOpen, setResubmitModalOpen] = useState(false)
+  const [copyModelOpen, setCopyModelOpen] = useState(false)
+  const [copyRevisionId, setCopyRevisionId] = useState("")
   const router = useRouter()
 
   const { setLoading: setModalLoading } = useLoading()
@@ -90,146 +95,10 @@ export default function DocumentRevision() {
 
   const handleDownload = async (revision_id: string) => {
     setDownloadIconSpin(true)
-    const project = await getData(`${PROJECT_API}/${project_id}`)
-    const projectInfo = await getData(`${PROJECT_INFO_API}/${project_id}`)
-    const projectCreator = await getData(`${THERMAX_USER_API}/${project?.owner}`)
-    const projectApprover = await getData(`${THERMAX_USER_API}/${project?.approver}`)
-    const superuserEmail = await getSuperuserEmail(projectCreator?.division)
-    const superuser = await getData(`${THERMAX_USER_API}/${superuserEmail}`)
-    const documentRevisions = await getData(
-      `${DESIGN_BASIS_REVISION_HISTORY_API}?filters=[["project_id", "=", "${project_id}"]]&fields=["*"]&order_by=creation asc`
-    )
-    const generalInfo = await getData(
-      `${DESIGN_BASIS_GENERAL_INFO_API}/?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
-    )
-    const projectMainPackage = await getData(
-      `${PROJECT_MAIN_PKG_API}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
-    )
-    const projectMainPkgData = []
-
-    for (const projectMainPkg of projectMainPackage || []) {
-      const projectMainPkgID = projectMainPkg.name
-      const mainPkgData = await getData(`${PROJECT_MAIN_PKG_API}/${projectMainPkgID}`)
-      projectMainPkgData.push(mainPkgData)
-    }
-
-    const motorParameters = await getData(
-      `${MOTOR_PARAMETER_API}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
-    )
-
-    const makeOfComponents = await getData(
-      `${MAKE_OF_COMPONENT_API}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
-    )
-
-    const commonConfigurations = await getData(
-      `${COMMON_CONFIGURATION}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
-    )
-
-    const projectPanelData = await getData(
-      `${PROJECT_PANEL_API}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
-    )
-
-    const finalProjectPanelData = []
-
-    for (const projectPanel of projectPanelData || []) {
-      const panel_id = projectPanel.name
-      const panelType = projectPanel.panel_main_type
-      if (panelType === MCC_PANEL_TYPE) {
-        const mccPanelData = await getData(
-          `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
-        )
-        finalProjectPanelData.push({
-          ...projectPanel,
-          panelData: mccPanelData[0],
-        })
-      }
-
-      if (panelType === PCC_PANEL_TYPE) {
-        const pccPanelData = await getData(
-          `${PCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
-        )
-        finalProjectPanelData.push({
-          ...projectPanel,
-          panelData: pccPanelData[0],
-        })
-      }
-
-      if (panelType === MCCcumPCC_PANEL_TYPE) {
-        const mccCumPccMccPanelData = await getData(
-          `${MCC_PANEL}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
-        )
-
-        const mccPccPlcPanel1Data = await getData(
-          `${MCC_PCC_PLC_PANEL_1}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
-        )
-
-        const mccPccPlcPanel2Data = await getData(
-          `${MCC_PCC_PLC_PANEL_2}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
-        )
-
-        const mccPccPlcPanel3Data = await getData(
-          `${MCC_PCC_PLC_PANEL_3}?filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]&fields=["*"]`
-        )
-
-        finalProjectPanelData.push({
-          ...projectPanel,
-          mccPanelData: mccCumPccMccPanelData[0],
-          plcPanelData: {
-            ...mccPccPlcPanel1Data[0],
-            ...mccPccPlcPanel2Data[0],
-            ...mccPccPlcPanel3Data[0],
-          },
-        })
-      }
-    }
-
-    const cableTrayLayoutData = await getData(
-      `${CABLE_TRAY_LAYOUT}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
-    )
-
-    const earthingLayoutData = await getData(
-      `${LAYOUT_EARTHING}?filters=[["revision_id", "=", "${revision_id}"]]&fields=["*"]`
-    )
 
     try {
       const result = await downloadFile(GET_DESIGN_BASIS_EXCEL_API, true, {
-        metadata: {
-          prepared_by_initials: projectCreator?.initials,
-          checked_by_initials: projectApprover?.initials,
-          approved_by_initials: superuser?.initials,
-          division_name: projectCreator?.division,
-        },
-        project,
-        projectInfo,
-        documentRevisions,
-        generalInfo: generalInfo[0],
-        projectMainPkgData,
-        motorParameters: motorParameters[0],
-        makeOfComponents: makeOfComponents[0],
-        commonConfigurations: commonConfigurations[0],
-        projectPanelData: finalProjectPanelData,
-        cableTrayLayoutData: cableTrayLayoutData[0],
-        earthingLayoutData: earthingLayoutData[0],
-      })
-
-      console.log("payload : ", {
-        metadata: {
-          prepared_by_initials: projectCreator?.initials,
-          checked_by_initials: projectApprover?.initials,
-          approved_by_initials: superuser?.initials,
-          division_name: projectCreator?.division,
-        },
-        project,
-        projectInfo,
-        documentRevisions,
-        generalInfo: generalInfo[0],
-        projectMainPkgData,
-        motorParameters: motorParameters[0],
-        makeOfComponents: makeOfComponents[0],
-        commonConfigurations: commonConfigurations[0],
-        projectPanelData: finalProjectPanelData,
-        cableTrayLayoutData: cableTrayLayoutData[0],
-        earthingLayoutData: earthingLayoutData[0],
+        revision_id,
       })
 
       const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
@@ -239,8 +108,11 @@ export default function DocumentRevision() {
       const url = window.URL.createObjectURL(excelBlob)
       const link = document.createElement("a")
       link.href = url
-      let document_revision_length = documentRevisions.length > 0 ? documentRevisions.length : 0
-      link.setAttribute("download", `Design_Basis_${project?.project_oc_number}_R${document_revision_length - 1}.xlsx`) // Filename
+      let document_revision_length = revisionHistory.length > 0 ? revisionHistory.length : 0
+      link.setAttribute(
+        "download",
+        `Design_Basis_${projectData?.project_oc_number}_R${document_revision_length - 1}.xlsx`
+      ) // Filename
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -250,6 +122,11 @@ export default function DocumentRevision() {
     }
 
     setDownloadIconSpin(false)
+  }
+
+  const handleClone = async (revision_id: string) => {
+    setCopyRevisionId(revision_id)
+    setCopyModelOpen(true)
   }
 
   const handleApprove = async (revision_id: string) => {
@@ -278,10 +155,13 @@ export default function DocumentRevision() {
   const handleRelease = async (revision_id: string) => {
     setModalLoading(true)
     try {
-      await releaseRevision(project_id, revision_id)
+      await updateData(`${DESIGN_BASIS_REVISION_HISTORY_API}/${revision_id}`, false, {
+        status: DB_REVISION_STATUS.Released,
+      })
       mutate(dbRevisionHistoryUrl)
       message.success("Design Basis revision is released and locked")
     } catch (error) {
+      message.error("Error releasing Design Basis revision")
       console.error(error)
     } finally {
       setModalLoading(false)
@@ -321,9 +201,36 @@ export default function DocumentRevision() {
       ),
     },
     {
+      title: () => <div className="text-center">Approver</div>,
+      dataIndex: "approverEmail",
+      render: (text) => <div className="text-center">{text}</div>,
+    },
+    {
       title: () => <div className="text-center">Document Revision</div>,
       dataIndex: "documentRevision",
       render: (text) => <div className="text-center">{text}</div>,
+    },
+    {
+      title: () => <div className="text-center">Clone</div>,
+      dataIndex: "clone",
+      render: (_, record) => (
+        <div className="text-center">
+          <Tooltip title={"Clone Revision"}>
+            <Button
+              type="link"
+              shape="circle"
+              icon={
+                <CopyTwoTone
+                  style={{
+                    fontSize: "1rem",
+                  }}
+                />
+              }
+              onClick={() => handleClone(record?.key)}
+            />
+          </Tooltip>
+        </div>
+      ),
     },
     {
       title: () => <div className="text-center">Created Date</div>,
@@ -478,6 +385,7 @@ export default function DocumentRevision() {
     status: item.status,
     documentRevision: `R${index}`,
     createdDate: item.creation,
+    approverEmail: item.approver_email,
   }))
 
   return (
@@ -497,6 +405,15 @@ export default function DocumentRevision() {
         setOpen={setResubmitModalOpen}
         projectData={projectData}
         dbRevisionHistoryUrl={dbRevisionHistoryUrl}
+      />
+      <CopyRevisionModel
+        open={copyModelOpen}
+        setOpen={setCopyModelOpen}
+        userInfo={userInfo}
+        projectData={projectData}
+        dbRevisionHistoryUrl={dbRevisionHistoryUrl}
+        revision_id={copyRevisionId}
+        setCopyRevisionId={setCopyRevisionId}
       />
     </>
   )

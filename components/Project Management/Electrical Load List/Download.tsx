@@ -10,11 +10,13 @@ import {
   SyncOutlined,
 } from "@ant-design/icons"
 import { downloadFile, getData, updateData } from "actions/crud-actions"
-import { releaseRevision } from "actions/design-basis_revision"
+import { copyDesignBasisRevision } from "actions/design-basis_revision"
 import { Button, message, Table, TableColumnsType, TableColumnType, Tabs, Tag, Tooltip } from "antd"
 import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
-  COMMON_CONFIGURATION,
+  COMMON_CONFIGURATION_1,
+  COMMON_CONFIGURATION_2,
+  COMMON_CONFIGURATION_3,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
   GET_CABLE_SCHEDULE_EXCEL_API,
   GET_LOAD_LIST_EXCEL_API,
@@ -84,7 +86,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
   const [tabKey, setTabKey] = useState("1")
   const userInfo: {
     division: string
-  } = useCurrentUser() 
+  } = useCurrentUser()
 
   useEffect(() => {
     if (revisionHistory?.length) {
@@ -146,7 +148,7 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
   const handleRelease = async (revision_id: string) => {
     setModalLoading(true)
     try {
-      await releaseRevision(project_id, revision_id)
+      // await copyDesignBasisRevision(project_id, revision_id)
       mutate(dbLoadlistHistoryUrl)
       message.success("Load list revision is released and locked")
     } catch (error) {
@@ -476,12 +478,23 @@ const Download: React.FC<Props> = ({ designBasisRevisionId, loadListLatestRevisi
     console.log(designBasisRevisionId)
 
     try {
-      const commonConfigData = await getData(
-        `${COMMON_CONFIGURATION}?fields=["field_motor_type","field_motor_enclosure","field_motor_material", "field_motor_qty", "field_motor_isolator_color_shade", "field_motor_cable_entry","field_motor_canopy_on_top"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      const commonConfigData1 = await getData(
+        `${COMMON_CONFIGURATION_1}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       )
+      const commonConfigData2 = await getData(
+        `${COMMON_CONFIGURATION_2}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      )
+
+      const commonConfigData3 = await getData(
+        `${COMMON_CONFIGURATION_3}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
+      )
+
+      const commonConfigData = { ...commonConfigData1?.[0], ...commonConfigData2?.[0], ...commonConfigData3?.[0] }
+
       const loadListData = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
+
       setLoadListData(loadListData)
-      setCommonConfigData(commonConfigData?.[0])
+      setCommonConfigData(commonConfigData)
       console.log(loadListData, "loadlist")
       console.log(commonConfigData, "commonConfigData")
     } catch (error) {
