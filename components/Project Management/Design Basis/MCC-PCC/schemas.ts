@@ -80,7 +80,7 @@ export const configItemValidationSchema = zod.object({
     required_error: "Current Transformer Coating is required",
     message: "Current Transformer Coating is Required",
   }),
-  current_transformer_quantity: zod.string({
+  current_transformer_number: zod.string({
     required_error: "Current Transformer Quantity is required",
     message: "Current Transformer Quantity is Required",
   }),
@@ -521,6 +521,18 @@ export const configItemValidationSchema = zod.object({
 
 export const mccPanelValidationSchema = zod
   .object({
+    commissioning_spare: zod.string({
+      required_error: "This field is required",
+      message: "This field is required",
+    }),
+    two_year_operational_spare: zod.string({
+      required_error: "This field is required",
+      message: "This field is required",
+    }),
+    general_requirments_for_construction: zod.string({
+      required_error: "General Requirements for Construction is required",
+      message: "General Requirements for Construction is Required"
+    }),
     is_spg_applicable: zod.string().optional(),
     incomer_ampere: zod.string({ required_error: "Incomer Ampere is required", message: "Incomer Ampere is required" }),
     special_note: zod.string().optional(),
@@ -576,6 +588,10 @@ export const mccPanelValidationSchema = zod
       required_error: "Current Transformer Quantity is required",
       message: "Current Transformer Quantity is required",
     }),
+    current_transformer_configuration: zod.string({
+      required_error: "Current Transformer Configuration is required",
+      message: "Current Transformer Configuration is required",
+    }),
     alarm_annunciator: zod.string({
       required_error: "Alarm Annunciator is required",
       message: "Alarm Annunciator is required",
@@ -620,6 +636,10 @@ export const mccPanelValidationSchema = zod
       required_error: "MOC Thickness Covers is required",
       message: "MOC Thickness Covers is required",
     }),
+    ga_gland_plate_thickness: zod.string({
+      required_error: "Gland Plate Thickness is required",
+      message: "Gland Plate Thickness is required",
+    }),
     ga_mcc_compartmental: zod.string({
       required_error: "MCC Compartmental is required",
       message: "MCC Compartmental is required",
@@ -652,7 +672,11 @@ export const mccPanelValidationSchema = zod
       required_error: "Panel Mounting Height is required",
       message: "Panel Mounting Height is required",
     }),
-    is_marshalling_section_selected: zod.number().optional(),
+    is_marshalling_section_selected: zod.string({
+      required_error: "Marshalling Section is required",
+      message: "Marshalling Section is required",
+    }),
+    marshalling_section_text_area: zod.string().optional(),
     is_cable_alley_section_selected: zod.number().optional(),
     is_power_and_bus_separation_section_selected: zod.number().optional(),
     is_both_side_extension_section_selected: zod.number().optional(),
@@ -828,6 +852,18 @@ export const mccPanelValidationSchema = zod
 
 export const pccPanelValidationSchema = zod
   .object({
+    commissioning_spare: zod.string({
+      required_error: "This field is required",
+      message: "This field is required",
+    }),
+    two_year_operational_spare: zod.string({
+      required_error: "This field is required",
+      message: "This field is required",
+    }),
+    general_requirments_for_construction: zod.string({
+      required_error: "General Requirements for Construction is required",
+      message: "General Requirements for Construction is Required"
+    }),
     is_spg_applicable: zod.string().optional(),
     incomer_ampere: zod.string({ required_error: "Incomer Ampere is required", message: "Incomer Ampere is required" }),
     special_note: zod.string().optional(),
@@ -846,6 +882,20 @@ export const pccPanelValidationSchema = zod
       required_error: "Incomer Above Type is required",
       message: "Incomer Above Type is required",
     }),
+
+    current_transformer_coating: zod.string({
+      required_error: "Control Transformer Coating is required",
+      message: "Control Transformer Coating is required",
+    }),
+    current_transformer_number: zod.string({
+      required_error: "Control Transformer Coating is required",
+      message: "Control Transformer Coating is required",
+    }),
+    current_transformer_configuration: zod.string({
+      required_error: "Control Transformer Coating is required",
+      message: "Control Transformer Coating is required",
+    }),
+
     control_transformer_coating: zod.string({
       required_error: "Control Transformer Coating is required",
       message: "Control Transformer Coating is required",
@@ -920,6 +970,10 @@ export const pccPanelValidationSchema = zod
       required_error: "MOC Thickness Covers is required",
       message: "MOC Thickness Covers is required",
     }),
+    ga_gland_plate_thickness: zod.string({
+      required_error: "Gland Plate Thickness is required",
+      message: "Gland Plate Thickness is required",
+    }),
     ga_pcc_compartmental: zod.string({
       required_error: "PCC Compartmental is required",
       message: "PCC Compartmental is required",
@@ -952,7 +1006,11 @@ export const pccPanelValidationSchema = zod
       required_error: "Panel Mounting Height is required",
       message: "Panel Mounting Height is required",
     }),
-    is_marshalling_section_selected: zod.number().optional(),
+    is_marshalling_section_selected: zod.string({
+      required_error: "Marhalling Section is required",
+      message: "Marshalling Section is required",
+    }),
+    marshalling_section_text_area: zod.string().optional(),
     is_cable_alley_section_selected: zod.number().optional(),
     is_power_and_bus_separation_section_selected: zod.number().optional(),
     is_both_side_extension_section_selected: zod.number().optional(),

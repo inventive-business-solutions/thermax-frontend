@@ -57,6 +57,7 @@ export default function useMCCPCCPanelDropdowns() {
         "SD Incomer Ampere": "name",
         "Current Transformer Coating": "name",
         "Current Transformer Number": "name",
+        "Current Transformer Configuration": "name",
         "Control Transformer Configuration": "name",
         "SD Incomer Pole": "name",
         "SD Incomer Type": "name",
@@ -93,6 +94,9 @@ export default function useMCCPCCPanelDropdowns() {
         "ACB Service Indication lamp": "name",
         "ACB Spring Charge Indication lamp": "name",
         "Trip Circuit Healthy Indication lamp": "name",
+        "Analog Meters": "name",
+        "Digital Meters": "name",
+        "Communication Protocol": "name",
       })
 
       console.log("PCC response", response)
