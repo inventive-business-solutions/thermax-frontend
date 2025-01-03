@@ -1,113 +1,158 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as zod from "zod"
-import { Button, Divider, message } from "antd"
-import React, { useEffect, useMemo, useState } from "react"
-import { SubmitHandler, useForm } from "react-hook-form"
-import { createData, getData, updateData } from "actions/crud-actions"
-import CustomTextInput from "components/FormInputs/CustomInput"
-import CustomTextNumber from "components/FormInputs/CustomInputNumber"
-import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { MCC_PCC_PLC_PANEL_1, MCC_PCC_PLC_PANEL_2, MCC_PCC_PLC_PANEL_3 } from "configs/api-endpoints"
-import { useGetData, useNewGetData } from "hooks/useCRUD"
-import usePLCDropdowns from "./PLCDropdown"
-import { plcPanelValidationSchema } from "../schemas"
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as zod from "zod";
+import { Button, Divider, message } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { updateData } from "@/actions/crud-actions";
+import CustomTextInput from "@/components/FormInputs/CustomInput";
+import CustomTextNumber from "@/components/FormInputs/CustomInputNumber";
+import CustomRadioSelect from "@/components/FormInputs/CustomRadioSelect";
+import CustomSingleSelect from "@/components/FormInputs/CustomSingleSelect";
+import CustomTextAreaInput from "@/components/FormInputs/CustomTextArea";
+import {
+  MCC_PCC_PLC_PANEL_1,
+  MCC_PCC_PLC_PANEL_2,
+  MCC_PCC_PLC_PANEL_3,
+} from "@/configs/api-endpoints";
+import { useNewGetData } from "@/hooks/useCRUD";
+import usePLCDropdowns from "./PLCDropdown";
+import { plcPanelValidationSchema } from "../schemas";
 
 const getDefaultValues = (plcData: any) => {
   const defaultValues = {
     // Supply Requirements
-    ups_control_voltage: plcData?.ups_control_voltage || "230 VAC, 1-Phase, 2 Wire",
-    non_ups_control_voltage: plcData?.non_ups_control_voltage || "230 VAC, 1-Phase, 2 Wire",
-    is_bulk_power_supply_selected: plcData?.is_bulk_power_supply_selected || "0",
+    ups_control_voltage:
+      plcData?.ups_control_voltage || "230 VAC, 1-Phase, 2 Wire",
+    non_ups_control_voltage:
+      plcData?.non_ups_control_voltage || "230 VAC, 1-Phase, 2 Wire",
+    is_bulk_power_supply_selected:
+      plcData?.is_bulk_power_supply_selected || "0",
     // UPS
     ups_scope: plcData?.ups_scope || "Client Scope",
     ups_input_voltage_3p: plcData?.ups_input_voltage_3p || "NA",
     ups_input_voltage_1p: plcData?.ups_input_voltage_1p || "NA",
-    ups_output_voltage_1p: plcData?.ups_output_voltage_1p || "230 VAC, 1-Phase, 2 Wire",
+    ups_output_voltage_1p:
+      plcData?.ups_output_voltage_1p || "230 VAC, 1-Phase, 2 Wire",
     ups_type: plcData?.ups_type || "NA",
     ups_battery_type: plcData?.ups_battery_type || "NA",
-    is_ups_battery_mounting_rack_selected: plcData?.is_ups_battery_mounting_rack_selected || "0",
+    is_ups_battery_mounting_rack_selected:
+      plcData?.is_ups_battery_mounting_rack_selected || "0",
     ups_battery_backup_time: plcData?.ups_battery_backup_time || "NA",
     ups_redundancy: plcData?.ups_redundancy || "NA",
     // PLC Hardware
     plc_cpu_system_series: plcData?.plc_cpu_system_series || "VTS",
-    plc_cpu_system_input_voltage: plcData?.plc_cpu_system_input_voltage || "24 VDC",
-    plc_cpu_system_battery_backup: plcData?.plc_cpu_system_battery_backup || "40%",
-    plc_cpu_system_memory_free_space_after_program: plcData?.plc_cpu_system_memory_free_space_after_program || "20%",
+    plc_cpu_system_input_voltage:
+      plcData?.plc_cpu_system_input_voltage || "24 VDC",
+    plc_cpu_system_battery_backup:
+      plcData?.plc_cpu_system_battery_backup || "40%",
+    plc_cpu_system_memory_free_space_after_program:
+      plcData?.plc_cpu_system_memory_free_space_after_program || "20%",
     // Redundancy
-    is_power_supply_plc_cpu_system_selected: plcData?.is_power_supply_plc_cpu_system_selected || "1",
-    is_power_supply_input_output_module_selected: plcData?.is_power_supply_input_output_module_selected || "1",
-    is_plc_input_output_modules_system_selected: plcData?.is_plc_input_output_modules_system_selected || "1",
+    is_power_supply_plc_cpu_system_selected:
+      plcData?.is_power_supply_plc_cpu_system_selected || "1",
+    is_power_supply_input_output_module_selected:
+      plcData?.is_power_supply_input_output_module_selected || "1",
+    is_plc_input_output_modules_system_selected:
+      plcData?.is_plc_input_output_modules_system_selected || "1",
     is_plc_cpu_system_and_input_output_modules_system_selected:
-      plcData?.is_plc_cpu_system_and_input_output_modules_system_selected || "0",
-    is_plc_cpu_system_and_hmi_scada_selected: plcData?.is_plc_cpu_system_and_hmi_scada_selected || "0",
+      plcData?.is_plc_cpu_system_and_input_output_modules_system_selected ||
+      "0",
+    is_plc_cpu_system_and_hmi_scada_selected:
+      plcData?.is_plc_cpu_system_and_hmi_scada_selected || "0",
     is_plc_cpu_system_and_third_party_devices_selected:
       plcData?.is_plc_cpu_system_and_third_party_devices_selected || "0",
     is_plc_cpu_system_selected: plcData?.is_plc_cpu_system_selected || "1",
     plc_cpu_system: plcData?.plc_cpu_system || "",
     // PLC Panel Mounted
     panel_mounted_ac: plcData?.panel_mounted_ac || "",
-    is_plc_and_ups_marshalling_cabinet_selected: plcData?.is_plc_and_ups_marshalling_cabinet_selected || "0",
-    marshalling_cabinet_for_plc_and_ups: plcData?.marshalling_cabinet_for_plc_and_ups || "",
+    is_plc_and_ups_marshalling_cabinet_selected:
+      plcData?.is_plc_and_ups_marshalling_cabinet_selected || "0",
+    marshalling_cabinet_for_plc_and_ups:
+      plcData?.marshalling_cabinet_for_plc_and_ups || "",
     // Panel Mounted Push Buttons, Indication lamps & Colors
-    is_electronic_hooter_selected: plcData?.is_electronic_hooter_selected || "0",
-    electronic_hooter_acknowledge: plcData?.electronic_hooter_acknowledge || "NA",
+    is_electronic_hooter_selected:
+      plcData?.is_electronic_hooter_selected || "0",
+    electronic_hooter_acknowledge:
+      plcData?.electronic_hooter_acknowledge || "NA",
     panel_power_supply_on_color: plcData?.panel_power_supply_on_color || "NA",
-    panel_power_supply_off_color: plcData?.panel_power_supply_off_color || "Green",
-    indicating_lamp_color_for_nonups_power_supply: plcData?.indicating_lamp_color_for_nonups_power_supply || "Red",
-    indicating_lamp_colour_for_ups_power_supply: plcData?.indicating_lamp_colour_for_ups_power_supply || "NA",
+    panel_power_supply_off_color:
+      plcData?.panel_power_supply_off_color || "Green",
+    indicating_lamp_color_for_nonups_power_supply:
+      plcData?.indicating_lamp_color_for_nonups_power_supply || "Red",
+    indicating_lamp_colour_for_ups_power_supply:
+      plcData?.indicating_lamp_colour_for_ups_power_supply || "NA",
     // IO Modules
     // DI Modules
-    di_module_channel_density: plcData?.di_module_channel_density || "8 Nos. Per Card",
+    di_module_channel_density:
+      plcData?.di_module_channel_density || "8 Nos. Per Card",
     di_module_loop_current: plcData?.di_module_loop_current || "VTS",
     di_module_isolation: plcData?.di_module_isolation || "Galvanic Isolation",
-    di_module_input_type: plcData?.di_module_input_type || "Potential Free Contacts",
-    di_module_interrogation_voltage: plcData?.di_module_interrogation_voltage || "24 VDC",
+    di_module_input_type:
+      plcData?.di_module_input_type || "Potential Free Contacts",
+    di_module_interrogation_voltage:
+      plcData?.di_module_interrogation_voltage || "24 VDC",
     di_module_scan_time: plcData?.di_module_scan_time || "",
     // DO Modules
-    do_module_channel_density: plcData?.do_module_channel_density || "8 Nos. Per Card",
+    do_module_channel_density:
+      plcData?.do_module_channel_density || "8 Nos. Per Card",
     do_module_loop_current: plcData?.do_module_loop_current || "VTS",
     do_module_isolation: plcData?.do_module_isolation || "Galvanic Isolation",
-    do_module_output_type: plcData?.do_module_output_type || "Potential Free Contacts",
+    do_module_output_type:
+      plcData?.do_module_output_type || "Potential Free Contacts",
     // Interposing Relay
     interposing_relay: plcData?.interposing_relay || "Applicable",
-    output_contact_rating_of_interposing_relay: plcData?.output_contact_rating_of_interposing_relay || "230 VAC, 5AMP",
+    output_contact_rating_of_interposing_relay:
+      plcData?.output_contact_rating_of_interposing_relay || "230 VAC, 5AMP",
     is_no_of_contact_selected: plcData?.is_no_of_contact_selected || "0",
     no_of_contacts: plcData?.no_of_contacts || "",
     // AI Modules
-    ai_module_channel_density: plcData?.ai_module_channel_density || "8 Nos. Per Card",
+    ai_module_channel_density:
+      plcData?.ai_module_channel_density || "8 Nos. Per Card",
     ai_module_loop_current: plcData?.ai_module_loop_current || "VTS",
     ai_module_isolation: plcData?.ai_module_isolation || "Galvanic Isolation",
     ai_module_input_type: plcData?.ai_module_input_type || "4-20 mA DC",
     ai_module_scan_time: plcData?.ai_module_scan_time || "",
-    is_ai_module_hart_protocol_support_selected: plcData?.is_ai_module_hart_protocol_support_selected || "0",
+    is_ai_module_hart_protocol_support_selected:
+      plcData?.is_ai_module_hart_protocol_support_selected || "0",
     // AO Modules
-    ao_module_channel_density: plcData?.ao_module_channel_density || "8 Nos. Per Card",
+    ao_module_channel_density:
+      plcData?.ao_module_channel_density || "8 Nos. Per Card",
     ao_module_loop_current: plcData?.ao_module_loop_current || "VTS",
     ao_module_isolation: plcData?.ao_module_isolation || "Galvanic Isolation",
     ao_module_output_type: plcData?.ao_module_output_type || "",
     ao_module_scan_time: plcData?.ao_module_scan_time || "",
-    is_ao_module_hart_protocol_support_selected: plcData?.is_ao_module_hart_protocol_support_selected || "0",
+    is_ao_module_hart_protocol_support_selected:
+      plcData?.is_ao_module_hart_protocol_support_selected || "0",
     // RTD Modules
-    rtd_module_channel_density: plcData?.rtd_module_channel_density || "8 Nos. Per Card",
+    rtd_module_channel_density:
+      plcData?.rtd_module_channel_density || "8 Nos. Per Card",
     rtd_module_loop_current: plcData?.rtd_module_loop_current || "VTS",
     rtd_module_isolation: plcData?.rtd_module_isolation || "Galvanic Isolation",
-    rtd_module_input_type: plcData?.rtd_module_input_type || "Resistance in (Ohm)",
+    rtd_module_input_type:
+      plcData?.rtd_module_input_type || "Resistance in (Ohm)",
     rtd_module_scan_time: plcData?.rtd_module_scan_time || "",
-    is_rtd_module_hart_protocol_support_selected: plcData?.is_rtd_module_hart_protocol_support_selected || "0",
+    is_rtd_module_hart_protocol_support_selected:
+      plcData?.is_rtd_module_hart_protocol_support_selected || "0",
     // Thermocouple Modules
-    thermocouple_module_channel_density: plcData?.thermocouple_module_channel_density || "8 Nos. Per Card",
-    thermocouple_module_loop_current: plcData?.thermocouple_module_loop_current || "VTS",
-    thermocouple_module_isolation: plcData?.thermocouple_module_isolation || "Galvanic Isolation",
-    thermocouple_module_input_type: plcData?.thermocouple_module_input_type || "Millivolts  (mV)",
-    thermocouple_module_scan_time: plcData?.thermocouple_module_scan_time || "VTS",
+    thermocouple_module_channel_density:
+      plcData?.thermocouple_module_channel_density || "8 Nos. Per Card",
+    thermocouple_module_loop_current:
+      plcData?.thermocouple_module_loop_current || "VTS",
+    thermocouple_module_isolation:
+      plcData?.thermocouple_module_isolation || "Galvanic Isolation",
+    thermocouple_module_input_type:
+      plcData?.thermocouple_module_input_type || "Millivolts  (mV)",
+    thermocouple_module_scan_time:
+      plcData?.thermocouple_module_scan_time || "VTS",
     is_thermocouple_module_hart_protocol_support_selected:
       plcData?.is_thermocouple_module_hart_protocol_support_selected || "1",
     // Universal Modules
-    universal_module_channel_density: plcData?.universal_module_channel_density || "8 Nos. Per Card",
-    universal_module_loop_current: plcData?.universal_module_loop_current || "VTS",
-    universal_module_isolation: plcData?.universal_module_isolation || "Galvanic Isolation",
+    universal_module_channel_density:
+      plcData?.universal_module_channel_density || "8 Nos. Per Card",
+    universal_module_loop_current:
+      plcData?.universal_module_loop_current || "VTS",
+    universal_module_isolation:
+      plcData?.universal_module_isolation || "Galvanic Isolation",
     universal_module_input_type:
       plcData?.universal_module_input_type ||
       "Millivolts (mV) / Resistance in Ω (Ohm) / Millivolts (mV) & Resistance in (Ohm)",
@@ -120,7 +165,8 @@ const getDefaultValues = (plcData: any) => {
     ai_module_terminal: plcData?.ai_module_terminal || "Fuse Terminal",
     ao_module_terminal: plcData?.ao_module_terminal || "Fuse Terminal",
     rtd_module_terminal: plcData?.rtd_module_terminal || "Fuse Terminal",
-    thermocouple_module_terminal: plcData?.thermocouple_module_terminal || "Fuse Terminal",
+    thermocouple_module_terminal:
+      plcData?.thermocouple_module_terminal || "Fuse Terminal",
     // HMI
     is_hmi_selected: plcData?.is_hmi_selected || "0",
     hmi_size: plcData?.hmi_size || "10",
@@ -130,21 +176,29 @@ const getDefaultValues = (plcData: any) => {
     hmi_input_voltage: plcData?.hmi_input_voltage || "24 VDC",
     hmi_battery_backup: plcData?.hmi_battery_backup || "",
     // Human Interface Device
-    is_engineering_station_quantity_selected: plcData?.is_engineering_station_quantity_selected || "1",
+    is_engineering_station_quantity_selected:
+      plcData?.is_engineering_station_quantity_selected || "1",
     engineering_station_quantity: plcData?.engineering_station_quantity || "",
     is_engineering_cum_operating_station_quantity_selected:
       plcData?.is_engineering_cum_operating_station_quantity_selected || "0",
-    engineering_cum_operating_station_quantity: plcData?.engineering_cum_operating_station_quantity || "",
-    is_operating_station_quantity_selected: plcData?.is_operating_station_quantity_selected || "0",
+    engineering_cum_operating_station_quantity:
+      plcData?.engineering_cum_operating_station_quantity || "",
+    is_operating_station_quantity_selected:
+      plcData?.is_operating_station_quantity_selected || "0",
     operating_station_quantity: plcData?.operating_station_quantity || "",
     // Software
     is_scada_program_development_license_quantity_selected:
       plcData?.is_scada_program_development_license_quantity_selected || "1",
-    scada_program_development_license_quantity: plcData?.scada_program_development_license_quantity || "",
-    is_scada_runtime_license_quantity_selected: plcData?.is_scada_runtime_license_quantity_selected || "1",
-    scada_runtime_license_quantity: plcData?.scada_runtime_license_quantity || "",
-    is_plc_progamming_software_license_quantity: plcData?.is_plc_progamming_software_license_quantity || "1",
-    plc_programming_software_license_quantity: plcData?.plc_programming_software_license_quantity || "",
+    scada_program_development_license_quantity:
+      plcData?.scada_program_development_license_quantity || "",
+    is_scada_runtime_license_quantity_selected:
+      plcData?.is_scada_runtime_license_quantity_selected || "1",
+    scada_runtime_license_quantity:
+      plcData?.scada_runtime_license_quantity || "",
+    is_plc_progamming_software_license_quantity:
+      plcData?.is_plc_progamming_software_license_quantity || "1",
+    plc_programming_software_license_quantity:
+      plcData?.plc_programming_software_license_quantity || "",
 
     // Engineering / Operating SCADA Station
     system_hardware: plcData?.system_hardware || "Commercial Grade",
@@ -153,21 +207,27 @@ const getDefaultValues = (plcData: any) => {
       "Minimum Configuration = Min. I5/Latest Processor, Min. 16GB RAM, Min. 1 TB Hard Disk, Multimedia With DVD R/W Drive, Keyboard Mouse Set 1 No's With 4 USB Port.",
     monitor_size: plcData?.monitor_size || "32",
     windows_operating_system: plcData?.windows_operating_system || "",
-    hardware_between_plc_and_scada_pc: plcData?.hardware_between_plc_and_scada_pc || "Approx 50 meter per PC",
+    hardware_between_plc_and_scada_pc:
+      plcData?.hardware_between_plc_and_scada_pc || "Approx 50 meter per PC",
     printer_type: plcData?.printer_type || "Laser Printer",
     printer_size: plcData?.printer_size || "A4",
     printer_quantity: plcData?.printer_quantity || "",
     is_printer_with_suitable_communication_cable_selected:
       plcData?.is_printer_with_suitable_communication_cable_selected || "0",
     is_furniture_selected: plcData?.is_furniture_selected || "1",
-    is_console_with_chair_selected: plcData?.is_console_with_chair_selected || "1",
-    is_plc_logic_diagram_selected: plcData?.is_plc_logic_diagram_selected || "1",
-    is_loop_drawing_for_complete_project_selected: plcData?.is_loop_drawing_for_complete_project_selected || "1",
+    is_console_with_chair_selected:
+      plcData?.is_console_with_chair_selected || "1",
+    is_plc_logic_diagram_selected:
+      plcData?.is_plc_logic_diagram_selected || "1",
+    is_loop_drawing_for_complete_project_selected:
+      plcData?.is_loop_drawing_for_complete_project_selected || "1",
     // Communication
     interface_signal_and_control_logic_implementation:
       plcData?.interface_signal_and_control_logic_implementation || "NA",
-    differential_pressure_flow_linearization: plcData?.differential_pressure_flow_linearization || "NA",
-    third_party_comm_protocol_for_plc_cpu_system: plcData?.third_party_comm_protocol_for_plc_cpu_system || "Modbus",
+    differential_pressure_flow_linearization:
+      plcData?.differential_pressure_flow_linearization || "NA",
+    third_party_comm_protocol_for_plc_cpu_system:
+      plcData?.third_party_comm_protocol_for_plc_cpu_system || "Modbus",
     third_party_communication_protocol:
       plcData?.third_party_communication_protocol ||
       `1) IIOT Gateway - Ethernet communication
@@ -183,10 +243,13 @@ Note - MFM, VFD, ACB Incomer - Address List & Parameter shall be configure by PL
       `"Applicable (Redundant Communication ports to Fiber Optic Gateway for Communication to customer DCS.
 Note: Ethernet IP is preferrable protocol for communication of above package."
 `,
-    hardware_between_plc_and_third_party: plcData?.hardware_between_plc_and_third_party || "",
-    hardware_between_plc_and_client_system: plcData?.hardware_between_plc_and_client_system || "Approx. 50 meter",
+    hardware_between_plc_and_third_party:
+      plcData?.hardware_between_plc_and_third_party || "",
+    hardware_between_plc_and_client_system:
+      plcData?.hardware_between_plc_and_client_system || "Approx. 50 meter",
     is_iiot_selected: plcData?.is_iiot_selected || "0",
-    is_client_system_comm_with_plc_cpu_selected: plcData?.is_client_system_comm_with_plc_cpu_selected || "0",
+    is_client_system_comm_with_plc_cpu_selected:
+      plcData?.is_client_system_comm_with_plc_cpu_selected || "0",
     iiot_gateway_note:
       plcData?.iiot_gateway_note ||
       `1) IIOT Gateway - Ethernet communication
@@ -202,31 +265,39 @@ Note - MFM, VFD, ACB Incomer - Address List & Parameter shall be configure by PL
       plcData?.iiot_gateway_mounting ||
       `IIOT gate way is mounted in PLC panel. Vendor to make the necessary mounting provision for the same. (Details will be shared during detailing). IIOT is in Thermax SSBU Scope of supply. IIOT will be installed at Site. IIOT is suitable for Profinet/Ethernet communication for which PLC vendor to ensure the compatability with Supplied PLC's.`,
     // Burner Controller LMV
-    is_burner_controller_lmv_mounting_selected: plcData?.is_burner_controller_lmv_mounting_selected || "0",
+    is_burner_controller_lmv_mounting_selected:
+      plcData?.is_burner_controller_lmv_mounting_selected || "0",
     hardware_between_plc_and_burner_controller_lmv:
       plcData?.hardware_between_plc_and_burner_controller_lmv ||
       `Burner Controller LMV in PLC panel. Vendor to make the necessary mounting provision for the same. (Details will be shared during detailing). Burner Controller LMV is in Thermax Scope of supply. Burner Controller LMV is suitable for Profinet/Ethernet communication for which PLC vendor to ensure the compatability with Supplied PLC's.`,
-    burner_controller_lmv_mounting: plcData?.burner_controller_lmv_mounting || "APPROX. 50 METER",
+    burner_controller_lmv_mounting:
+      plcData?.burner_controller_lmv_mounting || "APPROX. 50 METER",
     burner_controller_lmv_note: plcData?.burner_controller_lmv_note || "",
     // PLC Spares
     spare_input_and_output_notes: plcData?.spare_input_and_output_notes || "",
     commissioning_spare: plcData?.commissioning_spare || "",
     two_year_operational_spare: plcData?.two_year_operational_spare || "",
     project_specific_notes: plcData?.project_specific_notes || "",
-  }
-  return defaultValues
-}
+  };
+  return defaultValues;
+};
 
-const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; panel_id: string }) => {
+const MCCcumPCCPLCPanel = ({
+  revision_id,
+  panel_id,
+}: {
+  revision_id: string;
+  panel_id: string;
+}) => {
   const { data: plcPanelData1 } = useNewGetData(
     `${MCC_PCC_PLC_PANEL_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
-  )
+  );
   const { data: plcPanelData2 } = useNewGetData(
     `${MCC_PCC_PLC_PANEL_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
-  )
+  );
   const { data: plcPanelData3 } = useNewGetData(
     `${MCC_PCC_PLC_PANEL_3}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"], ["panel_id", "=", "${panel_id}"]]`
-  )
+  );
 
   const plcPanelData = useMemo(
     () => ({
@@ -235,42 +306,48 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
       ...(plcPanelData3?.[0] || {}),
     }),
     [plcPanelData1, plcPanelData2, plcPanelData3]
-  )
+  );
 
-  const [loading, setLoading] = useState(false)
-  const dropdown = usePLCDropdowns()
+  const [loading, setLoading] = useState(false);
+  const dropdown = usePLCDropdowns();
 
-  let plc_control_voltage_options = dropdown["PLC Control Voltage"]
-  let plc_ups_1p_voltage_options = dropdown["PLC UPS 1 Phase Voltage"]
-  let plc_ups_type_options = dropdown["PLC UPS Type"]
-  let plc_ups_battery_type_options = dropdown["PLC UPS Battery Type"]
-  let plc_ups_battery_backup_time_options = dropdown["PLC UPS Battery Backup Time"]
-  let plc_ups_redundancy_options = dropdown["UPS Redundancy"]
-  let plc_cpu_system_options = dropdown["PLC CPU System"]
-  let marshalling_cabinet_options = dropdown["Marshalling Cabinet for PLC and UPS"]
-  let electronic_hooter_acknowledge_options = dropdown["Electronic Hooter Acknowledge"]
-  let panel_power_supply_on_options = dropdown["Panel Power Supply On"]
-  let panel_power_supply_off_options = dropdown["Panel Power Supply Off"]
-  let indicating_lamp_color_options = dropdown["Indicating Lamp Color for Non-UPS Power Supply"]
-  let channel_density_options = dropdown["Channel Density"]
-  let isolation_dropdown_options = dropdown["Isolation Dropdown"]
-  let interposing_relay_options = dropdown["Interposing Relay"]
-  let di_module_interrogation_voltage_options = dropdown["DI Modules Interrogation Voltage"]
-  let do_module_output_type_options = dropdown["DO Modules Type Of Output"]
-  let number_of_contacts_options = dropdown["Number of Contacts"]
-  let ao_module_output_type_options = dropdown["AO Modules Type of Output"]
-  let terminal_block_connector_options = dropdown["Terminal Block Connector Dropdown"]
-  let plc_hmi_size_options = dropdown["PLC HMI Size"]
-  let hmi_hardware_make_options = dropdown["HMI Hardware Make"]
-  let eo_system_hardware_options = dropdown["EO System Hardware"]
-  let eo_monitor_size_options = dropdown["EO Monitor Size"]
+  const plc_control_voltage_options = dropdown["PLC Control Voltage"];
+  const plc_ups_1p_voltage_options = dropdown["PLC UPS 1 Phase Voltage"];
+  const plc_ups_type_options = dropdown["PLC UPS Type"];
+  const plc_ups_battery_type_options = dropdown["PLC UPS Battery Type"];
+  const plc_ups_battery_backup_time_options =
+    dropdown["PLC UPS Battery Backup Time"];
+  const plc_ups_redundancy_options = dropdown["UPS Redundancy"];
+  const plc_cpu_system_options = dropdown["PLC CPU System"];
+  const marshalling_cabinet_options =
+    dropdown["Marshalling Cabinet for PLC and UPS"];
+  const electronic_hooter_acknowledge_options =
+    dropdown["Electronic Hooter Acknowledge"];
+  const panel_power_supply_on_options = dropdown["Panel Power Supply On"];
+  const panel_power_supply_off_options = dropdown["Panel Power Supply Off"];
+  const indicating_lamp_color_options =
+    dropdown["Indicating Lamp Color for Non-UPS Power Supply"];
+  const channel_density_options = dropdown["Channel Density"];
+  const isolation_dropdown_options = dropdown["Isolation Dropdown"];
+  const interposing_relay_options = dropdown["Interposing Relay"];
+  const di_module_interrogation_voltage_options =
+    dropdown["DI Modules Interrogation Voltage"];
+  const do_module_output_type_options = dropdown["DO Modules Type Of Output"];
+  const number_of_contacts_options = dropdown["Number of Contacts"];
+  const ao_module_output_type_options = dropdown["AO Modules Type of Output"];
+  const terminal_block_connector_options =
+    dropdown["Terminal Block Connector Dropdown"];
+  const plc_hmi_size_options = dropdown["PLC HMI Size"];
+  const hmi_hardware_make_options = dropdown["HMI Hardware Make"];
+  const eo_system_hardware_options = dropdown["EO System Hardware"];
+  const eo_monitor_size_options = dropdown["EO Monitor Size"];
 
   const { control, handleSubmit, reset, watch } = useForm({
     resolver: zodResolver(plcPanelValidationSchema),
     defaultValues: getDefaultValues(plcPanelData?.[0]),
     mode: "onSubmit",
-  })
-  const upsScope = watch("ups_scope")
+  });
+  const upsScope = watch("ups_scope");
 
   // const is_third_party_communication_protocol_selected_controlled = watch(
   //   "is_third_party_communication_protocol_selected"
@@ -324,36 +401,54 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
   // ])
 
   useEffect(() => {
-    reset(getDefaultValues(plcPanelData?.[0]))
-  }, [plcPanelData, reset])
+    reset(getDefaultValues(plcPanelData?.[0]));
+  }, [plcPanelData, reset]);
 
   const handleError = (error: any) => {
     try {
-      const errorObj = JSON.parse(error?.message) as any
-      message?.error(errorObj?.message)
+      const errorObj = JSON.parse(error?.message) as any;
+      message?.error(errorObj?.message);
     } catch (parseError) {
-      message?.error(error?.message || "An unknown error occured")
+      console.error(parseError);
+      message?.error(error?.message || "An unknown error occured");
     }
-  }
+  };
 
-  const onSubmit: SubmitHandler<zod.infer<typeof plcPanelValidationSchema>> = async (data) => {
-    setLoading(true)
+  const onSubmit: SubmitHandler<
+    zod.infer<typeof plcPanelValidationSchema>
+  > = async (data) => {
+    setLoading(true);
     try {
-      await updateData(`${MCC_PCC_PLC_PANEL_1}/${plcPanelData1[0].name}`, false, data)
-      await updateData(`${MCC_PCC_PLC_PANEL_2}/${plcPanelData2[0].name}`, false, data)
-      await updateData(`${MCC_PCC_PLC_PANEL_3}/${plcPanelData3[0].name}`, false, data)
-      message.success("PLC Data updated successfully")
+      await updateData(
+        `${MCC_PCC_PLC_PANEL_1}/${plcPanelData1[0].name}`,
+        false,
+        data
+      );
+      await updateData(
+        `${MCC_PCC_PLC_PANEL_2}/${plcPanelData2[0].name}`,
+        false,
+        data
+      );
+      await updateData(
+        `${MCC_PCC_PLC_PANEL_3}/${plcPanelData3[0].name}`,
+        false,
+        data
+      );
+      message.success("PLC Data updated successfully");
     } catch (error) {
-      console.error(error)
-      handleError(error)
+      console.error(error);
+      handleError(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-2 px-4"
+      >
         <Divider>
           <span className="font-bold text-slate-700">Supply Requirements</span>
         </Divider>
@@ -634,7 +729,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
-            <CustomTextInput control={control} name="panel_mounted_ac" label="Panel Mounted AC" size="small" />
+            <CustomTextInput
+              control={control}
+              name="panel_mounted_ac"
+              label="Panel Mounted AC"
+              size="small"
+            />
           </div>
           <div className="flex flex-1 items-center gap-2">
             <div className="flex flex-1 items-center gap-4">
@@ -657,14 +757,18 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 label=""
                 size="small"
                 options={marshalling_cabinet_options || []}
-                disabled={watch("is_plc_and_ups_marshalling_cabinet_selected") === "0"}
+                disabled={
+                  watch("is_plc_and_ups_marshalling_cabinet_selected") === "0"
+                }
               />
             </div>
           </div>
         </div>
 
         <Divider>
-          <span className="font-bold text-slate-700">Panel Mounted Push Buttons, Indication lamps & Colors</span>
+          <span className="font-bold text-slate-700">
+            Panel Mounted Push Buttons, Indication lamps & Colors
+          </span>
         </Divider>
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
@@ -746,7 +850,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="di_module_loop_current" label="Loop Current" size="small" />
+              <CustomTextInput
+                control={control}
+                name="di_module_loop_current"
+                label="Loop Current"
+                size="small"
+              />
             </div>
             <div className="flex-1">
               <CustomSingleSelect
@@ -760,7 +869,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <CustomTextInput control={control} name="di_module_input_type" label="Type of Input" size="small" />
+              <CustomTextInput
+                control={control}
+                name="di_module_input_type"
+                label="Type of Input"
+                size="small"
+              />
             </div>
             <div className="flex-1">
               <CustomSingleSelect
@@ -772,7 +886,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="di_module_scan_time" label="Scan Time" size="small" />
+              <CustomTextInput
+                control={control}
+                name="di_module_scan_time"
+                label="Scan Time"
+                size="small"
+              />
             </div>
           </div>
         </div>
@@ -791,7 +910,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             />
           </div>
           <div className="flex-1">
-            <CustomTextInput control={control} name="do_module_loop_current" label="Loop Current" size="small" />
+            <CustomTextInput
+              control={control}
+              name="do_module_loop_current"
+              label="Loop Current"
+              size="small"
+            />
           </div>
           <div className="flex-1">
             <CustomSingleSelect
@@ -814,7 +938,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </div>
 
         <Divider orientation="left" orientationMargin={0}>
-          <span className="text-sm font-bold text-blue-500">Interposing Relay</span>
+          <span className="text-sm font-bold text-blue-500">
+            Interposing Relay
+          </span>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -874,7 +1000,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="ai_module_loop_current" label="Loop Current" size="small" />
+              <CustomTextInput
+                control={control}
+                name="ai_module_loop_current"
+                label="Loop Current"
+                size="small"
+              />
             </div>
             <div className="flex-1">
               <CustomSingleSelect
@@ -888,10 +1019,20 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <CustomTextInput control={control} name="ai_module_input_type" label="Type of Input" size="small" />
+              <CustomTextInput
+                control={control}
+                name="ai_module_input_type"
+                label="Type of Input"
+                size="small"
+              />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="ai_module_scan_time" label="Scan Time" size="small" />
+              <CustomTextInput
+                control={control}
+                name="ai_module_scan_time"
+                label="Scan Time"
+                size="small"
+              />
             </div>
             <div className="flex-1">
               <CustomRadioSelect
@@ -922,7 +1063,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="ao_module_loop_current" label="Loop Current" size="small" />
+              <CustomTextInput
+                control={control}
+                name="ao_module_loop_current"
+                label="Loop Current"
+                size="small"
+              />
             </div>
             <div className="flex-1">
               <CustomSingleSelect
@@ -945,7 +1091,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="ao_module_scan_time" label="Scan Time" size="small" />
+              <CustomTextInput
+                control={control}
+                name="ao_module_scan_time"
+                label="Scan Time"
+                size="small"
+              />
             </div>
             <div className="flex flex-1 items-center gap-4">
               <div className="flex-1">
@@ -978,7 +1129,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="rtd_module_loop_current" label="Loop Current" size="small" />
+              <CustomTextInput
+                control={control}
+                name="rtd_module_loop_current"
+                label="Loop Current"
+                size="small"
+              />
             </div>
             <div className="flex-1">
               <CustomSingleSelect
@@ -992,10 +1148,20 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <CustomTextInput control={control} name="rtd_module_input_type" label="Type of Input" size="small" />
+              <CustomTextInput
+                control={control}
+                name="rtd_module_input_type"
+                label="Type of Input"
+                size="small"
+              />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="rtd_module_scan_time" label="Scan Time" size="small" />
+              <CustomTextInput
+                control={control}
+                name="rtd_module_scan_time"
+                label="Scan Time"
+                size="small"
+              />
             </div>
             <div className="flex-1">
               <CustomRadioSelect
@@ -1012,7 +1178,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </div>
 
         <Divider orientation="left" orientationMargin={0}>
-          <span className="text-sm font-bold text-blue-500">Thermocouple Modules</span>
+          <span className="text-sm font-bold text-blue-500">
+            Thermocouple Modules
+          </span>
         </Divider>
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
@@ -1053,7 +1221,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="thermocouple_module_scan_time" label="Scan Time" size="small" />
+              <CustomTextInput
+                control={control}
+                name="thermocouple_module_scan_time"
+                label="Scan Time"
+                size="small"
+              />
             </div>
             <div className="flex-1">
               <CustomRadioSelect
@@ -1070,7 +1243,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </div>
 
         <Divider orientation="left" orientationMargin={0}>
-          <span className="text-sm font-bold text-blue-500">Universal Modules</span>
+          <span className="text-sm font-bold text-blue-500">
+            Universal Modules
+          </span>
         </Divider>
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
@@ -1111,7 +1286,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               />
             </div>
             <div className="flex-1">
-              <CustomTextInput control={control} name="universal_module_scan_time" label="Scan Time" size="small" />
+              <CustomTextInput
+                control={control}
+                name="universal_module_scan_time"
+                label="Scan Time"
+                size="small"
+              />
             </div>
             <div className="flex-1">
               <CustomRadioSelect
@@ -1128,7 +1308,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </div>
 
         <Divider>
-          <span className="font-bold text-slate-700">Terminal Block Connectors</span>
+          <span className="font-bold text-slate-700">
+            Terminal Block Connectors
+          </span>
         </Divider>
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
@@ -1271,7 +1453,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </div>
 
         <Divider>
-          <span className="font-bold text-slate-700">Human Interface Device</span>
+          <span className="font-bold text-slate-700">
+            Human Interface Device
+          </span>
         </Divider>
         <div className="flex gap-4">
           <div className="flex flex-1 items-center gap-4">
@@ -1292,7 +1476,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="engineering_station_quantity"
                 label=""
                 size="small"
-                disabled={watch("is_engineering_station_quantity_selected") === "0"}
+                disabled={
+                  watch("is_engineering_station_quantity_selected") === "0"
+                }
               />
             </div>
           </div>
@@ -1314,7 +1500,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="engineering_cum_operating_station_quantity"
                 label=""
                 size="small"
-                disabled={watch("is_engineering_station_quantity_selected") === "0"}
+                disabled={
+                  watch("is_engineering_station_quantity_selected") === "0"
+                }
               />
             </div>
           </div>
@@ -1336,7 +1524,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="operating_station_quantity"
                 label=""
                 size="small"
-                disabled={watch("is_operating_station_quantity_selected") === "0"}
+                disabled={
+                  watch("is_operating_station_quantity_selected") === "0"
+                }
               />
             </div>
           </div>
@@ -1364,7 +1554,11 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="scada_program_development_license_quantity"
                 label=""
                 size="small"
-                disabled={watch("is_scada_program_development_license_quantity_selected") === "0"}
+                disabled={
+                  watch(
+                    "is_scada_program_development_license_quantity_selected"
+                  ) === "0"
+                }
               />
             </div>
           </div>
@@ -1384,7 +1578,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               <CustomTextNumber
                 control={control}
                 name="scada_runtime_license_quantity"
-                disabled={watch("is_scada_runtime_license_quantity_selected") === "0"}
+                disabled={
+                  watch("is_scada_runtime_license_quantity_selected") === "0"
+                }
                 label=""
                 size="small"
               />
@@ -1408,14 +1604,18 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="plc_programming_software_license_quantity"
                 label=""
                 size="small"
-                disabled={watch("is_plc_progamming_software_license_quantity") === "0"}
+                disabled={
+                  watch("is_plc_progamming_software_license_quantity") === "0"
+                }
               />
             </div>
           </div>
         </div>
 
         <Divider>
-          <span className="font-bold text-slate-700">Engineering / Operating SCADA Station</span>
+          <span className="font-bold text-slate-700">
+            Engineering / Operating SCADA Station
+          </span>
         </Divider>
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between gap-4">
@@ -1484,7 +1684,12 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
               />
             </div>
             <div className="flex-1">
-              <CustomTextNumber control={control} name="printer_quantity" label="Printer Quantity" size="small" />
+              <CustomTextNumber
+                control={control}
+                name="printer_quantity"
+                label="Printer Quantity"
+                size="small"
+              />
             </div>
           </div>
           <div className="flex items-center justify-between gap-4">
@@ -1566,7 +1771,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
                 name="differential_pressure_flow_linearization"
                 label="Signals From Differential Pressure Flow Transmitters Shall Be Linearized."
                 size="small"
-                options={dropdown["Differential Pressure Flow Linearization"] || []}
+                options={
+                  dropdown["Differential Pressure Flow Linearization"] || []
+                }
               />
             </div>
             <div className="flex-1">
@@ -1641,7 +1848,11 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
           </div>
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1">
-              <CustomTextAreaInput control={control} name="iiot_gateway_note" label="IIOT Gateway Note" />
+              <CustomTextAreaInput
+                control={control}
+                name="iiot_gateway_note"
+                label="IIOT Gateway Note"
+              />
             </div>
             <div className="flex-1">
               <CustomTextAreaInput
@@ -1654,7 +1865,9 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </div>
 
         <Divider>
-          <span className="font-bold text-slate-700">Burner Controller LMV</span>
+          <span className="font-bold text-slate-700">
+            Burner Controller LMV
+          </span>
         </Divider>
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between gap-4">
@@ -1708,7 +1921,11 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             />
           </div>
           <div className="flex-1">
-            <CustomTextAreaInput control={control} name="commissioning_spare" label="Commissioning Spare" />
+            <CustomTextAreaInput
+              control={control}
+              name="commissioning_spare"
+              label="Commissioning Spare"
+            />
           </div>
         </div>
         <div className="flex gap-4">
@@ -1720,7 +1937,11 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
             />
           </div>
           <div className="flex-1">
-            <CustomTextAreaInput control={control} name="project_specific_notes" label="Project Specific Notes" />
+            <CustomTextAreaInput
+              control={control}
+              name="project_specific_notes"
+              label="Project Specific Notes"
+            />
           </div>
         </div>
         <div className="mt-2 flex w-full justify-end">
@@ -1730,7 +1951,7 @@ const MCCcumPCCPLCPanel = ({ revision_id, panel_id }: { revision_id: string; pan
         </div>
       </form>
     </>
-  )
-}
+  );
+};
 
-export default MCCcumPCCPLCPanel
+export default MCCcumPCCPLCPanel;

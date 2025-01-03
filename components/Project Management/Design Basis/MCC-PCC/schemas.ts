@@ -1,4 +1,4 @@
-import * as zod from "zod"
+import * as zod from "zod";
 export const configItemValidationSchema = zod.object({
   rtd_thermocouple_wiring_color: zod.string({
     required_error: "RTD / Thermocouple Wiring Color is required",
@@ -14,12 +14,18 @@ export const configItemValidationSchema = zod.object({
   is_local_push_button_station_selected: zod.string(),
   is_safe_lpbs_selected: zod.string(),
   is_hazardous_lpbs_selected: zod.string(),
-  dol_starter: zod.string({ required_error: "DOL Starter is required", message: "DOL Starter is required" }),
+  dol_starter: zod.string({
+    required_error: "DOL Starter is required",
+    message: "DOL Starter is required",
+  }),
   star_delta_starter: zod.string({
     required_error: "Star Delta Starter is required",
     message: "Star Delta Starter is required",
   }),
-  ammeter: zod.string({ required_error: "Ammeter is required", message: "Ammeter is required" }),
+  ammeter: zod.string({
+    required_error: "Ammeter is required",
+    message: "Ammeter is required",
+  }),
   ammeter_configuration: zod.string({
     required_error: "Ammeter Configuration is required",
     message: "Ammeter Configuration is required",
@@ -103,7 +109,10 @@ export const configItemValidationSchema = zod.object({
   }),
 
   // SUPPLY FEEDER
-  pole: zod.string({ required_error: "Pole is required", message: "Pole is required" }),
+  pole: zod.string({
+    required_error: "Pole is required",
+    message: "Pole is required",
+  }),
   supply_feeder_standard: zod.string({
     required_error: "Supply Feeder Standard is required",
     message: "Supply Feeder Standard is required",
@@ -169,8 +178,14 @@ export const configItemValidationSchema = zod.object({
     required_error: "Air clearance between phase to neutral Bus is required",
     message: "Air clearance between phase to neutral Bus is required",
   }),
-  ferrule: zod.string({ required_error: "Ferrule is required", message: "Ferrule is required" }),
-  ferrule_note: zod.string({ required_error: "Ferrule is required", message: "Ferrule is required" }),
+  ferrule: zod.string({
+    required_error: "Ferrule is required",
+    message: "Ferrule is required",
+  }),
+  ferrule_note: zod.string({
+    required_error: "Ferrule is required",
+    message: "Ferrule is required",
+  }),
   device_identification_of_components: zod.string({
     required_error: "Ferrule is required",
     message: "Ferrule is required",
@@ -196,7 +211,10 @@ export const configItemValidationSchema = zod.object({
     required_error: "Control Terminal is required",
     message: "Spare Terminal is required",
   }),
-  spare_terminal: zod.string({ required_error: "Spare  is required", message: "Spare Terminal is required" }),
+  spare_terminal: zod.string({
+    required_error: "Spare  is required",
+    message: "Spare Terminal is required",
+  }),
   forward_push_button_start: zod.string({
     required_error: "Push Button Start is required",
     message: "Push Button Start is required",
@@ -241,8 +259,14 @@ export const configItemValidationSchema = zod.object({
     required_error: "Lamp Test Push Button is required",
     message: "Lamp Test Push Button is required",
   }),
-  test_dropdown: zod.string({ required_error: "Test Reset is required", message: "Test Reset is required" }),
-  reset_dropdown: zod.string({ required_error: "Test Reset is required", message: "Test Reset is required" }),
+  test_dropdown: zod.string({
+    required_error: "Test Reset is required",
+    message: "Test Reset is required",
+  }),
+  reset_dropdown: zod.string({
+    required_error: "Test Reset is required",
+    message: "Test Reset is required",
+  }),
   // Selector Switch
   selector_switch_applicable: zod.string({
     required_error: "Selector Switch Applicable is required",
@@ -261,7 +285,10 @@ export const configItemValidationSchema = zod.object({
     required_error: "Stopped/Closed field is required",
     message: "Stopped/Closed field is required",
   }),
-  trip: zod.string({ required_error: "Trip field is required", message: "Trip field is required" }),
+  trip: zod.string({
+    required_error: "Trip field is required",
+    message: "Trip field is required",
+  }),
   // Field Motor Isolator (General Specification)
 
   // safe area
@@ -423,14 +450,18 @@ export const configItemValidationSchema = zod.object({
     message: "Local Push Button Station is required",
   }),
   //   // APFC
-  apfc_relay: zod.string({ required_error: "APFC Relay is required", message: "APFC Relay is required" }),
+  apfc_relay: zod.string({
+    required_error: "APFC Relay is required",
+    message: "APFC Relay is required",
+  }),
   // Power Bus
   power_bus_main_busbar_selection: zod.string({
     required_error: "Main Busbar Selection is required",
     message: "Main Busbar Selection is required",
   }),
   power_bus_heat_pvc_sleeve: zod.string({
-    required_error: "Heat Shrinkable Color PVC sleeve (L1, L2, L3, N) is required",
+    required_error:
+      "Heat Shrinkable Color PVC sleeve (L1, L2, L3, N) is required",
     message: "Heat Shrinkable Color PVC sleeve (L1, L2, L3, N) is required",
   }),
   power_bus_material: zod.string({
@@ -451,7 +482,8 @@ export const configItemValidationSchema = zod.object({
     message: "Control Bus Main Busbar Selection is required",
   }),
   control_bus_heat_pvc_sleeve: zod.string({
-    required_error: "Heat Shrinkable Color PVC sleeve (L1, L2, L3, N) is required",
+    required_error:
+      "Heat Shrinkable Color PVC sleeve (L1, L2, L3, N) is required",
     message: "Heat Shrinkable Color PVC sleeve (L1, L2, L3, N) is required",
   }),
   control_bus_material: zod.string({
@@ -505,7 +537,10 @@ export const configItemValidationSchema = zod.object({
     message: "Metering for Feeder is required",
   }),
   // Others
-  cooling_fans: zod.string({ required_error: "Cooling Fans is required", message: "Cooling Fans is required" }),
+  cooling_fans: zod.string({
+    required_error: "Cooling Fans is required",
+    message: "Cooling Fans is required",
+  }),
   louvers_and_filters: zod.string({
     required_error: "Louvers and Filters is required",
     message: "Louvers and Filters is required",
@@ -521,7 +556,7 @@ export const configItemValidationSchema = zod.object({
   // Spares
   // commissioning_spare: zod.string().optional(),
   // two_year_operational_spare: zod.string().optional(),
-})
+});
 
 export const mccPanelValidationSchema = zod
   .object({
@@ -535,13 +570,22 @@ export const mccPanelValidationSchema = zod
     }),
     general_requirments_for_construction: zod.string({
       required_error: "General Requirements for Construction is required",
-      message: "General Requirements for Construction is Required"
+      message: "General Requirements for Construction is Required",
     }),
     is_spg_applicable: zod.string().optional(),
-    incomer_ampere: zod.string({ required_error: "Incomer Ampere is required", message: "Incomer Ampere is required" }),
+    incomer_ampere: zod.string({
+      required_error: "Incomer Ampere is required",
+      message: "Incomer Ampere is required",
+    }),
     special_note: zod.string().optional(),
-    incomer_pole: zod.string({ required_error: "Incomer Pole is required", message: "Incomer Pole is required" }),
-    incomer_type: zod.string({ required_error: "Incomer Type is required", message: "Incomer Type is required" }),
+    incomer_pole: zod.string({
+      required_error: "Incomer Pole is required",
+      message: "Incomer Pole is required",
+    }),
+    incomer_type: zod.string({
+      required_error: "Incomer Type is required",
+      message: "Incomer Type is required",
+    }),
     incomer_above_ampere: zod.string({
       required_error: "Incomer Above Ampere is required",
       message: "Incomer Above Ampere is required",
@@ -625,13 +669,22 @@ export const mccPanelValidationSchema = zod
       required_error: "ON Indication Lamp is required",
       message: "ON Indication Lamp is required",
     }),
-    mi_analog: zod.string({ required_error: "Analog is required", message: "Analog is required" }),
-    mi_digital: zod.string({ required_error: "Digital is required", message: "Digital is required" }),
+    mi_analog: zod.string({
+      required_error: "Analog is required",
+      message: "Analog is required",
+    }),
+    mi_digital: zod.string({
+      required_error: "Digital is required",
+      message: "Digital is required",
+    }),
     mi_communication_protocol: zod.string({
       required_error: "Communication Protocol is required",
       message: "Communication Protocol is required",
     }),
-    ga_moc_material: zod.string({ required_error: "MOC is required", message: "MOC is required" }),
+    ga_moc_material: zod.string({
+      required_error: "MOC is required",
+      message: "MOC is required",
+    }),
     ga_moc_thickness_door: zod.string({
       required_error: "MOC Thickness Door is required",
       message: "MOC Thickness Door is required",
@@ -740,9 +793,18 @@ export const mccPanelValidationSchema = zod
       required_error: "Punching Details For Boiler is required",
       message: "Punching Details For Boiler is required",
     }),
-    boiler_model: zod.string({ required_error: "Boiler Model is required", message: "Boiler Model is required" }),
-    boiler_fuel: zod.string({ required_error: "Boiler Fuel is required", message: "Boiler Fuel is required" }),
-    boiler_year: zod.string({ required_error: "Boiler Year is required", message: "Boiler Year is required" }),
+    boiler_model: zod.string({
+      required_error: "Boiler Model is required",
+      message: "Boiler Model is required",
+    }),
+    boiler_fuel: zod.string({
+      required_error: "Boiler Fuel is required",
+      message: "Boiler Fuel is required",
+    }),
+    boiler_year: zod.string({
+      required_error: "Boiler Year is required",
+      message: "Boiler Year is required",
+    }),
     boiler_power_supply_vac: zod.string({
       required_error: "Boiler Power Supply VAC is required",
       message: "Boiler Power Supply VAC is required",
@@ -771,7 +833,10 @@ export const mccPanelValidationSchema = zod
       required_error: "Boiler Evaporation is required",
       message: "Boiler Evaporation is required",
     }),
-    boiler_output: zod.string({ required_error: "Boiler Output is required", message: "Boiler Output is required" }),
+    boiler_output: zod.string({
+      required_error: "Boiler Output is required",
+      message: "Boiler Output is required",
+    }),
     boiler_connected_load: zod.string({
       required_error: "Boiler Connected Load is required",
       message: "Boiler Connected Load is required",
@@ -784,9 +849,18 @@ export const mccPanelValidationSchema = zod
       required_error: "Punching Details For Heater is required",
       message: "Punching Details For Heater is required",
     }),
-    heater_model: zod.string({ required_error: "Heater Motor is required", message: "Heater Motor is required" }),
-    heater_fuel: zod.string({ required_error: "Heater Fuel is required", message: "Heater Fuel is required" }),
-    heater_year: zod.string({ required_error: "Heater Year is required", message: "Heater Year is required" }),
+    heater_model: zod.string({
+      required_error: "Heater Motor is required",
+      message: "Heater Motor is required",
+    }),
+    heater_fuel: zod.string({
+      required_error: "Heater Fuel is required",
+      message: "Heater Fuel is required",
+    }),
+    heater_year: zod.string({
+      required_error: "Heater Year is required",
+      message: "Heater Year is required",
+    }),
     heater_power_supply_vac: zod.string({
       required_error: "Heater Power Supply VAC is required",
       message: "Heater Power Supply VAC is required",
@@ -815,7 +889,10 @@ export const mccPanelValidationSchema = zod
       required_error: "Heater Evaporation is required",
       message: "Heater Evaporation is required",
     }),
-    heater_output: zod.string({ required_error: "Heater Output is required", message: "Heater Output is required" }),
+    heater_output: zod.string({
+      required_error: "Heater Output is required",
+      message: "Heater Output is required",
+    }),
     heater_connected_load: zod.string({
       required_error: "Heater Connected Load is required",
       message: "Heater Connected Load is required",
@@ -852,7 +929,7 @@ export const mccPanelValidationSchema = zod
   .refine((fieldsData) => !(fieldsData.mi_analog === fieldsData.mi_digital), {
     message: "Analog and Digital meter cannot be same",
     path: ["mi_digital"],
-  })
+  });
 
 export const pccPanelValidationSchema = zod
   .object({
@@ -866,14 +943,23 @@ export const pccPanelValidationSchema = zod
     }),
     general_requirments_for_construction: zod.string({
       required_error: "General Requirements for Construction is required",
-      message: "General Requirements for Construction is Required"
+      message: "General Requirements for Construction is Required",
     }),
     is_spg_applicable: zod.string().optional(),
-    incomer_ampere: zod.string({ required_error: "Incomer Ampere is required", message: "Incomer Ampere is required" }),
+    incomer_ampere: zod.string({
+      required_error: "Incomer Ampere is required",
+      message: "Incomer Ampere is required",
+    }),
     special_note: zod.string().optional(),
     is_other_selected: zod.number().optional(),
-    incomer_pole: zod.string({ required_error: "Incomer Pole is required", message: "Incomer Pole is required" }),
-    incomer_type: zod.string({ required_error: "Incomer Type is required", message: "Incomer Type is required" }),
+    incomer_pole: zod.string({
+      required_error: "Incomer Pole is required",
+      message: "Incomer Pole is required",
+    }),
+    incomer_type: zod.string({
+      required_error: "Incomer Type is required",
+      message: "Incomer Type is required",
+    }),
     incomer_above_ampere: zod.string({
       required_error: "Incomer Above Ampere is required",
       message: "Incomer Above Ampere is required",
@@ -959,13 +1045,22 @@ export const pccPanelValidationSchema = zod
       message: "ON Indication Lamp is required",
     }),
 
-    mi_analog: zod.string({ required_error: "Analog is required", message: "Analog is required" }),
-    mi_digital: zod.string({ required_error: "Digital is required", message: "Digital is required" }),
+    mi_analog: zod.string({
+      required_error: "Analog is required",
+      message: "Analog is required",
+    }),
+    mi_digital: zod.string({
+      required_error: "Digital is required",
+      message: "Digital is required",
+    }),
     mi_communication_protocol: zod.string({
       required_error: "Communication Protocol is required",
       message: "Communication Protocol is required",
     }),
-    ga_moc_material: zod.string({ required_error: "MOC is required", message: "MOC is required" }),
+    ga_moc_material: zod.string({
+      required_error: "MOC is required",
+      message: "MOC is required",
+    }),
     ga_moc_thickness_door: zod.string({
       required_error: "MOC Thickness Door is required",
       message: "MOC Thickness Door is required",
@@ -985,10 +1080,6 @@ export const pccPanelValidationSchema = zod
     ga_pcc_construction_front_type: zod.string({
       required_error: "PCC Construction Front Type is required",
       message: "PCC Construction Front Type is required",
-    }),
-    ga_pcc_construction_drawout_type: zod.string({
-      required_error: "PCC Construction Drawout Type is required",
-      message: "PCC Construction Drawout Type is required",
     }),
     ga_pcc_construction_type: zod.string({
       required_error: "PCC Construction Type is required",
@@ -1071,9 +1162,18 @@ export const pccPanelValidationSchema = zod
       required_error: "Punching Details For Boiler is required",
       message: "Punching Details For Boiler is required",
     }),
-    boiler_model: zod.string({ required_error: "Boiler Model is required", message: "Boiler Model is required" }),
-    boiler_fuel: zod.string({ required_error: "Boiler Fuel is required", message: "Boiler Fuel is required" }),
-    boiler_year: zod.string({ required_error: "Boiler Year is required", message: "Boiler Year is required" }),
+    boiler_model: zod.string({
+      required_error: "Boiler Model is required",
+      message: "Boiler Model is required",
+    }),
+    boiler_fuel: zod.string({
+      required_error: "Boiler Fuel is required",
+      message: "Boiler Fuel is required",
+    }),
+    boiler_year: zod.string({
+      required_error: "Boiler Year is required",
+      message: "Boiler Year is required",
+    }),
     boiler_power_supply_vac: zod.string({
       required_error: "Boiler Power Supply VAC is required",
       message: "Boiler Power Supply VAC is required",
@@ -1102,7 +1202,10 @@ export const pccPanelValidationSchema = zod
       required_error: "Boiler Evaporation is required",
       message: "Boiler Evaporation is required",
     }),
-    boiler_output: zod.string({ required_error: "Boiler Output is required", message: "Boiler Output is required" }),
+    boiler_output: zod.string({
+      required_error: "Boiler Output is required",
+      message: "Boiler Output is required",
+    }),
     boiler_connected_load: zod.string({
       required_error: "Boiler Connected Load is required",
       message: "Boiler Connected Load is required",
@@ -1115,9 +1218,18 @@ export const pccPanelValidationSchema = zod
       required_error: "Punching Details For Heater is required",
       message: "Punching Details For Heater is required",
     }),
-    heater_model: zod.string({ required_error: "Heater Motor is required", message: "Heater Motor is required" }),
-    heater_fuel: zod.string({ required_error: "Heater Fuel is required", message: "Heater Fuel is required" }),
-    heater_year: zod.string({ required_error: "Heater Year is required", message: "Heater Year is required" }),
+    heater_model: zod.string({
+      required_error: "Heater Motor is required",
+      message: "Heater Motor is required",
+    }),
+    heater_fuel: zod.string({
+      required_error: "Heater Fuel is required",
+      message: "Heater Fuel is required",
+    }),
+    heater_year: zod.string({
+      required_error: "Heater Year is required",
+      message: "Heater Year is required",
+    }),
     heater_power_supply_vac: zod.string({
       required_error: "Heater Power Supply VAC is required",
       message: "Heater Power Supply VAC is required",
@@ -1146,7 +1258,10 @@ export const pccPanelValidationSchema = zod
       required_error: "Heater Evaporation is required",
       message: "Heater Evaporation is required",
     }),
-    heater_output: zod.string({ required_error: "Heater Output is required", message: "Heater Output is required" }),
+    heater_output: zod.string({
+      required_error: "Heater Output is required",
+      message: "Heater Output is required",
+    }),
     heater_connected_load: zod.string({
       required_error: "Heater Connected Load is required",
       message: "Heater Connected Load is required",
@@ -1183,7 +1298,7 @@ export const pccPanelValidationSchema = zod
   .refine((fieldsData) => !(fieldsData.mi_digital === fieldsData.mi_analog), {
     message: "Analog and Digital meter cannot be same",
     path: ["mi_digital"],
-  })
+  });
 
 export const plcPanelValidationSchema = zod.object({
   ups_control_voltage: zod.string({
@@ -1247,7 +1362,8 @@ export const plcPanelValidationSchema = zod.object({
     message: "PLC CPU System Battery Backup is required",
   }),
   plc_cpu_system_memory_free_space_after_program: zod.string({
-    required_error: "PLC CPU System Memory Free Space after Program is required",
+    required_error:
+      "PLC CPU System Memory Free Space after Program is required",
     message: "PLC CPU System Memory Free Space after Program is required",
   }),
   is_power_supply_plc_cpu_system_selected: zod.string({
@@ -1263,7 +1379,8 @@ export const plcPanelValidationSchema = zod.object({
     message: "PLC Input - Output Modules System is required",
   }),
   is_plc_cpu_system_and_input_output_modules_system_selected: zod.string({
-    required_error: "PLC CPU System and PLC Input - Output Modules System is required",
+    required_error:
+      "PLC CPU System and PLC Input - Output Modules System is required",
     message: "PLC CPU System and PLC Input - Output Modules System is required",
   }),
   is_plc_cpu_system_and_hmi_scada_selected: zod.string({
@@ -1311,7 +1428,8 @@ export const plcPanelValidationSchema = zod.object({
     message: "Panel Power Supply Off Color is required",
   }),
   indicating_lamp_color_for_nonups_power_supply: zod.string({
-    required_error: "Indicating Lamp Color for Non-UPS Power Supply is required",
+    required_error:
+      "Indicating Lamp Color for Non-UPS Power Supply is required",
     message: "Indicating Lamp Color for Non-UPS Power Supply is required",
   }),
   indicating_lamp_colour_for_ups_power_supply: zod.string({
@@ -1647,7 +1765,8 @@ export const plcPanelValidationSchema = zod.object({
     message: "Loop Drawing for Complete Project is required",
   }),
   interface_signal_and_control_logic_implementation: zod.string({
-    required_error: "Interface Signal and Control Logic Implementation is required",
+    required_error:
+      "Interface Signal and Control Logic Implementation is required",
     message: "Interface Signal and Control Logic Implementation is required",
   }),
   differential_pressure_flow_linearization: zod.string({
@@ -1695,7 +1814,8 @@ export const plcPanelValidationSchema = zod.object({
     message: "Burner Controller LMV Mounting is required",
   }),
   hardware_between_plc_and_burner_controller_lmv: zod.string({
-    required_error: "Hardware between PLC and Burner Controller LMV is required",
+    required_error:
+      "Hardware between PLC and Burner Controller LMV is required",
     message: "Hardware between PLC and Burner Controller LMV is required",
   }),
   burner_controller_lmv_mounting: zod.string({
@@ -1722,4 +1842,4 @@ export const plcPanelValidationSchema = zod.object({
     required_error: "Project Specific Notes is required",
     message: "Project Specific Notes is required",
   }),
-})
+});

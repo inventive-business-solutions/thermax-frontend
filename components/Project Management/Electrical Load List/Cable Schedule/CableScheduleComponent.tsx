@@ -1,13 +1,22 @@
-"use client"
-import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
-import React, { useRef, useEffect, useState, useMemo, useCallback } from "react"
-import "jspreadsheet-ce/dist/jspreadsheet.css"
-import { Button, message, Spin } from "antd"
-import { ValidColumnType } from "../types"
-import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableConfig"
-import { CableSchedulecolumns, multicoreCableConfigColumns } from "../common/ExcelColumns"
-import "./CableScheduleComponent.css"
-import { downloadFile, getData, updateData } from "actions/crud-actions"
+"use client";
+import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+import "jspreadsheet-ce/dist/jspreadsheet.css";
+import { Button, message, Spin } from "antd";
+import { ValidColumnType } from "../types";
+import MulticoreCableConfigurator from "./Multicore Cable Config/MulticoreCableConfig";
+import {
+  CableSchedulecolumns,
+  multicoreCableConfigColumns,
+} from "../common/ExcelColumns";
+import "./CableScheduleComponent.css";
+import { downloadFile, getData, updateData } from "@/actions/crud-actions";
 import {
   CABLE_SCHEDULE_REVISION_HISTORY_API,
   CABLE_TRAY_LAYOUT,
@@ -16,12 +25,18 @@ import {
   HEATING_CONTROL_SCHEMES_URI,
   LPBS_SCHEMES_URI,
   SPG_SERVICES_CONTROL_SCHEMES_URI,
-} from "configs/api-endpoints"
-import { useLoading } from "hooks/useLoading"
-import { useParams, useRouter } from "next/navigation"
-import { getCableSizingCalculation } from "actions/electrical-load-list"
-import { useCurrentUser } from "hooks/useCurrentUser"
-import { ENVIRO, HEATING, SERVICES, WWS_IPG, WWS_SPG } from "configs/constants"
+} from "@/configs/api-endpoints";
+import { useLoading } from "@/hooks/useLoading";
+import { useParams, useRouter } from "next/navigation";
+import { getCableSizingCalculation } from "@/actions/electrical-load-list";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import {
+  ENVIRO,
+  HEATING,
+  SERVICES,
+  WWS_IPG,
+  WWS_SPG,
+} from "@/configs/constants";
 import {
   Enviro_ControlSchemeDataDol,
   Enviro_ControlSchemeDataSD,
@@ -29,23 +44,27 @@ import {
   lcs_od_gland_data,
   WWS_IPG_data,
   WWS_SPG_DATA,
-} from "app/Data"
+} from "@/app/Data";
 
 interface CableScheduleProps {
-  loadListLatestRevisionId: string
-  cableScheduleRevisionId: string
-  designBasisRevisionId: string
+  loadListLatestRevisionId: string;
+  cableScheduleRevisionId: string;
+  designBasisRevisionId: string;
 }
 
-const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any, cableTrayData: any) => {
-  if (!data?.electrical_load_list_data) return []
-  console.log(data.electrical_load_list_data, "load list")
-  console.log(savedCableSchedule?.cable_schedule_data, "load list cable")
+const getArrayOfCableScheduleData = (
+  data: any,
+  savedCableSchedule: any,
+  cableTrayData: any
+) => {
+  if (!data?.electrical_load_list_data) return [];
+  console.log(data.electrical_load_list_data, "load list");
+  console.log(savedCableSchedule?.cable_schedule_data, "load list cable");
 
   return data.electrical_load_list_data.map((item: any) => {
     const cableScheduleData = savedCableSchedule?.cable_schedule_data?.find(
       (row: any) => row.tag_number === item.tag_number
-    )
+    );
 
     return [
       item.tag_number,
@@ -67,7 +86,9 @@ const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any, cableTr
       cableScheduleData?.percent_vd_running,
       cableScheduleData?.percent_vd_starting,
       cableScheduleData?.selected_cable_capacity_amp,
-      cableScheduleData?.derating_factor ? cableScheduleData.derating_factor : cableTrayData[0]?.derating_factor_air,
+      cableScheduleData?.derating_factor
+        ? cableScheduleData.derating_factor
+        : cableTrayData[0]?.derating_factor_air,
       cableScheduleData?.final_capacity,
       cableScheduleData?.number_of_runs
         ? cableScheduleData?.number_of_runs
@@ -84,12 +105,13 @@ const getArrayOfCableScheduleData = (data: any, savedCableSchedule: any, cableTr
         ? "4C"
         : "",
       cableScheduleData?.final_cable_size,
-      cableScheduleData?.cable_selected_status ? cableScheduleData?.cable_selected_status : "Safe",
+      cableScheduleData?.cable_selected_status
+        ? cableScheduleData?.cable_selected_status
+        : "Safe",
       cableScheduleData?.cable_size_heating_chart,
-    ]
-  })
-}
- 
+    ];
+  });
+};
 
 const useDataFetching = (
   designBasisRevisionId: string,
@@ -97,90 +119,103 @@ const useDataFetching = (
   cableScheduleRevisionId: string,
   userInfo: any
 ) => {
-  const [isLoading, setIsLoading] = useState(true)
-  const { setLoading } = useLoading()
-  const [cableScheduleData, setCableScheduleData] = useState<any[]>([])
-  const [cableScheduleSavedData, setCableScheduleSavedData] = useState<any[]>([])
-  const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([])
-  const [controlSchemes, setControlSchemes] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true);
+  const { setLoading } = useLoading();
+  const [cableScheduleData, setCableScheduleData] = useState<any[]>([]);
+  const [cableScheduleSavedData, setCableScheduleSavedData] = useState<any[]>(
+    []
+  );
+  const [lpbsSchemes, setLpbsSchemes] = useState<any[]>([]);
+  const [controlSchemes, setControlSchemes] = useState<any[]>([]);
 
-  const [loadListData, setLoadListData] = useState<any[]>([])
-  const [cableTrayData, setCableTrayData] = useState<any>()
+  const [loadListData, setLoadListData] = useState<any[]>([]);
+  const [cableTrayData, setCableTrayData] = useState<any>();
   const getApiEndpoint = (division: string) => {
     switch (division) {
       case HEATING:
-        return `${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+        return `${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`;
       case WWS_SPG:
-        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`;
       case SERVICES:
-        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`;
       case ENVIRO:
-        return `${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+        return `${HEATING_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`;
       case WWS_IPG:
-        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`
+        return `${SPG_SERVICES_CONTROL_SCHEMES_URI}?limit=1000&fields=["*"]`;
 
       default:
-        return ""
+        return "";
     }
-  }
+  };
   const fetchData = useCallback(async () => {
-    if (!loadListLatestRevisionId) return
+    if (!loadListLatestRevisionId) return;
 
     try {
-      setIsLoading(true)
+      setIsLoading(true);
 
-      const division = userInfo?.division === WWS_SPG || userInfo?.division === SERVICES ? WWS_SPG : userInfo?.division
+      const division =
+        userInfo?.division === WWS_SPG || userInfo?.division === SERVICES
+          ? WWS_SPG
+          : userInfo?.division;
       const lpbsResponse = await getData(
         `${LPBS_SCHEMES_URI}?filters=[["division_name", "=", "${division}"]]&fields=["*"]`
-      )
+      );
 
-      const loadList = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
-      const savedCableSchedule = await getData(`${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`)
+      const loadList = await getData(
+        `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`
+      );
+      const savedCableSchedule = await getData(
+        `${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`
+      );
       const cableTrayData = await getData(
         `${CABLE_TRAY_LAYOUT}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-      )
-      const formattedData = getArrayOfCableScheduleData(loadList, savedCableSchedule, cableTrayData)
-     
+      );
+      const formattedData = getArrayOfCableScheduleData(
+        loadList,
+        savedCableSchedule,
+        cableTrayData
+      );
+
       getData(getApiEndpoint(userInfo?.division)).then((res) => {
-        console.log(res)
-        let sortedSchemes
+        console.log(res);
+        let sortedSchemes;
         if (userInfo.division === SERVICES || userInfo.division === WWS_SPG) {
-          sortedSchemes = WWS_SPG_DATA
+          sortedSchemes = WWS_SPG_DATA;
         } else if (userInfo.division === ENVIRO) {
           sortedSchemes = [
             ...Enviro_ControlSchemeDataDol,
             ...Enviro_ControlSchemeDataSD,
             ...Enviro_ControlSchemeDataVFD,
-          ]
+          ];
         } else if (userInfo.division === WWS_IPG) {
-          sortedSchemes = WWS_IPG_data
+          sortedSchemes = WWS_IPG_data;
         } else {
-          sortedSchemes = res
+          sortedSchemes = res;
         }
 
-        console.log(sortedSchemes, "control schemes sorted")
+        console.log(sortedSchemes, "control schemes sorted");
 
-        setControlSchemes(sortedSchemes)
-        setLoading(false)
-      })
-      setLpbsSchemes(lpbsResponse)
-      setCableTrayData(cableTrayData[0])
-      setCableScheduleSavedData(savedCableSchedule)
-      setLoadListData(loadList?.electrical_load_list_data)
-      setCableScheduleData(formattedData)
+        setControlSchemes(sortedSchemes);
+        setLoading(false);
+      });
+      setLpbsSchemes(lpbsResponse);
+      setCableTrayData(cableTrayData[0]);
+      setCableScheduleSavedData(savedCableSchedule);
+      setLoadListData(loadList?.electrical_load_list_data);
+      setCableScheduleData(formattedData);
     } catch (error) {
-      console.error("Error fetching data:", error)
-      message.error("Failed to load data")
-      setCableScheduleData([])
+      console.error("Error fetching data:", error);
+      message.error("Failed to load data");
+      setCableScheduleData([]);
     } finally {
-      setIsLoading(false)
-      setLoading(false)
+      setIsLoading(false);
+      setLoading(false);
     }
-  }, [loadListLatestRevisionId,cableScheduleRevisionId,])
+  }, [loadListLatestRevisionId, cableScheduleRevisionId]);
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    fetchData();
+  }, [fetchData]);
 
   return {
     controlSchemes,
@@ -191,38 +226,42 @@ const useDataFetching = (
     loadListData,
     isLoading,
     refetch: fetchData,
-  }
-}
+  };
+};
 
 const CableSchedule: React.FC<CableScheduleProps> = ({
   loadListLatestRevisionId,
   cableScheduleRevisionId,
   designBasisRevisionId,
 }) => {
-  const jRef = useRef<HTMLDivElement | null>(null)
-  const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
-  const { setLoading } = useLoading()
-  const params = useParams()
-  const [cableSizeCalcData, setCableSizeCalcData] = useState<any[]>([])
-  const router = useRouter()
+  const jRef = useRef<HTMLDivElement | null>(null);
+  const [spreadsheetInstance, setSpreadsheetInstance] =
+    useState<JspreadsheetInstance | null>(null);
+  const { setLoading } = useLoading();
+  const params = useParams();
+  const [cableSizeCalcData, setCableSizeCalcData] = useState<any[]>([]);
+  const router = useRouter();
   const userInfo: {
-    division: string
-  } = useCurrentUser()
+    division: string;
+  } = useCurrentUser();
 
-  const project_id = params.project_id as string
+  const project_id = params.project_id as string;
 
-  const [isMulticoreModalOpen, setIsMulticoreModalOpen] = useState(false)
+  const [isMulticoreModalOpen, setIsMulticoreModalOpen] = useState(false);
 
   const {
     lpbsSchemes,
     controlSchemes,
-    cableScheduleSavedData,
     cableTrayData,
     cableScheduleData,
     loadListData,
     isLoading,
-    refetch,
-  } = useDataFetching(designBasisRevisionId, loadListLatestRevisionId, cableScheduleRevisionId, userInfo)
+  } = useDataFetching(
+    designBasisRevisionId,
+    loadListLatestRevisionId,
+    cableScheduleRevisionId,
+    userInfo
+  );
 
   const typedCableScheduleColumns = useMemo(
     () =>
@@ -231,7 +270,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         type: column.type as ValidColumnType,
       })),
     []
-  )
+  );
 
   const typedMulticoreCableConfigColumns = useMemo(
     () =>
@@ -240,7 +279,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         type: column.type as ValidColumnType,
       })),
     []
-  )
+  );
 
   const cableScheduleOptions = useMemo(
     () => ({
@@ -260,67 +299,77 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
       rowResize: true,
     }),
     [typedCableScheduleColumns, cableScheduleData]
-  )
+  );
 
   useEffect(() => {
-    if (isLoading || !jRef.current) return
+    if (isLoading || !jRef.current) return;
 
     const initSpreadsheet = () => {
       if (spreadsheetInstance) {
-        spreadsheetInstance.destroy()
+        spreadsheetInstance.destroy();
       }
 
-      const instance = jspreadsheet(jRef.current!, cableScheduleOptions)
-      setSpreadsheetInstance(instance)
-      setLoading(false)
-    }
+      const instance = jspreadsheet(jRef.current!, cableScheduleOptions);
+      setSpreadsheetInstance(instance);
+      setLoading(false);
+    };
 
-    initSpreadsheet()
+    initSpreadsheet();
 
     return () => {
-      spreadsheetInstance?.destroy()
-    }
-  }, [isLoading, cableScheduleOptions])
+      spreadsheetInstance?.destroy();
+    };
+  }, [isLoading, cableScheduleOptions]);
   const getCableType = (tag_number: any) => {
-    let feeder = cableSizeCalcData?.find((item: any) => item.tag_number == tag_number)
-    return feeder ? feeder.type : ""
-  }
+    const feeder = cableSizeCalcData?.find(
+      (item: any) => item.tag_number == tag_number
+    );
+    return feeder ? feeder.type : "";
+  };
   const getCableOd = (tag_number: any) => {
-    let feeder = cableSizeCalcData?.find((item) => item.tagNo == tag_number)
-    return feeder ? feeder.cableOd : ""
-  }
+    const feeder = cableSizeCalcData?.find((item) => item.tagNo == tag_number);
+    return feeder ? feeder.cableOd : "";
+  };
   const getCableGlandSize = (tag_number: any) => {
-    let feeder = cableSizeCalcData?.find((item) => item.tagNo == tag_number)
-    return feeder ? feeder.gladSize : ""
-  }
+    const feeder = cableSizeCalcData?.find((item) => item.tagNo == tag_number);
+    return feeder ? feeder.gladSize : "";
+  };
   const getOdLcs = (core: any, size: any) => {
-    let od = lcs_od_gland_data.find((item) => item[0] == core && item[3] == size)
-    return od ? od[1] : []
-  }
+    const od = lcs_od_gland_data.find(
+      (item) => item[0] == core && item[3] == size
+    );
+    return od ? od[1] : [];
+  };
   const getGladSizeLcs = (core: any, size: any) => {
-    let od = lcs_od_gland_data.find((item) => item[0] == core && item[3] == size)
-    return od ? od[2] : []
-  }
+    const od = lcs_od_gland_data.find(
+      (item) => item[0] == core && item[3] == size
+    );
+    return od ? od[2] : [];
+  };
   const handleCableScheduleSave = async () => {
-    const data = spreadsheetInstance?.getData()
-    console.log(data, "Cable schedule data")
-    console.log("Load list data", loadListData)
+    const data = spreadsheetInstance?.getData();
+    console.log(data, "Cable schedule data");
+    console.log("Load list data", loadListData);
     const individualFeeders: any = data?.map((row: any) => {
-      const division = userInfo?.division
-      const loadListItem = loadListData.find((item: any) => item.tag_number === row[0])
+      const division = userInfo?.division;
+      const loadListItem = loadListData.find(
+        (item: any) => item.tag_number === row[0]
+      );
 
-      const lpbsScheme = lpbsSchemes?.find((item) => item.lpbs_type === loadListItem.lpbs_type)
+      const lpbsScheme = lpbsSchemes?.find(
+        (item) => item.lpbs_type === loadListItem.lpbs_type
+      );
       const controlScheme = controlSchemes?.find((item) =>
         division === HEATING
           ? loadListItem.control_scheme === item.sub_scheme
           : loadListItem.control_scheme === item.control_scheme
-      )
+      );
 
-      const isPresentInGrouping = false
-      const isSpaceHeater = loadListItem.space_heater === "Yes"
-      const isThermister = loadListItem.thermistor === "Yes"
+      const isPresentInGrouping = false;
+      const isSpaceHeater = loadListItem.space_heater === "Yes";
+      const isThermister = loadListItem.thermistor === "Yes";
 
-      const cables = []
+      const cables = [];
       const motorCable = {
         panel_name: loadListItem?.panel,
         starter_type: loadListItem?.starter_type,
@@ -341,8 +390,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         gland_size: getCableGlandSize(row[0]),
         gland_qty: (Number(row[21]) * 2).toString(),
         comment: "POWER TO MOTOR",
-      }
-      cables.push(motorCable)
+      };
+      cables.push(motorCable);
 
       if (isSpaceHeater) {
         const spaceheaterCable = {
@@ -366,8 +415,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           gland_size: "3/4″",
           gland_qty: "2",
           comment: "POWER TO SPACE HEATER",
-        }
-        cables.push(spaceheaterCable)
+        };
+        cables.push(spaceheaterCable);
       }
       if (lpbsScheme?.lcs) {
         const lcsCable = {
@@ -391,8 +440,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           gland_size: getGladSizeLcs(lpbsScheme.lcs, "1.5"),
           gland_qty: "2",
           comment: "START & STOP COMMAND FROM LCS",
-        }
-        cables.push(lcsCable)
+        };
+        cables.push(lcsCable);
       }
       if (lpbsScheme?.lcs_inc_dec) {
         const lcsIncDecCable = {
@@ -416,8 +465,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           gland_size: getGladSizeLcs(lpbsScheme.lcs_inc_dec, "1.5"),
           gland_qty: "2",
           comment: "START & STOP COMMAND FROM LCS (INC/DEC)",
-        }
-        cables.push(lcsIncDecCable)
+        };
+        cables.push(lcsIncDecCable);
       }
       if (lpbsScheme?.lcs_rpm) {
         const lcsRpmCable = {
@@ -441,8 +490,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           gland_size: "3/4″",
           gland_qty: "2",
           comment: "START & STOP COMMAND FROM LCS (RPM)",
-        }
-        cables.push(lcsRpmCable)
+        };
+        cables.push(lcsRpmCable);
       }
       if (!isPresentInGrouping && controlScheme?.di) {
         const diCable = {
@@ -466,8 +515,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           gland_size: getGladSizeLcs(controlScheme.di * 2 + "C", "0.5"),
           gland_qty: "2",
           comment: "RUN TRIP & L/R FEEDBACK",
-        }
-        cables.push(diCable)
+        };
+        cables.push(diCable);
       }
       if (!isPresentInGrouping && controlScheme?.do) {
         const doCable = {
@@ -491,8 +540,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           gland_size: getGladSizeLcs(controlScheme.do * 2 + "C", "0.5"),
           gland_qty: "2",
           comment: "START/STOP COMMAND FROM PLC",
-        }
-        cables.push(doCable)
+        };
+        cables.push(doCable);
       }
       if (!isPresentInGrouping && controlScheme?.ai) {
         const aiCable = {
@@ -516,8 +565,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           gland_size: "3/4″",
           gland_qty: "2",
           comment: "SPEED REFERANCE",
-        }
-        cables.push(aiCable)
+        };
+        cables.push(aiCable);
       }
       if (!isPresentInGrouping && controlScheme?.ao) {
         const aoCable = {
@@ -541,8 +590,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           gland_size: "3/4″",
           gland_qty: "2",
           comment: "SPEED FEEDBACK",
-        }
-        cables.push(aoCable)
+        };
+        cables.push(aoCable);
       }
       if (isThermister) {
         const thermisterCable = {
@@ -557,8 +606,10 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           type_of_cable: "Control - 2XWY",
           scope: "",
           number_of_runs: "1",
-          pair_core: division === HEATING ? "1P" : division === ENVIRO ? "3C" : "", // question for javed sir
-          sizemm2: division === HEATING ? "0.5" : division === ENVIRO ? "1.5" : "",
+          pair_core:
+            division === HEATING ? "1P" : division === ENVIRO ? "3C" : "", // question for javed sir
+          sizemm2:
+            division === HEATING ? "0.5" : division === ENVIRO ? "1.5" : "",
           cable_material: "CU",
           type_of_insulation: "XLPE",
           appx_length: row[13],
@@ -566,29 +617,33 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           gland_size: "3/4″",
           gland_qty: "2",
           comment: "THERMISTER CABLE",
-        }
-        cables.push(thermisterCable)
+        };
+        cables.push(thermisterCable);
       }
 
       return {
         motor_name: row[1] + ` (${row[0]}) `,
         cables: cables,
-      }
-    })
+      };
+    });
 
-    const grouping: any = JSON.parse(localStorage.getItem("grouping_of_cables_table") as string)
-    let groupPayload = []
+    const grouping: any = JSON.parse(
+      localStorage.getItem("grouping_of_cables_table") as string
+    );
+    const groupPayload = [];
     if (grouping) {
       for (let i = 0; i < grouping.length; i++) {
-        const cableSchedule: any = data?.filter((el) => el[1] === grouping[i][6].split(",")[0])[0]
-        let Di = grouping[i][4]
-        let Do = grouping[i++][4]
-        let Ai = grouping[i++][4]
-        let Ao = grouping[i++][4]
+        const cableSchedule: any = data?.filter(
+          (el) => el[1] === grouping[i][6].split(",")[0]
+        )[0];
+        const Di = grouping[i][4];
+        const Do = grouping[i++][4];
+        const Ai = grouping[i++][4];
+        const Ao = grouping[i++][4];
         i += 4;
 
-        let cables: any[] = []
-        console.log(Di, Do, Ai, Ao, "DIDOAIAO")
+        const cables: any[] = [];
+        console.log(Di, Do, Ai, Ao, "DIDOAIAO");
         if (Di !== "-") {
           const diCable = {
             panel_name: grouping[i][7],
@@ -596,8 +651,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             name: "PLC (DI)",
             voltage: "",
             kw: "",
-            service_description:"", 
-            tag_number:"",
+            service_description: "",
+            tag_number: "",
 
             type_of_cable: "Control - 2XWY",
             scope: "",
@@ -611,8 +666,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             gland_size: getGladSizeLcs(Di, "0.5"),
             gland_qty: "2",
             comment: "RUN TRIP & L/R FEEDBACK",
-          }
-          cables.push(diCable)
+          };
+          cables.push(diCable);
         }
         if (Do !== "-") {
           const doCable = {
@@ -620,8 +675,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             starter_type: "",
             name: "PLC (DO)",
             voltage: "",
-            service_description:"", 
-            tag_number:"",
+            service_description: "",
+            tag_number: "",
             kw: "",
             type_of_cable: "Control - 2XWY",
             scope: "",
@@ -635,8 +690,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             gland_size: getGladSizeLcs(Do, "0.5"),
             gland_qty: "2",
             comment: "START/STOP COMMAND FROM PLC",
-          }
-          cables.push(doCable)
+          };
+          cables.push(doCable);
         }
         if (Ai !== "-") {
           const aiCable = {
@@ -644,8 +699,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             starter_type: "",
             name: "PLC (AI)",
             voltage: "",
-            service_description:"", 
-            tag_number:"",
+            service_description: "",
+            tag_number: "",
             kw: "",
             type_of_cable: "Signal - 2XWY",
             scope: "",
@@ -659,8 +714,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             gland_size: "3/4″",
             gland_qty: "2",
             comment: "SPEED REFERANCE",
-          }
-          cables.push(aiCable)
+          };
+          cables.push(aiCable);
         }
         if (Ao !== "-") {
           const aoCable = {
@@ -668,8 +723,8 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             starter_type: "",
             name: "PLC (AO)",
             voltage: "",
-            service_description:"", 
-            tag_number:"",
+            service_description: "",
+            tag_number: "",
             kw: "",
             type_of_cable: "Signal - 2XWY",
             scope: "",
@@ -683,20 +738,20 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
             gland_size: "3/4″",
             gland_qty: "2",
             comment: "SPEED FEEDBACK",
-          }
-          cables.push(aoCable)
+          };
+          cables.push(aoCable);
         }
         groupPayload.push({
           motor_name: grouping[i][6],
           cables: cables,
-        })
+        });
       }
     }
-    console.log(individualFeeders, "final payload")
-    console.log(groupPayload, "final payload group")
-    console.log({ ...individualFeeders, ...groupPayload }, "final payload all")
+    console.log(individualFeeders, "final payload");
+    console.log(groupPayload, "final payload group");
+    console.log({ ...individualFeeders, ...groupPayload }, "final payload all");
 
-    let payload = {
+    const payload = {
       project_id: project_id,
       status: "Not Released",
       description: "test",
@@ -728,44 +783,47 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           final_cable_size: row[23],
           cable_selected_status: row[24],
           cable_size_heating_chart: row[25],
-        }
+        };
       }),
       excel_payload: { ...individualFeeders, ...groupPayload },
-    }
+    };
     try {
-      console.log(payload, "cable schedule payload")
+      console.log(payload, "cable schedule payload");
 
       const respose = await updateData(
         `${CABLE_SCHEDULE_REVISION_HISTORY_API}/${cableScheduleRevisionId}`,
         false,
         payload
-      )
-      setLoading(false)
-      message.success("Cable Schedule Saved !")
+      );
+      setLoading(false);
+      message.success("Cable Schedule Saved !");
 
-      console.log(respose, "Cable Schedule response")
+      console.log(respose, "Cable Schedule response");
     } catch (error) {
-      message.error("Unable to save Cable Schedule list")
+      console.error(error);
+      message.error("Unable to save Cable Schedule list");
 
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
   const getStandByKw = (item2: any, item3: any) => {
     if (item2 == 0) {
-      return Number(item3)
+      return Number(item3);
     } else {
-      return Number(item2)
+      return Number(item2);
     }
-  }
+  };
   const getCableSizing = async () => {
-    setLoading(true)
-    const cableScheduleData = spreadsheetInstance?.getData()
-    console.log(cableTrayData, "cableTrayData")
+    setLoading(true);
+    const cableScheduleData = spreadsheetInstance?.getData();
+    console.log(cableTrayData, "cableTrayData");
     const cableSizeCalc = await getCableSizingCalculation({
       divisionName: userInfo.division,
       layoutCableTray: {
-        motor_voltage_drop_during_running: cableTrayData?.motor_voltage_drop_during_running,
-        motor_voltage_drop_during_starting: cableTrayData?.motor_voltage_drop_during_starting,
+        motor_voltage_drop_during_running:
+          cableTrayData?.motor_voltage_drop_during_running,
+        motor_voltage_drop_during_starting:
+          cableTrayData?.motor_voltage_drop_during_starting,
         copper_conductor: cableTrayData?.copper_conductor,
         aluminium_conductor: cableTrayData?.aluminium_conductor,
       },
@@ -785,86 +843,91 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
           numberOfCores: row[22],
           deratingFactor: Number(row[19]),
           appx_length: Number(row[13]),
-        }
+        };
       }),
-    })
-    console.log(cableSizeCalc, "cableSizeCalc")
-    const sizingCalcData: any = []
+    });
+    console.log(cableSizeCalc, "cableSizeCalc");
+    const sizingCalcData: any = [];
 
     const updatedCableSchedule: any = cableScheduleData?.map((row: any) => {
-      const calculationResult = cableSizeCalc?.find((item: any) => item.tagNo === row[0])
+      const calculationResult = cableSizeCalc?.find(
+        (item: any) => item.tagNo === row[0]
+      );
       if (calculationResult) {
-        const updatedRow = [...row]
+        const updatedRow = [...row];
 
-        updatedRow[8] = calculationResult.moc
-        updatedRow[11] = calculationResult.dbl_r
-        updatedRow[12] = calculationResult.dbl_x
-        updatedRow[14] = calculationResult.vd_run
-        updatedRow[15] = calculationResult.vd_start
-        updatedRow[16] = calculationResult.vd_run_percentage
-        updatedRow[17] = calculationResult.vd_start_percentage
-        updatedRow[18] = calculationResult.current_air
-        updatedRow[20] = calculationResult.final_current_carrying_capacity
+        updatedRow[8] = calculationResult.moc;
+        updatedRow[11] = calculationResult.dbl_r;
+        updatedRow[12] = calculationResult.dbl_x;
+        updatedRow[14] = calculationResult.vd_run;
+        updatedRow[15] = calculationResult.vd_start;
+        updatedRow[16] = calculationResult.vd_run_percentage;
+        updatedRow[17] = calculationResult.vd_start_percentage;
+        updatedRow[18] = calculationResult.current_air;
+        updatedRow[20] = calculationResult.final_current_carrying_capacity;
         updatedRow[23] = calculationResult.sizes.includes("/")
           ? calculationResult.sizes
-          : parseFloat(calculationResult.sizes).toFixed(1)
-        updatedRow[25] = calculationResult.heating_chart_cable_size //cable size as per heating value
+          : parseFloat(calculationResult.sizes).toFixed(1);
+        updatedRow[25] = calculationResult.heating_chart_cable_size; //cable size as per heating value
         sizingCalcData.push({
           tag_number: calculationResult.tagNo,
           cableOd: calculationResult.od,
           gladSize: "ET″",
           type: calculationResult.cable_type,
-        })
+        });
 
-        return updatedRow
+        return updatedRow;
       }
 
-      return row
-    })
-    console.log("updated calc", updatedCableSchedule)
+      return row;
+    });
+    console.log("updated calc", updatedCableSchedule);
 
-    spreadsheetInstance?.setData(updatedCableSchedule)
-    setCableSizeCalcData(sizingCalcData)
-    setLoading(false)
+    spreadsheetInstance?.setData(updatedCableSchedule);
+    setCableSizeCalcData(sizingCalcData);
+    setLoading(false);
 
     // setLoadListData(updatedLoadList)
-  }
+  };
   // handleDownloadVD
   const handleDownloadVD = async () => {
-    setLoading(true)
+    setLoading(true);
     // console.log(revision_id)
     // console.log(getDownLoadEndpoint())
 
     try {
       const result = await downloadFile(GET_VOLTAGE_DROP_EXCEL_API, true, {
-        revision_id:cableScheduleRevisionId,
-      })
+        revision_id: cableScheduleRevisionId,
+      });
       console.log(result);
-      
-      const byteArray = new Uint8Array(result?.data?.data) // Convert the array into a Uint8Array
+
+      const byteArray = new Uint8Array(result?.data?.data); // Convert the array into a Uint8Array
       const excelBlob = new Blob([byteArray.buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      })
-      const url = window.URL.createObjectURL(excelBlob)
-      const link = document.createElement("a")
-      link.href = url
-      link.setAttribute("download", `voltage_drop_calculation.xlsx`) // Filename
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      });
+      const url = window.URL.createObjectURL(excelBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `voltage_drop_calculation.xlsx`); // Filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
-      console.error(error)
-      setLoading(false)
+      console.error(error);
+      setLoading(false);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
+  };
 
   return (
     <>
       <div className="mb-4 flex justify-end gap-4">
-        <Button type="primary" onClick={() => setIsMulticoreModalOpen(true)} className="hover:bg-blue-600">
+        <Button
+          type="primary"
+          onClick={() => setIsMulticoreModalOpen(true)}
+          className="hover:bg-blue-600"
+        >
           Multicore Cable Configurator
         </Button>
       </div>
@@ -885,23 +948,31 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         loadListData={loadListData}
         typedMulticoreCableColumns={typedMulticoreCableConfigColumns}
         onConfigurationComplete={(selectedCables: any) => {
-          console.log("Selected cables:", selectedCables)
+          console.log("Selected cables:", selectedCables);
         }}
       />
 
       <div className="flex w-full flex-row justify-end gap-2">
-        <Button type="primary" onClick={handleDownloadVD}>Download Voltage Drop Calculations</Button>
+        <Button type="primary" onClick={handleDownloadVD}>
+          Download Voltage Drop Calculations
+        </Button>
         <Button type="primary" onClick={getCableSizing}>
           Get Cable Sizing
         </Button>
-        <Button type="primary" onClick={handleCableScheduleSave} disabled={isLoading}>
+        <Button
+          type="primary"
+          onClick={handleCableScheduleSave}
+          disabled={isLoading}
+        >
           Save
         </Button>
         <Button
           type="primary"
           onClick={() => {
-            setLoading(true)
-            router.push(`/project/${project_id}/electrical-load-list/motor-canopy`)
+            setLoading(true);
+            router.push(
+              `/project/${project_id}/electrical-load-list/motor-canopy`
+            );
           }}
           disabled={isLoading}
         >
@@ -909,7 +980,7 @@ const CableSchedule: React.FC<CableScheduleProps> = ({
         </Button>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default CableSchedule
+export default CableSchedule;
