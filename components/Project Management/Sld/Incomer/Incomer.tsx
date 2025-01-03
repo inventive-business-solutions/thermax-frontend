@@ -1,23 +1,29 @@
-import { Button } from "antd"
-import React, { useState } from "react"
-import AddIncomer from "./Add Incomer/AddIncomer"
-import { useGetData } from "hooks/useCRUD"
-import { PROJECT_PANEL_API } from "configs/api-endpoints"
+import { Button } from "antd";
+import React, { useState } from "react";
+import AddIncomer from "./Add Incomer/AddIncomer";
 interface Props {
-  designBasisRevisionId: string
-  revision_id: string
-  panelData: any
-  projectPanelData: any
+  designBasisRevisionId: string;
+  revision_id: string;
+  panelData: any;
+  projectPanelData: any;
 }
-const Incomer: React.FC<Props> = ({ designBasisRevisionId, projectPanelData, panelData, revision_id }) => {
-  const [isAddMainsIncomerOpen, setIsAddMainsIncomerOpen] = useState<boolean>(false)
+const Incomer: React.FC<Props> = ({
+  designBasisRevisionId,
+  projectPanelData,
+  panelData,
+  revision_id,
+}) => {
+  const [isAddMainsIncomerOpen, setIsAddMainsIncomerOpen] =
+    useState<boolean>(false);
 
-  console.log(designBasisRevisionId, "project panel data")
-  console.log(projectPanelData, "project panel data")
-  console.log(panelData, "project panel data")
+  console.log(designBasisRevisionId, "project panel data");
+  console.log(projectPanelData, "project panel data");
+  console.log(panelData, "project panel data");
   const getPanelType = () => {
-    return projectPanelData?.find((item: any) => item.panel_name === panelData.panelName)
-  }
+    return projectPanelData?.find(
+      (item: any) => item.panel_name === panelData.panelName
+    );
+  };
 
   return (
     <div>
@@ -25,7 +31,7 @@ const Incomer: React.FC<Props> = ({ designBasisRevisionId, projectPanelData, pan
         <Button
           type="primary"
           onClick={() => {
-            setIsAddMainsIncomerOpen(true)
+            setIsAddMainsIncomerOpen(true);
           }}
           className="hover:bg-blue-600"
         >
@@ -49,7 +55,7 @@ const Incomer: React.FC<Props> = ({ designBasisRevisionId, projectPanelData, pan
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Incomer
+export default Incomer;

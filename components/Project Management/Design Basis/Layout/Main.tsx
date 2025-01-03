@@ -1,34 +1,36 @@
-"use client"
-import { Tabs } from "antd"
-import React, { useEffect, useState } from "react"
-import { useLoading } from "hooks/useLoading"
-import CableTray from "./CableTray"
-import Earthing from "./Earthing"
+"use client";
+import { Tabs } from "antd";
+import React, { useEffect, useState } from "react";
+import { useLoading } from "@/hooks/useLoading";
+import CableTray from "./CableTray";
+import Earthing from "./Earthing";
 
 const MainLayout = ({ revision_id }: { revision_id: string }) => {
-  const [activeKey, setActiveKey] = useState<string>("1") // Default active tab
-  const { setLoading: setModalLoading } = useLoading()
+  const [activeKey, setActiveKey] = useState<string>("1"); // Default active tab
+  const { setLoading: setModalLoading } = useLoading();
   useEffect(() => {
-    setModalLoading(false)
+    setModalLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const TabMCC = [
     {
       label: "Cable Tray",
       key: "1",
-      children: <CableTray revision_id={revision_id} setActiveKey={setActiveKey} />,
+      children: (
+        <CableTray revision_id={revision_id} setActiveKey={setActiveKey} />
+      ),
     },
     {
       label: "Earthing",
       key: "2",
       children: <Earthing revision_id={revision_id} />,
     },
-  ]
+  ];
 
   const onChange = (key: string) => {
-    setActiveKey(key) // Update active tab
-  }
+    setActiveKey(key); // Update active tab
+  };
 
   return (
     <div>
@@ -43,7 +45,7 @@ const MainLayout = ({ revision_id }: { revision_id: string }) => {
         }))}
       />
     </div>
-  )
-}
+  );
+};
 
-export default MainLayout
+export default MainLayout;

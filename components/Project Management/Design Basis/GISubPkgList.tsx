@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { Checkbox, Radio, Select } from "antd"
-import React, { useEffect, useState } from "react"
+import { Checkbox, Radio, Select } from "antd";
+import React, { useEffect, useState } from "react";
 import {
   CLASSIFICATION_AREA_GAS_GROUP_API,
   CLASSIFICATION_AREA_STANDARD_API,
   CLASSIFICATION_AREA_TEMPERATURE_CLASS_API,
   CLASSIFICATION_AREA_ZONE_API,
-} from "configs/api-endpoints"
-import { useDropdownOptions } from "hooks/useDropdownOptions"
+} from "@/configs/api-endpoints";
+import { useDropdownOptions } from "@/hooks/useDropdownOptions";
 
 export default function GISubPkgList({
   mainPkg,
   generalInfoData,
   setGeneralInfoData,
 }: {
-  mainPkg: any
-  generalInfoData: any
-  setGeneralInfoData: any
+  mainPkg: any;
+  generalInfoData: any;
+  setGeneralInfoData: any;
 }) {
-  const [main_package, setMainPackage] = useState<any>()
+  const [main_package, setMainPackage] = useState<any>();
   useEffect(() => {
     setMainPackage({
       ...mainPkg,
@@ -27,46 +27,62 @@ export default function GISubPkgList({
       // zone: mainPkg?.zone || "Zone 2",
       // gas_group: mainPkg?.gas_group || "IIA/IIB",
       // temperature_class: mainPkg?.temperature_class || "T3",
-    })
-  }, [mainPkg])
-  const { dropdownOptions: standardOptions } = useDropdownOptions(CLASSIFICATION_AREA_STANDARD_API, "name")
-  const { dropdownOptions: zoneOptions } = useDropdownOptions(CLASSIFICATION_AREA_ZONE_API, "name")
-  const { dropdownOptions: gasGroupOptions } = useDropdownOptions(CLASSIFICATION_AREA_GAS_GROUP_API, "name")
+    });
+  }, [mainPkg]);
+  const { dropdownOptions: standardOptions } = useDropdownOptions(
+    CLASSIFICATION_AREA_STANDARD_API,
+    "name"
+  );
+  const { dropdownOptions: zoneOptions } = useDropdownOptions(
+    CLASSIFICATION_AREA_ZONE_API,
+    "name"
+  );
+  const { dropdownOptions: gasGroupOptions } = useDropdownOptions(
+    CLASSIFICATION_AREA_GAS_GROUP_API,
+    "name"
+  );
   const { dropdownOptions: temperatureClassOptions } = useDropdownOptions(
     CLASSIFICATION_AREA_TEMPERATURE_CLASS_API,
     "name"
-  )
+  );
 
-  const [hasHazardousArea, setHasHazardousArea] = useState(false)
+  const [hasHazardousArea, setHasHazardousArea] = useState(false);
 
   useEffect(() => {
-    if (!generalInfoData?.pkgList) return // Safeguard if data is undefined or empty
+    if (!generalInfoData?.pkgList) return; // Safeguard if data is undefined or empty
 
-    const mainPkgList = generalInfoData.pkgList
-    const selectedMainPkg = mainPkgList.find((pkg: any) => pkg?.main_package_name === main_package?.main_package_name)
+    const mainPkgList = generalInfoData.pkgList;
+    const selectedMainPkg = mainPkgList.find(
+      (pkg: any) => pkg?.main_package_name === main_package?.main_package_name
+    );
 
     // Check if any main package has a hazardous sub-package selected
     const hasHazardous = selectedMainPkg?.sub_packages?.some((subPkg: any) => {
       const isHazardous =
-        (subPkg.is_sub_package_selected === 1 || subPkg.is_sub_package_selected === true) &&
-        subPkg.area_of_classification === "Hazardous Area"
+        (subPkg.is_sub_package_selected === 1 ||
+          subPkg.is_sub_package_selected === true) &&
+        subPkg.area_of_classification === "Hazardous Area";
 
-      return isHazardous
-    })
+      return isHazardous;
+    });
 
     // Update state only if necessary
     if (hasHazardous !== hasHazardousArea) {
-      setHasHazardousArea(hasHazardous)
+      setHasHazardousArea(hasHazardous);
     }
-  }, [generalInfoData, hasHazardousArea, main_package?.main_package_name])
+  }, [generalInfoData, hasHazardousArea, main_package?.main_package_name]);
 
   const getSubPkg = (main_package: any, subPkg: any, generalInfoData: any) => {
-    const main_package_name = main_package?.main_package_name
-    const sub_package_name = subPkg.sub_package_name
-    const defaultMainPkg = generalInfoData?.pkgList?.find((pkg: any) => pkg?.main_package_name === main_package_name)
-    const defaultSubPkg = defaultMainPkg?.sub_packages?.find((pkg: any) => pkg.sub_package_name === sub_package_name)
-    return defaultSubPkg
-  }
+    const main_package_name = main_package?.main_package_name;
+    const sub_package_name = subPkg.sub_package_name;
+    const defaultMainPkg = generalInfoData?.pkgList?.find(
+      (pkg: any) => pkg?.main_package_name === main_package_name
+    );
+    const defaultSubPkg = defaultMainPkg?.sub_packages?.find(
+      (pkg: any) => pkg.sub_package_name === sub_package_name
+    );
+    return defaultSubPkg;
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -77,21 +93,25 @@ export default function GISubPkgList({
               <Checkbox
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 checked={(() => {
-                  const subPkgValue = getSubPkg(main_package, subPkg, generalInfoData)
-                  return subPkgValue?.is_sub_package_selected
+                  const subPkgValue = getSubPkg(
+                    main_package,
+                    subPkg,
+                    generalInfoData
+                  );
+                  return subPkgValue?.is_sub_package_selected;
                 })()}
                 onChange={(e) => {
-                  const newGeneralInfoData = { ...generalInfoData }
-                  const main_package_name = main_package?.main_package_name
-                  const sub_package_name = subPkg.sub_package_name
+                  const newGeneralInfoData = { ...generalInfoData };
+                  const main_package_name = main_package?.main_package_name;
+                  const sub_package_name = subPkg.sub_package_name;
                   const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
                     (pkg: any) => pkg?.main_package_name === main_package_name
-                  )
+                  );
                   const defaultSubPkg = defaultMainPkg?.sub_packages?.find(
                     (pkg: any) => pkg.sub_package_name === sub_package_name
-                  )
-                  defaultSubPkg.is_sub_package_selected = e.target.checked
-                  setGeneralInfoData(newGeneralInfoData)
+                  );
+                  defaultSubPkg.is_sub_package_selected = e.target.checked;
+                  setGeneralInfoData(newGeneralInfoData);
                 }}
               >
                 {subPkg.sub_package_name}
@@ -101,22 +121,26 @@ export default function GISubPkgList({
               <Radio.Group
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 value={(() => {
-                  const subPkgValue = getSubPkg(main_package, subPkg, generalInfoData)
-                  return subPkgValue?.area_of_classification
+                  const subPkgValue = getSubPkg(
+                    main_package,
+                    subPkg,
+                    generalInfoData
+                  );
+                  return subPkgValue?.area_of_classification;
                 })()}
                 onChange={
                   ((e: any) => {
-                    const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package?.main_package_name
-                    const sub_package_name = subPkg.sub_package_name
+                    const newGeneralInfoData = { ...generalInfoData };
+                    const main_package_name = main_package?.main_package_name;
+                    const sub_package_name = subPkg.sub_package_name;
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
                       (pkg: any) => pkg?.main_package_name === main_package_name
-                    )
+                    );
                     const defaultSubPkg = defaultMainPkg?.sub_packages?.find(
                       (pkg: any) => pkg.sub_package_name === sub_package_name
-                    )
-                    defaultSubPkg.area_of_classification = e.target.value
-                    setGeneralInfoData(newGeneralInfoData)
+                    );
+                    defaultSubPkg.area_of_classification = e.target.value;
+                    setGeneralInfoData(newGeneralInfoData);
                   }) as any
                 }
               >
@@ -129,7 +153,9 @@ export default function GISubPkgList({
       ))}
       {hasHazardousArea && (
         <div className="flex flex-col gap-4">
-          <h4 className="font-semibold text-slate-800">Area of Classification</h4>
+          <h4 className="font-semibold text-slate-800">
+            Area of Classification
+          </h4>
           <div className="flex gap-2">
             <div className="flex-1">
               <p className="font-semibold text-slate-700">Standard</p>
@@ -141,13 +167,13 @@ export default function GISubPkgList({
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
-                    const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package?.main_package_name
+                    const newGeneralInfoData = { ...generalInfoData };
+                    const main_package_name = main_package?.main_package_name;
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
                       (pkg: any) => pkg?.main_package_name === main_package_name
-                    )
-                    defaultMainPkg.standard = value
-                    setGeneralInfoData(newGeneralInfoData)
+                    );
+                    defaultMainPkg.standard = value;
+                    setGeneralInfoData(newGeneralInfoData);
                   }) as any
                 }
               />
@@ -162,13 +188,13 @@ export default function GISubPkgList({
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
-                    const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package?.main_package_name
+                    const newGeneralInfoData = { ...generalInfoData };
+                    const main_package_name = main_package?.main_package_name;
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
                       (pkg: any) => pkg?.main_package_name === main_package_name
-                    )
-                    defaultMainPkg.zone = value
-                    setGeneralInfoData(newGeneralInfoData)
+                    );
+                    defaultMainPkg.zone = value;
+                    setGeneralInfoData(newGeneralInfoData);
                   }) as any
                 }
               />
@@ -183,13 +209,13 @@ export default function GISubPkgList({
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
-                    const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package?.main_package_name
+                    const newGeneralInfoData = { ...generalInfoData };
+                    const main_package_name = main_package?.main_package_name;
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
                       (pkg: any) => pkg?.main_package_name === main_package_name
-                    )
-                    defaultMainPkg.gas_group = value
-                    setGeneralInfoData(newGeneralInfoData)
+                    );
+                    defaultMainPkg.gas_group = value;
+                    setGeneralInfoData(newGeneralInfoData);
                   }) as any
                 }
               />
@@ -204,13 +230,13 @@ export default function GISubPkgList({
                 disabled={generalInfoData.is_package_selection_enabled === 0}
                 onChange={
                   ((value: any) => {
-                    const newGeneralInfoData = { ...generalInfoData }
-                    const main_package_name = main_package?.main_package_name
+                    const newGeneralInfoData = { ...generalInfoData };
+                    const main_package_name = main_package?.main_package_name;
                     const defaultMainPkg = newGeneralInfoData?.pkgList?.find(
                       (pkg: any) => pkg?.main_package_name === main_package_name
-                    )
-                    defaultMainPkg.temperature_class = value
-                    setGeneralInfoData(newGeneralInfoData)
+                    );
+                    defaultMainPkg.temperature_class = value;
+                    setGeneralInfoData(newGeneralInfoData);
                   }) as any
                 }
               />
@@ -219,5 +245,5 @@ export default function GISubPkgList({
         </div>
       )}
     </div>
-  )
+  );
 }

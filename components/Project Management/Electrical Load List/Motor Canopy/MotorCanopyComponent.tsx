@@ -1,37 +1,45 @@
-"use client"
-import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
-import React, { useRef, useEffect, useState, useMemo, useCallback } from "react"
-import "jspreadsheet-ce/dist/jspreadsheet.css"
-import { Button, message, Spin } from "antd"
-import { ValidColumnType } from "../types"
-import { CableSchedulecolumns, motorCanopyColumns, multicoreCableConfigColumns } from "../common/ExcelColumns"
-import { getData, updateData } from "actions/crud-actions"
+"use client";
+import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+import "jspreadsheet-ce/dist/jspreadsheet.css";
+import { Button, message, Spin } from "antd";
+import { ValidColumnType } from "../types";
+import { motorCanopyColumns } from "../common/ExcelColumns";
+import { getData, updateData } from "@/actions/crud-actions";
 import {
-  CABLE_SCHEDULE_REVISION_HISTORY_API,
   ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API,
   MOTOR_CANOPY_REVISION_HISTORY_API,
-} from "configs/api-endpoints"
-import { useLoading } from "hooks/useLoading"
-import { useParams, useRouter } from "next/navigation"
-import { getStandByKw } from "../Electrical Load List/LoadListComponent"
-import { motorCanopyCalculation } from "actions/electrical-load-list"
+} from "@/configs/api-endpoints";
+import { useLoading } from "@/hooks/useLoading";
+import { useParams } from "next/navigation";
+import { getStandByKw } from "../Electrical Load List/LoadListComponent";
+import { motorCanopyCalculation } from "@/actions/electrical-load-list";
 
 interface MotorCanopyProps {
-  loadListLatestRevisionId: string
-  motorCanopyRevisionId: string
+  loadListLatestRevisionId: string;
+  motorCanopyRevisionId: string;
 }
 
 const getArrayOfMotorCanopyData = (data: any, motorCanopySavedData: any) => {
-  if (!data?.electrical_load_list_data) return []
-  console.log(data.electrical_load_list_data, "load list")
+  if (!data?.electrical_load_list_data) return [];
+  console.log(data.electrical_load_list_data, "load list");
 
   return data.electrical_load_list_data
     ?.filter(
       (item: any) =>
-        (item.motor_scope === "THERMAX" || item.motor_scope === "VENDOR") && item.motor_location === "OUTDOOR"
+        (item.motor_scope === "THERMAX" || item.motor_scope === "VENDOR") &&
+        item.motor_location === "OUTDOOR"
     )
     .map((item: any) => {
-      const savedItem = motorCanopySavedData?.motor_canopy_data?.find((row: any) => row.tag_number === item.tag_number)
+      const savedItem = motorCanopySavedData?.motor_canopy_data?.find(
+        (row: any) => row.tag_number === item.tag_number
+      );
       return [
         item.tag_number,
         item.service_description,
@@ -48,74 +56,87 @@ const getArrayOfMotorCanopyData = (data: any, motorCanopySavedData: any) => {
         savedItem?.part_code || "",
         item.motor_scope,
         savedItem?.remark || "",
-      ]
-    })
-}
-const motorCanopyPayload = {
-  tag_number: "",
-  service_description: "",
-  qty: 0,
-  motor_rated_current: 0,
-  rpm: 0,
-  motor_mounting_type: "",
-  motor_frame_size: "",
-  motor_location: "",
-  moc: "",
-  canopy_model_number: "",
-  canopy_leg_length: "",
-  canopy_cut_out: "",
-  part_code: "",
-  motor_scope: "",
-  remark: "",
-}
+      ];
+    });
+};
+// const motorCanopyPayload = {
+//   tag_number: "",
+//   service_description: "",
+//   qty: 0,
+//   motor_rated_current: 0,
+//   rpm: 0,
+//   motor_mounting_type: "",
+//   motor_frame_size: "",
+//   motor_location: "",
+//   moc: "",
+//   canopy_model_number: "",
+//   canopy_leg_length: "",
+//   canopy_cut_out: "",
+//   part_code: "",
+//   motor_scope: "",
+//   remark: "",
+// };
 
-const useDataFetching = (loadListLatestRevisionId: string, motorCanopyRevisionId: string) => {
-  const [isLoading, setIsLoading] = useState(true)
-  const [motorCanopyData, setMotorCanopyData] = useState<any[]>([])
-  const [motorCanopySavedData, setMotorCanopySavedData] = useState<any[]>([])
+const useDataFetching = (
+  loadListLatestRevisionId: string,
+  motorCanopyRevisionId: string
+) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [motorCanopyData, setMotorCanopyData] = useState<any[]>([]);
+  // const [motorCanopySavedData, setMotorCanopySavedData] = useState<any[]>([]);
   // const {setLoading} = useLoading();
-  const [loadListData, setLoadListData] = useState<any[]>([])
+  const [loadListData, setLoadListData] = useState<any[]>([]);
   const fetchData = useCallback(async () => {
-    if (!loadListLatestRevisionId) return
+    if (!loadListLatestRevisionId) return;
 
     try {
-      setIsLoading(true)
-      const loadList = await getData(`${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`)
-      const motorCanopySavedData = await getData(`${MOTOR_CANOPY_REVISION_HISTORY_API}/${motorCanopyRevisionId}`)
-      const formattedData = getArrayOfMotorCanopyData(loadList, motorCanopySavedData)
+      setIsLoading(true);
+      const loadList = await getData(
+        `${ELECTRICAL_LOAD_LIST_REVISION_HISTORY_API}/${loadListLatestRevisionId}`
+      );
+      const motorCanopySavedData = await getData(
+        `${MOTOR_CANOPY_REVISION_HISTORY_API}/${motorCanopyRevisionId}`
+      );
+      const formattedData = getArrayOfMotorCanopyData(
+        loadList,
+        motorCanopySavedData
+      );
       //   console.log(savedCableSchedule, "savedCableSchedule")
 
-      setLoadListData(loadList?.electrical_load_list_data)
-      setMotorCanopyData(formattedData)
+      setLoadListData(loadList?.electrical_load_list_data);
+      setMotorCanopyData(formattedData);
     } catch (error) {
-      console.error("Error fetching data:", error)
-      message.error("Failed to load data")
-      setMotorCanopyData([])
+      console.error("Error fetching data:", error);
+      message.error("Failed to load data");
+      setMotorCanopyData([]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [loadListLatestRevisionId])
+  }, [loadListLatestRevisionId]);
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    fetchData();
+  }, [fetchData]);
 
-  return { motorCanopyData, loadListData, isLoading, refetch: fetchData }
-}
+  return { motorCanopyData, loadListData, isLoading, refetch: fetchData };
+};
 
-const MotorCanopy: React.FC<MotorCanopyProps> = ({ loadListLatestRevisionId, motorCanopyRevisionId }) => {
-  const jRef = useRef<HTMLDivElement | null>(null)
-  const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
-  const { setLoading } = useLoading()
-  const params = useParams()
-  const router = useRouter()
+const MotorCanopy: React.FC<MotorCanopyProps> = ({
+  loadListLatestRevisionId,
+  motorCanopyRevisionId,
+}) => {
+  const jRef = useRef<HTMLDivElement | null>(null);
+  const [spreadsheetInstance, setSpreadsheetInstance] =
+    useState<JspreadsheetInstance | null>(null);
+  const { setLoading } = useLoading();
+  const params = useParams();
 
-  const project_id = params.project_id as string
+  const project_id = params.project_id as string;
 
-  const { motorCanopyData, loadListData, isLoading, refetch } = useDataFetching(
+  const { motorCanopyData, isLoading } = useDataFetching(
     loadListLatestRevisionId,
     motorCanopyRevisionId
-  )
+  );
 
   const typedMotorCanopyColumns = useMemo(
     () =>
@@ -124,16 +145,16 @@ const MotorCanopy: React.FC<MotorCanopyProps> = ({ loadListLatestRevisionId, mot
         type: column.type as ValidColumnType,
       })),
     []
-  )
+  );
 
-  const typedMulticoreCableConfigColumns = useMemo(
-    () =>
-      multicoreCableConfigColumns.map((column) => ({
-        ...column,
-        type: column.type as ValidColumnType,
-      })),
-    []
-  )
+  // const typedMulticoreCableConfigColumns = useMemo(
+  //   () =>
+  //     multicoreCableConfigColumns.map((column) => ({
+  //       ...column,
+  //       type: column.type as ValidColumnType,
+  //     })),
+  //   []
+  // );
 
   const cableScheduleOptions = useMemo(
     () => ({
@@ -153,35 +174,35 @@ const MotorCanopy: React.FC<MotorCanopyProps> = ({ loadListLatestRevisionId, mot
       rowResize: true,
     }),
     [typedMotorCanopyColumns, motorCanopyData]
-  )
+  );
 
   // Initialize or update spreadsheet
   useEffect(() => {
-    if (isLoading || !jRef.current) return
+    if (isLoading || !jRef.current) return;
 
     const initSpreadsheet = () => {
       if (spreadsheetInstance) {
-        spreadsheetInstance.destroy()
+        spreadsheetInstance.destroy();
       }
 
-      const instance = jspreadsheet(jRef.current!, cableScheduleOptions)
-      setSpreadsheetInstance(instance)
-      setLoading(false)
-    }
+      const instance = jspreadsheet(jRef.current!, cableScheduleOptions);
+      setSpreadsheetInstance(instance);
+      setLoading(false);
+    };
 
-    initSpreadsheet()
+    initSpreadsheet();
 
     return () => {
-      spreadsheetInstance?.destroy()
-    }
-  }, [isLoading, cableScheduleOptions])
+      spreadsheetInstance?.destroy();
+    };
+  }, [isLoading, cableScheduleOptions]);
 
   const handleMotorCanopySave = async () => {
-    const data = spreadsheetInstance?.getData()
+    const data = spreadsheetInstance?.getData();
 
-    console.log(data, "all load list data")
+    console.log(data, "all load list data");
 
-    let payload = {
+    const payload = {
       project_id: project_id,
       status: "Not Released",
       description: "test",
@@ -202,28 +223,33 @@ const MotorCanopy: React.FC<MotorCanopyProps> = ({ loadListLatestRevisionId, mot
           part_code: row[12],
           motor_scope: row[13],
           remark: row[14],
-        }
+        };
       }),
-    }
+    };
     try {
-      console.log(payload, "cable schedule payload")
+      console.log(payload, "cable schedule payload");
 
-      const respose = await updateData(`${MOTOR_CANOPY_REVISION_HISTORY_API}/${motorCanopyRevisionId}`, false, payload)
-      setLoading(false)
-      message.success("Motor Canopy Saved !")
+      const respose = await updateData(
+        `${MOTOR_CANOPY_REVISION_HISTORY_API}/${motorCanopyRevisionId}`,
+        false,
+        payload
+      );
+      setLoading(false);
+      message.success("Motor Canopy Saved !");
 
-      console.log(respose, "Motor Canopy response")
+      console.log(respose, "Motor Canopy response");
     } catch (error) {
-      message.error("Unable to save Motor Canopy list")
+      console.error("Error saving Motor Canopy:", error);
+      message.error("Unable to save Motor Canopy list");
 
-      setLoading(false)
+      setLoading(false);
     }
     // Add your save logic here
-  }
+  };
   const getCanopyDetails = async () => {
-    setLoading(true)
+    setLoading(true);
 
-    const motorCanopyData = spreadsheetInstance?.getData()
+    const motorCanopyData = spreadsheetInstance?.getData();
     try {
       const payload = {
         data: motorCanopyData?.map((item: any) => {
@@ -233,33 +259,39 @@ const MotorCanopy: React.FC<MotorCanopyProps> = ({ loadListLatestRevisionId, mot
             rpm: Number(item[4]),
             mounting_type: item[5],
             frame_size: item[6],
-          }
+          };
         }),
-      }
+      };
 
-      const motorData = await motorCanopyCalculation(payload)
+      const motorData = await motorCanopyCalculation(payload);
       const updatedLoadList: any = motorCanopyData?.map((row: any) => {
-        const calculationResult = motorData?.find((item: any) => item.tag_number === row[0])
-        console.log(calculationResult)
+        const calculationResult = motorData?.find(
+          (item: any) => item.tag_number === row[0]
+        );
+        console.log(calculationResult);
 
         if (calculationResult) {
-          const updatedRow = [...row]
-          updatedRow[9] = calculationResult.canopy_model_number
-          updatedRow[10] = calculationResult.canopy_leg_length
-          updatedRow[11] = calculationResult.canopy_cut_out
-          updatedRow[12] = calculationResult.part_code
-          return updatedRow
+          const updatedRow = [...row];
+          updatedRow[9] = calculationResult.canopy_model_number;
+          updatedRow[10] = calculationResult.canopy_leg_length;
+          updatedRow[11] = calculationResult.canopy_cut_out;
+          updatedRow[12] = calculationResult.part_code;
+          return updatedRow;
         }
-        return row
-      })
-      console.log("updated calc", motorData)
-      console.log("updated calc", updatedLoadList)
+        return row;
+      });
+      console.log("updated calc", motorData);
+      console.log("updated calc", updatedLoadList);
 
-      spreadsheetInstance?.setData(updatedLoadList)
-      setLoading(false)
+      spreadsheetInstance?.setData(updatedLoadList);
       // console.log(res,'motor calculations');
-    } catch (error) {}
-  }
+    } catch (error) {
+      console.error("Error fetching Canopy Details:", error);
+      message.error("Unable to fetch Canopy Details");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <div className="m-2 flex flex-col overflow-auto">
@@ -277,7 +309,11 @@ const MotorCanopy: React.FC<MotorCanopyProps> = ({ loadListLatestRevisionId, mot
         <Button type="primary" onClick={getCanopyDetails} disabled={isLoading}>
           Get Canopy Details
         </Button>
-        <Button type="primary" onClick={handleMotorCanopySave} disabled={isLoading}>
+        <Button
+          type="primary"
+          onClick={handleMotorCanopySave}
+          disabled={isLoading}
+        >
           Save
         </Button>
         <Button type="primary" onClick={() => {}} disabled={isLoading}>
@@ -285,7 +321,7 @@ const MotorCanopy: React.FC<MotorCanopyProps> = ({ loadListLatestRevisionId, mot
         </Button>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default MotorCanopy
+export default MotorCanopy;

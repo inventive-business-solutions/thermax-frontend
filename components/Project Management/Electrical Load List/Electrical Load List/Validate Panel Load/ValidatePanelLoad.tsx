@@ -1,6 +1,6 @@
 import React from "react";
-import Modal from "components/Modal/Modal";
-import './ValidatePanelLoad.css'
+import Modal from "@/components/Modal/Modal";
+import "./ValidatePanelLoad.css";
 import { Table } from "antd";
 
 export interface PanelData {
@@ -14,9 +14,12 @@ interface ValidatePanelLoadProps {
   onClose: () => void;
   panelsSumData: PanelData[];
 }
- 
 
-const ValidatePanelLoad: React.FC<ValidatePanelLoadProps> = ({ isOpen, onClose, panelsSumData }) => {
+const ValidatePanelLoad: React.FC<ValidatePanelLoadProps> = ({
+  isOpen,
+  onClose,
+  panelsSumData,
+}) => {
   const columns = [
     {
       title: "Panel Name",

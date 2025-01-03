@@ -1,4 +1,4 @@
-import { ENVIRO, HEATING } from "configs/constants"
+import { ENVIRO, HEATING } from "@/configs/constants";
 
 export const LoadListcolumns = (division: string) => {
   return [
@@ -67,7 +67,11 @@ export const LoadListcolumns = (division: string) => {
     {
       type: "dropdown",
       name: "phase",
-      source: ["3 Phase", "1 Phase", ...(division === ENVIRO ? ["Control Transformer"] : [])],
+      source: [
+        "3 Phase",
+        "1 Phase",
+        ...(division === ENVIRO ? ["Control Transformer"] : []),
+      ],
       title: "PHASE",
       width: "90",
     },
@@ -186,7 +190,13 @@ export const LoadListcolumns = (division: string) => {
       title: "DRIVEN  EQUIPMENT GD2",
       width: "150",
     },
-    { type: "text", name: "bkw", readOnly: division === HEATING ? true : false, title: "BKW", width: "150" },
+    {
+      type: "text",
+      name: "bkw",
+      readOnly: division === HEATING ? true : false,
+      title: "BKW",
+      width: "150",
+    },
     {
       type: "dropdown",
       name: "typeOfCoupling",
@@ -241,7 +251,20 @@ export const LoadListcolumns = (division: string) => {
     {
       type: "dropdown",
       name: "gasGroup",
-      source: ["A", "B", "C", "D", "E", "F", "G", "IIA", "IIA/IIB", "IIB", "IIC", "NA"],
+      source: [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "IIA",
+        "IIA/IIB",
+        "IIB",
+        "IIC",
+        "NA",
+      ],
       title: "GAS GROUP",
       width: "150",
     },
@@ -316,7 +339,13 @@ export const LoadListcolumns = (division: string) => {
     {
       type: "dropdown",
       name: "pannelAmmeter",
-      source: ["All Phase With CT", "Y-Phase with CT", "Y-Phase-Direct", "All Phase-Direct", "NA"],
+      source: [
+        "All Phase With CT",
+        "Y-Phase with CT",
+        "Y-Phase-Direct",
+        "All Phase-Direct",
+        "NA",
+      ],
       title: "PANEL AMMETER",
       width: "150",
     },
@@ -368,8 +397,8 @@ export const LoadListcolumns = (division: string) => {
       title: "Motor Rated Current (AMP) ",
       width: "200",
     },
-  ]
-}
+  ];
+};
 export const CableSchedulecolumns = () => {
   return [
     {
@@ -585,8 +614,8 @@ export const CableSchedulecolumns = () => {
       title: "CABLE SIZE AS PER HEATING CHART ",
       width: "150",
     },
-  ]
-}
+  ];
+};
 
 export const multicoreCableConfigColumns = [
   {
@@ -654,7 +683,7 @@ export const multicoreCableConfigColumns = [
     title: "PANEL NAME",
     width: "90",
   },
-]
+];
 export const multicoreCableConfigGroupedColumns = [
   {
     type: "text",
@@ -685,7 +714,22 @@ export const multicoreCableConfigGroupedColumns = [
     name: "tag",
     title: "MULTICORE/PAIR CABLE SELECTED",
     autocomplete: true,
-    source: ["2C", "3C", "4C", "6C", "8C", "12C", "16C", "24C", "30C", "37C", "1P", "2P", "6P", "12P"],
+    source: [
+      "2C",
+      "3C",
+      "4C",
+      "6C",
+      "8C",
+      "12C",
+      "16C",
+      "24C",
+      "30C",
+      "37C",
+      "1P",
+      "2P",
+      "6P",
+      "12P",
+    ],
     multiple: false,
     width: "100",
   },
@@ -707,7 +751,7 @@ export const multicoreCableConfigGroupedColumns = [
     title: "PANEL NAME",
     width: "100",
   },
-]
+];
 export const motorCanopyColumns = [
   {
     type: "text",
@@ -804,17 +848,54 @@ export const motorCanopyColumns = [
     title: "REMARK",
     width: "150",
   },
-]
+];
 
 export const switchGearSelectionColumns = (division: string) => {
   const columns = [
-    { type: "text", name: "motorTag", title: "TAG NO.", width: "150", readOnly: true },
-    { type: "text", name: "feederName", title: "SERVICE DESCRIPTION", width: "225", readOnly: true, filters: true },
+    {
+      type: "text",
+      name: "motorTag",
+      title: "TAG NO.",
+      width: "150",
+      readOnly: true,
+    },
+    {
+      type: "text",
+      name: "feederName",
+      title: "SERVICE DESCRIPTION",
+      width: "225",
+      readOnly: true,
+      filters: true,
+    },
     { type: "text", name: "hp", title: "HP", width: "70", readOnly: true },
-    { type: "text", name: "kw", title: "WORKING KW", width: "90", readOnly: true },
-    { type: "text", name: "kwstandby", title: "STAND-BY KW", width: "90", readOnly: true },
-    { type: "text", name: "current", title: "CURRENT", width: "70", readOnly: true },
-    { type: "text", name: "starter", title: "STARTER", width: "130", readOnly: true },
+    {
+      type: "text",
+      name: "kw",
+      title: "WORKING KW",
+      width: "90",
+      readOnly: true,
+    },
+    {
+      type: "text",
+      name: "kwstandby",
+      title: "STAND-BY KW",
+      width: "90",
+      readOnly: true,
+    },
+    {
+      type: "text",
+      name: "current",
+      title: "CURRENT",
+      width: "70",
+      readOnly: true,
+    },
+    {
+      type: "text",
+      name: "starter",
+      title: "STARTER",
+      width: "130",
+      readOnly: true,
+    },
     { type: "text", name: "make", title: "MAKE", width: "140", readOnly: true },
     {
       type: "dropdown",
@@ -837,19 +918,68 @@ export const switchGearSelectionColumns = (division: string) => {
       width: "200",
     },
     { type: "text", name: "fuseHolder", title: "FUSE HOLDER", width: "100" },
-    { type: "text", name: "contactorMain", title: "CONTACTOR MAIN", width: "110" },
-    { type: "text", name: "contactorStar", title: "CONTRACTOR STAR", width: "100" },
-    { type: "text", name: "contactorDelta", title: "CONTACTOR DELTA", width: "120" },
-    { type: "text", name: "overloadRealy", title: "OVERLAY RELAY", width: "110" },
-    { type: "text", name: "termainlPartNum", title: "TERMINAL PART NO.", width: "130" },
-    { type: "text", name: "cableSize", readOnly: true, title: "CABLE SIZE", width: "170" },
-    { type: "dropdown", name: "incomer", source: [], title: "INCOMER", width: "115" },
-  ]
+    {
+      type: "text",
+      name: "contactorMain",
+      title: "CONTACTOR MAIN",
+      width: "110",
+    },
+    {
+      type: "text",
+      name: "contactorStar",
+      title: "CONTRACTOR STAR",
+      width: "100",
+    },
+    {
+      type: "text",
+      name: "contactorDelta",
+      title: "CONTACTOR DELTA",
+      width: "120",
+    },
+    {
+      type: "text",
+      name: "overloadRealy",
+      title: "OVERLAY RELAY",
+      width: "110",
+    },
+    {
+      type: "text",
+      name: "termainlPartNum",
+      title: "TERMINAL PART NO.",
+      width: "130",
+    },
+    {
+      type: "text",
+      name: "cableSize",
+      readOnly: true,
+      title: "CABLE SIZE",
+      width: "170",
+    },
+    {
+      type: "dropdown",
+      name: "incomer",
+      source: [],
+      title: "INCOMER",
+      width: "115",
+    },
+  ];
   if (division === HEATING) {
-    columns.splice(8, 0, { type: "text", name: "startingTime", title: "STARTING TIME", width: "70", readOnly: true })
+    columns.splice(8, 0, {
+      type: "text",
+      name: "startingTime",
+      title: "STARTING TIME",
+      width: "70",
+      readOnly: true,
+    });
   }
   if (division === ENVIRO) {
-    columns.splice(5, 0, { type: "text", name: "kva", title: "KVA", width: "70", readOnly: true })
+    columns.splice(5, 0, {
+      type: "text",
+      name: "kva",
+      title: "KVA",
+      width: "70",
+      readOnly: true,
+    });
   }
-  return columns
-}
+  return columns;
+};
