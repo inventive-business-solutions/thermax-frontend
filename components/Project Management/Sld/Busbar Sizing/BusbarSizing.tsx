@@ -1,75 +1,88 @@
-import React, { useCallback, useEffect, useState } from "react"
-import { Form, InputNumber, Card, Button, Select, message, Spin } from "antd"
-import { getData } from "actions/crud-actions"
-import { useParams } from "next/navigation"
+import React, { useCallback, useEffect, useState } from "react";
+import { Form, InputNumber, Card, Button, Select, message, Spin } from "antd";
+import { getData } from "@/actions/crud-actions";
+import { useParams } from "next/navigation";
 import {
   COMMON_CONFIGURATION_1,
   COMMON_CONFIGURATION_2,
   COMMON_CONFIGURATION_3,
   PROJECT_INFO_API,
-} from "configs/api-endpoints"
+} from "@/configs/api-endpoints";
 
 const useDataFetching = (designBasisRevisionId: string) => {
-  const [isLoading, setIsLoading] = useState(true)
-  const [sg_data, setSg_data] = useState<any>([])
-  const [commonConfig, setCommonConfig] = useState<any>([])
+  const [isLoading, setIsLoading] = useState(true);
+  // const [sg_data, setSg_data] = useState<any>([]);
+  const [commonConfig, setCommonConfig] = useState<any>([]);
   // const [commonConfiguration, setCommonConfiguration] = useState<any[]>([])
-  const [projectInfo, setProjectInfo] = useState<any>([])
-  const [totalCountOfItems, setTotalCountOfItems] = useState<number>(0)
-  const params = useParams()
-  const project_id = params.project_id
-  const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`
+  const [projectInfo, setProjectInfo] = useState<any>([]);
+  // const [totalCountOfItems, setTotalCountOfItems] = useState<number>(0);
+  const params = useParams();
+  const project_id = params.project_id;
+  const getProjectInfoUrl = `${PROJECT_INFO_API}/${project_id}`;
 
-  const [projectPanelData, setProjectPanelData] = useState<any>([])
+  // const [projectPanelData, setProjectPanelData] = useState<any>([]);
 
   const fetchData = useCallback(async () => {
     try {
-      setIsLoading(true)
-      const projectInfo = await getData(getProjectInfoUrl)
+      setIsLoading(true);
+      const projectInfo = await getData(getProjectInfoUrl);
       // Fetch all required data in parallel
       const commonConfigData1 = await getData(
         `${COMMON_CONFIGURATION_1}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-      )
+      );
       const commonConfigData2 = await getData(
         `${COMMON_CONFIGURATION_2}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-      )
+      );
 
       const commonConfigData3 = await getData(
         `${COMMON_CONFIGURATION_3}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-      )
+      );
 
-      const commonConfig = { ...commonConfigData1?.[0], ...commonConfigData2?.[0], ...commonConfigData3?.[0] }
+      const commonConfig = {
+        ...commonConfigData1?.[0],
+        ...commonConfigData2?.[0],
+        ...commonConfigData3?.[0],
+      };
 
-      console.log(commonConfig, "commonConfig")
+      console.log(commonConfig, "commonConfig");
 
-      setProjectInfo(projectInfo)
-      setCommonConfig(commonConfig)
-      setIsLoading(false)
+      setProjectInfo(projectInfo);
+      setCommonConfig(commonConfig);
+      setIsLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error)
-      message.error("Failed to load data")
+      console.error("Error fetching data:", error);
+      message.error("Failed to load data");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    fetchData();
+  }, [fetchData]);
 
-  return { totalCountOfItems, projectInfo, projectPanelData, sg_data, commonConfig, isLoading }
-}
+  return {
+    totalCountOfItems: 0,
+    projectInfo,
+    projectPanelData: [],
+    sg_data: [],
+    commonConfig,
+    isLoading,
+  };
+};
 
 interface Props {
-  designBasisRevisionId: string
+  designBasisRevisionId: string;
 }
 const BusbarSizing: React.FC<Props> = ({ designBasisRevisionId }) => {
-  const [form] = Form.useForm()
-  let { projectInfo, commonConfig, isLoading } = useDataFetching(designBasisRevisionId)
+  const [form] = Form.useForm();
+  const { projectInfo, commonConfig, isLoading } = useDataFetching(
+    designBasisRevisionId
+  );
 
   const onFinish = (values: any) => {
-    console.log("Received values:", values)
-  }
+    console.log("Received values:", values);
+  };
   useEffect(() => {
     if (projectInfo && commonConfig) {
       form.setFieldsValue({
@@ -94,9 +107,9 @@ const BusbarSizing: React.FC<Props> = ({ designBasisRevisionId }) => {
         // horizontalCableHeight: projectInfo.horizontalCableHeight,
         // verticalBusbarWidth: projectInfo.verticalBusbarWidth,
         // verticalCableWidth: projectInfo.verticalCableWidth,
-      })
+      });
     }
-  }, [projectInfo, commonConfig])
+  }, [projectInfo, commonConfig]);
 
   return (
     <>
@@ -119,14 +132,18 @@ const BusbarSizing: React.FC<Props> = ({ designBasisRevisionId }) => {
                 <Form.Item
                   label="Fault Current (kA)"
                   name="faultCurrent"
-                  rules={[{ required: true, message: "Please enter fault current!" }]}
+                  rules={[
+                    { required: true, message: "Please enter fault current!" },
+                  ]}
                 >
                   <InputNumber min={0} disabled className="!w-full" />
                 </Form.Item>
                 <Form.Item
                   label="Fault Duration (Sec.)"
                   name="faultDuration"
-                  rules={[{ required: true, message: "Please enter fault duration!" }]}
+                  rules={[
+                    { required: true, message: "Please enter fault duration!" },
+                  ]}
                 >
                   <InputNumber min={0} disabled className="!w-full" />
                 </Form.Item>
@@ -139,28 +156,48 @@ const BusbarSizing: React.FC<Props> = ({ designBasisRevisionId }) => {
                 <Form.Item
                   label="Operating Temperature (Deg C)"
                   name="operatingTemp"
-                  rules={[{ required: true, message: "Please enter operating temperature!" }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter operating temperature!",
+                    },
+                  ]}
                 >
                   <InputNumber min={0} disabled className="!w-full" />
                 </Form.Item>
                 <Form.Item
                   label="Max. Temperature during fault (Deg C)"
                   name="maxTempFault"
-                  rules={[{ required: true, message: "Please enter max temperature!" }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter max temperature!",
+                    },
+                  ]}
                 >
                   <InputNumber min={0} className="!w-full" />
                 </Form.Item>
                 <Form.Item
                   label="Ambient Temperature (Deg C)"
                   name="ambientTemp"
-                  rules={[{ required: true, message: "Please enter ambient temperature!" }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter ambient temperature!",
+                    },
+                  ]}
                 >
                   <InputNumber min={0} disabled className="!w-full" />
                 </Form.Item>
                 <Form.Item
                   label="Max. Busbar Temperature rise (Deg C)"
                   name="maxBusbarTemp"
-                  rules={[{ required: true, message: "Please enter max busbar temperature!" }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter max busbar temperature!",
+                    },
+                  ]}
                 >
                   <InputNumber min={0} className="!w-full" />
                 </Form.Item>
@@ -173,9 +210,15 @@ const BusbarSizing: React.FC<Props> = ({ designBasisRevisionId }) => {
                 <Form.Item
                   label="Material"
                   name="material"
-                  rules={[{ required: true, message: "Please select material!" }]}
+                  rules={[
+                    { required: true, message: "Please select material!" },
+                  ]}
                 >
-                  <Select placeholder="Select material" disabled className="!w-full">
+                  <Select
+                    placeholder="Select material"
+                    disabled
+                    className="!w-full"
+                  >
                     <Select.Option value="copper">Copper</Select.Option>
                     <Select.Option value="aluminum">Aluminum</Select.Option>
                   </Select>
@@ -183,7 +226,12 @@ const BusbarSizing: React.FC<Props> = ({ designBasisRevisionId }) => {
                 <Form.Item
                   label="Material Constant"
                   name="materialConstant"
-                  rules={[{ required: true, message: "Please enter material constant!" }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter material constant!",
+                    },
+                  ]}
                 >
                   <InputNumber min={0} disabled className="!w-full" />
                 </Form.Item>
@@ -198,7 +246,9 @@ const BusbarSizing: React.FC<Props> = ({ designBasisRevisionId }) => {
                   <Form.Item
                     label="Height (mm)"
                     name="height"
-                    rules={[{ required: true, message: "Please enter height!" }]}
+                    rules={[
+                      { required: true, message: "Please enter height!" },
+                    ]}
                   >
                     <InputNumber min={0} className="!w-full" />
                   </Form.Item>
@@ -216,28 +266,50 @@ const BusbarSizing: React.FC<Props> = ({ designBasisRevisionId }) => {
                   <Form.Item
                     label="Horizontal Busbar Chamber Height (mm)"
                     name="horizontalBusbarHeight"
-                    rules={[{ required: true, message: "Please enter horizontal busbar chamber height!" }]}
+                    rules={[
+                      {
+                        required: true,
+                        message:
+                          "Please enter horizontal busbar chamber height!",
+                      },
+                    ]}
                   >
                     <InputNumber min={0} className="!w-full" />
                   </Form.Item>
                   <Form.Item
                     label="Horizontal Cable Chamber Height (mm)"
                     name="horizontalCableHeight"
-                    rules={[{ required: true, message: "Please enter horizontal cable chamber height!" }]}
+                    rules={[
+                      {
+                        required: true,
+                        message:
+                          "Please enter horizontal cable chamber height!",
+                      },
+                    ]}
                   >
                     <InputNumber min={0} className="!w-full" />
                   </Form.Item>
                   <Form.Item
                     label="Vertical Busbar Chamber Width (mm)"
                     name="verticalBusbarWidth"
-                    rules={[{ required: true, message: "Please enter vertical busbar chamber width!" }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter vertical busbar chamber width!",
+                      },
+                    ]}
                   >
                     <InputNumber min={0} className="!w-full" />
                   </Form.Item>
                   <Form.Item
                     label="Vertical Cable Chamber Width (mm)"
                     name="verticalCableWidth"
-                    rules={[{ required: true, message: "Please enter vertical cable chamber width!" }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter vertical cable chamber width!",
+                      },
+                    ]}
                   >
                     <InputNumber min={0} className="!w-full" />
                   </Form.Item>
@@ -411,10 +483,10 @@ const BusbarSizing: React.FC<Props> = ({ designBasisRevisionId }) => {
     //     </div>
     //   </Form>
     // </div>
-  )
-}
+  );
+};
 
-export default BusbarSizing
+export default BusbarSizing;
 
 // <div className="max-w-6xl mx-auto p-4">
 // <Form

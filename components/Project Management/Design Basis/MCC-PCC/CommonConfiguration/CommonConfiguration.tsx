@@ -1,103 +1,156 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as zod from "zod"
-import { Button, Divider, message } from "antd"
-import React, { useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
-import { createData, getData, updateData } from "actions/crud-actions"
-import CustomTextInput from "components/FormInputs/CustomInput"
-import CustomRadioSelect from "components/FormInputs/CustomRadioSelect"
-import CustomSingleSelect from "components/FormInputs/CustomSingleSelect"
-import CustomTextAreaInput from "components/FormInputs/CustomTextArea"
-import { COMMON_CONFIGURATION_1, COMMON_CONFIGURATION_2, COMMON_CONFIGURATION_3 } from "configs/api-endpoints"
-import { useGetData } from "hooks/useCRUD"
-import useCommonConfigDropdowns from "./CommonConfigDropdowns"
-import { configItemValidationSchema } from "../schemas"
-import { useCurrentUser } from "hooks/useCurrentUser"
-import { WWS_SPG } from "configs/constants"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Divider, message } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { updateData } from "@/actions/crud-actions";
+import CustomTextInput from "@/components/FormInputs/CustomInput";
+import CustomRadioSelect from "@/components/FormInputs/CustomRadioSelect";
+import CustomSingleSelect from "@/components/FormInputs/CustomSingleSelect";
+import CustomTextAreaInput from "@/components/FormInputs/CustomTextArea";
+import {
+  COMMON_CONFIGURATION_1,
+  COMMON_CONFIGURATION_2,
+  COMMON_CONFIGURATION_3,
+} from "@/configs/api-endpoints";
+import { useGetData } from "@/hooks/useCRUD";
+import useCommonConfigDropdowns from "./CommonConfigDropdowns";
+import { configItemValidationSchema } from "../schemas";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { WWS_SPG } from "@/configs/constants";
 
 const getDefaultValues = (commonConfigData: any) => {
   return {
     rtd_thermocouple_wiring_color:
-      commonConfigData?.rtd_thermocouple_wiring_color?.toString() || "Brown, White Shielded Cable",
-    rtd_thermocouple_wiring_size: commonConfigData?.rtd_thermocouple_wiring_size?.toString() || "1 Sq. mm",
-    is_field_motor_isolator_selected: commonConfigData?.is_field_motor_isolator_selected?.toString() || "1",
-    is_safe_area_isolator_selected: commonConfigData?.is_safe_area_isolator_selected?.toString() || "1",
-    is_hazardous_area_isolator_selected: commonConfigData?.is_hazardous_area_isolator_selected?.toString() || "1",
-    is_local_push_button_station_selected: commonConfigData?.is_local_push_button_station_selected?.toString() || "1",
-    is_safe_lpbs_selected: commonConfigData?.is_safe_lpbs_selected?.toString() || "1",
-    is_hazardous_lpbs_selected: commonConfigData?.is_hazardous_lpbs_selected?.toString() || "1",
+      commonConfigData?.rtd_thermocouple_wiring_color?.toString() ||
+      "Brown, White Shielded Cable",
+    rtd_thermocouple_wiring_size:
+      commonConfigData?.rtd_thermocouple_wiring_size?.toString() || "1 Sq. mm",
+    is_field_motor_isolator_selected:
+      commonConfigData?.is_field_motor_isolator_selected?.toString() || "1",
+    is_safe_area_isolator_selected:
+      commonConfigData?.is_safe_area_isolator_selected?.toString() || "1",
+    is_hazardous_area_isolator_selected:
+      commonConfigData?.is_hazardous_area_isolator_selected?.toString() || "1",
+    is_local_push_button_station_selected:
+      commonConfigData?.is_local_push_button_station_selected?.toString() ||
+      "1",
+    is_safe_lpbs_selected:
+      commonConfigData?.is_safe_lpbs_selected?.toString() || "1",
+    is_hazardous_lpbs_selected:
+      commonConfigData?.is_hazardous_lpbs_selected?.toString() || "1",
     dol_starter: commonConfigData?.dol_starter || "0.37",
     star_delta_starter: commonConfigData?.star_delta_starter || "0.55",
     ammeter: commonConfigData?.ammeter || "0.37",
-    ammeter_configuration: commonConfigData?.ammeter_configuration || "All Phase With CT",
-    mcc_switchgear_type: commonConfigData?.mcc_switchgear_type || "Type II Coordination-Fuseless-One Size Higher",
-    switchgear_combination: commonConfigData?.switchgear_combination || "Without MCB",
+    ammeter_configuration:
+      commonConfigData?.ammeter_configuration || "All Phase With CT",
+    mcc_switchgear_type:
+      commonConfigData?.mcc_switchgear_type ||
+      "Type II Coordination-Fuseless-One Size Higher",
+    switchgear_combination:
+      commonConfigData?.switchgear_combination || "Without MCB",
 
-    is_control_transformer_applicable: commonConfigData?.is_control_transformer_applicable || "0",
+    is_control_transformer_applicable:
+      commonConfigData?.is_control_transformer_applicable || "0",
     control_transformer_primary_voltage:
-      commonConfigData?.control_transformer_primary_voltage || "230 VAC, 1-Phase, 2 wire",
+      commonConfigData?.control_transformer_primary_voltage ||
+      "230 VAC, 1-Phase, 2 wire",
     control_transformer_secondary_voltage:
-      commonConfigData?.control_transformer_secondary_voltage || "230 VAC, 1-Phase, 2 wire",
-    control_transformer_coating: commonConfigData?.control_transformer_coating || "Tape Wound",
-    control_transformer_quantity: commonConfigData?.control_transformer_quantity || "One",
-    control_transformer_configuration: commonConfigData?.control_transformer_configuration || "Single",
-    control_transformer_type: commonConfigData?.control_transformer_type || "Industrial control Step down transformer",
+      commonConfigData?.control_transformer_secondary_voltage ||
+      "230 VAC, 1-Phase, 2 wire",
+    control_transformer_coating:
+      commonConfigData?.control_transformer_coating || "Tape Wound",
+    control_transformer_quantity:
+      commonConfigData?.control_transformer_quantity || "One",
+    control_transformer_configuration:
+      commonConfigData?.control_transformer_configuration || "Single",
+    control_transformer_type:
+      commonConfigData?.control_transformer_type ||
+      "Industrial control Step down transformer",
 
     digital_meters: commonConfigData?.digital_meters || "NA",
     analog_meters: commonConfigData?.analog_meters || "Ammeter with ASS",
     communication_protocol: commonConfigData?.communication_protocol || "NA",
 
     current_transformer: commonConfigData?.current_transformer || "NA",
-    current_transformer_coating: commonConfigData?.current_transformer_coating || "Cast Resin",
-    current_transformer_number: commonConfigData?.current_transformer_number || "One",
-    current_transformer_configuration: commonConfigData?.current_transformer_configuration || "Y-Phase with CT",
+    current_transformer_coating:
+      commonConfigData?.current_transformer_coating || "Cast Resin",
+    current_transformer_number:
+      commonConfigData?.current_transformer_number || "One",
+    current_transformer_configuration:
+      commonConfigData?.current_transformer_configuration || "Y-Phase with CT",
 
     pole: commonConfigData?.pole || "4 POLE",
     supply_feeder_standard: commonConfigData?.supply_feeder_standard || "IEC",
     dm_standard: commonConfigData?.dm_standard || "IEC 61439",
     testing_standard: commonConfigData?.testing_standard || "IEC 61439",
-    power_wiring_color: commonConfigData?.power_wiring_color || "Brown, Black, Grey, Blue",
+    power_wiring_color:
+      commonConfigData?.power_wiring_color || "Brown, Black, Grey, Blue",
     power_wiring_size: commonConfigData?.power_wiring_size || "Min. 2.5 Sq. mm",
-    control_wiring_color: commonConfigData?.control_wiring_color || "Grey, Black",
+    control_wiring_color:
+      commonConfigData?.control_wiring_color || "Grey, Black",
     control_wiring_size: commonConfigData?.control_wiring_size || "1 Sq. mm",
-    vdc_24_wiring_color: commonConfigData?.vdc_24_wiring_color || "Orange, White",
+    vdc_24_wiring_color:
+      commonConfigData?.vdc_24_wiring_color || "Orange, White",
     vdc_24_wiring_size: commonConfigData?.vdc_24_wiring_size || "0.75 Sq. mm",
-    analog_signal_wiring_color: commonConfigData?.analog_signal_wiring_color || "Brown, White Shielded Cable",
-    analog_signal_wiring_size: commonConfigData?.analog_signal_wiring_size || "1 Sq. mm",
-    ct_wiring_color: commonConfigData?.ct_wiring_color || "Red, Yellow, Blue, Black",
+    analog_signal_wiring_color:
+      commonConfigData?.analog_signal_wiring_color ||
+      "Brown, White Shielded Cable",
+    analog_signal_wiring_size:
+      commonConfigData?.analog_signal_wiring_size || "1 Sq. mm",
+    ct_wiring_color:
+      commonConfigData?.ct_wiring_color || "Red, Yellow, Blue, Black",
     ct_wiring_size: commonConfigData?.ct_wiring_size || "2.5 Sq. mm",
-    cable_insulation_pvc: commonConfigData?.cable_insulation_pvc || "Fire Resistant",
-    air_clearance_between_phase_to_phase_bus: commonConfigData?.air_clearance_between_phase_to_phase_bus || "25mm",
-    air_clearance_between_phase_to_neutral_bus: commonConfigData?.air_clearance_between_phase_to_neutral_bus || "19mm",
+    cable_insulation_pvc:
+      commonConfigData?.cable_insulation_pvc || "Fire Resistant",
+    air_clearance_between_phase_to_phase_bus:
+      commonConfigData?.air_clearance_between_phase_to_phase_bus || "25mm",
+    air_clearance_between_phase_to_neutral_bus:
+      commonConfigData?.air_clearance_between_phase_to_neutral_bus || "19mm",
     ferrule: commonConfigData?.ferrule || "Cross Ferrule",
-    ferrule_note: commonConfigData?.ferrule_note || "Printed Ferrules-Black Letters On White Sleeves",
+    ferrule_note:
+      commonConfigData?.ferrule_note ||
+      "Printed Ferrules-Black Letters On White Sleeves",
     device_identification_of_components:
-      commonConfigData?.device_identification_of_components || "PVC sticker with black letters",
-    general_note_internal_wiring: commonConfigData?.general_note_internal_wiring || "Not Applicable",
+      commonConfigData?.device_identification_of_components ||
+      "PVC sticker with black letters",
+    general_note_internal_wiring:
+      commonConfigData?.general_note_internal_wiring || "Not Applicable",
     common_requirement:
       commonConfigData?.common_requirement ||
       "660/1100 V Grade PVC insulated, FR/FRLS, Multistranded, Copper, Flexible cable identified with colour code",
-    power_terminal_clipon: commonConfigData?.power_terminal_clipon || "Min.4 Sq.mm Clipon Type",
-    power_terminal_busbar_type: commonConfigData?.power_terminal_busbar_type || "Above 4 sq.mm Busbar Type",
-    control_terminal: commonConfigData?.control_terminal || "Min.4 Sq.mm Clipon Type",
+    power_terminal_clipon:
+      commonConfigData?.power_terminal_clipon || "Min.4 Sq.mm Clipon Type",
+    power_terminal_busbar_type:
+      commonConfigData?.power_terminal_busbar_type ||
+      "Above 4 sq.mm Busbar Type",
+    control_terminal:
+      commonConfigData?.control_terminal || "Min.4 Sq.mm Clipon Type",
     spare_terminal: commonConfigData?.spare_terminal || "10",
-    forward_push_button_start: commonConfigData?.forward_push_button_start || "Yellow",
-    reverse_push_button_start: commonConfigData?.reverse_push_button_start || "Yellow",
+    forward_push_button_start:
+      commonConfigData?.forward_push_button_start || "Yellow",
+    reverse_push_button_start:
+      commonConfigData?.reverse_push_button_start || "Yellow",
     push_button_start: commonConfigData?.push_button_start || "Green",
     push_button_stop: commonConfigData?.push_button_stop || "Green",
-    push_button_ess: commonConfigData?.push_button_ess || "Mushroom headed Stayput ( Key to release) Red Colour",
+    push_button_ess:
+      commonConfigData?.push_button_ess ||
+      "Mushroom headed Stayput ( Key to release) Red Colour",
     potentiometer: commonConfigData?.potentiometer || "0",
-    is_push_button_speed_selected: commonConfigData?.is_push_button_speed_selected?.toString() || "1",
+    is_push_button_speed_selected:
+      commonConfigData?.is_push_button_speed_selected?.toString() || "1",
     speed_increase_pb: commonConfigData?.speed_increase_pb || "Yellow",
     speed_decrease_pb: commonConfigData?.speed_decrease_pb || "Black",
-    alarm_acknowledge_and_lamp_test: commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
+    alarm_acknowledge_and_lamp_test:
+      commonConfigData?.alarm_acknowledge_and_lamp_test || "Black",
     lamp_test_push_button: commonConfigData?.lamp_test_push_button || "Yellow",
     test_dropdown: commonConfigData?.test_dropdown || "Yellow",
     reset_dropdown: commonConfigData?.reset_dropdown || "Black",
-    selector_switch_applicable: commonConfigData?.selector_switch_applicable || "Not Applicable",
-    selector_switch_lockable: commonConfigData?.selector_switch_lockable || "Lockable",
+    selector_switch_applicable:
+      commonConfigData?.selector_switch_applicable || "Not Applicable",
+    selector_switch_lockable:
+      commonConfigData?.selector_switch_lockable || "Lockable",
     running_open: commonConfigData?.running_open || "Green",
     stopped_closed: commonConfigData?.stopped_closed || "Red",
     trip: commonConfigData?.trip || "Amber",
@@ -105,8 +158,10 @@ const getDefaultValues = (commonConfigData: any) => {
     safe_field_motor_enclosure: commonConfigData?.enclosure || "IP 65",
     safe_field_motor_material: commonConfigData?.material || "SS 316",
     safe_field_motor_thickness: commonConfigData?.thickness || "1.6 mm",
-    safe_field_motor_qty: commonConfigData?.qty || "As Mentioned in Electrical Load List",
-    safe_field_motor_isolator_color_shade: commonConfigData?.field_motor_isolator_color_shade || "RAL 7035",
+    safe_field_motor_qty:
+      commonConfigData?.qty || "As Mentioned in Electrical Load List",
+    safe_field_motor_isolator_color_shade:
+      commonConfigData?.field_motor_isolator_color_shade || "RAL 7035",
     safe_field_motor_cable_entry: commonConfigData?.cable_entry || "Bottom",
     safe_field_motor_canopy: commonConfigData?.canopy_on_top || "All",
     safe_field_motor_canopy_type: commonConfigData?.type || "On Top",
@@ -114,9 +169,12 @@ const getDefaultValues = (commonConfigData: any) => {
     hazardous_field_motor_enclosure: commonConfigData?.enclosure || "IP 65",
     hazardous_field_motor_material: commonConfigData?.material || "SS 316",
     hazardous_field_motor_thickness: commonConfigData?.thickness || "1.6 mm",
-    hazardous_field_motor_qty: commonConfigData?.qty || "As Mentioned in Electrical Load List",
-    hazardous_field_motor_isolator_color_shade: commonConfigData?.field_motor_isolator_color_shade || "RAL 7035",
-    hazardous_field_motor_cable_entry: commonConfigData?.cable_entry || "Bottom",
+    hazardous_field_motor_qty:
+      commonConfigData?.qty || "As Mentioned in Electrical Load List",
+    hazardous_field_motor_isolator_color_shade:
+      commonConfigData?.field_motor_isolator_color_shade || "RAL 7035",
+    hazardous_field_motor_cable_entry:
+      commonConfigData?.cable_entry || "Bottom",
     hazardous_field_motor_canopy: commonConfigData?.canopy_on_top || "All",
     hazardous_field_motor_canopy_type: commonConfigData?.type || "On Top",
 
@@ -124,7 +182,8 @@ const getDefaultValues = (commonConfigData: any) => {
     safe_lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
     safe_lpbs_material: commonConfigData?.lpbs_material || "CRCA",
     safe_lpbs_thickness: commonConfigData?.thickness || "1.6 mm",
-    safe_lpbs_qty: commonConfigData?.lpbs_qty || "As Mentioned in Electrical Load List",
+    safe_lpbs_qty:
+      commonConfigData?.lpbs_qty || "As Mentioned in Electrical Load List",
     safe_lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
     safe_lpbs_canopy: commonConfigData?.lpbs_canopy_on_top || "All",
     safe_lpbs_canopy_type: commonConfigData?.type || "On Top",
@@ -133,229 +192,299 @@ const getDefaultValues = (commonConfigData: any) => {
     hazardous_lpbs_enclosure: commonConfigData?.lpbs_enclosure || "IP 65",
     hazardous_lpbs_material: commonConfigData?.lpbs_material || "CRCA",
     hazardous_lpbs_thickness: commonConfigData?.thickness || "1.6 mm",
-    hazardous_lpbs_qty: commonConfigData?.lpbs_qty || "As Mentioned in Electrical Load List",
-    hazardous_lpbs_color_shade: commonConfigData?.lpbs_color_shade || "RAL 7035",
+    hazardous_lpbs_qty:
+      commonConfigData?.lpbs_qty || "As Mentioned in Electrical Load List",
+    hazardous_lpbs_color_shade:
+      commonConfigData?.lpbs_color_shade || "RAL 7035",
     hazardous_lpbs_canopy: commonConfigData?.lpbs_canopy_on_top || "All",
     hazardous_lpbs_canopy_type: commonConfigData?.type || "On Top",
 
-    lpbs_push_button_start_color: commonConfigData?.lpbs_push_button_start_color || "Green",
-    lpbs_indication_lamp_start_color: commonConfigData?.lpbs_indication_lamp_start_color || "Green",
-    lpbs_indication_lamp_stop_color: commonConfigData?.lpbs_indication_lamp_stop_color || "Red",
+    lpbs_push_button_start_color:
+      commonConfigData?.lpbs_push_button_start_color || "Green",
+    lpbs_indication_lamp_start_color:
+      commonConfigData?.lpbs_indication_lamp_start_color || "Green",
+    lpbs_indication_lamp_stop_color:
+      commonConfigData?.lpbs_indication_lamp_stop_color || "Red",
     lpbs_speed_increase: commonConfigData?.lpbs_speed_increase || "Yellow",
     lpbs_speed_decrease: commonConfigData?.lpbs_speed_decrease || "Black",
     apfc_relay: commonConfigData?.apfc_relay || "4",
-    power_bus_main_busbar_selection: commonConfigData?.power_bus_main_busbar_selection || "As per IS8623",
-    power_bus_heat_pvc_sleeve: commonConfigData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
+    power_bus_main_busbar_selection:
+      commonConfigData?.power_bus_main_busbar_selection || "As per IS8623",
+    power_bus_heat_pvc_sleeve:
+      commonConfigData?.power_bus_heat_pvc_sleeve || "Red, Yellow, Blue, Black",
     power_bus_material: commonConfigData?.power_bus_material || "Aluminium",
-    power_bus_current_density: commonConfigData?.power_bus_current_density || "0.8 A/Sq. mm",
-    power_bus_rating_of_busbar: commonConfigData?.power_bus_rating_of_busbar || "(Min - 1R x 65 mm X 10 mm)",
-    control_bus_main_busbar_selection: commonConfigData?.control_bus_main_busbar_selection || "As per IS8623",
-    control_bus_heat_pvc_sleeve: commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Black",
+    power_bus_current_density:
+      commonConfigData?.power_bus_current_density || "0.8 A/Sq. mm",
+    power_bus_rating_of_busbar:
+      commonConfigData?.power_bus_rating_of_busbar ||
+      "(Min - 1R x 65 mm X 10 mm)",
+    control_bus_main_busbar_selection:
+      commonConfigData?.control_bus_main_busbar_selection || "As per IS8623",
+    control_bus_heat_pvc_sleeve:
+      commonConfigData?.control_bus_heat_pvc_sleeve || "Red, Black",
     control_bus_material: commonConfigData?.control_bus_material || "Aluminium",
-    control_bus_current_density: commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
-    control_bus_rating_of_busbar: commonConfigData?.control_bus_rating_of_busbar || "VTS",
-    earth_bus_main_busbar_selection: commonConfigData?.earth_bus_main_busbar_selection || "As per IS8623",
-    earth_bus_busbar_position: commonConfigData?.earth_bus_busbar_position || "Top",
+    control_bus_current_density:
+      commonConfigData?.control_bus_current_density || "0.8 A/Sq. mm",
+    control_bus_rating_of_busbar:
+      commonConfigData?.control_bus_rating_of_busbar || "VTS",
+    earth_bus_main_busbar_selection:
+      commonConfigData?.earth_bus_main_busbar_selection || "As per IS8623",
+    earth_bus_busbar_position:
+      commonConfigData?.earth_bus_busbar_position || "Top",
     earth_bus_material: commonConfigData?.earth_bus_material || "Aluminium",
-    earth_bus_current_density: commonConfigData?.earth_bus_current_density || "0.8 A/Sq. mm",
-    earth_bus_rating_of_busbar: commonConfigData?.earth_bus_rating_of_busbar || "(Min - 1R x 30 mm X 10 mm )",
-    metering_for_feeders: commonConfigData?.metering_for_feeders || "Ammeter (Digital)",
+    earth_bus_current_density:
+      commonConfigData?.earth_bus_current_density || "0.8 A/Sq. mm",
+    earth_bus_rating_of_busbar:
+      commonConfigData?.earth_bus_rating_of_busbar ||
+      "(Min - 1R x 30 mm X 10 mm )",
+    metering_for_feeders:
+      commonConfigData?.metering_for_feeders || "Ammeter (Digital)",
     general_note_busbar_and_insulation_materials:
-      commonConfigData?.general_note_busbar_and_insulation_materials || "Not Applicable",
+      commonConfigData?.general_note_busbar_and_insulation_materials ||
+      "Not Applicable",
     door_earthing:
-      commonConfigData?.door_earthing || "Through Separate Stud With Yellow-Green PVC stranded copper wire (2.5 sq.mm)",
+      commonConfigData?.door_earthing ||
+      "Through Separate Stud With Yellow-Green PVC stranded copper wire (2.5 sq.mm)",
     instrument_earth:
       commonConfigData?.instrument_earth ||
       "1. Dark Green PVC Copper Wire 0.5/1 Sq.mm & Copper Busbar \n2. Every VFD section shall have isolated Isntrument Earth busbar",
     cooling_fans: commonConfigData?.cooling_fans || "Not Applicable",
-    louvers_and_filters: commonConfigData?.louvers_and_filters || "Not Applicable",
+    louvers_and_filters:
+      commonConfigData?.louvers_and_filters || "Not Applicable",
     alarm_annunciator: commonConfigData?.alarm_annunciator || "Not Applicable",
-    control_transformer: commonConfigData?.control_transformer || "Not Applicable",
-    commissioning_spare: commonConfigData?.commissioning_spare || "Not Applicable",
-    two_year_operational_spare: commonConfigData?.two_year_operational_spare || "Not Applicable",
-  }
-}
+    control_transformer:
+      commonConfigData?.control_transformer || "Not Applicable",
+    commissioning_spare:
+      commonConfigData?.commissioning_spare || "Not Applicable",
+    two_year_operational_spare:
+      commonConfigData?.two_year_operational_spare || "Not Applicable",
+  };
+};
 
 const CommonConfiguration = ({
   revision_id,
 }: {
-  revision_id: string
-  setActiveKey: React.Dispatch<React.SetStateAction<string>>
+  revision_id: string;
+  setActiveKey: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const { data: commonConfiguration1 } = useGetData(
     `${COMMON_CONFIGURATION_1}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  )
+  );
   const { data: commonConfiguration2 } = useGetData(
     `${COMMON_CONFIGURATION_2}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  )
+  );
   const { data: commonConfiguration3 } = useGetData(
     `${COMMON_CONFIGURATION_3}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
-  )
+  );
 
   const commonConfigurationData = useMemo(
-    () => [...(commonConfiguration1 || []), ...(commonConfiguration2 || []), ...(commonConfiguration3 || [])],
+    () => [
+      ...(commonConfiguration1 || []),
+      ...(commonConfiguration2 || []),
+      ...(commonConfiguration3 || []),
+    ],
     [commonConfiguration1, commonConfiguration2, commonConfiguration3]
-  )
+  );
 
   // const { data: projectPanelData } = useGetData(
   //   `${PROJECT_PANEL_API}?fields=["*"]&filters=[["revision_id", "=", "${revision_id}"]]`
   // )
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
-  const userInfo = useCurrentUser()
-  let { dropdown } = useCommonConfigDropdowns()
+  const userInfo = useCurrentUser();
+  const { dropdown } = useCommonConfigDropdowns();
 
-  let dol_starter_options = dropdown["DOL Starter"]
-  let star_delta_starter_options = dropdown["Star Delta Starter"]
-  let ammeter_options = dropdown["Ammeter"]
-  let ammeter_configuration_options = dropdown["Ammeter Configuration"]
-  let mcc_switchgear_type_options = dropdown["MCC Switchgear Type"]
-  let switchgear_combination_options = dropdown["Switchgear Combination"]
+  const dol_starter_options = dropdown["DOL Starter"];
+  const star_delta_starter_options = dropdown["Star Delta Starter"];
+  const ammeter_options = dropdown["Ammeter"];
+  const ammeter_configuration_options = dropdown["Ammeter Configuration"];
+  const mcc_switchgear_type_options = dropdown["MCC Switchgear Type"];
+  const switchgear_combination_options = dropdown["Switchgear Combination"];
 
-  let control_transformer_type_options = dropdown["Control Transformer Type"]
-  let control_transformer_primary_voltage_options = dropdown["Control Transformer primary voltage"]
-  let control_tranformer_coating_options = dropdown["Current Transformer Coating"]
-  let control_tranformer_quantity_options = dropdown["Control Transformer Quantity"]
-  let control_tranformer_configuration_options = dropdown["Control Transformer Configuration"]
+  const control_transformer_type_options = dropdown["Control Transformer Type"];
+  const control_transformer_primary_voltage_options =
+    dropdown["Control Transformer primary voltage"];
+  const control_tranformer_coating_options =
+    dropdown["Current Transformer Coating"];
+  const control_tranformer_quantity_options =
+    dropdown["Control Transformer Quantity"];
+  const control_tranformer_configuration_options =
+    dropdown["Control Transformer Configuration"];
 
-  let digital_meters_options = dropdown["Digital Meters"]
-  let analog_meters_options = dropdown["Analog Meters"]
-  let communication_protocol_options = dropdown["Communication Protocol"]
+  const digital_meters_options = dropdown["Digital Meters"];
+  const analog_meters_options = dropdown["Analog Meters"];
+  const communication_protocol_options = dropdown["Communication Protocol"];
 
-  let current_transformer_options = dropdown["Current Transformer"]
-  let current_transformer_configuration_options = dropdown["Current Transformer Configuration"]
+  const current_transformer_options = dropdown["Current Transformer"];
+  const current_transformer_configuration_options =
+    dropdown["Current Transformer Configuration"];
 
-  let pole_options = dropdown["Supply Feeder Pole"]
-  let dm_standard_options = dropdown["Supply Feeder DM Standard"]
-  let testing_standard_options = dropdown["Supply Feeder Testing Standard"]
-  let power_wiring_color_options = dropdown["Power Wiring Color"]
-  let power_wiring_length_options = dropdown["Power Wiring Size"]
-  let control_wiring_color_options = dropdown["Control Wiring Color"]
-  let control_wiring_length_options = dropdown["Control Wiring Size"]
-  let vdc_24_wiring_color_options = dropdown["VDC 24 Wiring Color"]
-  let vdc_24_wiring_length_options = dropdown["VDC 24 Wiring Size"]
-  let analog_signal_wiring_color_options = dropdown["Analog Signal Wiring Color"]
-  let analog_signal_wiring_length_options = dropdown["Analog Signal Wiring Size"]
-  let ct_wiring_color_options = dropdown["CT Wiring Color"]
-  let ct_wiring_length_options = dropdown["CT Wiring Size"]
-  let cable_wiring_pvc_options = dropdown["Cable Insulation PVC"]
-  let air_clearance_between_phase_to_neutral_bus_options = dropdown["Air Clearance Doctype"]
-  let air_clearance_between_phase_to_phase_bus_options = dropdown["Air Clearance Doctype"]
-  let ferrule_options = dropdown["Ferrule"]
+  const pole_options = dropdown["Supply Feeder Pole"];
+  const dm_standard_options = dropdown["Supply Feeder DM Standard"];
+  const testing_standard_options = dropdown["Supply Feeder Testing Standard"];
+  const power_wiring_color_options = dropdown["Power Wiring Color"];
+  const power_wiring_length_options = dropdown["Power Wiring Size"];
+  const control_wiring_color_options = dropdown["Control Wiring Color"];
+  const control_wiring_length_options = dropdown["Control Wiring Size"];
+  const vdc_24_wiring_color_options = dropdown["VDC 24 Wiring Color"];
+  const vdc_24_wiring_length_options = dropdown["VDC 24 Wiring Size"];
+  const analog_signal_wiring_color_options =
+    dropdown["Analog Signal Wiring Color"];
+  const analog_signal_wiring_length_options =
+    dropdown["Analog Signal Wiring Size"];
+  const ct_wiring_color_options = dropdown["CT Wiring Color"];
+  const ct_wiring_length_options = dropdown["CT Wiring Size"];
+  const cable_wiring_pvc_options = dropdown["Cable Insulation PVC"];
+  const air_clearance_between_phase_to_neutral_bus_options =
+    dropdown["Air Clearance Doctype"];
+  const air_clearance_between_phase_to_phase_bus_options =
+    dropdown["Air Clearance Doctype"];
+  const ferrule_options = dropdown["Ferrule"];
 
-  let power_terminal_clipon_options = dropdown["Power Terminal Clipon"]
-  let power_terminal_busbar_type_options = dropdown["Power Terminal Busbar Type"]
-  let control_terminal_options = dropdown["Control Terminal"]
-  let spare_terminal_options = dropdown["Spare Terminal"]
+  const power_terminal_clipon_options = dropdown["Power Terminal Clipon"];
+  const power_terminal_busbar_type_options =
+    dropdown["Power Terminal Busbar Type"];
+  const control_terminal_options = dropdown["Control Terminal"];
+  const spare_terminal_options = dropdown["Spare Terminal"];
 
-  let forward_reverst_push_button_options = dropdown["Forward and Reverse Push Button"]
-  let push_button_stop_options = dropdown["Push Button Stop Color"]
-  let push_button_start_options = dropdown["Push Button Start Color"]
-  let ess_options = dropdown["Push Button ESS"]
-  let speed_increase_pb_options = dropdown["Speed Increase PB"]
-  let field_motor_thickness_options = dropdown["Field Motor Thickness"]
-  let speed_decrease_pb_options = dropdown["Speed Decrease PB"]
-  let test_dropdown_options = dropdown["Test Dropdown"]
-  let reset_dropdown_options = dropdown["Reset Dropdown"]
-  let alarm_acknowledge_dropdown_options = dropdown["Alarm Acknowledge Dropdown"]
-  let lamp_test_dropdown_options = dropdown["Lamp Test Dropdown"]
+  const forward_reverst_push_button_options =
+    dropdown["Forward and Reverse Push Button"];
+  const push_button_stop_options = dropdown["Push Button Stop Color"];
+  const push_button_start_options = dropdown["Push Button Start Color"];
+  const ess_options = dropdown["Push Button ESS"];
+  const speed_increase_pb_options = dropdown["Speed Increase PB"];
+  const field_motor_thickness_options = dropdown["Field Motor Thickness"];
+  const speed_decrease_pb_options = dropdown["Speed Decrease PB"];
+  const test_dropdown_options = dropdown["Test Dropdown"];
+  const reset_dropdown_options = dropdown["Reset Dropdown"];
+  const alarm_acknowledge_dropdown_options =
+    dropdown["Alarm Acknowledge Dropdown"];
+  const lamp_test_dropdown_options = dropdown["Lamp Test Dropdown"];
 
-  let running_open_options = dropdown["Indicating Lamp Running Open"]
-  let stopped_closed_options = dropdown["Indicating Lamp Stopped Closed"]
-  let trip_options = dropdown["Indicating Lamp Trip"]
+  const running_open_options = dropdown["Indicating Lamp Running Open"];
+  const stopped_closed_options = dropdown["Indicating Lamp Stopped Closed"];
+  const trip_options = dropdown["Indicating Lamp Trip"];
 
-  let field_motor_type_options = dropdown["Field Motor Isolator General Type"]
-  let hazardous_area_type_options = dropdown["Hazardous Area Type Isolator and Lpbs"]
-  let field_motor_enclosure_options = dropdown["Field Motor Isolator General Enclosure"]
-  let field_motor_material_options = dropdown["Field Motor Isolator General Material"]
-  let field_motor_qty_options = dropdown["Field Motor Isolator General QTY"]
-  let field_motor_color_shade_options = dropdown["Field Motor Isolator Color Shade"]
-  let field_motor_cable_entry_options = dropdown["Field Motor Isolator General Cable Entry"]
-  let field_motor_canopy_on_top_options = dropdown["Field Motor Isolator Canopy On Top"]
-  let field_motor_canopy_type_options = dropdown["Field Motor Isolator Canopy Type"]
+  const field_motor_type_options =
+    dropdown["Field Motor Isolator General Type"];
+  const hazardous_area_type_options =
+    dropdown["Hazardous Area Type Isolator and Lpbs"];
+  const field_motor_enclosure_options =
+    dropdown["Field Motor Isolator General Enclosure"];
+  const field_motor_material_options =
+    dropdown["Field Motor Isolator General Material"];
+  const field_motor_qty_options = dropdown["Field Motor Isolator General QTY"];
+  const field_motor_color_shade_options =
+    dropdown["Field Motor Isolator Color Shade"];
+  const field_motor_canopy_on_top_options =
+    dropdown["Field Motor Isolator Canopy On Top"];
+  const field_motor_canopy_type_options =
+    dropdown["Field Motor Isolator Canopy Type"];
 
-  let lpbs_color_shade_options = dropdown["Local Push Button Station LPBS Color Shade"]
-  let lpbs_canopy_on_top_options = dropdown["Local Push Button Station Canopy On top"]
-  let lpbs_indicator_on_options = dropdown["LPBS Start On Indication Lamp Color"]
-  let lpbs_indiacator_off_options = dropdown["LPBS Stop Off Indication Lamp Color"]
-  let lpbs_speed_increase_options = dropdown["LPBS Speed Increase Push Button"]
-  let lpbs_speed_decrease_options = dropdown["LPBS Speed Decrease Push Button"]
+  const lpbs_color_shade_options =
+    dropdown["Local Push Button Station LPBS Color Shade"];
+  const lpbs_canopy_on_top_options =
+    dropdown["Local Push Button Station Canopy On top"];
+  const lpbs_indicator_on_options =
+    dropdown["LPBS Start On Indication Lamp Color"];
+  const lpbs_indiacator_off_options =
+    dropdown["LPBS Stop Off Indication Lamp Color"];
+  const lpbs_speed_increase_options =
+    dropdown["LPBS Speed Increase Push Button"];
+  const lpbs_speed_decrease_options =
+    dropdown["LPBS Speed Decrease Push Button"];
 
-  let apfc_relay_options = dropdown["APFC Relay"]
+  const apfc_relay_options = dropdown["APFC Relay"];
 
-  let pb_main_busbar_selection_options = dropdown["Power Bus Main Busbar Selection"]
-  let pb_heat_pvc_sleeve_options = dropdown["Power Bus Heat Shrinkable Color PVC sleeve"]
-  let pb_current_density_options = dropdown["Power Bus Current Density"]
-  let cb_main_busbar_selection_option = dropdown["Control Bus Main Busbar Selection"]
-  let cb_heat_pvc_sleeve_options = dropdown["Control Bus Heat Shrinkable Color PVC sleeve"]
-  let cb_current_density_options = dropdown["Control Bus Current Density"]
-  let eb_main_busbar_selection_options = dropdown["Earth Bus Main Busbar Selection"]
-  let eb_main_busbar_position_options = dropdown["Earth Bus Busbar Position"]
-  let eb_current_density_options = dropdown["Earth Bus Current Density"]
-  let metering_for_feeder_options = dropdown["Metering for Feeder"]
+  const pb_main_busbar_selection_options =
+    dropdown["Power Bus Main Busbar Selection"];
+  const pb_heat_pvc_sleeve_options =
+    dropdown["Power Bus Heat Shrinkable Color PVC sleeve"];
+  const pb_current_density_options = dropdown["Power Bus Current Density"];
+  const cb_main_busbar_selection_option =
+    dropdown["Control Bus Main Busbar Selection"];
+  const cb_heat_pvc_sleeve_options =
+    dropdown["Control Bus Heat Shrinkable Color PVC sleeve"];
+  const cb_current_density_options = dropdown["Control Bus Current Density"];
+  const eb_main_busbar_selection_options =
+    dropdown["Earth Bus Main Busbar Selection"];
+  const eb_main_busbar_position_options = dropdown["Earth Bus Busbar Position"];
+  const eb_current_density_options = dropdown["Earth Bus Current Density"];
+  const metering_for_feeder_options = dropdown["Metering for Feeder"];
 
-  const [testing_standards, setTestingStandards] = useState<any[]>(
-    Array.isArray(testing_standard_options) ? [...testing_standard_options] : []
-  )
   const iec_testing_standards = testing_standard_options?.filter(
     (item: any) => item.name.startsWith("IEC") || item.name === "NA"
-  )
+  );
   const is_testing_standards = testing_standard_options?.filter(
     (item: any) => item.name.startsWith("IS") || item.name === "NA"
-  )
+  );
 
-  const iec_dm_standards = dm_standard_options?.filter((item: any) => item.name.startsWith("IEC") || item.name === "NA")
-  const is_dm_standards = dm_standard_options?.filter((item: any) => item.name.startsWith("IS") || item.name === "NA")
+  const iec_dm_standards = dm_standard_options?.filter(
+    (item: any) => item.name.startsWith("IEC") || item.name === "NA"
+  );
+  const is_dm_standards = dm_standard_options?.filter(
+    (item: any) => item.name.startsWith("IS") || item.name === "NA"
+  );
 
-  const al_pb_current_density = pb_current_density_options?.filter((item: any) => item.name.startsWith("0.8"))
+  const al_pb_current_density = pb_current_density_options?.filter(
+    (item: any) => item.name.startsWith("0.8")
+  );
   const cu_pb_current_density = pb_current_density_options?.filter(
     (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
-  )
-  const al_cb_current_density = cb_current_density_options?.filter((item: any) => item.name.startsWith("0.8"))
+  );
+  const al_cb_current_density = cb_current_density_options?.filter(
+    (item: any) => item.name.startsWith("0.8")
+  );
   const cu_cb_current_density = cb_current_density_options?.filter(
     (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
-  )
-  const al_eb_current_density = eb_current_density_options?.filter((item: any) => item.name.startsWith("0.8"))
+  );
+  const al_eb_current_density = eb_current_density_options?.filter(
+    (item: any) => item.name.startsWith("0.8")
+  );
   const cu_eb_current_density = eb_current_density_options?.filter(
     (item: any) => item.name.startsWith("1.2") || item.name.startsWith("1.0")
-  )
+  );
 
   const { control, handleSubmit, reset, watch, setValue } = useForm({
     resolver: zodResolver(configItemValidationSchema),
     defaultValues: getDefaultValues(commonConfigurationData?.[0]),
     mode: "onSubmit",
-  })
+  });
 
-  const supply_feeder_standard_controlled = watch("supply_feeder_standard")
+  const supply_feeder_standard_controlled = watch("supply_feeder_standard");
 
   useEffect(() => {
-    reset(getDefaultValues(commonConfigurationData?.[0]))
-  }, [commonConfigurationData, reset])
+    reset(getDefaultValues(commonConfigurationData?.[0]));
+  }, [commonConfigurationData, reset]);
 
   useEffect(() => {
     if (supply_feeder_standard_controlled === "IS") {
-      setValue("dm_standard", "IS 8623")
-      setValue("testing_standard", "IS 8623")
+      setValue("dm_standard", "IS 8623");
+      setValue("testing_standard", "IS 8623");
     } else {
-      setValue("dm_standard", "IEC 60439")
-      setValue("testing_standard", "IEC 60439")
+      setValue("dm_standard", "IEC 60439");
+      setValue("testing_standard", "IEC 60439");
     }
-  }, [setValue, supply_feeder_standard_controlled])
+  }, [setValue, supply_feeder_standard_controlled]);
 
-  const is_Ammeter_NA = watch("ammeter")
-  const control_bus_material_controlled = watch("control_bus_material")
-  const power_bus_material_controlled = watch("power_bus_material")
-  const earth_bus_material_controlled = watch("earth_bus_material")
-  const safe_field_motor_controlled = watch("safe_field_motor_material")
-  const hazardous_field_motor_controlled = watch("hazardous_field_motor_material")
-  const hazardous__field_motor_type_controlled = watch("hazardous_field_motor_type")
-  const safe_lpbs_material_controlled = watch("safe_lpbs_material")
-  const hazardous_lpbs_material_controlled = watch("hazardous_lpbs_material")
-  const hazardous_lpbs_type_controlled = watch("hazardous_lpbs_type")
+  const is_Ammeter_NA = watch("ammeter");
+  const control_bus_material_controlled = watch("control_bus_material");
+  const power_bus_material_controlled = watch("power_bus_material");
+  const earth_bus_material_controlled = watch("earth_bus_material");
+  const safe_field_motor_controlled = watch("safe_field_motor_material");
+  const hazardous_field_motor_controlled = watch(
+    "hazardous_field_motor_material"
+  );
+  const hazardous__field_motor_type_controlled = watch(
+    "hazardous_field_motor_type"
+  );
+  const safe_lpbs_material_controlled = watch("safe_lpbs_material");
+  const hazardous_lpbs_material_controlled = watch("hazardous_lpbs_material");
+  const hazardous_lpbs_type_controlled = watch("hazardous_lpbs_type");
 
   useEffect(() => {
     if (is_Ammeter_NA === "NA") {
-      setValue("ammeter_configuration", "NA")
+      setValue("ammeter_configuration", "NA");
     }
 
     if (
@@ -363,40 +492,40 @@ const CommonConfiguration = ({
       safe_field_motor_controlled !== "SS 304" &&
       safe_field_motor_controlled !== "CRCA"
     ) {
-      setValue("safe_field_motor_thickness", "NA")
+      setValue("safe_field_motor_thickness", "NA");
     }
     if (
       hazardous_field_motor_controlled !== "SS 316" &&
       hazardous_field_motor_controlled !== "SS 304" &&
       hazardous_field_motor_controlled !== "CRCA"
     ) {
-      setValue("hazardous_field_motor_thickness", "NA")
+      setValue("hazardous_field_motor_thickness", "NA");
     }
     if (
       safe_lpbs_material_controlled !== "SS 316" &&
       safe_lpbs_material_controlled !== "SS 304" &&
       safe_lpbs_material_controlled !== "CRCA"
     ) {
-      setValue("safe_lpbs_thickness", "NA")
+      setValue("safe_lpbs_thickness", "NA");
     }
     if (
       hazardous_lpbs_material_controlled !== "SS 316" &&
       hazardous_lpbs_material_controlled !== "SS 304" &&
       hazardous_lpbs_material_controlled !== "CRCA"
     ) {
-      setValue("hazardous_lpbs_thickness", "NA")
+      setValue("hazardous_lpbs_thickness", "NA");
     }
     if (hazardous__field_motor_type_controlled === "IEC Exd") {
-      setValue("hazardous_field_motor_material", "Diecast Aluminium")
+      setValue("hazardous_field_motor_material", "Diecast Aluminium");
     }
     if (hazardous__field_motor_type_controlled === "IEC Exe") {
-      setValue("hazardous_field_motor_material", "SS 316")
+      setValue("hazardous_field_motor_material", "SS 316");
     }
     if (hazardous_lpbs_type_controlled === "IEC Exd") {
-      setValue("hazardous_lpbs_material", "Diecast Aluminium")
+      setValue("hazardous_lpbs_material", "Diecast Aluminium");
     }
     if (hazardous_lpbs_type_controlled === "IEC Exe") {
-      setValue("hazardous_lpbs_material", "SS 316")
+      setValue("hazardous_lpbs_material", "SS 316");
     }
   }, [
     is_Ammeter_NA,
@@ -407,71 +536,87 @@ const CommonConfiguration = ({
     safe_field_motor_controlled,
     hazardous_field_motor_controlled,
     setValue,
-  ])
+  ]);
   // }, [is_Ammeter_NA, safe_field_motor_controlled, hazardous_field_motor_controlled, hazardous__field_motor_type_controlled, setValue])
 
   // Control Bus (dependancy Logic)
   useEffect(() => {
     if (control_bus_material_controlled === "Aluminium") {
-      setValue("control_bus_current_density", "0.8 A/Sq. mm")
+      setValue("control_bus_current_density", "0.8 A/Sq. mm");
     } else if (control_bus_material_controlled === "Copper") {
-      setValue("control_bus_current_density", "1.0 A/Sq. mm")
+      setValue("control_bus_current_density", "1.0 A/Sq. mm");
     } else {
-      setValue("control_bus_current_density", "1.0 A/Sq. mm")
+      setValue("control_bus_current_density", "1.0 A/Sq. mm");
     }
-  }, [cb_current_density_options, control_bus_material_controlled, setValue])
+  }, [cb_current_density_options, control_bus_material_controlled, setValue]);
 
   // Power Bus (dependency logic)
   useEffect(() => {
     if (power_bus_material_controlled === "Aluminium") {
-      setValue("power_bus_current_density", "0.8 A/Sq. mm")
+      setValue("power_bus_current_density", "0.8 A/Sq. mm");
     } else if (power_bus_material_controlled === "Copper") {
-      setValue("power_bus_current_density", "1.0 A/Sq. mm")
+      setValue("power_bus_current_density", "1.0 A/Sq. mm");
     } else {
-      setValue("power_bus_current_density", "1.0 A/Sq. mm")
+      setValue("power_bus_current_density", "1.0 A/Sq. mm");
     }
-  }, [pb_current_density_options, power_bus_material_controlled, setValue])
+  }, [pb_current_density_options, power_bus_material_controlled, setValue]);
 
   // earth Bus (Dependency logic)
   useEffect(() => {
     if (earth_bus_material_controlled === "Aluminium") {
-      setValue("earth_bus_current_density", "0.8 A/Sq. mm")
+      setValue("earth_bus_current_density", "0.8 A/Sq. mm");
     } else if (earth_bus_material_controlled === "Copper") {
-      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+      setValue("earth_bus_current_density", "1.0 A/Sq. mm");
     } else {
-      setValue("earth_bus_current_density", "1.0 A/Sq. mm")
+      setValue("earth_bus_current_density", "1.0 A/Sq. mm");
     }
-  }, [earth_bus_material_controlled, eb_current_density_options, setValue])
+  }, [earth_bus_material_controlled, eb_current_density_options, setValue]);
 
   const handleError = (error: any) => {
     try {
-      const errorObj = JSON.parse(error?.message) as any
-      message?.error(errorObj?.message)
+      const errorObj = JSON.parse(error?.message) as any;
+      message?.error(errorObj?.message);
     } catch (parseError) {
-      message?.error(error?.message || "An unknown error occured")
+      console.error("parseError: ", parseError);
+      message?.error(error?.message || "An unknown error occured");
     }
-  }
+  };
 
   const onSubmit = async (data: any) => {
-    console.log("data", data)
-    setLoading(true)
+    console.log("data", data);
+    setLoading(true);
     try {
-      await updateData(`${COMMON_CONFIGURATION_1}/${commonConfiguration1[0].name}`, false, data)
-      await updateData(`${COMMON_CONFIGURATION_2}/${commonConfiguration2[0].name}`, false, data)
-      await updateData(`${COMMON_CONFIGURATION_3}/${commonConfiguration3[0].name}`, false, data)
-      message.success("Common configuration updated successfully")
+      await updateData(
+        `${COMMON_CONFIGURATION_1}/${commonConfiguration1[0].name}`,
+        false,
+        data
+      );
+      await updateData(
+        `${COMMON_CONFIGURATION_2}/${commonConfiguration2[0].name}`,
+        false,
+        data
+      );
+      await updateData(
+        `${COMMON_CONFIGURATION_3}/${commonConfiguration3[0].name}`,
+        false,
+        data
+      );
+      message.success("Common configuration updated successfully");
     } catch (error) {
-      console.error("error: ", error)
-      console.error("error: ", error)
-      handleError(error)
+      console.error("error: ", error);
+      console.error("error: ", error);
+      handleError(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 px-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-2 px-4"
+      >
         <Divider>
           <span className="font-bold text-slate-700">Outgoing Feeder</span>
         </Divider>
@@ -483,7 +628,10 @@ const CommonConfiguration = ({
               name="dol_starter"
               label={
                 <>
-                  DOL Starter <span className="text-xs text-blue-500">(kW including and below)</span>
+                  DOL Starter{" "}
+                  <span className="text-xs text-blue-500">
+                    (kW including and below)
+                  </span>
                 </>
               }
               options={dol_starter_options || []}
@@ -496,7 +644,10 @@ const CommonConfiguration = ({
               name="star_delta_starter"
               label={
                 <>
-                  Star Delta Starter <span className="text-xs text-blue-500">(kW including and above)</span>
+                  Star Delta Starter{" "}
+                  <span className="text-xs text-blue-500">
+                    (kW including and above)
+                  </span>
                 </>
               }
               options={star_delta_starter_options || []}
@@ -511,7 +662,10 @@ const CommonConfiguration = ({
               name="ammeter"
               label={
                 <>
-                  Ammeter <span className="text-xs text-blue-500">(kW including and above)</span>
+                  Ammeter{" "}
+                  <span className="text-xs text-blue-500">
+                    (kW including and above)
+                  </span>
                 </>
               }
               options={ammeter_options || []}
@@ -556,8 +710,10 @@ const CommonConfiguration = ({
                 name="switchgear_combination"
                 label="Switchgear Combination"
                 disabled={
-                  watch("mcc_switchgear_type") === "Type II Coordination-Fuse" ||
-                  watch("mcc_switchgear_type") === "Type II Coordination-Fuse-One Size Higher"
+                  watch("mcc_switchgear_type") ===
+                    "Type II Coordination-Fuse" ||
+                  watch("mcc_switchgear_type") ===
+                    "Type II Coordination-Fuse-One Size Higher"
                 }
                 options={switchgear_combination_options || []}
                 size="small"
@@ -636,7 +792,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Metering Instruments for Feeders</span>
+          <span className="font-bold text-slate-700">
+            Metering Instruments for Feeders
+          </span>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -668,7 +826,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Current Transformer for Feeders</span>
+          <span className="font-bold text-slate-700">
+            Current Transformer for Feeders
+          </span>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -714,7 +874,13 @@ const CommonConfiguration = ({
           <span className="font-bold text-slate-700">Supply Feeder</span>
         </Divider>
         <div className="w-1/3">
-          <CustomSingleSelect control={control} name="pole" label="Pole" options={pole_options || []} size="small" />
+          <CustomSingleSelect
+            control={control}
+            name="pole"
+            label="Pole"
+            options={pole_options || []}
+            size="small"
+          />
         </div>
         <div className="flex items-center gap-4">
           <div className="basis-1/3">
@@ -733,7 +899,11 @@ const CommonConfiguration = ({
               control={control}
               name="dm_standard"
               label="Design, Manufacturer's Standard & Testing Standard"
-              options={(watch("supply_feeder_standard").startsWith("IEC") ? iec_dm_standards : is_dm_standards) || []}
+              options={
+                (watch("supply_feeder_standard").startsWith("IEC")
+                  ? iec_dm_standards
+                  : is_dm_standards) || []
+              }
               size="small"
             />
           </div>
@@ -743,7 +913,9 @@ const CommonConfiguration = ({
               name="testing_standard"
               label=""
               options={
-                (watch("supply_feeder_standard").startsWith("IEC") ? iec_testing_standards : is_testing_standards) || []
+                (watch("supply_feeder_standard").startsWith("IEC")
+                  ? iec_testing_standards
+                  : is_testing_standards) || []
               }
               size="small"
             />
@@ -753,7 +925,9 @@ const CommonConfiguration = ({
           <span className="font-bold text-slate-700">Wiring</span>
         </Divider>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">Power Wiring (L1, L2, L3, N)</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">
+            Power Wiring (L1, L2, L3, N)
+          </h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -774,7 +948,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">Control Wiring (P, N)</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">
+            Control Wiring (P, N)
+          </h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -795,7 +971,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">24 VDC Wiring (+ / -)</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">
+            24 VDC Wiring (+ / -)
+          </h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -816,7 +994,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">Analog Signal Wiring (+ / -)</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">
+            Analog Signal Wiring (+ / -)
+          </h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -837,7 +1017,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">CT Wiring</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">
+            CT Wiring
+          </h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -858,7 +1040,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <h4 className="flex-1 text-sm font-semibold text-slate-700">RTD / Thermocouple Wiring (+, - )</h4>
+          <h4 className="flex-1 text-sm font-semibold text-slate-700">
+            RTD / Thermocouple Wiring (+, - )
+          </h4>
           <div className="flex-1">
             <CustomSingleSelect
               control={control}
@@ -916,11 +1100,17 @@ const CommonConfiguration = ({
             />
           </div>
           <div className="flex-1">
-            <CustomTextAreaInput control={control} name="common_requirement" label="Common Requirement" />
+            <CustomTextAreaInput
+              control={control}
+              name="common_requirement"
+              label="Common Requirement"
+            />
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Terminal Block Connectors</span>
+          <span className="font-bold text-slate-700">
+            Terminal Block Connectors
+          </span>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -983,7 +1173,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Panel Mounted Push Buttons & Colours</span>
+          <span className="font-bold text-slate-700">
+            Panel Mounted Push Buttons & Colours
+          </span>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -1147,7 +1339,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Panel Mounted Indicating Lamps & Colours</span>
+          <span className="font-bold text-slate-700">
+            Panel Mounted Indicating Lamps & Colours
+          </span>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -1169,11 +1363,19 @@ const CommonConfiguration = ({
             />
           </div>
           <div className="flex-1">
-            <CustomSingleSelect control={control} name="trip" label="Trip" options={trip_options || []} size="small" />
+            <CustomSingleSelect
+              control={control}
+              name="trip"
+              label="Trip"
+              options={trip_options || []}
+              size="small"
+            />
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Field Motor Isolator (General Specification)</span>
+          <span className="font-bold text-slate-700">
+            Field Motor Isolator (General Specification)
+          </span>
           <div>
             <CustomRadioSelect
               control={control}
@@ -1219,7 +1421,8 @@ const CommonConfiguration = ({
               options={field_motor_enclosure_options || []}
               size="small"
               disabled={
-                watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"
+                watch("is_field_motor_isolator_selected") === "0" ||
+                watch("is_safe_area_isolator_selected") === "0"
               }
             />
           </div>
@@ -1231,7 +1434,8 @@ const CommonConfiguration = ({
               options={field_motor_material_options || []}
               size="small"
               disabled={
-                watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"
+                watch("is_field_motor_isolator_selected") === "0" ||
+                watch("is_safe_area_isolator_selected") === "0"
               }
             />
           </div>
@@ -1243,7 +1447,8 @@ const CommonConfiguration = ({
               options={field_motor_thickness_options || []}
               size="small"
               disabled={
-                watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"
+                watch("is_field_motor_isolator_selected") === "0" ||
+                watch("is_safe_area_isolator_selected") === "0"
               }
             />
           </div>
@@ -1257,7 +1462,8 @@ const CommonConfiguration = ({
               options={field_motor_qty_options || []}
               size="small"
               disabled={
-                watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"
+                watch("is_field_motor_isolator_selected") === "0" ||
+                watch("is_safe_area_isolator_selected") === "0"
               }
             />
           </div>
@@ -1269,7 +1475,8 @@ const CommonConfiguration = ({
               options={field_motor_color_shade_options || []}
               size="small"
               disabled={
-                watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"
+                watch("is_field_motor_isolator_selected") === "0" ||
+                watch("is_safe_area_isolator_selected") === "0"
               }
             />
           </div>
@@ -1281,7 +1488,8 @@ const CommonConfiguration = ({
               options={field_motor_canopy_on_top_options || []}
               size="small"
               disabled={
-                watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"
+                watch("is_field_motor_isolator_selected") === "0" ||
+                watch("is_safe_area_isolator_selected") === "0"
               }
             />
           </div>
@@ -1293,7 +1501,8 @@ const CommonConfiguration = ({
               options={field_motor_canopy_type_options || []}
               size="small"
               disabled={
-                watch("is_field_motor_isolator_selected") === "0" || watch("is_safe_area_isolator_selected") === "0"
+                watch("is_field_motor_isolator_selected") === "0" ||
+                watch("is_safe_area_isolator_selected") === "0"
               }
             />
           </div>
@@ -1421,7 +1630,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Local Push Button Station (General Specification)</span>
+          <span className="font-bold text-slate-700">
+            Local Push Button Station (General Specification)
+          </span>
           <div>
             <CustomRadioSelect
               control={control}
@@ -1521,7 +1732,8 @@ const CommonConfiguration = ({
               label="IP Protection"
               options={field_motor_enclosure_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_safe_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1533,7 +1745,8 @@ const CommonConfiguration = ({
               label="MOC"
               options={field_motor_material_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_safe_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1545,7 +1758,8 @@ const CommonConfiguration = ({
               label="Thickness"
               options={field_motor_thickness_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_safe_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1559,7 +1773,8 @@ const CommonConfiguration = ({
               label="Qty"
               options={field_motor_qty_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_safe_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1571,7 +1786,8 @@ const CommonConfiguration = ({
               label="LPBS Color Shade"
               options={lpbs_color_shade_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_safe_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1583,7 +1799,8 @@ const CommonConfiguration = ({
               label="Canopy"
               options={lpbs_canopy_on_top_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_safe_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1595,7 +1812,8 @@ const CommonConfiguration = ({
               label="Canopy Type"
               options={field_motor_canopy_type_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_safe_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_safe_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1624,7 +1842,8 @@ const CommonConfiguration = ({
               label="Type"
               options={hazardous_area_type_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_hazardous_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1636,7 +1855,8 @@ const CommonConfiguration = ({
               label="IP Protection"
               options={field_motor_enclosure_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_hazardous_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1648,7 +1868,8 @@ const CommonConfiguration = ({
               label="MOC"
               options={field_motor_material_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_hazardous_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1660,7 +1881,8 @@ const CommonConfiguration = ({
               label="Thickness"
               options={field_motor_thickness_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_hazardous_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1674,7 +1896,8 @@ const CommonConfiguration = ({
               label="Qty"
               options={field_motor_qty_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_hazardous_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1686,7 +1909,8 @@ const CommonConfiguration = ({
               label="LPBS Color Shade"
               options={lpbs_color_shade_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_hazardous_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1698,7 +1922,8 @@ const CommonConfiguration = ({
               label="Canopy"
               options={lpbs_canopy_on_top_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_hazardous_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1710,7 +1935,8 @@ const CommonConfiguration = ({
               label="Canopy Type"
               options={field_motor_canopy_type_options || []}
               disabled={
-                watch("is_local_push_button_station_selected") === "0" || watch("is_hazardous_lpbs_selected") === "0"
+                watch("is_local_push_button_station_selected") === "0" ||
+                watch("is_hazardous_lpbs_selected") === "0"
               }
               size="small"
             />
@@ -1776,7 +2002,9 @@ const CommonConfiguration = ({
               name="power_bus_current_density"
               label="Current Density"
               options={
-                (watch("power_bus_material") === "Aluminium" ? al_pb_current_density : cu_pb_current_density) || []
+                (watch("power_bus_material") === "Aluminium"
+                  ? al_pb_current_density
+                  : cu_pb_current_density) || []
               }
               size="small"
             />
@@ -1832,7 +2060,9 @@ const CommonConfiguration = ({
               name="control_bus_current_density"
               label="Current Density"
               options={
-                (watch("control_bus_material") === "Aluminium" ? al_cb_current_density : cu_cb_current_density) || []
+                (watch("control_bus_material") === "Aluminium"
+                  ? al_cb_current_density
+                  : cu_cb_current_density) || []
               }
               size="small"
             />
@@ -1888,7 +2118,9 @@ const CommonConfiguration = ({
               name="earth_bus_current_density"
               label="Current Density"
               options={
-                (watch("earth_bus_material") === "Aluminium" ? al_eb_current_density : cu_eb_current_density) || []
+                (watch("earth_bus_material") === "Aluminium"
+                  ? al_eb_current_density
+                  : cu_eb_current_density) || []
               }
               size="small"
             />
@@ -1904,10 +2136,18 @@ const CommonConfiguration = ({
         </div>
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <CustomTextAreaInput control={control} name="door_earthing" label="Door Earthing" />
+            <CustomTextAreaInput
+              control={control}
+              name="door_earthing"
+              label="Door Earthing"
+            />
           </div>
           <div className="flex-1">
-            <CustomTextAreaInput control={control} name="instrument_earth" label="Instrumental Earth" />
+            <CustomTextAreaInput
+              control={control}
+              name="instrument_earth"
+              label="Instrumental Earth"
+            />
           </div>
           <div className="flex-1">
             <CustomTextAreaInput
@@ -1918,7 +2158,9 @@ const CommonConfiguration = ({
           </div>
         </div>
         <Divider>
-          <span className="font-bold text-slate-700">Identification of Components</span>
+          <span className="font-bold text-slate-700">
+            Identification of Components
+          </span>
         </Divider>
         <div className="flex gap-4">
           <div className="flex-1">
@@ -1931,7 +2173,12 @@ const CommonConfiguration = ({
             />
           </div>
           <div className="flex-1">
-            <CustomTextInput control={control} name="ferrule_note" label="Ferrule Note" size="small" />
+            <CustomTextInput
+              control={control}
+              name="ferrule_note"
+              label="Ferrule Note"
+              size="small"
+            />
           </div>
           <div className="flex-1">
             <CustomTextInput
@@ -1979,7 +2226,7 @@ const CommonConfiguration = ({
         </div>
       </form>
     </>
-  )
-}
+  );
+};
 
-export default CommonConfiguration
+export default CommonConfiguration;

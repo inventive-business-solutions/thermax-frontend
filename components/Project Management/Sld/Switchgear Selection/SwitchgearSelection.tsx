@@ -1,30 +1,33 @@
-"use client"
-import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce"
-import React, { useRef, useEffect, useState, useMemo, useCallback } from "react"
-import "jspreadsheet-ce/dist/jspreadsheet.css"
-import { Button, message, Spin } from "antd"
-import { getData, updateData } from "actions/crud-actions"
+"use client";
+import jspreadsheet, { JspreadsheetInstance } from "jspreadsheet-ce";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+import "jspreadsheet-ce/dist/jspreadsheet.css";
+import { Button, message, Spin } from "antd";
+import { getData, updateData } from "@/actions/crud-actions";
 import {
   COMMON_CONFIGURATION_1,
-  COMMON_CONFIGURATION_2,
-  COMMON_CONFIGURATION_3,
   MAKE_OF_COMPONENT_API,
   SLD_REVISIONS_API,
-} from "configs/api-endpoints"
-import { useLoading } from "hooks/useLoading"
-import { useParams, useRouter } from "next/navigation"
-import { switchGearSelectionColumns } from "components/Project Management/Electrical Load List/common/ExcelColumns"
-import { ValidColumnType } from "components/Project Management/Electrical Load List/types"
-import { getStandByKw } from "components/Project Management/Electrical Load List/Electrical Load List/LoadListComponent"
-import { useCurrentUser } from "hooks/useCurrentUser"
-import { ENVIRO, HEATING } from "configs/constants"
-import { getSwSelectionDetails } from "actions/sld"
-import { log } from "node:console"
+} from "@/configs/api-endpoints";
+import { useLoading } from "@/hooks/useLoading";
+import { useParams } from "next/navigation";
+import { switchGearSelectionColumns } from "@/components/Project Management/Electrical Load List/common/ExcelColumns";
+import { ValidColumnType } from "@/components/Project Management/Electrical Load List/types";
+import { getStandByKw } from "@/components/Project Management/Electrical Load List/Electrical Load List/LoadListComponent";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { ENVIRO, HEATING } from "@/configs/constants";
+import { getSwSelectionDetails } from "@/actions/sld";
 
 interface Props {
-  designBasisRevisionId: string
-  data: any[]
-  revision_id: string
+  designBasisRevisionId: string;
+  data: any[];
+  revision_id: string;
 }
 
 const getArrayOfSwitchgearSelectionData = (
@@ -34,8 +37,8 @@ const getArrayOfSwitchgearSelectionData = (
   makeComponents: any,
   division: string
 ) => {
-  console.log(data, "load list data")
-  console.log(sg_saved_data, "load list data sg_saved_data  ")
+  console.log(data, "load list data");
+  console.log(sg_saved_data, "load list data sg_saved_data  ");
 
   if (sg_saved_data.length && !data.length) {
     return sg_saved_data.map((item: any) => {
@@ -48,7 +51,9 @@ const getArrayOfSwitchgearSelectionData = (
         item.current,
         item.starter,
         item.make,
-        item?.mcc_switchgear_type ? item.mcc_switchgear_type : commonConfiguration.mcc_switchgear_type,
+        item?.mcc_switchgear_type
+          ? item.mcc_switchgear_type
+          : commonConfiguration.mcc_switchgear_type,
         item?.vfd || "",
         item?.breaker_fuse || "",
         item?.fuse_holder || "",
@@ -59,29 +64,31 @@ const getArrayOfSwitchgearSelectionData = (
         item?.terminal_part_number || "",
         item.cable_size || "",
         item.incomer,
-      ]
+      ];
       if (division === HEATING) {
-        arr.splice(8, 0, item.starting_time)
+        arr.splice(8, 0, item.starting_time);
       }
       if (division === ENVIRO) {
-        arr.splice(5, 0, item.kva)
+        arr.splice(5, 0, item.kva);
       }
-      return arr
-    })
+      return arr;
+    });
   }
 
-  if (!data) return []
-  console.log(commonConfiguration, "commonConfiguration")
+  if (!data) return [];
+  console.log(commonConfiguration, "commonConfiguration");
 
   return data.map((item: any) => {
-    const savedItem = sg_saved_data?.find((row: any) => row.tag_number === item.tag_number)
-    let make
+    const savedItem = sg_saved_data?.find(
+      (row: any) => row.tag_number === item.tag_number
+    );
+    let make;
     if (item.starter_type.includes("VFD")) {
-      make = makeComponents.preferred_vfdvsd
+      make = makeComponents.preferred_vfdvsd;
     } else if (item.starter_type.includes("SOFT STARTER")) {
-      make = makeComponents.preferred_soft_starter
+      make = makeComponents.preferred_soft_starter;
     } else {
-      make = makeComponents.preferred_lv_switchgear
+      make = makeComponents.preferred_lv_switchgear;
     }
     const arr = [
       item.tag_number,
@@ -92,7 +99,9 @@ const getArrayOfSwitchgearSelectionData = (
       item.motor_rated_current,
       item.starter_type,
       savedItem?.make ?? make,
-      savedItem?.mcc_switchgear_type ? savedItem.mcc_switchgear_type : commonConfiguration.mcc_switchgear_type,
+      savedItem?.mcc_switchgear_type
+        ? savedItem.mcc_switchgear_type
+        : commonConfiguration.mcc_switchgear_type,
       savedItem?.vfd || "",
       savedItem?.breaker_fuse || "",
       savedItem?.fuse_holder || "",
@@ -102,32 +111,41 @@ const getArrayOfSwitchgearSelectionData = (
       savedItem?.overlay_relay || "",
       savedItem?.terminal_part_number || "",
       item.cablesize || "",
-      savedItem?.incomer ? savedItem.incomer : item.bus_segregation === "A" ? "Incomer 1" : "",
-    ]
+      savedItem?.incomer
+        ? savedItem.incomer
+        : item.bus_segregation === "A"
+        ? "Incomer 1"
+        : "",
+    ];
     if (division === HEATING) {
-      arr.splice(8, 0, item.starting_time)
+      arr.splice(8, 0, item.starting_time);
     }
     if (division === ENVIRO) {
-      arr.splice(5, 0, item.kva)
+      arr.splice(5, 0, item.kva);
     }
-    return arr
-  })
-}
+    return arr;
+  });
+};
 
-const useDataFetching = (designBasisRevisionId: string, loadListData: any, division: string, revision_id: string) => {
-  const [isLoading, setIsLoading] = useState(true)
-  const [swSelectionData, setSwSelectionData] = useState<any[]>([])
-  const [commonConfiguration, setCommonConfiguration] = useState<any[]>([])
+const useDataFetching = (
+  designBasisRevisionId: string,
+  loadListData: any,
+  division: string,
+  revision_id: string
+) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [swSelectionData, setSwSelectionData] = useState<any[]>([]);
+  const [commonConfiguration, setCommonConfiguration] = useState<any[]>([]);
 
-  const [makeComponents, setMakeComponents] = useState<any[]>([])
+  const [makeComponents, setMakeComponents] = useState<any[]>([]);
 
   const fetchData = useCallback(async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
 
       const commonConfiguration = await getData(
         `${COMMON_CONFIGURATION_1}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-      )
+      );
       // const commonConfiguration2 = await getData(
       //   `${COMMON_CONFIGURATION_2}?fields=["*"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
       // )
@@ -136,11 +154,13 @@ const useDataFetching = (designBasisRevisionId: string, loadListData: any, divis
       // )
 
       // const commonConfiguration: any =  [...(commonConfiguration1 || []), ...(commonConfiguration2 || []), ...(commonConfiguration3 || [])].flat()
-      const sg_saved_data = await getData(`${SLD_REVISIONS_API}/${revision_id}`)
+      const sg_saved_data = await getData(
+        `${SLD_REVISIONS_API}/${revision_id}`
+      );
       const makeComponents = await getData(
         `${MAKE_OF_COMPONENT_API}?fields=["preferred_soft_starter","preferred_lv_switchgear","preferred_vfdvsd"]&filters=[["revision_id", "=", "${designBasisRevisionId}"]]`
-      )
-      console.log(commonConfiguration, "commonConfiguration")
+      );
+      console.log(commonConfiguration, "commonConfiguration");
 
       const formattedData = getArrayOfSwitchgearSelectionData(
         loadListData,
@@ -148,46 +168,63 @@ const useDataFetching = (designBasisRevisionId: string, loadListData: any, divis
         commonConfiguration[0],
         makeComponents[0],
         division
-      )
-      setMakeComponents(makeComponents[0])
-      setCommonConfiguration(commonConfiguration[0])
-      setSwSelectionData(formattedData)
-      setIsLoading(false)
+      );
+      setMakeComponents(makeComponents[0]);
+      setCommonConfiguration(commonConfiguration[0]);
+      setSwSelectionData(formattedData);
+      setIsLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error)
-      message.error("Failed to load data")
+      console.error("Error fetching data:", error);
+      message.error("Failed to load data");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    fetchData();
+  }, [fetchData]);
 
-  return { commonConfiguration, makeComponents, swSelectionData, loadListData, isLoading, refetch: fetchData }
-}
+  return {
+    commonConfiguration,
+    makeComponents,
+    swSelectionData,
+    loadListData,
+    isLoading,
+    refetch: fetchData,
+  };
+};
 
-const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, revision_id }) => {
-  console.log(data, "switchgear")
-  console.log(revision_id, "switchgear revision_id")
+const SwitchgearSelection: React.FC<Props> = ({
+  designBasisRevisionId,
+  data,
+  revision_id,
+}) => {
+  console.log(data, "switchgear");
+  console.log(revision_id, "switchgear revision_id");
 
-  const jRef = useRef<HTMLDivElement | null>(null)
-  const [spreadsheetInstance, setSpreadsheetInstance] = useState<JspreadsheetInstance | null>(null)
-  const { setLoading } = useLoading()
-  const params = useParams()
-  const userInfo: { division: string } = useCurrentUser()
-  const router = useRouter()
+  const jRef = useRef<HTMLDivElement | null>(null);
+  const [spreadsheetInstance, setSpreadsheetInstance] =
+    useState<JspreadsheetInstance | null>(null);
+  const { setLoading } = useLoading();
+  const params = useParams();
+  const userInfo: { division: string } = useCurrentUser();
 
-  const project_id = params.project_id as string
+  const project_id = params.project_id as string;
 
-  let { commonConfiguration, makeComponents, swSelectionData, loadListData, isLoading } = useDataFetching(
+  const {
+    commonConfiguration,
+    makeComponents,
+    swSelectionData,
+    loadListData,
+    isLoading,
+  } = useDataFetching(
     designBasisRevisionId,
     data,
     userInfo.division,
     revision_id
-  )
-  console.log(swSelectionData, "switchegear data")
+  );
+  console.log(swSelectionData, "switchegear data");
 
   const typedSwitchgearColumns = useMemo(
     () =>
@@ -196,59 +233,59 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
         type: column.type as ValidColumnType,
       })),
     []
-  )
+  );
   useEffect(() => {
     const sortByBusSegregation = (data: any) => {
-      const busA: any[] = []
-      const busB: any[] = []
-      const busC: any[] = []
-      const others: any[] = [] // For items with empty or different bus segregation values
+      const busA: any[] = [];
+      const busB: any[] = [];
+      const busC: any[] = [];
+      const others: any[] = []; // For items with empty or different bus segregation values
 
       data.forEach((item: { bus_segregation: any }) => {
-        const segregation = (item.bus_segregation || "").trim().toUpperCase()
+        const segregation = (item.bus_segregation || "").trim().toUpperCase();
         switch (segregation) {
           case "A":
-            busA.push(item)
-            break
+            busA.push(item);
+            break;
           case "B":
-            busB.push(item)
-            break
+            busB.push(item);
+            break;
           case "C":
-            busC.push(item)
-            break
+            busC.push(item);
+            break;
           default:
-            others.push(item)
+            others.push(item);
         }
-      })
+      });
 
       return {
         busA,
         busB,
         busC,
         others,
-      }
-    }
+      };
+    };
 
-    const sortedData = sortByBusSegregation(data)
+    const sortedData = sortByBusSegregation(data);
 
     typedSwitchgearColumns.forEach((column) => {
       if (userInfo.division === HEATING) {
         if (column.name === "incomer") {
-          column.source = ["Incomer 1", "Combine"]
+          column.source = ["Incomer 1", "Combine"];
         }
       } else {
         if (column.name === "incomer") {
           if (sortedData.busC.length) {
-            column.source = ["Incomer 1", "Incomer 2", "Incomer 3", "Combine"]
+            column.source = ["Incomer 1", "Incomer 2", "Incomer 3", "Combine"];
           } else if (sortedData.busB.length) {
-            column.source = ["Incomer 1", "Incomer 2", "Combine"]
+            column.source = ["Incomer 1", "Incomer 2", "Combine"];
           } else {
-            column.source = ["Incomer 1"]
+            column.source = ["Incomer 1"];
           }
         }
       }
-    })
-  }, [loadListData])
+    });
+  }, [loadListData]);
 
   const swSelectionOptions = useMemo(
     () => ({
@@ -268,33 +305,33 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
       rowResize: true,
     }),
     [typedSwitchgearColumns, swSelectionData]
-  )
+  );
 
   // Initialize or update spreadsheet
   const initSpreadsheet = () => {
     // console.log(data);
 
     if (spreadsheetInstance) {
-      spreadsheetInstance.destroy()
+      spreadsheetInstance.destroy();
     }
-    console.log(swSelectionData)
+    console.log(swSelectionData);
 
-    const instance = jspreadsheet(jRef.current!, swSelectionOptions)
-    setSpreadsheetInstance(instance)
-    setLoading(false)
-  }
+    const instance = jspreadsheet(jRef.current!, swSelectionOptions);
+    setSpreadsheetInstance(instance);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    if (isLoading || !jRef.current) return
+    if (isLoading || !jRef.current) return;
 
-    initSpreadsheet()
+    initSpreadsheet();
 
     return () => {
-      spreadsheetInstance?.destroy()
-    }
-  }, [isLoading, swSelectionOptions])
+      spreadsheetInstance?.destroy();
+    };
+  }, [isLoading, swSelectionOptions]);
   useEffect(() => {
-    console.log(data)
+    console.log(data);
 
     if (data.length) {
       const formattedData = getArrayOfSwitchgearSelectionData(
@@ -303,40 +340,21 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
         commonConfiguration,
         makeComponents,
         userInfo.division
-      )
+      );
       // setSwSelectionData(formattedData)
-      console.log(formattedData, "formattedData")
-      spreadsheetInstance?.setData(formattedData)
+      console.log(formattedData, "formattedData");
+      spreadsheetInstance?.setData(formattedData);
       // swSelectionData=formattedData;
       // initSpreadsheet()
     }
-  }, [data])
+  }, [data]);
 
   const handleSgSave = async () => {
-    const data = spreadsheetInstance?.getData()
+    const data = spreadsheetInstance?.getData();
 
-    console.log(data, "all load list data")
-    const temp = {
-      tag_number: "",
-      service_description: "",
-      hp: 0,
-      kw: 0,
-      current: 0,
-      starter: "",
-      make: "",
-      mcc_switchgear_type: "",
-      vfd: "",
-      breaker_fuse: "",
-      fuse_holder: "",
-      contractor_main: "",
-      contractor_star: "",
-      contractor_delta: "",
-      overlay_relay: "",
-      terminal_part_number: "",
-      incomer: "",
-    }
+    console.log(data, "all load list data");
 
-    let payload = {
+    const payload = {
       switchgear_selection_data: data?.map((row: any) => {
         if (userInfo.division === ENVIRO) {
           return {
@@ -360,32 +378,37 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
             terminal_part_number: row[17],
             cable_size: row[18],
             incomer: row[19],
-          }
+          };
         }
       }),
-    }
+    };
     try {
-      console.log(payload, "sg payload")
-      setLoading(true)
+      console.log(payload, "sg payload");
+      setLoading(true);
 
-      const respose = await updateData(`${SLD_REVISIONS_API}/${revision_id}`, false, payload)
-      setLoading(false)
-      message.success("Switchgear Selection Saved !")
+      const respose = await updateData(
+        `${SLD_REVISIONS_API}/${revision_id}`,
+        false,
+        payload
+      );
+      setLoading(false);
+      message.success("Switchgear Selection Saved !");
 
-      console.log(respose, "Switchgear Selection response")
+      console.log(respose, "Switchgear Selection response");
     } catch (error) {
-      message.error("Unable to save Switchgear Selection list")
+      console.error("Error saving Switchgear Selection list:", error);
+      message.error("Unable to save Switchgear Selection list");
 
-      setLoading(false)
+      setLoading(false);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
     // Add your save logic here
-  }
+  };
   const handleGetSwDetails = async () => {
-    setLoading(true)
+    setLoading(true);
 
-    const swData = spreadsheetInstance?.getData()
+    const swData = spreadsheetInstance?.getData();
     try {
       const payload = {
         division: userInfo.division,
@@ -396,54 +419,61 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
             kw: getStandByKw(item[3], item[4]),
             starter_type: userInfo.division === ENVIRO ? item[7] : item[6],
             make: userInfo.division === ENVIRO ? item[8] : item[7],
-            sw_type: userInfo.division === ENVIRO || userInfo.division === HEATING ? item[9] : item[8],
+            sw_type:
+              userInfo.division === ENVIRO || userInfo.division === HEATING
+                ? item[9]
+                : item[8],
             starting_time: userInfo.division === HEATING ? item[8] : "",
-          }
+          };
         }),
-      }
+      };
 
-      const sg_data = await getSwSelectionDetails(payload)
+      const sg_data = await getSwSelectionDetails(payload);
       const updatedSgData: any = swData?.map((row: any) => {
-        const calculationResult = sg_data?.find((item: any) => item.tag_number === row[0])
-        console.log(calculationResult)
+        const calculationResult = sg_data?.find(
+          (item: any) => item.tag_number === row[0]
+        );
+        console.log(calculationResult);
 
         if (calculationResult) {
-          const updatedRow = [...row]
+          const updatedRow = [...row];
           if (userInfo.division === HEATING || userInfo.division === ENVIRO) {
-            updatedRow[10] = calculationResult.vfd
-            updatedRow[11] = calculationResult.breaker_fuse
-            updatedRow[12] = calculationResult.fuse_holder
-            updatedRow[13] = calculationResult.contractor_main
-            updatedRow[14] = calculationResult.contractor_star
-            updatedRow[15] = calculationResult.contractor_delta
-            updatedRow[16] = calculationResult.overlay_relay
-            updatedRow[17] = calculationResult.terminal_part_no
+            updatedRow[10] = calculationResult.vfd;
+            updatedRow[11] = calculationResult.breaker_fuse;
+            updatedRow[12] = calculationResult.fuse_holder;
+            updatedRow[13] = calculationResult.contractor_main;
+            updatedRow[14] = calculationResult.contractor_star;
+            updatedRow[15] = calculationResult.contractor_delta;
+            updatedRow[16] = calculationResult.overlay_relay;
+            updatedRow[17] = calculationResult.terminal_part_no;
           } else {
-            updatedRow[9] = calculationResult.vfd
-            updatedRow[10] = calculationResult.breaker_fuse
-            updatedRow[11] = calculationResult.fuse_holder
-            updatedRow[12] = calculationResult.contractor_main
-            updatedRow[13] = calculationResult.contractor_star
-            updatedRow[14] = calculationResult.contractor_delta
-            updatedRow[15] = calculationResult.overlay_relay
-            updatedRow[16] = calculationResult.terminal_part_no
+            updatedRow[9] = calculationResult.vfd;
+            updatedRow[10] = calculationResult.breaker_fuse;
+            updatedRow[11] = calculationResult.fuse_holder;
+            updatedRow[12] = calculationResult.contractor_main;
+            updatedRow[13] = calculationResult.contractor_star;
+            updatedRow[14] = calculationResult.contractor_delta;
+            updatedRow[15] = calculationResult.overlay_relay;
+            updatedRow[16] = calculationResult.terminal_part_no;
           }
 
-          return updatedRow
+          return updatedRow;
         }
-        return row
-      })
-      console.log("updated sg_data", sg_data)
-      console.log("updated calc", updatedSgData)
+        return row;
+      });
+      console.log("updated sg_data", sg_data);
+      console.log("updated calc", updatedSgData);
 
-      spreadsheetInstance?.setData(updatedSgData)
-      setLoading(false)
+      spreadsheetInstance?.setData(updatedSgData);
+      setLoading(false);
       // console.log(res,'motor calculations');
-    } catch (error) {}
-  }
+    } catch (error) {
+      console.error("Error fetching switchgear details:", error);
+    }
+  };
   useEffect(() => {
-    console.log(isLoading)
-  }, [isLoading])
+    console.log(isLoading);
+  }, [isLoading]);
 
   return (
     <>
@@ -461,7 +491,11 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
       <div className="flex w-full flex-row justify-end gap-2">
         {/* <Button type="primary">Get Cable Sizing</Button> */}
 
-        <Button type="primary" onClick={handleGetSwDetails} disabled={isLoading}>
+        <Button
+          type="primary"
+          onClick={handleGetSwDetails}
+          disabled={isLoading}
+        >
           Get Switchgear Details
         </Button>
         <Button type="primary" onClick={handleSgSave} disabled={isLoading}>
@@ -472,7 +506,7 @@ const SwitchgearSelection: React.FC<Props> = ({ designBasisRevisionId, data, rev
         </Button>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default SwitchgearSelection
+export default SwitchgearSelection;

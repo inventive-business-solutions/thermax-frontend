@@ -12,25 +12,6 @@
       "runtimeArgs": ["dev"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
-    },
-
-    {
-      "name": "Fix lint issues",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "yarn",
-      "runtimeArgs": ["lint:fix"],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
-    },
-    {
-      "name": "Run Yarn Build",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "yarn",
-      "runtimeArgs": ["build"],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

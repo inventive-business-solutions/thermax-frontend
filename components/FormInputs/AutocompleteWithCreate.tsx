@@ -1,20 +1,20 @@
-"use client"
-import { AutoComplete, Button, Input, message, Spin } from "antd"
-import { useEffect, useState } from "react"
-import { Control, Controller } from "react-hook-form"
-import { mutate } from "swr"
-import { createData } from "actions/crud-actions"
+"use client";
+import { AutoComplete, Button, Input, message, Spin } from "antd";
+import { useEffect, useState } from "react";
+import { Control, Controller } from "react-hook-form";
+import { mutate } from "swr";
+import { createData } from "@/actions/crud-actions";
 
 interface CustomAutoCompleteProps {
-  control: Control<any>
-  name: string
-  label: string
-  placeholder?: string
-  options: { value: string; label?: string; [key: string]: any }[]
-  optionKeyName: string
-  disabled?: boolean
-  createOptionUrl: string
-  defaultOption?: string
+  control: Control<any>;
+  name: string;
+  label: string;
+  placeholder?: string;
+  options: { value: string; label?: string; [key: string]: any }[];
+  optionKeyName: string;
+  disabled?: boolean;
+  createOptionUrl: string;
+  defaultOption?: string;
 }
 
 export default function CustomAutoComplete({
@@ -28,34 +28,37 @@ export default function CustomAutoComplete({
   createOptionUrl,
   defaultOption,
 }: CustomAutoCompleteProps) {
-  const [typedValue, setTypedValue] = useState<string>("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [filteredOptions, setFilteredOptions] = useState(options)
+  const [typedValue, setTypedValue] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [filteredOptions, setFilteredOptions] = useState(options);
 
   // Use useEffect to update filteredOptions whenever the options prop changes
   useEffect(() => {
     if (defaultOption) {
-      setTypedValue(defaultOption)
+      setTypedValue(defaultOption);
     }
-    setFilteredOptions(options) // Sync filteredOptions with the new options from parent
-  }, [defaultOption, options])
+    setFilteredOptions(options); // Sync filteredOptions with the new options from parent
+  }, [defaultOption, options]);
 
-  const handleCreateOption = async (value: string, onChange: (value: string) => void) => {
-    if (!value) return
+  const handleCreateOption = async (
+    value: string,
+    onChange: (value: string) => void
+  ) => {
+    if (!value) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await createData(createOptionUrl, false, { [optionKeyName]: value })
-      onChange(value)
-      mutate(createOptionUrl) // Trigger SWR to re-fetch data
-      message.success(`Option "${value}" created successfully!`)
+      await createData(createOptionUrl, false, { [optionKeyName]: value });
+      onChange(value);
+      mutate(createOptionUrl); // Trigger SWR to re-fetch data
+      message.success(`Option "${value}" created successfully!`);
     } catch (error: any) {
-      const errorObj = JSON.parse(error?.message) as any
-      message.error(errorObj?.message)
+      const errorObj = JSON.parse(error?.message) as any;
+      message.error(errorObj?.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleSearch = (searchText: string) => {
     // Filter options based on input
@@ -63,9 +66,9 @@ export default function CustomAutoComplete({
       (option) =>
         option.label?.toLowerCase().includes(searchText.toLowerCase()) ||
         option.value.toLowerCase().includes(searchText.toLowerCase())
-    )
-    setFilteredOptions(filtered)
-  }
+    );
+    setFilteredOptions(filtered);
+  };
 
   return (
     <Controller
@@ -78,28 +81,31 @@ export default function CustomAutoComplete({
               {label}
             </label>
             {/* Show create button when the input doesn't match any existing option */}
-            {typedValue && !filteredOptions.find((opt) => opt.value === typedValue) && (
-              <div className="">
-                <Button
-                  type="primary"
-                  onClick={() => handleCreateOption(typedValue, field.onChange)}
-                  loading={isLoading}
-                  disabled={isLoading || !typedValue}
-                  size="small"
-                >
-                  {isLoading ? <Spin /> : `Create "${typedValue}"`}
-                </Button>
-              </div>
-            )}
+            {typedValue &&
+              !filteredOptions.find((opt) => opt.value === typedValue) && (
+                <div className="">
+                  <Button
+                    type="primary"
+                    onClick={() =>
+                      handleCreateOption(typedValue, field.onChange)
+                    }
+                    loading={isLoading}
+                    disabled={isLoading || !typedValue}
+                    size="small"
+                  >
+                    {isLoading ? <Spin /> : `Create "${typedValue}"`}
+                  </Button>
+                </div>
+              )}
           </div>
 
           <AutoComplete
             {...field}
             value={typedValue}
             onChange={(value) => {
-              setTypedValue(value)
-              field.onChange(value) // Update form value with selected/typed value
-              handleSearch(value) // Filter options based on typed value
+              setTypedValue(value);
+              field.onChange(value); // Update form value with selected/typed value
+              handleSearch(value); // Filter options based on typed value
             }}
             options={filteredOptions} // Use filteredOptions instead of raw options
             disabled={disabled}
@@ -109,9 +115,11 @@ export default function CustomAutoComplete({
             <Input />
           </AutoComplete>
 
-          {fieldState.error && <p className="text-xs text-red-600">{fieldState.error.message}</p>}
+          {fieldState.error && (
+            <p className="text-xs text-red-600">{fieldState.error.message}</p>
+          )}
         </div>
       )}
     />
-  )
+  );
 }

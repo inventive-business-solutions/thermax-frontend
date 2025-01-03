@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons"
-import { Modal } from "antd"
-import { useEffect, useState } from "react"
-import { getBucketObjects } from "actions/aws/s3-actions"
-import S3BucketUpload from "components/FormInputs/S3BucketUpload"
-import { S3FolderMapping } from "configs/constants"
+import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
+import { Modal } from "antd";
+import { useEffect, useState } from "react";
+import { getBucketObjects } from "@/actions/aws/s3-actions";
+import S3BucketUpload from "@/components/FormInputs/S3BucketUpload";
+import { S3FolderMapping } from "@/configs/constants";
 
 interface UserInfo {
-  division: keyof typeof S3FolderMapping
+  division: keyof typeof S3FolderMapping;
 }
 
 export const UploadProjectFilesModal = ({
@@ -17,10 +17,10 @@ export const UploadProjectFilesModal = ({
   values,
   userInfo,
 }: {
-  open: boolean
-  setOpen: (open: boolean) => void
-  values: any
-  userInfo: UserInfo
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  values: any;
+  userInfo: UserInfo;
 }) => {
   const [fileExist, setFileExist] = useState({
     panelSpec: false,
@@ -28,37 +28,49 @@ export const UploadProjectFilesModal = ({
     lpbsSpec: false,
     localIsolatorSpec: false,
     cableSpec: false,
-  })
+  });
 
   useEffect(() => {
     const checkFileExist = async () => {
       const panelSpec = await getBucketObjects(
-        `${S3FolderMapping[userInfo?.division]}/${values?.["project_name"]}/Panel Specification`
-      )
+        `${S3FolderMapping[userInfo?.division]}/${
+          values?.["project_name"]
+        }/Panel Specification`
+      );
       const motorSpec = await getBucketObjects(
-        `${S3FolderMapping[userInfo?.division]}/${values?.["project_name"]}/Motor Specification`
-      )
+        `${S3FolderMapping[userInfo?.division]}/${
+          values?.["project_name"]
+        }/Motor Specification`
+      );
       const lpbsSpec = await getBucketObjects(
-        `${S3FolderMapping[userInfo?.division]}/${values?.["project_name"]}/LPBS Specification`
-      )
+        `${S3FolderMapping[userInfo?.division]}/${
+          values?.["project_name"]
+        }/LPBS Specification`
+      );
       const localIsolatorSpec = await getBucketObjects(
-        `${S3FolderMapping[userInfo?.division]}/${values?.["project_name"]}/Local Isolator Specification`
-      )
+        `${S3FolderMapping[userInfo?.division]}/${
+          values?.["project_name"]
+        }/Local Isolator Specification`
+      );
       const cableSpec = await getBucketObjects(
-        `${S3FolderMapping[userInfo?.division]}/${values?.["project_name"]}/Cable Specification`
-      )
+        `${S3FolderMapping[userInfo?.division]}/${
+          values?.["project_name"]
+        }/Cable Specification`
+      );
       setFileExist({
         panelSpec: panelSpec ? panelSpec?.length > 0 : false,
         motorSpec: motorSpec ? motorSpec?.length > 0 : false,
         lpbsSpec: lpbsSpec ? lpbsSpec?.length > 0 : false,
-        localIsolatorSpec: localIsolatorSpec ? localIsolatorSpec?.length > 0 : false,
+        localIsolatorSpec: localIsolatorSpec
+          ? localIsolatorSpec?.length > 0
+          : false,
         cableSpec: cableSpec ? cableSpec?.length > 0 : false,
-      })
-    }
+      });
+    };
     if (open) {
-      checkFileExist()
+      checkFileExist();
     }
-  }, [open, userInfo?.division, values])
+  }, [open, userInfo?.division, values]);
 
   return (
     <Modal
@@ -76,12 +88,16 @@ export const UploadProjectFilesModal = ({
             ) : (
               <CloseCircleTwoTone twoToneColor="#eb2f96" className="text-lg" />
             )}
-            <h4 className="font-semibold text-slate-700">Panel Specification</h4>
+            <h4 className="font-semibold text-slate-700">
+              Panel Specification
+            </h4>
           </div>
           <div className="flex items-center gap-2">
             <S3BucketUpload
               accept=".pdf"
-              folderPath={`${S3FolderMapping[userInfo?.division]}/${values?.["project_name"]}/Panel Specification`}
+              folderPath={`${S3FolderMapping[userInfo?.division]}/${
+                values?.["project_name"]
+              }/Panel Specification`}
             />
           </div>
         </div>
@@ -92,12 +108,16 @@ export const UploadProjectFilesModal = ({
             ) : (
               <CloseCircleTwoTone twoToneColor="#eb2f96" className="text-lg" />
             )}
-            <h4 className="font-semibold text-slate-700">Motor Specification</h4>
+            <h4 className="font-semibold text-slate-700">
+              Motor Specification
+            </h4>
           </div>
           <div className="flex items-center gap-2">
             <S3BucketUpload
               accept=".pdf"
-              folderPath={`${S3FolderMapping[userInfo?.division]}/${values?.["project_name"]}/Motor Specification`}
+              folderPath={`${S3FolderMapping[userInfo?.division]}/${
+                values?.["project_name"]
+              }/Motor Specification`}
             />
           </div>
         </div>
@@ -113,7 +133,9 @@ export const UploadProjectFilesModal = ({
           <div className="flex items-center gap-2">
             <S3BucketUpload
               accept=".pdf"
-              folderPath={`${S3FolderMapping[userInfo?.division]}/${values?.["project_name"]}/LPBS Specification`}
+              folderPath={`${S3FolderMapping[userInfo?.division]}/${
+                values?.["project_name"]
+              }/LPBS Specification`}
             />
           </div>
         </div>
@@ -124,14 +146,16 @@ export const UploadProjectFilesModal = ({
             ) : (
               <CloseCircleTwoTone twoToneColor="#eb2f96" className="text-lg" />
             )}
-            <h4 className="font-semibold text-slate-700">Local Isolator Specification</h4>
+            <h4 className="font-semibold text-slate-700">
+              Local Isolator Specification
+            </h4>
           </div>
           <div className="flex items-center gap-2">
             <S3BucketUpload
               accept=".pdf"
-              folderPath={`${S3FolderMapping[userInfo?.division]}/${values?.[
-                "project_name"
-              ]}/Local Isolator Specification`}
+              folderPath={`${S3FolderMapping[userInfo?.division]}/${
+                values?.["project_name"]
+              }/Local Isolator Specification`}
             />
           </div>
         </div>
@@ -142,16 +166,20 @@ export const UploadProjectFilesModal = ({
             ) : (
               <CloseCircleTwoTone twoToneColor="#eb2f96" className="text-lg" />
             )}
-            <h4 className="font-semibold text-slate-700">Cable Specification</h4>
+            <h4 className="font-semibold text-slate-700">
+              Cable Specification
+            </h4>
           </div>
           <div className="flex items-center gap-2">
             <S3BucketUpload
               accept=".pdf"
-              folderPath={`${S3FolderMapping[userInfo?.division]}/${values?.["project_name"]}/Cable Specification`}
+              folderPath={`${S3FolderMapping[userInfo?.division]}/${
+                values?.["project_name"]
+              }/Cable Specification`}
             />
           </div>
         </div>
       </div>
     </Modal>
-  )
-}
+  );
+};

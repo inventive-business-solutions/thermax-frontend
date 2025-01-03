@@ -51,68 +51,60 @@
 
 //   return dropdownOptions
 // }
-"use client"
+"use client";
 
-import { createData } from "actions/crud-actions"
-import Dropdown from "antd/es/dropdown/dropdown"
-import {
-  GLAND_MAKE,
-  MAKE_CABLE,
-  MAKE_LV_SWITCHGEAR,
-  MAKE_MOTORS,
-  MAKE_PANEL_ENCLOSURE,
-  MAKE_PLC,
-  MAKE_SOFT_STARTER,
-  MAKE_VFD_VSD,
-} from "configs/api-endpoints"
+import { createData } from "@/actions/crud-actions";
 
-import { useDropdownOptions } from "hooks/useDropdownOptions"
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
 // Define the structure of the dropdown option
-interface DropdownOption {
-  id: number // or string, depending on your data structure
-  name: string
-  label: string
-  value: string
-}
+// interface DropdownOption {
+//   id: number; // or string, depending on your data structure
+//   name: string;
+//   label: string;
+//   value: string;
+// }
 
 type DropdownState = {
   [key: string]: any[]; // Each key is a string and the value is an array of any type
 };
 
-
 // Function to move "NA" options to the end of the array
-const moveNAtoEnd = (options: DropdownOption[]): DropdownOption[] => {
-  const naOptions = options.filter((item) => item.name === "NA")
-  const filteredOptions = options.filter((item) => item.name !== "NA")
+// const moveNAtoEnd = (options: DropdownOption[]): DropdownOption[] => {
+//   const naOptions = options.filter((item) => item.name === "NA");
+//   const filteredOptions = options.filter((item) => item.name !== "NA");
 
-  // If there are NA options, add them to the end
-  return naOptions.length > 0 ? [...filteredOptions, ...naOptions] : filteredOptions
-}
+//   // If there are NA options, add them to the end
+//   return naOptions.length > 0
+//     ? [...filteredOptions, ...naOptions]
+//     : filteredOptions;
+// };
 
 // Main hook to fetch dropdown options for different components
 export default function useMakeOfComponentDropdowns() {
-  const [dropdown, setDropdown] = useState<DropdownState>({})
+  const [dropdown, setDropdown] = useState<DropdownState>({});
 
   useEffect(() => {
     const getDropdown = async () => {
-      const response = await createData("method/design_basis_make_of_component.get_make_of_component_dropdowns", true, {
-        "Gland Make": "name",
-        "Motors Make": "name",
-        "Cables Make": "name",
-        "LV Switchgear Make": "name",
-        "Panel Enclosure Make": "name",
-        "VFD VSD Make": "name",
-        "Soft Starter Make": "name",
-        "PLC Make": "name"
+      const response = await createData(
+        "method/design_basis_make_of_component.get_make_of_component_dropdowns",
+        true,
+        {
+          "Gland Make": "name",
+          "Motors Make": "name",
+          "Cables Make": "name",
+          "LV Switchgear Make": "name",
+          "Panel Enclosure Make": "name",
+          "VFD VSD Make": "name",
+          "Soft Starter Make": "name",
+          "PLC Make": "name",
+        }
+      );
+      console.log(response, "make response");
+      setDropdown(response);
+    };
+    getDropdown();
+  }, []);
 
-      })
-      console.log(response, 'make response')
-      setDropdown(response)
-    }
-    getDropdown()
-  }, [])
-
-  return dropdown
+  return dropdown;
 }

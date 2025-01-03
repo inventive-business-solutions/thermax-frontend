@@ -1,77 +1,53 @@
-"use client"
+"use client";
 
-import { createData } from "actions/crud-actions";
-import {
-  HAZARDOUS_BEARING_RTD,
-  HAZARDOUS_BODY_MATERIAL,
-  HAZARDOUS_CERTIFICATION,
-  HAZARDOUS_EFFICIENCY_LEVEL,
-  HAZARDOUS_ENCLOSURE_IP_RATING,
-  HAZARDOUS_INSULATION_CLASS,
-  HAZARDOUS_SPACE_HEATER,
-  HAZARDOUS_TEMPERATURE_RISE,
-  HAZARDOUS_TERMINAL_BOX_IP_RATING,
-  HAZARDOUS_TERMINAL_BOX_MATERIAL,
-  HAZARDOUS_WINDING_RTD,
-  SAFE_BEARING_RTD,
-  SAFE_BODY_MATERIAL,
-  SAFE_EFFICIENCY_LEVEL,
-  SAFE_ENCLOSURE_IP_RATING,
-  SAFE_INSULATION_CLASS,
-  SAFE_SPACE_HEATER,
-  SAFE_TEMPERATURE_RISE,
-  SAFE_TERMINAL_BOX_IP_RATING,
-  SAFE_TERMINAL_BOX_MATERIAL,
-  SAFE_THERMISTOR,
-  SAFE_WINDING_RTD,
-} from "configs/api-endpoints"
+import { createData } from "@/actions/crud-actions";
 
-import { useDropdownOptions } from "hooks/useDropdownOptions"
 import { useEffect, useState } from "react";
-import { sortDropdownOptions } from "utils/helpers"
 
 type DropdownState = {
   [key: string]: any[]; // Each key is a string and the value is an array of any type
 };
 
 export default function useMotorParametersDropdowns() {
-
-  const [dropdown, setDropdown] = useState<DropdownState>({})
+  const [dropdown, setDropdown] = useState<DropdownState>({});
 
   useEffect(() => {
     const getDropdown = async () => {
-      const response = await createData("method/design_basis_make_of_component.get_make_of_component_dropdowns", true, {
-        "Efficiency Level Safe Area": "name",
-        "Efficiency Level Hazardous Area": "name",
-        "Insulation Class Safe Area": "name",
-        "Insulation Class Hazardous Area": "name",
-        "Safe Temperature Rise": "name",
-        "Hazardous Temperature Rise": "name",
-        "Enclosure IP Rating Safe": "name",
-        "Enclosure IP Rating Hazardous": "name",
-        "IP rating for Terminal Box Safe": "name",
-        "IP rating for Terminal Box Hazardous": "name",
-        "Thermister Safe": "name",
-        "Thermister Hazardous": "name",
-        "Space Heater Hazardous": "name",
-        "Space Heater Safe": "name",
-        "Hazardous Area Certification": "name",
-        "Bearing RTD Safe": "name",
-        "Bearing RTD Hazardous": "name",
-        "Winding RTD Safe": "name",
-        "Winding RTD Hazardous": "name",
-        "Body Material Safe": "name",
-        "Body Material Hazardous": "name",
-        "Material of Terminal Box Safe": "name",
-        "Material of Terminal Box Hazardous": "name",
-      })
-      console.log("Motor response", response)
-      setDropdown(response)
-    }
+      const response = await createData(
+        "method/design_basis_make_of_component.get_make_of_component_dropdowns",
+        true,
+        {
+          "Efficiency Level Safe Area": "name",
+          "Efficiency Level Hazardous Area": "name",
+          "Insulation Class Safe Area": "name",
+          "Insulation Class Hazardous Area": "name",
+          "Safe Temperature Rise": "name",
+          "Hazardous Temperature Rise": "name",
+          "Enclosure IP Rating Safe": "name",
+          "Enclosure IP Rating Hazardous": "name",
+          "IP rating for Terminal Box Safe": "name",
+          "IP rating for Terminal Box Hazardous": "name",
+          "Thermister Safe": "name",
+          "Thermister Hazardous": "name",
+          "Space Heater Hazardous": "name",
+          "Space Heater Safe": "name",
+          "Hazardous Area Certification": "name",
+          "Bearing RTD Safe": "name",
+          "Bearing RTD Hazardous": "name",
+          "Winding RTD Safe": "name",
+          "Winding RTD Hazardous": "name",
+          "Body Material Safe": "name",
+          "Body Material Hazardous": "name",
+          "Material of Terminal Box Safe": "name",
+          "Material of Terminal Box Hazardous": "name",
+        }
+      );
+      console.log("Motor response", response);
+      setDropdown(response);
+    };
 
     getDropdown();
-
-  }, [])
+  }, []);
 
   // const { dropdownOptions: safeEfficiencyLevelOptions } = useDropdownOptions(
   //   `${SAFE_EFFICIENCY_LEVEL}?fields=["*"]`,
@@ -128,7 +104,6 @@ export default function useMotorParametersDropdowns() {
   // )
   // safeSpaceHeaterOptions = sortDropdownOptions(safeSpaceHeaterOptions)
 
-
   // let { dropdownOptions: hazardousSpaceHeaterOptions } = useDropdownOptions(
   //   `${HAZARDOUS_SPACE_HEATER}?limit=100&fields=["*"]`,
   //   "name"
@@ -179,6 +154,6 @@ export default function useMotorParametersDropdowns() {
   // )
 
   return {
-    dropdown
-  }
+    dropdown,
+  };
 }
