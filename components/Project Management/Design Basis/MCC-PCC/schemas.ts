@@ -121,10 +121,10 @@ export const configItemValidationSchema = zod.object({
     required_error: "Design & Manufacturer's Standard is required",
     message: "Design & Manufacturer's Standard is required",
   }),
-  testing_standard: zod.string({
-    required_error: "Testing Standard is required",
-    message: "Testing Standard is required",
-  }),
+  // testing_standard: zod.string({
+  //   required_error: "Testing Standard is required",
+  //   message: "Testing Standard is required",
+  // }),
   // Wiring
   power_wiring_color: zod.string({
     required_error: "Power Wiring Color is required",
@@ -448,6 +448,20 @@ export const configItemValidationSchema = zod.object({
   lpbs_speed_decrease: zod.string({
     required_error: "Local Push Button Station Speed Decrease is required",
     message: "Local Push Button Station is required",
+  }),
+
+  lpbs_forward_push_button_start: zod.string({
+    required_error: "Forward Push Button Start is required",
+    message: "Forward Push Button Start is required",
+  }),
+
+  lpbs_reverse_push_button_start: zod.string({
+    required_error: "Reverse Push Button Start",
+    message: "Reverse Push Button Start",
+  }),
+  lpbs_push_button_ess: zod.string({
+    required_error: "LPBS ESS is required",
+    message: "LPBS ESS is required"
   }),
   //   // APFC
   apfc_relay: zod.string({
